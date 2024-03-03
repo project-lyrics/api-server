@@ -32,3 +32,15 @@ export SPRING_PROFILES_ACTIVE={profile}
 프로젝트 내의 일부 Shell Script 실행을 위해서는 AWS CLI가 설치되어 있어야 합니다.
 
 ---
+
+## Setup Formatter
+
+이 프로젝트는 formatter로 checkstyle을 사용하고, google style을 약간 수정하여 사용합니다.
+
+커밋 전 반드시 `./gradlew checkstyleMain`을 실행해주세요.
+
+아래 명령을 실행하면 깃 커밋 전 자동으로 checkstyle을 실행시킬 수 있습니다.
+```shell
+echo "./gradlew checkstyleMain; git update-index --again" > .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
