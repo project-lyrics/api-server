@@ -1,1 +1,16 @@
-
+spring:
+  config:
+    import: aws-secretsmanager:/lyrics/server/${spring.profiles.active:local}
+  datasource:
+    url: ${rdb.dsn}
+    username: ${rdb.username}
+    password: ${rdb.password}
+  jpa:
+    open-in-view: false
+    show-sql: ${jpa.showSql}
+management:
+  server:
+    port: ${actuator.port}
+springdoc:
+  api-docs:
+    enabled: ${apiDocs.enabled}
