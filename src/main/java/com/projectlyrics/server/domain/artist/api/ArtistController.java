@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.artist.api;
 
-import com.projectlyrics.server.domain.artist.dto.ArtistDto;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ public class ArtistController {
       description = "아티스트의 데이터를 전달받아 새로운 아티스트를 추가합니다."
   )
   @PostMapping
-  public ResponseEntity<ArtistDto> addArtist(@RequestBody @Valid AddArtistRequest request) {
+  public ResponseEntity<AddArtistResponse> addArtist(@RequestBody @Valid AddArtistRequest request) {
     var artistId = artistService.addArtist(request);
 
     return ResponseEntity

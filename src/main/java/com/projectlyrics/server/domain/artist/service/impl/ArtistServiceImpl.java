@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.artist.service.impl;
 
-import com.projectlyrics.server.domain.artist.dto.ArtistDto;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.ArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,8 @@ public class ArtistServiceImpl implements ArtistService {
 
   @Transactional
   @Override
-  public ArtistDto addArtist(AddArtistRequest request) {
+  public AddArtistResponse addArtist(AddArtistRequest request) {
     var savedArtist = artistRepository.save(request.toEntity());
-    return ArtistDto.from(savedArtist);
+    return AddArtistResponse.of(savedArtist.getId());
   }
 }
