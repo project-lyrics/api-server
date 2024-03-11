@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.artist.dto;
+package com.projectlyrics.server.domain.artist.dto.request;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import io.swagger.v3.oas.annotations.media.Schema;

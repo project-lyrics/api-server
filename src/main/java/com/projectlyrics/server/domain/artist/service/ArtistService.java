@@ -1,8 +1,9 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.domain.artist.dto.AddArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.ArtistDto;
+import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 
 public interface ArtistService {
 
-  Long addArtist(AddArtistRequest request);
+  ArtistDto addArtist(AddArtistRequest request);
 }

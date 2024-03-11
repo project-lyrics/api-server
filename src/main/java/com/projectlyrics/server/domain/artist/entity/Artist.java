@@ -24,7 +24,6 @@ public class Artist {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "artist_id")
   private Long id;
 
   @Column(nullable = true)
