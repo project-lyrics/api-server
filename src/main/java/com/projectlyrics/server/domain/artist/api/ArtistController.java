@@ -1,7 +1,9 @@
 package com.projectlyrics.server.domain.artist.api;
 
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +32,21 @@ public class ArtistController {
   )
   @PostMapping
   public ResponseEntity<AddArtistResponse> addArtist(@RequestBody @Valid AddArtistRequest request) {
-    var artistId = artistService.addArtist(request);
-
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(artistId);
+        .body(artistService.addArtist(request));
+  }
+
+  @Operation(
+      summary = "아티스트 수정 API",
+      description = "수정할 아티스트의 데이터를 전달받아 아티스트 데이터를 수정합니다."
+  )
+  @PatchMapping("/{artistId}")
+  public ResponseEntity<UpdateArtistResponse> updateArtist(
+      @PathVariable Long artistId, @RequestBody UpdateArtistRequest request
+  ) {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(artistService.updateArtist(artistId, request));
   }
 }
