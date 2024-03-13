@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,7 @@ public class ArtistController {
 
   @Operation(
       summary = "아티스트 수정 API",
-      description = "수정할 아티스트의 데이터를 전달받아 아티스트 데이터를 수정합니다."
+      description = "수정할 아티스트의 PK와 데이터를 전달받아 아티스트 데이터를 수정합니다."
   )
   @PatchMapping("/{artistId}")
   public ResponseEntity<UpdateArtistResponse> updateArtist(
@@ -48,5 +49,18 @@ public class ArtistController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(artistService.updateArtist(artistId, request));
+  }
+
+  @Operation(
+      summary = "아티스트 삭제 API",
+      description = "삭제할 아티스트의 PK를 전달받아 아티스트 데이터를 삭제합니다."
+  )
+  @DeleteMapping("/{artistId}")
+  public ResponseEntity<Void> deleteArtist(@PathVariable Long artistId) {
+    artistService.deleteArtist(artistId);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(null);
   }
 }
