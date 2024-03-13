@@ -30,7 +30,7 @@ public class ArtistServiceImpl implements ArtistService {
   @Transactional
   @Override
   public UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request) {
-    var artist = artistRepository.findByIdAndCommonField_DeletedAtIsNull(artistId)
+    var artist = artistRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
 
     artist.updateIfNotBlank(request.name(), artist::updateName);
