@@ -8,11 +8,9 @@ import com.projectlyrics.server.domain.artist.repository.ArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
-import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 
 @RequiredArgsConstructor
@@ -35,16 +33,10 @@ public class ArtistServiceImpl implements ArtistService {
     var artist = artistRepository.findByIdAndCommonField_DeletedAtIsNull(artistId)
         .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
 
-    updateIfNotBlank(request.name(), artist::updateName);
-    updateIfNotBlank(request.englishName(), artist::updateEnglishName);
-    updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
+    artist.updateIfNotBlank(request.name(), artist::updateName);
+    artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
+    artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
 
     return UpdateArtistResponse.from(artist);
-  }
-
-  private void updateIfNotBlank(String value, Consumer<String> updater) {
-    if (StringUtils.hasText(value)) {
-      updater.accept(value);
-    }
   }
 }

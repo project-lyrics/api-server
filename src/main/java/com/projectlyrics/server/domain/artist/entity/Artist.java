@@ -11,12 +11,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.StringUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -64,5 +66,11 @@ public class Artist {
     }
 
     this.profileImageCdnLink = profileImageCdnLink;
+  }
+
+  public void updateIfNotBlank(String value, Consumer<String> updater) {
+    if (StringUtils.hasText(value)) {
+      updater.accept(value);
+    }
   }
 }
