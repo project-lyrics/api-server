@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.impl.ArtistServiceImpl;
+import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.global.exception.BusinessException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import org.junit.jupiter.api.Test;
@@ -73,7 +74,7 @@ class ArtistServiceTest {
   }
 
   @Test
-  void 데이터_수정_시_profileImageCdnLink가_https로_시작하지_않는다면_에러가_발생한다() {
+  void 아티스트_데이터_수정_시_profileImageCdnLink가_https로_시작하지_않는다면_에러가_발생한다() {
     // given
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
@@ -86,6 +87,23 @@ class ArtistServiceTest {
     // then
     then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(throwable).isInstanceOf(BusinessException.class);
+  }
+
+  @Test
+  void 아티스트_데이터_삭제_시_soft_delete를_시킨다() {
+    // given
+    Long artistId = 1L;
+    var artist = ArtistTestUtil.create();
+    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+
+    // when
+    sut.deleteArtist(artistId);
+
+    // then
+    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    assertThat(artist.getCommonField().getDeletedAt()).isNotNull();
+    assertThat(artist.getCommonField().getDeletedBy()).isNotNull();
+    assertThat(artist.getCommonField().getStatus()).isEqualTo(EntityStatusEnum.DELETED);
   }
 
   private AddArtistRequest createAddArtistRequest() {
