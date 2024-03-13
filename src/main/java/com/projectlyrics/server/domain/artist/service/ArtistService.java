@@ -11,4 +11,6 @@ public interface ArtistService {
   AddArtistResponse addArtist(AddArtistRequest request);
 
   UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request);
+
+  void deleteArtist(Long artistId);
 }

@@ -8,10 +8,10 @@ import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepos
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
+import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArtistServiceImpl implements ArtistService {
 
   private final CommandQueryArtistRepository commandArtistRepository;
+  private final Clock clock;
 
   @Transactional
   @Override
@@ -38,5 +39,15 @@ public class ArtistServiceImpl implements ArtistService {
     artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
 
     return UpdateArtistResponse.from(artist);
+  }
+
+  @Transactional
+  @Override
+  public void deleteArtist(Long artistId) {
+    var artist = commandArtistRepository.findByIdAndNotDeleted(artistId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
+
+    // TODO: 인증 구현되면 deletedById 값 수정
+    artist.getCommonField().delete(1L, clock.systemDefaultZone());
   }
 }
