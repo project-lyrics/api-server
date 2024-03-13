@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.artist.service;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.artist.repository.ArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.impl.ArtistServiceImpl;
 import com.projectlyrics.server.global.exception.BusinessException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
@@ -31,7 +31,7 @@ class ArtistServiceTest {
   private ArtistServiceImpl sut;
 
   @Mock
-  private ArtistRepository artistRepository;
+  private CommandQueryArtistRepository commandArtistRepository;
 
   @Captor
   private ArgumentCaptor<Artist> addArtistArgumentCaptor;
@@ -41,13 +41,13 @@ class ArtistServiceTest {
     // given
     var artist = ArtistTestUtil.create();
     var addArtistRequest = createAddArtistRequest();
-    given(artistRepository.save(any(Artist.class))).willReturn(artist);
+    given(commandArtistRepository.save(any(Artist.class))).willReturn(artist);
 
     // when
     sut.addArtist(addArtistRequest);
 
     // then
-    then(artistRepository).should().save(addArtistArgumentCaptor.capture());
+    then(commandArtistRepository).should().save(addArtistArgumentCaptor.capture());
     var captorValue = addArtistArgumentCaptor.getValue();
     assertThat(addArtistRequest.name()).isEqualTo(captorValue.getName());
     assertThat(addArtistRequest.englishName()).isEqualTo(captorValue.getEnglishName());
@@ -60,13 +60,13 @@ class ArtistServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest("   ", null, "https://~2");
-    given(artistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     var updateArtistResponse = sut.updateArtist(artistId, updateArtistRequest);
 
     // then
-    then(artistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(updateArtistResponse.name()).isEqualTo(artist.getName());
     assertThat(updateArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
     assertThat(updateArtistResponse.profileImageCdnLink()).isEqualTo(updateArtistRequest.profileImageCdnLink());
@@ -78,13 +78,13 @@ class ArtistServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest(null, null, "http://~2");
-    given(artistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     Throwable throwable = catchThrowable(() -> sut.updateArtist(artistId, updateArtistRequest));
 
     // then
-    then(artistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(throwable).isInstanceOf(BusinessException.class);
   }
 

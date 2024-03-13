@@ -8,7 +8,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ArtistRepositoryQCustomImpl implements ArtistRepositoryQCustom {
+public class QueryArtistRepositoryImpl implements QueryArtistRepository {
 
   private final JPAQueryFactory jpaQueryFactory;
 
