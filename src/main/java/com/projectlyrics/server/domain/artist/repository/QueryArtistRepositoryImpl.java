@@ -1,8 +1,7 @@
 package com.projectlyrics.server.domain.artist.repository;
 
-import static com.projectlyrics.server.domain.artist.entity.QArtist.*;
-
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.entity.QArtist;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,10 @@ public class QueryArtistRepositoryImpl implements QueryArtistRepository {
   public Optional<Artist> findByIdAndNotDeleted(Long artistId) {
     return Optional.ofNullable(
         jpaQueryFactory
-            .selectFrom(artist)
+            .selectFrom(QArtist.artist)
             .where(
-                artist.id.eq(artistId),
-                artist.commonField.deletedAt.isNull()
+                QArtist.artist.id.eq(artistId),
+                QArtist.artist.commonField.deletedAt.isNull()
             )
             .fetchOne());
   }

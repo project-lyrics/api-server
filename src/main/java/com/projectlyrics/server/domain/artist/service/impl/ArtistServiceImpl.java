@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.artist.service.impl;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
@@ -49,5 +50,13 @@ public class ArtistServiceImpl implements ArtistService {
 
     // TODO: 인증 구현되면 deletedById 값 수정
     artist.getCommonField().delete(1L, clock.systemDefaultZone());
+  }
+
+  @Override
+  public GetArtistResponse getArtist(Long artistId) {
+    var artist = commandArtistRepository.findByIdAndNotDeleted(artistId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
+
+    return GetArtistResponse.from(artist);
   }
 }

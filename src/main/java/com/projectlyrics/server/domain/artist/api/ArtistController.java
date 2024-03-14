@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.artist.api;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,7 +62,18 @@ public class ArtistController {
     artistService.deleteArtist(artistId);
 
     return ResponseEntity
-        .status(HttpStatus.OK)
+        .status(HttpStatus.NO_CONTENT)
         .body(null);
+  }
+
+  @Operation(
+      summary = "아티스트 단건 조회 API",
+      description = "아티스트의 PK를 전달받아 아티스트 데이터를 조회해 반환합니다."
+  )
+  @GetMapping("/{artistId}")
+  public ResponseEntity<GetArtistResponse> getArtist(@PathVariable Long artistId) {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(artistService.getArtist(artistId));
   }
 }
