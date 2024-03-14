@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistServiceTest {
@@ -104,6 +106,25 @@ class ArtistServiceTest {
     assertThat(artist.getCommonField().getDeletedAt()).isNotNull();
     assertThat(artist.getCommonField().getDeletedBy()).isNotNull();
     assertThat(artist.getCommonField().getStatus()).isEqualTo(EntityStatusEnum.DELETED);
+  }
+
+  @Test
+  void 아티스트의_PK를_전달받아_아티스트_데이터를_조회해_반환한다() {
+    // given
+    Long artistId = 1L;
+    var artist = Mockito.spy(ArtistTestUtil.create());
+    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    doReturn(artistId).when(artist).getId();
+
+    // when
+    var getArtistResponse = sut.getArtist(artistId);
+
+    // then
+    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    assertThat(getArtistResponse.id()).isEqualTo(artistId);
+    assertThat(getArtistResponse.name()).isEqualTo(artist.getName());
+    assertThat(getArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
+    assertThat(getArtistResponse.profileImageCdnLink()).isEqualTo(artist.getProfileImageCdnLink());
   }
 
   private AddArtistRequest createAddArtistRequest() {
