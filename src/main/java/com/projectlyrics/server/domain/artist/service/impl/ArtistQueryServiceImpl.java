@@ -3,9 +3,11 @@ package com.projectlyrics.server.domain.artist.service.impl;
 import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
+import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +24,18 @@ public class ArtistQueryServiceImpl implements ArtistQueryService {
         .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
 
     return GetArtistResponse.from(artist);
+  }
+
+  @Override
+  public CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Pageable pageable) {
+    var artistList = commandArtistRepository.findAllAndNotDeleted(pageable).map(GetArtistResponse::from);
+
+    return new CursorBasePaginatedResponse<>(
+        artistList.hasNext() ? String.valueOf(artistList.getNumber() + 1) : null,
+        String.valueOf(artistList.getNumber()),
+        artistList.getSize(),
+        artistList.getNumberOfElements(),
+        artistList.getContent()
+    );
   }
 }
