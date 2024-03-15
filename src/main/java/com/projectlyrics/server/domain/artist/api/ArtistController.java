@@ -5,7 +5,8 @@ import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
-import com.projectlyrics.server.domain.artist.service.ArtistService;
+import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
+import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ArtistController {
 
-  private final ArtistService artistService;
+  private final ArtistQueryService artistQueryService;
+  private final ArtistCommandService artistCommandService;
 
   @Operation(
       summary = "아티스트 추가 API",
@@ -37,7 +39,7 @@ public class ArtistController {
   public ResponseEntity<AddArtistResponse> addArtist(@RequestBody @Valid AddArtistRequest request) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(artistService.addArtist(request));
+        .body(artistCommandService.addArtist(request));
   }
 
   @Operation(
@@ -50,7 +52,7 @@ public class ArtistController {
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistService.updateArtist(artistId, request));
+        .body(artistCommandService.updateArtist(artistId, request));
   }
 
   @Operation(
@@ -59,7 +61,7 @@ public class ArtistController {
   )
   @DeleteMapping("/{artistId}")
   public ResponseEntity<Void> deleteArtist(@PathVariable Long artistId) {
-    artistService.deleteArtist(artistId);
+    artistCommandService.deleteArtist(artistId);
 
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
@@ -74,6 +76,6 @@ public class ArtistController {
   public ResponseEntity<GetArtistResponse> getArtist(@PathVariable Long artistId) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistService.getArtist(artistId));
+        .body(artistQueryService.getArtist(artistId));
   }
 }
