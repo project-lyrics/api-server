@@ -3,8 +3,10 @@ package com.projectlyrics.server.domain.artist.api;
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
-import com.projectlyrics.server.domain.artist.service.ArtistService;
+import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
+import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ArtistController {
 
-  private final ArtistService artistService;
+  private final ArtistQueryService artistQueryService;
+  private final ArtistCommandService artistCommandService;
 
   @Operation(
       summary = "아티스트 추가 API",
@@ -35,7 +39,7 @@ public class ArtistController {
   public ResponseEntity<AddArtistResponse> addArtist(@RequestBody @Valid AddArtistRequest request) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(artistService.addArtist(request));
+        .body(artistCommandService.addArtist(request));
   }
 
   @Operation(
@@ -48,7 +52,7 @@ public class ArtistController {
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistService.updateArtist(artistId, request));
+        .body(artistCommandService.updateArtist(artistId, request));
   }
 
   @Operation(
@@ -57,10 +61,21 @@ public class ArtistController {
   )
   @DeleteMapping("/{artistId}")
   public ResponseEntity<Void> deleteArtist(@PathVariable Long artistId) {
-    artistService.deleteArtist(artistId);
+    artistCommandService.deleteArtist(artistId);
 
     return ResponseEntity
-        .status(HttpStatus.OK)
+        .status(HttpStatus.NO_CONTENT)
         .body(null);
+  }
+
+  @Operation(
+      summary = "아티스트 단건 조회 API",
+      description = "아티스트의 PK를 전달받아 아티스트 데이터를 조회해 반환합니다."
+  )
+  @GetMapping("/{artistId}")
+  public ResponseEntity<GetArtistResponse> getArtist(@PathVariable Long artistId) {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(artistQueryService.getArtist(artistId));
   }
 }

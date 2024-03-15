@@ -1,13 +1,21 @@
 package com.projectlyrics.server.domain.artist.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
-import com.projectlyrics.server.domain.artist.service.impl.ArtistServiceImpl;
+import com.projectlyrics.server.domain.artist.service.impl.ArtistCommandServiceImpl;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.global.exception.BusinessException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,20 +24,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
 @ExtendWith(MockitoExtension.class)
-class ArtistServiceTest {
+class ArtistCommandServiceTest {
 
   @InjectMocks
-  private ArtistServiceImpl sut;
+  private ArtistCommandServiceImpl sut;
 
   @Mock
   private CommandQueryArtistRepository commandArtistRepository;
