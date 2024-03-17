@@ -8,5 +8,5 @@ public interface ArtistQueryService {
 
   GetArtistResponse getArtist(Long artistId);
 
-  CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Pageable pageable);
+  CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Long cursor, Pageable pageable);
 }

@@ -89,11 +89,12 @@ public class ArtistController {
   )
   @GetMapping
   public ResponseEntity<CursorBasePaginatedResponse<GetArtistResponse>> getArtistList(
-      @Parameter(description = "페이지 번호 (1부터 시작)") @RequestParam(defaultValue = "1") int page,
+      @Parameter(description = "이전에 응답 받은 nextCursor 값. 응답 받은 값이 없다면 해당 값을 비워서 요청합니다.")
+      @RequestParam(required = false) Long cursor,
       @Parameter(description = "조회할 데이터의 최대 크기") @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistQueryService.getArtistList(PageRequest.of(page - 1, size)));
+        .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
   }
 }

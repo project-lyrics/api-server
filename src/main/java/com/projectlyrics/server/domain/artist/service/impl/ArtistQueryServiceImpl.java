@@ -27,15 +27,10 @@ public class ArtistQueryServiceImpl implements ArtistQueryService {
   }
 
   @Override
-  public CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Pageable pageable) {
-    var artistList = commandArtistRepository.findAllAndNotDeleted(pageable).map(GetArtistResponse::from);
+  public CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Long cursor, Pageable pageable) {
+    var artistList = commandArtistRepository.findAllAndNotDeleted(cursor, pageable).map(GetArtistResponse::from);
+    var nextCursor = artistList.getContent().getLast().id() + 1;
 
-    return new CursorBasePaginatedResponse<>(
-        artistList.hasNext() ? String.valueOf(artistList.getNumber() + 1) : null,
-        String.valueOf(artistList.getNumber()),
-        artistList.getSize(),
-        artistList.getNumberOfElements(),
-        artistList.getContent()
-    );
+    return CursorBasePaginatedResponse.of(artistList, cursor, nextCursor);
   }
 }

@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.artist.repository;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,10 @@ public class QueryArtistRepositoryImpl implements QueryArtistRepository {
   }
 
   @Override
-  public Slice<Artist> findAllAndNotDeleted(Pageable pageable) {
+  public Slice<Artist> findAllAndNotDeleted(Long cursor, Pageable pageable) {
     var content = jpaQueryFactory
         .selectFrom(QArtist.artist)
-        .offset(pageable.getOffset())
+        .where(goeCursorId(cursor), QArtist.artist.commonField.deletedAt.isNull())
         .limit(pageable.getPageSize() + 1)
         .fetch();
 
@@ -42,5 +43,9 @@ public class QueryArtistRepositoryImpl implements QueryArtistRepository {
     }
 
     return new SliceImpl<>(content, pageable, hasNext);
+  }
+
+  private BooleanExpression goeCursorId(Long cursor) {
+    return cursor == null ? null : QArtist.artist.id.goe(cursor);
   }
 }
