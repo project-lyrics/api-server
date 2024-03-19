@@ -7,10 +7,13 @@ import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
+import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "아티스트 관련 API")
@@ -77,5 +81,20 @@ public class ArtistController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(artistQueryService.getArtist(artistId));
+  }
+
+  @Operation(
+      summary = "아티스트 리스트 조회 API",
+      description = "아티스트의 데이터의 목록을 조회합니다."
+  )
+  @GetMapping
+  public ResponseEntity<CursorBasePaginatedResponse<GetArtistResponse>> getArtistList(
+      @Parameter(description = "이전에 응답 받은 nextCursor 값. 응답 받은 값이 없다면 해당 값을 비워서 요청합니다.")
+      @RequestParam(required = false) Long cursor,
+      @Parameter(description = "조회할 데이터의 최대 크기") @RequestParam(defaultValue = "10") int size
+  ) {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
   }
 }

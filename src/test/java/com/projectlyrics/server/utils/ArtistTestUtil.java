@@ -11,4 +11,10 @@ public class ArtistTestUtil {
         .profileImageCdnLink("https://~")
         .build();
   }
+
+  public static Artist createWithName(String name) {
+    return Artist.builder()
+        .name(name)
+        .build();
+  }
 }

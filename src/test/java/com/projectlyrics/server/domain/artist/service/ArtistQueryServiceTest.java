@@ -5,10 +5,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.impl.ArtistQueryServiceImpl;
 import com.projectlyrics.server.utils.ArtistTestUtil;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistQueryServiceTest {
@@ -43,5 +47,34 @@ class ArtistQueryServiceTest {
     assertThat(getArtistResponse.name()).isEqualTo(artist.getName());
     assertThat(getArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
     assertThat(getArtistResponse.profileImageCdnLink()).isEqualTo(artist.getProfileImageCdnLink());
+  }
+
+  @Test
+  void 아티스트의_데이터를_커서_기반_페이지네이션으로_조회해_반환한다() {
+    // given
+    var cursor = 5L;
+    var pageable = PageRequest.of(0, 3);
+    var artist = spy(ArtistTestUtil.createWithName("실리카겔"));
+    var artist2 = spy(ArtistTestUtil.createWithName("잔나비"));
+    var artist3 = spy(ArtistTestUtil.createWithName("너드커넥션"));
+    var artistList = List.of(artist, artist2, artist3);
+    given(commandArtistRepository.findAllAndNotDeleted(cursor, pageable))
+        .willReturn(new SliceImpl<>(artistList, pageable, true));
+    doReturn(5L).when(artist).getId();
+    doReturn(6L).when(artist2).getId();
+    doReturn(7L).when(artist3).getId();
+
+    // when
+    var artistListResponse = sut.getArtistList(cursor, pageable);
+
+    // then
+    then(commandArtistRepository).should().findAllAndNotDeleted(cursor, pageable);
+    assertThat(artistListResponse.currentCursor()).isEqualTo(String.valueOf(cursor));
+    assertThat(artistListResponse.nextCursor()).isEqualTo(String.valueOf(artist3.getId() + 1));
+    assertThat(artistListResponse.itemSize()).isEqualTo(artistList.size());
+    assertThat(artistListResponse.totalSize()).isEqualTo(pageable.getPageSize());
+    for (int i = 0; i < artistList.size(); i++) {
+      assertThat(artistListResponse.data().get(i).name()).isEqualTo(artistList.get(i).getName());
+    }
   }
 }
