@@ -12,7 +12,10 @@ public enum ErrorCode {
 
   // Artist
   ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "00600", "The artist data could not be found."),
-  ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "00601", "The data to be updated failed validation.")
+  ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "00601", "The data to be updated failed validation."),
+
+  // Auth
+  AUTHENTICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "00601", "The authentication code is expired."),
   ;
 
   private final HttpStatus responseStatus;
