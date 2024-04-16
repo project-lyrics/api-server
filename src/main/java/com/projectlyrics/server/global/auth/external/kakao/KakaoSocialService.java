@@ -17,47 +17,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoSocialService extends SocialService {
 
-    private static final String GRANT_TYPE = "authorization_code";
-    private static final String TOKEN_TYPE = "Bearer ";
+  private static final String GRANT_TYPE = "authorization_code";
+  private static final String TOKEN_TYPE = "Bearer ";
 
-    @Value("${kakao.client_id}")
-    private String clientId;
-    private final KakaoAuthApiClient kakaoAuthApiClient;
-    private final KakaoApiClient kakaoApiClient;
-    private String accessToken;
+  @Value("${kakao.client_id}")
+  private String clientId;
+  private final KakaoAuthApiClient kakaoAuthApiClient;
+  private final KakaoApiClient kakaoApiClient;
+  private String accessToken;
 
-    @Override
-    protected UserInfoResponse login(String authorizationCode, UserLoginRequest loginRequest) {
-        try {
-            accessToken = getAccessTokenWith(loginRequest.redirectUri(), authorizationCode);
-        } catch (FeignException e) {
-            throw new BusinessException(ErrorCode.AUTHENTICATION_CODE_EXPIRED);
-        }
-
-        KakaoUserInfoResponse userInfo = getUserInfoFrom(accessToken);
-        return getLoginResult(loginRequest.authProvider(), userInfo);
+  @Override
+  protected UserInfoResponse login(String authorizationCode, UserLoginRequest loginRequest) {
+    try {
+      accessToken = getAccessTokenWith(loginRequest.redirectUri(), authorizationCode);
+    } catch (FeignException e) {
+      throw new BusinessException(ErrorCode.AUTHENTICATION_CODE_EXPIRED);
     }
 
-    private String getAccessTokenWith(String redirectUri, String code) {
-        KakaoAccessTokenResponse response = kakaoAuthApiClient.getOAuth2AccessToken(
-                GRANT_TYPE,
-                clientId,
-                redirectUri,
-                code
-        );
+    KakaoUserInfoResponse userInfo = getUserInfoFrom(accessToken);
+    return getLoginResult(loginRequest.authProvider(), userInfo);
+  }
 
-        return response.accessToken();
-    }
+  private String getAccessTokenWith(String redirectUri, String code) {
+    KakaoAccessTokenResponse response = kakaoAuthApiClient.getOauth2AccessToken(
+        GRANT_TYPE,
+        clientId,
+        redirectUri,
+        code
+    );
 
-    private KakaoUserInfoResponse getUserInfoFrom(String accessToken) {
-        return kakaoApiClient.getUserInfo(TOKEN_TYPE + accessToken);
-    }
+    return response.accessToken();
+  }
 
-    private UserInfoResponse getLoginResult(AuthProvider authProvider, KakaoUserInfoResponse userInfoResponse) {
-        return UserInfoResponse.of(
-                userInfoResponse.id(),
-                authProvider,
-                userInfoResponse.kakaoAccount().email()
-        );
-    }
+  private KakaoUserInfoResponse getUserInfoFrom(String accessToken) {
+    return kakaoApiClient.getUserInfo(TOKEN_TYPE + accessToken);
+  }
+
+  private UserInfoResponse getLoginResult(AuthProvider authProvider,
+      KakaoUserInfoResponse userInfoResponse) {
+    return UserInfoResponse.of(
+        userInfoResponse.id(),
+        authProvider,
+        userInfoResponse.kakaoAccount().email()
+    );
+  }
 }
