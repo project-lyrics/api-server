@@ -5,5 +5,5 @@ import com.projectlyrics.server.global.auth.external.dto.response.UserInfoRespon
 
 public abstract class SocialService {
 
-  protected abstract UserInfoResponse login(String authorizationCode, UserLoginRequest loginRequest);
+  public abstract UserInfoResponse login(UserLoginRequest loginRequest);
 }

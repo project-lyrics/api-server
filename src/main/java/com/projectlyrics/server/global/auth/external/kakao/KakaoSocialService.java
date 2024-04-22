@@ -27,9 +27,9 @@ public class KakaoSocialService extends SocialService {
   private String accessToken;
 
   @Override
-  protected UserInfoResponse login(String authorizationCode, UserLoginRequest loginRequest) {
+  public UserInfoResponse login(UserLoginRequest loginRequest) {
     try {
-      accessToken = getAccessTokenWith(loginRequest.redirectUri(), authorizationCode);
+      accessToken = getAccessTokenWith(loginRequest);
     } catch (FeignException e) {
       throw new BusinessException(ErrorCode.AUTHENTICATION_CODE_EXPIRED);
     }
@@ -38,12 +38,12 @@ public class KakaoSocialService extends SocialService {
     return getLoginResult(loginRequest.authProvider(), userInfo);
   }
 
-  private String getAccessTokenWith(String redirectUri, String code) {
+  private String getAccessTokenWith(UserLoginRequest loginRequest) {
     KakaoAccessTokenResponse response = kakaoAuthApiClient.getOauth2AccessToken(
         GRANT_TYPE,
         clientId,
-        redirectUri,
-        code
+        loginRequest.redirectUri(),
+        loginRequest.authorizationCode()
     );
 
     return response.accessToken();
@@ -53,8 +53,7 @@ public class KakaoSocialService extends SocialService {
     return kakaoApiClient.getUserInfo(TOKEN_TYPE + accessToken);
   }
 
-  private UserInfoResponse getLoginResult(AuthProvider authProvider,
-      KakaoUserInfoResponse userInfoResponse) {
+  private UserInfoResponse getLoginResult(AuthProvider authProvider, KakaoUserInfoResponse userInfoResponse) {
     return UserInfoResponse.of(
         userInfoResponse.id(),
         authProvider,
