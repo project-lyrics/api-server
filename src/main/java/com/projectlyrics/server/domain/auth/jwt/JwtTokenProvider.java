@@ -1,5 +1,7 @@
 package com.projectlyrics.server.domain.auth.jwt;
 
+import com.projectlyrics.server.domain.auth.authentication.UserAuthentication;
+import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -32,12 +34,21 @@ public class JwtTokenProvider {
     JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
   }
 
-  public String issueAccessToken(final Authentication authentication) {
+  public AuthToken issueTokens(long id) {
+    UserAuthentication authentication = UserAuthentication.of(id);
+
+    return new AuthToken(
+        issueAccessToken(authentication),
+        issueRefreshToken(authentication)
+    );
+  }
+
+  private String issueAccessToken(final Authentication authentication) {
     return issueToken(authentication, ACCESS_TOKEN_EXPIRATION_TIME);
   }
 
 
-  public String issueRefreshToken(final Authentication authentication) {
+  private String issueRefreshToken(final Authentication authentication) {
     return issueToken(authentication, REFRESH_TOKEN_EXPIRATION_TIME);
   }
 
