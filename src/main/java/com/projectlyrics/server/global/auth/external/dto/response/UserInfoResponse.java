@@ -8,14 +8,6 @@ public record UserInfoResponse(
     AuthProvider authProvider,
     String email
 ) {
-  public static UserInfoResponse of(
-          Long socialId,
-          AuthProvider authProvider,
-          String email
-  ) {
-    return new UserInfoResponse(socialId, authProvider, email);
-  }
-
   public User toEntity() {
     return User.of(socialId, email, authProvider);
   }

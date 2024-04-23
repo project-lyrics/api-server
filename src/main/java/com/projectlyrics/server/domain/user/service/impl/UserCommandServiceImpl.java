@@ -60,7 +60,7 @@ public class UserCommandServiceImpl implements UserCommandService {
   private LoginResponse getAccessAndRefreshTokensByUserId(Long id) {
     UserAuthentication authentication = UserAuthentication.of(id);
 
-    return LoginResponse.of(
+    return new LoginResponse(
         jwtTokenProvider.issueAccessToken(authentication),
         issueRefreshToken(authentication)
     );

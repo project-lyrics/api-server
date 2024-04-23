@@ -54,7 +54,7 @@ public class KakaoSocialService extends SocialService {
   }
 
   private UserInfoResponse getLoginResult(AuthProvider authProvider, KakaoUserInfoResponse userInfoResponse) {
-    return UserInfoResponse.of(
+    return new UserInfoResponse(
         userInfoResponse.id(),
         authProvider,
         userInfoResponse.kakaoAccount().email()
