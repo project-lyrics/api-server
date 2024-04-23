@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.auth.external;
+package com.projectlyrics.server.domain.auth.external;
 
 public enum AuthProvider {
     KAKAO,

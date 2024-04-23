@@ -1,7 +1,7 @@
-package com.projectlyrics.server.global.auth.external.dto.response;
+package com.projectlyrics.server.domain.auth.external.dto.response;
 
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.global.auth.external.AuthProvider;
+import com.projectlyrics.server.domain.auth.external.AuthProvider;
 
 public record UserInfoResponse(
     Long socialId,

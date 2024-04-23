@@ -1,6 +1,6 @@
-package com.projectlyrics.server.global.auth.external.dto.request;
+package com.projectlyrics.server.domain.auth.external.dto.request;
 
-import com.projectlyrics.server.global.auth.external.AuthProvider;
+import com.projectlyrics.server.domain.auth.external.AuthProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

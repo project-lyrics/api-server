@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.auth.jwt;
+package com.projectlyrics.server.domain.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

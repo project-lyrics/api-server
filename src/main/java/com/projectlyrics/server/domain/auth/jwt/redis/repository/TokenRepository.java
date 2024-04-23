@@ -1,6 +1,6 @@
-package com.projectlyrics.server.global.auth.jwt.redis.repository;
+package com.projectlyrics.server.domain.auth.jwt.redis.repository;
 
-import com.projectlyrics.server.global.auth.jwt.redis.domain.Token;
+import com.projectlyrics.server.domain.auth.jwt.redis.domain.Token;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,6 +1,6 @@
-package com.projectlyrics.server.global.auth.external.kakao;
+package com.projectlyrics.server.domain.auth.external.kakao;
 
-import com.projectlyrics.server.global.auth.external.kakao.dto.KakaoUserInfoResponse;
+import com.projectlyrics.server.domain.auth.external.kakao.dto.KakaoUserInfoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;

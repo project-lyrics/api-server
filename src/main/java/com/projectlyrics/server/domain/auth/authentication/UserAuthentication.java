@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.auth.authentication;
+package com.projectlyrics.server.domain.auth.authentication;
 
 import java.util.Collection;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

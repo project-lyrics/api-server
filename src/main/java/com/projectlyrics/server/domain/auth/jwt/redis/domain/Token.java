@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.auth.jwt.redis.domain;
+package com.projectlyrics.server.domain.auth.jwt.redis.domain;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.auth.jwt;
+package com.projectlyrics.server.domain.auth.jwt;
 
 public enum JwtValidationType {
   VALID_JWT,                  // 유효한 JWT

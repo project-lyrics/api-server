@@ -1,7 +1,7 @@
-package com.projectlyrics.server.global.auth.jwt.redis.service;
+package com.projectlyrics.server.domain.auth.jwt.redis.service;
 
-import com.projectlyrics.server.global.auth.jwt.redis.domain.Token;
-import com.projectlyrics.server.global.auth.jwt.redis.repository.TokenRepository;
+import com.projectlyrics.server.domain.auth.jwt.redis.domain.Token;
+import com.projectlyrics.server.domain.auth.jwt.redis.repository.TokenRepository;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
 import jakarta.transaction.Transactional;
