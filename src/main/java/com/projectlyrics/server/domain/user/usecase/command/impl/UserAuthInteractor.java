@@ -1,15 +1,15 @@
-package com.projectlyrics.server.domain.user.service.impl;
+package com.projectlyrics.server.domain.user.usecase.command.impl;
 
 import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.CommandQueryUserRepository;
-import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.auth.authentication.UserAuthentication;
 import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.auth.external.dto.response.UserInfoResponse;
 import com.projectlyrics.server.domain.auth.external.kakao.KakaoSocialService;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.redis.service.TokenService;
+import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserCommandServiceImpl implements UserCommandService {
+public class UserAuthInteractor implements UserAuthUseCase {
 
   private final CommandQueryUserRepository userRepository;
   private final KakaoSocialService kakaoSocialService;
