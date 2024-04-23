@@ -39,7 +39,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         return kakaoSocialService.login(loginRequest);
 
       default :
-        throw new BusinessException(ErrorCode.BAD_REQUEST);
+        throw new BusinessException(ErrorCode.UNSUPPORTED_AUTH_PROVIDER);
     }
   }
 
