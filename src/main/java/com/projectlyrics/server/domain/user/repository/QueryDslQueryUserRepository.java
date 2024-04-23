@@ -6,14 +6,16 @@ import com.projectlyrics.server.global.auth.external.AuthProvider;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @RequiredArgsConstructor
-public class QueryUserRepositoryImpl implements QueryUserRepository {
+public class QueryDslQueryUserRepository implements QueryUserRepository {
 
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(Long socialId, AuthProvider authProvider) {
+  public Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(long socialId, AuthProvider authProvider) {
     return Optional.ofNullable(
         jpaQueryFactory
             .selectFrom(QUser.user)
