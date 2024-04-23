@@ -8,7 +8,6 @@ import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginReques
 import com.projectlyrics.server.domain.auth.external.dto.response.UserInfoResponse;
 import com.projectlyrics.server.domain.auth.external.kakao.KakaoSocialService;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.jwt.redis.service.TokenService;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
@@ -23,14 +22,13 @@ public class UserAuthInteractor implements UserAuthUseCase {
 
   private final CommandQueryUserRepository userRepository;
   private final KakaoSocialService kakaoSocialService;
-  private final TokenService tokenService;
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
   public LoginResponse login(UserLoginRequest loginRequest) {
     UserInfoResponse userInfo = getUserInfo(loginRequest);
 
-    return getAccessAndRefreshTokens(userInfo);
+    return authenticateUser(userInfo);
   }
 
   private UserInfoResponse getUserInfo(UserLoginRequest loginRequest) {
@@ -43,34 +41,27 @@ public class UserAuthInteractor implements UserAuthUseCase {
     }
   }
 
-  private LoginResponse getAccessAndRefreshTokens(UserInfoResponse userinfo) {
+  private LoginResponse authenticateUser(UserInfoResponse userinfo) {
     if (isExistingUserBy(userinfo)) {
       User user = getUserBy(userinfo);
-      return getAccessAndRefreshTokensByUserId(user.getId());
+      return issueTokens(user.getId());
     }
 
-    Long id = join(userinfo);
-    return getAccessAndRefreshTokensByUserId(id);
+    Long id = joinNewUser(userinfo);
+    return issueTokens(id);
   }
 
-  private Long join(UserInfoResponse userinfo) {
+  private Long joinNewUser(UserInfoResponse userinfo) {
     return userRepository.save(userinfo.toEntity()).getId();
   }
 
-  private LoginResponse getAccessAndRefreshTokensByUserId(Long id) {
+  private LoginResponse issueTokens(Long id) {
     UserAuthentication authentication = UserAuthentication.of(id);
 
     return new LoginResponse(
         jwtTokenProvider.issueAccessToken(authentication),
-        issueRefreshToken(authentication)
+        jwtTokenProvider.issueRefreshToken(authentication)
     );
-  }
-
-  private String issueRefreshToken(UserAuthentication authentication) {
-    String refreshToken = jwtTokenProvider.issueRefreshToken(authentication);
-    tokenService.saveRefreshToken((Long) authentication.getPrincipal(), refreshToken);
-
-    return refreshToken;
   }
 
   private boolean isExistingUserBy(UserInfoResponse userInfo) {
