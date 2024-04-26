@@ -6,11 +6,11 @@ import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginReques
 import com.projectlyrics.server.domain.auth.external.dto.response.UserInfoResponse;
 import com.projectlyrics.server.domain.auth.external.kakao.KakaoSocialService;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.user.repository.UserCommandQueryRepository;
+import com.projectlyrics.server.domain.user.repository.CommandUserRepository;
+import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
 import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
-import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserAuthInteractor implements UserAuthUseCase {
 
-  private final UserCommandQueryRepository userRepository;
+  private final QueryUserRepository queryUserRepository;
+  private final CommandUserRepository commandUserRepository;
   private final KakaoSocialService kakaoSocialService;
   private final JwtTokenProvider jwtTokenProvider;
 
@@ -42,23 +43,17 @@ public class UserAuthInteractor implements UserAuthUseCase {
   }
 
   private LoginResponse authenticateUser(UserInfoResponse userinfo) {
-    long id;
-
-    try {
-      id = getUserBy(userinfo).getId();
-    } catch (NotFoundException e) {
-      id = joinNewUser(userinfo);
-    }
+    long id = getUser(userinfo).getId();
 
     return LoginResponse.of(jwtTokenProvider.issueTokens(id));
   }
 
-  private Long joinNewUser(UserInfoResponse userinfo) {
-    return userRepository.save(userinfo.toEntity()).getId();
+  private User getUser(UserInfoResponse userinfo) {
+    return queryUserRepository.findBySocialIdAndAuthProviderAndNotDeleted(userinfo.socialId(), userinfo.authProvider())
+            .orElseGet(() -> joinNewUser(userinfo));
   }
 
-  private User getUserBy(UserInfoResponse userinfo) {
-    return userRepository.findBySocialIdAndAuthProviderAndNotDeleted(userinfo.socialId(), userinfo.authProvider())
-        .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+  private User joinNewUser(UserInfoResponse userinfo) {
+    return commandUserRepository.save(userinfo.toEntity());
   }
 }
