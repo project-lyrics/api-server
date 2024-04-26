@@ -1,16 +1,18 @@
 package com.projectlyrics.server.domain.user.entity;
 
+import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import com.projectlyrics.server.domain.auth.external.AuthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,22 +33,19 @@ public class User {
   private Long id;
 
   @Column(nullable = true)
-  private Long socialId;
-
-  @Column(nullable = true)
   private String email;
-
-  @Enumerated(value = EnumType.STRING)
-  private AuthProvider authProvider;
 
   @Embedded
   private EntityCommonField commonField;
 
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "auth_id")
+  private Auth auth;
+
   @Builder
   public User(Long socialId, String email, AuthProvider authProvider) {
-    this.socialId = socialId;
+    this.auth = new Auth(socialId, authProvider);
     this.email = email;
-    this.authProvider = authProvider;
     this.commonField = EntityCommonField.withDefaultValue();
   }
 
