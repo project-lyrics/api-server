@@ -1,6 +1,6 @@
 package com.projectlyrics.server.global.exception;
 
-import com.projectlyrics.server.global.error_code.ErrorCode;
+import com.projectlyrics.server.global.message.ErrorCode;
 
 public class NotFoundException extends BusinessException {
 

@@ -1,14 +1,16 @@
 package com.projectlyrics.server.domain.common.dto;
 
+import com.projectlyrics.server.global.message.SuccessMessage;
+
 public record SuccessResponse<T>(
-        int status,
+        String message,
         T data
 ) {
-    public static <T> SuccessResponse of(int status, T data) {
-        return new SuccessResponse(status, data);
+    public static <T> SuccessResponse of(SuccessMessage message, T data) {
+        return new SuccessResponse(message.getMessage(), data);
     }
 
-    public static SuccessResponse of(int status) {
-        return new SuccessResponse(status, null);
+    public static SuccessResponse of(SuccessMessage message) {
+        return new SuccessResponse(message.getMessage(), null);
     }
 }

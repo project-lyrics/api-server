@@ -9,7 +9,7 @@ import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.user.repository.CommandUserRepository;
 import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
-import com.projectlyrics.server.global.error_code.ErrorCode;
+import com.projectlyrics.server.global.message.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

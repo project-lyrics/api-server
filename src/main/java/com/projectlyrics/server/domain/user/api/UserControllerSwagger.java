@@ -2,14 +2,13 @@ package com.projectlyrics.server.domain.user.api;
 
 import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
-import com.projectlyrics.server.domain.common.dto.SuccessResponse;
-import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "사용자 관련 API")
@@ -29,7 +28,7 @@ public interface UserControllerSwagger {
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    SuccessResponse<LoginResponse> login(
+    ResponseEntity login(
             @RequestBody UserLoginRequest loginRequest
     );
 }

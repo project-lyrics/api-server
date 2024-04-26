@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.error_code;
+package com.projectlyrics.server.global.message;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
