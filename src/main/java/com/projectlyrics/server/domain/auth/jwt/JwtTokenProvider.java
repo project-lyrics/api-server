@@ -28,12 +28,6 @@ public class JwtTokenProvider {
   @Value("${jwt.secret}")
   private String JWT_SECRET;
 
-  @PostConstruct
-  protected void init() {
-    //base64 라이브러리에서 encodeToString을 이용해서 byte[] 형식을 String 형식으로 변환
-    JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-  }
-
   public AuthToken issueTokens(long id) {
     UserAuthentication authentication = UserAuthentication.of(id);
 
