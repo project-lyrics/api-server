@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserAuthInteractor implements UserAuthUseCase {
+public class UserAuthService implements UserAuthUseCase {
 
   private final QueryUserRepository queryUserRepository;
   private final CommandUserRepository commandUserRepository;
