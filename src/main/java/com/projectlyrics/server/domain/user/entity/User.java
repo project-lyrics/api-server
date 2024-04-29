@@ -1,8 +1,8 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.entity.Auth;
-import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

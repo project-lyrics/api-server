@@ -1,13 +1,13 @@
 package com.projectlyrics.server.domain.auth.service.kakao;
 
-import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
-import com.projectlyrics.server.domain.auth.service.SocialService;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.service.SocialService;
 import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoAccessTokenResponse;
 import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoUserInfoResponse;
-import com.projectlyrics.server.global.message.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.message.ErrorCode;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

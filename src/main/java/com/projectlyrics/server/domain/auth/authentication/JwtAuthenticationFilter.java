@@ -26,12 +26,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(
+          HttpServletRequest request,
+          HttpServletResponse response,
+          FilterChain filterChain) throws ServletException, IOException {
     try {
       String token = getAccessTokenFromRequest(request);
 
-      if (isValidToken(token))
+      if (isValidToken(token)) {
         setUserIntoContext(token, request);
+      }
     } catch (Exception e) {
       throw new JwtValidationException(ErrorCode.INVALID_TOKEN);
     }

@@ -68,6 +68,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(requests ->
             requests
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/artists")).permitAll()
                 .anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

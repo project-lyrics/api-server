@@ -24,7 +24,7 @@ public class JwtTokenProvider {
   private static final long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 1000L * 14;
 
   @Value("${jwt.secret}")
-  private String JWT_SECRET;
+  private static String JWT_SECRET;
 
   public AuthToken issueTokens(long id) {
     UserAuthentication authentication = UserAuthentication.of(id);

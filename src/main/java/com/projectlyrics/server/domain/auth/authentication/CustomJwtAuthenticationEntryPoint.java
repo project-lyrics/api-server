@@ -21,12 +21,13 @@ public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoi
   private final ObjectMapper objectMapper;
 
   @Override
-  public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-    ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
-
+  public void commence(
+          HttpServletRequest request,
+          HttpServletResponse response,
+          AuthenticationException authException) throws IOException {
     response.setCharacterEncoding("UTF-8");
     response.setContentType(APPLICATION_JSON_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INVALID_TOKEN)));
   }
 }
