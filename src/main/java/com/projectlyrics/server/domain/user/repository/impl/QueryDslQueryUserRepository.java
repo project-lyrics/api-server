@@ -21,8 +21,8 @@ public class QueryDslQueryUserRepository implements QueryUserRepository {
         jpaQueryFactory
             .selectFrom(QUser.user)
             .where(
-                QUser.user.socialId.eq(socialId),
-                QUser.user.authProvider.eq(authProvider),
+                QUser.user.auth.socialId.eq(socialId),
+                QUser.user.auth.authProvider.eq(authProvider),
                 QUser.user.commonField.deletedAt.isNull()
             )
             .fetchOne()
