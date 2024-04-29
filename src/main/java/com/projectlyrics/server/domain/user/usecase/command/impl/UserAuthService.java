@@ -2,9 +2,9 @@ package com.projectlyrics.server.domain.user.usecase.command.impl;
 
 import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginRequest;
-import com.projectlyrics.server.domain.auth.external.dto.response.UserInfoResponse;
-import com.projectlyrics.server.domain.auth.external.kakao.KakaoSocialService;
+import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
+import com.projectlyrics.server.domain.auth.service.kakao.KakaoSocialService;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.user.repository.CommandUserRepository;
 import com.projectlyrics.server.domain.user.repository.QueryUserRepository;

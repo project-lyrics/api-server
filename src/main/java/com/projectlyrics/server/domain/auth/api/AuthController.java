@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;

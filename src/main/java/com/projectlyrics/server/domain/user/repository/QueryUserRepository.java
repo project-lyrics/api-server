@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.user.repository;
 
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.auth.external.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import java.util.Optional;
 
 public interface QueryUserRepository {

@@ -1,11 +1,11 @@
-package com.projectlyrics.server.domain.auth.external.kakao;
+package com.projectlyrics.server.domain.auth.service.kakao;
 
-import com.projectlyrics.server.domain.auth.external.dto.response.UserInfoResponse;
-import com.projectlyrics.server.domain.auth.external.service.SocialService;
-import com.projectlyrics.server.domain.auth.external.AuthProvider;
-import com.projectlyrics.server.domain.auth.external.dto.request.UserLoginRequest;
-import com.projectlyrics.server.domain.auth.external.kakao.dto.KakaoAccessTokenResponse;
-import com.projectlyrics.server.domain.auth.external.kakao.dto.KakaoUserInfoResponse;
+import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
+import com.projectlyrics.server.domain.auth.service.SocialService;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoAccessTokenResponse;
+import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoUserInfoResponse;
 import com.projectlyrics.server.global.message.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
 import feign.FeignException;

@@ -2,7 +2,7 @@ package com.projectlyrics.server.domain.user.repository.impl;
 
 import com.projectlyrics.server.domain.user.entity.QUser;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.auth.external.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;

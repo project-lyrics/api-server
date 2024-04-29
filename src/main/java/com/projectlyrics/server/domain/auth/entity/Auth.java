@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.entity;
 
-import com.projectlyrics.server.domain.auth.external.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
