@@ -5,5 +5,5 @@ import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 
 public interface UserAuthUseCase {
 
-  LoginResponse login(UserLoginRequest request);
+  LoginResponse signIn(String socialAccessToken, UserLoginRequest request);
 }
