@@ -70,9 +70,9 @@ public class SecurityConfig {
             exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .authorizeHttpRequests(requests ->
             requests
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/artists")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/test")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/artists/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/test/**")).permitAll()
                 .anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
