@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 public class JwtTokenProvider {
 
   private static final String MEMBER_ID = "memberId";
+  private static final String TOKEN_TYPE = "token_type";
+  private static final String ACCESS_TOKEN_TYPE = "access_token";
+  private static final String REFRESH_TOKEN_TYPE = "refresh_token";
   private static final long ACCESS_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L * 14;
   private static final long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 1000L * 14;
 
@@ -35,28 +38,29 @@ public class JwtTokenProvider {
     );
   }
 
-  private String issueAccessToken(final Authentication authentication) {
-    return issueToken(authentication, ACCESS_TOKEN_EXPIRATION_TIME);
+  private String issueAccessToken(Authentication authentication) {
+    return issueToken(authentication, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_TYPE);
   }
 
 
-  private String issueRefreshToken(final Authentication authentication) {
-    return issueToken(authentication, REFRESH_TOKEN_EXPIRATION_TIME);
+  private String issueRefreshToken(Authentication authentication) {
+    return issueToken(authentication, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_TYPE);
   }
 
-  private String issueToken(final Authentication authentication, final Long expiredTime) {
+  private String issueToken(Authentication authentication, Long expiredTime, String tokenType) {
     return Jwts.builder()
         .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // Header
-        .setClaims(generateClaims(authentication)) // Claim
+        .setClaims(generateClaims(authentication, tokenType)) // Claim
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
         .signWith(getSigningKey()) // Signature
         .compact();
   }
 
-  private static Claims generateClaims(Authentication authentication) {
+  private static Claims generateClaims(Authentication authentication, String tokenType) {
     Claims claims = Jwts.claims();
     claims.put(MEMBER_ID, authentication.getPrincipal());
+    claims.put(TOKEN_TYPE, tokenType);
 
     return claims;
   }
@@ -82,7 +86,7 @@ public class JwtTokenProvider {
     }
   }
 
-  private Claims getBody(final String token) {
+  private Claims getBody(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(getSigningKey())
         .build()
