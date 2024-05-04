@@ -45,18 +45,20 @@ public class JwtTokenProvider {
   }
 
   private String issueToken(final Authentication authentication, final Long expiredTime) {
-    final Date now = new Date();
-
-    final Claims claims = Jwts.claims()
-        .setIssuedAt(now)
-        .setExpiration(new Date(now.getTime() + expiredTime));  // 만료 시간 설정
-
-    claims.put(MEMBER_ID, authentication.getPrincipal());
     return Jwts.builder()
         .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // Header
-        .setClaims(claims) // Claim
+        .setClaims(generateClaims(authentication)) // Claim
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
         .signWith(getSigningKey()) // Signature
         .compact();
+  }
+
+  private static Claims generateClaims(Authentication authentication) {
+    Claims claims = Jwts.claims();
+    claims.put(MEMBER_ID, authentication.getPrincipal());
+
+    return claims;
   }
 
   private SecretKey getSigningKey() {
