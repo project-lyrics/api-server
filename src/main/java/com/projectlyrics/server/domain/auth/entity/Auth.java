@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-@Table(name = "users")
+@Table(name = "auths")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Auth {

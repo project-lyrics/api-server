@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -60,8 +61,10 @@ public class SecurityConfig {
 
   // TODO : 비회원 허용 API를 추가적으로 등록해야 함
   private void setHttp(HttpSecurity http) throws Exception {
-    http.csrf(CsrfConfigurer::disable)
+    http
+        .csrf(CsrfConfigurer::disable)
         .formLogin(FormLoginConfigurer::disable)
+        .httpBasic(HttpBasicConfigurer::disable)
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .exceptionHandling(exception ->
             exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
@@ -69,9 +72,9 @@ public class SecurityConfig {
             requests
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/artists")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/test")).permitAll()
                 .anyRequest().authenticated()
         )
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .build();
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
 }

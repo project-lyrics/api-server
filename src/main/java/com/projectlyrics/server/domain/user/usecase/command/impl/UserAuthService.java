@@ -12,10 +12,8 @@ import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class UserAuthService implements UserAuthUseCase {
 
