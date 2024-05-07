@@ -2,7 +2,7 @@ package com.projectlyrics.server.global.configuration;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import com.projectlyrics.server.domain.auth.authentication.CustomJwtAuthenticationEntryPoint;
+import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationEntryPoint;
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig {
 
-  private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
@@ -64,7 +64,7 @@ public class SecurityConfig {
         .formLogin(FormLoginConfigurer::disable)
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .exceptionHandling(exception ->
-            exception.authenticationEntryPoint(customJwtAuthenticationEntryPoint))
+            exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .authorizeHttpRequests(requests ->
             requests
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/auth")).permitAll()

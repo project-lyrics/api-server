@@ -8,6 +8,7 @@ import com.projectlyrics.server.global.message.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
   private final ObjectMapper objectMapper;
 
@@ -25,7 +26,7 @@ public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoi
           HttpServletRequest request,
           HttpServletResponse response,
           AuthenticationException authException) throws IOException {
-    response.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding(StandardCharsets.UTF_8.name());
     response.setContentType(APPLICATION_JSON_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INVALID_TOKEN)));

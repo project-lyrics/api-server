@@ -11,8 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  public static final String TOKEN_PREFIX = "Bearer ";
+  private static final String TOKEN_PREFIX = "Bearer ";
+
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
@@ -44,17 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String getAccessTokenFromRequest(HttpServletRequest request) {
-    return isContainsAccessToken(request) ? getAuthorizationAccessToken(request) : null;
-  }
-
-  private boolean isContainsAccessToken(HttpServletRequest request) {
-    val authorization = request.getHeader(AUTHORIZATION);
-    return authorization != null && authorization.startsWith(TOKEN_PREFIX);
-  }
-
-  private String getAuthorizationAccessToken(HttpServletRequest request) {
-    return request.getHeader(AUTHORIZATION)
-        .substring(TOKEN_PREFIX.length());
+    return Optional.ofNullable(request.getHeader(AUTHORIZATION))
+        .filter(t -> t.startsWith(TOKEN_PREFIX))
+        .orElseThrow(() -> new JwtValidationException(ErrorCode.WRONG_TOKEN_TYPE));
   }
 
   private boolean isValidToken(String token) {
