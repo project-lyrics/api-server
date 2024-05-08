@@ -9,8 +9,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -26,7 +24,7 @@ public class JwtTokenProvider {
   private static final long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 1000L * 14;
 
   @Value("${jwt.secret}")
-  private String JWT_SECRET;
+  private static String JWT_SECRET;
 
   public AuthToken issueTokens(long id) {
     UserAuthentication authentication = UserAuthentication.of(id);
@@ -71,7 +69,8 @@ public class JwtTokenProvider {
 
   public JwtValidationType validateToken(String token) {
     try {
-      final Claims claims = getBody(token);
+      getBody(token);
+
       return JwtValidationType.VALID_JWT;
     } catch (MalformedJwtException ex) {
       return JwtValidationType.INVALID_JWT_TOKEN;
