@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.user.entity;
 import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.common.entity.EntityCommonField;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -38,13 +39,13 @@ public class User {
   @Embedded
   private EntityCommonField commonField;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "auth_id")
   private Auth auth;
 
   @Builder
-  public User(Long socialId, String email, AuthProvider authProvider) {
-    this.auth = new Auth(socialId, authProvider);
+  public User(Auth auth, String email) {
+    this.auth = auth;
     this.email = email;
     this.commonField = EntityCommonField.withDefaultValue();
   }
@@ -55,9 +56,8 @@ public class User {
       final AuthProvider authProvider
   ) {
     return User.builder()
-        .socialId(socialId)
+        .auth(new Auth(socialId, authProvider))
         .email(email)
-        .authProvider(authProvider)
         .build();
   }
 }

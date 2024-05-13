@@ -4,8 +4,8 @@ import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.User;
 
 public record UserInfoResponse(
-    Long socialId,
     AuthProvider authProvider,
+    Long socialId,
     String email
 ) {
   public User toEntity() {

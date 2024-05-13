@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "사용자 관련 API")
 public interface AuthControllerSwagger {
@@ -24,13 +25,17 @@ public interface AuthControllerSwagger {
       value = {
           @ApiResponse(responseCode = "200", description = "소셜 로그인이 완료되었습니다."),
           @ApiResponse(responseCode = "400", description =
-              "1. 요청한 값이 유효하지 않습니다.\n" + "2. 인가 코드가 만료되었습니다.\n",
+              """
+                  1. 요청한 값이 유효하지 않습니다.
+                  2. 소셜 액세스 토큰이 만료되었습니다.
+                  """,
               content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
           @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<LoginResponse>> login(
+  ResponseEntity<SuccessResponse<LoginResponse>> signIn(
+      @RequestHeader("Authorization") String socialAccessToken,
       @RequestBody UserLoginRequest loginRequest
   );
 }
