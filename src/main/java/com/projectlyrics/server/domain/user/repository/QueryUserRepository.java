@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface QueryUserRepository {
 
-  Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(long socialId, AuthProvider authProvider);
+  Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(String socialId, AuthProvider authProvider);
 }
