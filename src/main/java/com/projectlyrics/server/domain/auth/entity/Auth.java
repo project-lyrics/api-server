@@ -32,9 +32,9 @@ public class Auth {
   private AuthProvider authProvider;
 
   @Column(nullable = false)
-  private Long socialId;
+  private String socialId;
 
-  public Auth(Long socialId, AuthProvider authProvider) {
+  public Auth(String socialId, AuthProvider authProvider) {
     this.socialId = socialId;
     this.authProvider = authProvider;
   }
