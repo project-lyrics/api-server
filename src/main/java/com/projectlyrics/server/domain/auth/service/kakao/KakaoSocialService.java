@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KakaoSocialService implements SocialService {
 
-  private static final String TOKEN_TYPE = "Bearer ";
-
   private final KakaoSocialDataApiClient kakaoApiClient;
 
   @Override
@@ -22,6 +20,6 @@ public class KakaoSocialService implements SocialService {
   }
 
   private KakaoUserInfoResponse getUserInfo(String accessToken) {
-    return kakaoApiClient.getUserInfo(TOKEN_TYPE + accessToken);
+    return kakaoApiClient.getUserInfo(accessToken);
   }
 }
