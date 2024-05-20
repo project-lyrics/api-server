@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.user.repository;
 
-import com.projectlyrics.server.domain.user.repository.impl.JpaUserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.impl.JpaCommandUserRepository;
 
-public interface CommandUserRepository extends JpaUserCommandRepository {
+public interface CommandUserRepository extends JpaCommandUserRepository {
 }
