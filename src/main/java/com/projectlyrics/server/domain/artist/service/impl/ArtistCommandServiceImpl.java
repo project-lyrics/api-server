@@ -4,10 +4,11 @@ import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
-import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
-import com.projectlyrics.server.global.error_code.ErrorCode;
 import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.message.ErrorCode;
 import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ArtistCommandServiceImpl implements ArtistCommandService {
 
-  private final CommandQueryArtistRepository commandArtistRepository;
+  private final CommandArtistRepository commandArtistRepository;
+  private final QueryArtistRepository queryArtistRepository;
   private final Clock clock;
 
   @Override
@@ -29,7 +31,7 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
 
   @Override
   public UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request) {
-    var artist = commandArtistRepository.findByIdAndNotDeleted(artistId)
+    var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
 
     artist.updateIfNotBlank(request.name(), artist::updateName);
@@ -41,7 +43,7 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
 
   @Override
   public void deleteArtist(Long artistId) {
-    var artist = commandArtistRepository.findByIdAndNotDeleted(artistId)
+    var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
 
     // TODO: 인증 구현되면 deletedById 값 수정
