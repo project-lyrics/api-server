@@ -8,7 +8,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
-import com.projectlyrics.server.domain.artist.service.impl.ArtistQueryServiceImpl;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,7 @@ import org.springframework.data.domain.SliceImpl;
 class ArtistQueryServiceTest {
 
   @InjectMocks
-  private ArtistQueryServiceImpl sut;
+  private ArtistQueryService sut;
 
   @Mock
   private QueryArtistRepository queryArtistRepository;

@@ -12,7 +12,6 @@ import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
-import com.projectlyrics.server.domain.artist.service.impl.ArtistCommandServiceImpl;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
@@ -29,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ArtistCommandServiceTest {
 
   @InjectMocks
-  private ArtistCommandServiceImpl sut;
+  private ArtistCommandService sut;
 
   @Mock
   private CommandArtistRepository commandArtistRepository;
