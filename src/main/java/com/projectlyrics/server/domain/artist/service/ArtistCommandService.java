@@ -1,15 +1,15 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
-import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 
 public interface ArtistCommandService {
 
-  AddArtistResponse addArtist(AddArtistRequest request);
+  ArtistAddResponse addArtist(ArtistAddRequest request);
 
-  UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request);
+  ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request);
 
   void deleteArtist(Long artistId);
 }

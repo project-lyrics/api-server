@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.artist.service.impl;
 
-import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
@@ -19,16 +19,17 @@ public class ArtistQueryServiceImpl implements ArtistQueryService {
   private final QueryArtistRepository queryArtistRepository;
 
   @Override
-  public GetArtistResponse getArtist(Long artistId) {
+  public ArtistGetResponse getArtist(Long artistId) {
     var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
-    return GetArtistResponse.from(artist);
+    return ArtistGetResponse.from(artist);
   }
 
   @Override
-  public CursorBasePaginatedResponse<GetArtistResponse> getArtistList(Long cursor, Pageable pageable) {
-    var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable).map(GetArtistResponse::from);
+  public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
+    var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable).map(
+        ArtistGetResponse::from);
     var nextCursor = artistList.getContent().getLast().id() + 1;
 
     return CursorBasePaginatedResponse.of(artistList, cursor, nextCursor);

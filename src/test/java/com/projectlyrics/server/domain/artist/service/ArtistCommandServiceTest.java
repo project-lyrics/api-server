@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
@@ -109,11 +109,11 @@ class ArtistCommandServiceTest {
     assertThat(artist.getCommonField().getStatus()).isEqualTo(EntityStatusEnum.DELETED);
   }
 
-  private AddArtistRequest createAddArtistRequest() {
-    return new AddArtistRequest("넬", "NELL", "https://~");
+  private ArtistAddRequest createAddArtistRequest() {
+    return new ArtistAddRequest("넬", "NELL", "https://~");
   }
 
-  private UpdateArtistRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
-    return new UpdateArtistRequest(name, englishName, profileImageCdnLink);
+  private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
+    return new ArtistUpdateRequest(name, englishName, profileImageCdnLink);
   }
 }

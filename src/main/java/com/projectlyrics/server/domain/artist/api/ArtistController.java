@@ -1,10 +1,10 @@
 package com.projectlyrics.server.domain.artist.api;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
-import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
-import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
@@ -32,8 +32,8 @@ public class ArtistController implements ArtistControllerSwagger {
   private final ArtistCommandService artistCommandService;
 
   @PostMapping
-  public ResponseEntity<AddArtistResponse> addArtist(
-      @RequestBody @Valid AddArtistRequest request
+  public ResponseEntity<ArtistAddResponse> addArtist(
+      @RequestBody @Valid ArtistAddRequest request
   ) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -41,8 +41,8 @@ public class ArtistController implements ArtistControllerSwagger {
   }
 
   @PatchMapping("/{artistId}")
-  public ResponseEntity<UpdateArtistResponse> updateArtist(
-      @PathVariable Long artistId, @RequestBody UpdateArtistRequest request
+  public ResponseEntity<ArtistUpdateResponse> updateArtist(
+      @PathVariable Long artistId, @RequestBody ArtistUpdateRequest request
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
@@ -59,14 +59,14 @@ public class ArtistController implements ArtistControllerSwagger {
   }
 
   @GetMapping("/{artistId}")
-  public ResponseEntity<GetArtistResponse> getArtist(@PathVariable Long artistId) {
+  public ResponseEntity<ArtistGetResponse> getArtist(@PathVariable Long artistId) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(artistQueryService.getArtist(artistId));
   }
 
   @GetMapping
-  public ResponseEntity<CursorBasePaginatedResponse<GetArtistResponse>> getArtistList(
+  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
       @RequestParam(required = false) Long cursor,
       @RequestParam(defaultValue = "10") int size
   ) {

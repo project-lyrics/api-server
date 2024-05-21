@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AddArtistRequestTest {
+class ArtistAddRequestTest {
 
   private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -56,7 +56,7 @@ class AddArtistRequestTest {
     });
   }
 
-  private AddArtistRequest createAddArtistRequest(String name, String englishName, String profileImageCdnLink) {
-    return new AddArtistRequest(name, englishName, profileImageCdnLink);
+  private ArtistAddRequest createAddArtistRequest(String name, String englishName, String profileImageCdnLink) {
+    return new ArtistAddRequest(name, englishName, profileImageCdnLink);
   }
 }

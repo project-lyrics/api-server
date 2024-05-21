@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.service.kakao.KakaoSocialService;
-import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
+import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.CommandUserRepository;
 import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
@@ -23,10 +23,10 @@ public class UserAuthService implements UserAuthUseCase {
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
-  public LoginResponse signIn(String socialAccessToken, UserLoginRequest request) {
+  public UserLoginResponse signIn(String socialAccessToken, UserLoginRequest request) {
     UserInfoResponse userInfo = getUserInfo(socialAccessToken, request);
 
-    return LoginResponse.of(getToken(userInfo));
+    return UserLoginResponse.of(getToken(userInfo));
   }
 
   private UserInfoResponse getUserInfo(String socialAccessToken, UserLoginRequest loginRequest) {

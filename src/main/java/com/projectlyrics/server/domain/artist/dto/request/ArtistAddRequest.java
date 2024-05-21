@@ -4,7 +4,7 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 
-public record AddArtistRequest(
+public record ArtistAddRequest(
     @Schema(name = "아티스트의 한글 이름")
     @Pattern(regexp = "^(?!\\s*$).+", message = "빈 문자열 또는 공백 문자열은 허용하지 않습니다.")
     String name,

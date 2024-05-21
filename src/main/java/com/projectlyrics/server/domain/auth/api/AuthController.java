@@ -2,7 +2,7 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
-import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
+import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
 import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthController {
   private final UserAuthUseCase userAuthUseCase;
 
   @PostMapping("/login")
-  public ResponseEntity<SuccessResponse<LoginResponse>> signIn(
+  public ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
       @RequestBody UserLoginRequest loginRequest
   ) {

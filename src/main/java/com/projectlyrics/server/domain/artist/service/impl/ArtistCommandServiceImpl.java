@@ -1,9 +1,9 @@
 package com.projectlyrics.server.domain.artist.service.impl;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
-import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
@@ -24,13 +24,13 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
   private final Clock clock;
 
   @Override
-  public AddArtistResponse addArtist(AddArtistRequest request) {
+  public ArtistAddResponse addArtist(ArtistAddRequest request) {
     var savedArtist = commandArtistRepository.save(request.toEntity());
-    return AddArtistResponse.of(savedArtist.getId());
+    return ArtistAddResponse.of(savedArtist.getId());
   }
 
   @Override
-  public UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request) {
+  public ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request) {
     var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
@@ -38,7 +38,7 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
     artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
     artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
 
-    return UpdateArtistResponse.from(artist);
+    return ArtistUpdateResponse.from(artist);
   }
 
   @Override
