@@ -51,7 +51,7 @@ public class User {
   }
 
   public static User of(
-      final Long socialId,
+      final String socialId,
       final String email,
       final AuthProvider authProvider
   ) {

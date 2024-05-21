@@ -11,12 +11,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.UrlPathHelper;
 
 @RequiredArgsConstructor
 @Component
@@ -24,7 +28,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String TOKEN_PREFIX = "Bearer ";
 
+  @Value("#{'${auth.free-apis}'.split(',')}")
+  private String[] authFreeApis;
+
   private final JwtTokenProvider jwtTokenProvider;
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    String path = new UrlPathHelper().getPathWithinApplication(request);
+    return Arrays.stream(authFreeApis)
+        .anyMatch(pattern -> new AntPathMatcher().match(pattern, path));
+  }
 
   @Override
   protected void doFilterInternal(

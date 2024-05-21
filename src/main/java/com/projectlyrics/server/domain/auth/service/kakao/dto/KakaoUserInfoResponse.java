@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoUserInfoResponse(
-        Long id,
+        String id,
         KakaoAccount kakaoAccount
 ) {
   public UserInfoResponse toUserInfo() {

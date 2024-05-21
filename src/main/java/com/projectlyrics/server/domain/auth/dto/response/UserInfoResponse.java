@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 
 public record UserInfoResponse(
     AuthProvider authProvider,
-    Long socialId,
+    String socialId,
     String email
 ) {
   public User toEntity() {

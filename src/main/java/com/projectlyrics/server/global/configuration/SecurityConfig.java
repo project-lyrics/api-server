@@ -5,6 +5,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationEntryPoint;
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +22,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+
+  @Value("#{'${auth.free-apis}'.split(',')}")
+  String[] authFreeApis;
 
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -70,9 +74,7 @@ public class SecurityConfig {
             exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .authorizeHttpRequests(requests ->
             requests
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/artists/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/test/**")).permitAll()
+                .requestMatchers(authFreeApis).permitAll()
                 .anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
