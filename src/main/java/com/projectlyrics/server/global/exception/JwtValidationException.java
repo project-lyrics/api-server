@@ -2,7 +2,7 @@ package com.projectlyrics.server.global.exception;
 
 import com.projectlyrics.server.global.message.ErrorCode;
 
-public class JwtValidationException extends BusinessException {
+public class JwtValidationException extends FeelinException {
 
   public JwtValidationException(ErrorCode errorCode) {
     super(errorCode);

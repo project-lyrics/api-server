@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
-import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.global.message.ErrorCode;
 import java.time.Clock;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
   @Override
   public UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request) {
     var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
-        .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
+        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     artist.updateIfNotBlank(request.name(), artist::updateName);
     artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
@@ -44,7 +44,7 @@ public class ArtistCommandServiceImpl implements ArtistCommandService {
   @Override
   public void deleteArtist(Long artistId) {
     var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
-        .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
+        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     // TODO: 인증 구현되면 deletedById 값 수정
     artist.getCommonField().delete(1L, clock.systemDefaultZone());

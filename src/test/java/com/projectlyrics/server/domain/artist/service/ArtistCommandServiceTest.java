@@ -14,7 +14,7 @@ import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.impl.ArtistCommandServiceImpl;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
-import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -89,7 +89,7 @@ class ArtistCommandServiceTest {
 
     // then
     then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
-    assertThat(throwable).isInstanceOf(BusinessException.class);
+    assertThat(throwable).isInstanceOf(FeelinException.class);
   }
 
   @Test

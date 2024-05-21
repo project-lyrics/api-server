@@ -2,7 +2,7 @@ package com.projectlyrics.server.global.exception;
 
 import com.projectlyrics.server.global.message.ErrorCode;
 
-public class NotFoundException extends BusinessException {
+public class NotFoundException extends FeelinException {
 
   public NotFoundException(ErrorCode errorCode) {
     super(errorCode);

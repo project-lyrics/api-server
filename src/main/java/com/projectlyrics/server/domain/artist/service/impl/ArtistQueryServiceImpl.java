@@ -4,7 +4,7 @@ import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
-import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.global.message.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,7 @@ public class ArtistQueryServiceImpl implements ArtistQueryService {
   @Override
   public GetArtistResponse getArtist(Long artistId) {
     var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
-        .orElseThrow(() -> new BusinessException(ErrorCode.ARTIST_NOT_FOUND));
+        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     return GetArtistResponse.from(artist);
   }
