@@ -25,10 +25,10 @@ public class ArtistQueryService {
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-    var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable).map(
-        ArtistGetResponse::from);
+    var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable)
+        .map(ArtistGetResponse::from);
     var nextCursor = artistList.getContent().getLast().id() + 1;
 
-    return CursorBasePaginatedResponse.of(artistList, cursor, nextCursor);
+    return CursorBasePaginatedResponse.of(artistList, nextCursor, cursor);
   }
 }
