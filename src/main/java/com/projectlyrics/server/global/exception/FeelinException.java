@@ -1,7 +1,7 @@
 package com.projectlyrics.server.global.exception;
 
-import com.projectlyrics.server.domain.common.message.ErrorCode;
 import lombok.Getter;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 
 @Getter
 public class FeelinException extends RuntimeException {
