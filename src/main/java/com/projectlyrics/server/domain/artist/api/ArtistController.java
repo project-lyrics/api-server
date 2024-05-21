@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
-import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

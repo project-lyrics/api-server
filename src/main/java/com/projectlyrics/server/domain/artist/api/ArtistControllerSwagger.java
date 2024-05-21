@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
 import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
-import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

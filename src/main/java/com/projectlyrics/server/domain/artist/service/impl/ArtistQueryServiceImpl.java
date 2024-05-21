@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.artist.service.impl;
 import com.projectlyrics.server.domain.artist.dto.response.GetArtistResponse;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
-import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import lombok.RequiredArgsConstructor;
