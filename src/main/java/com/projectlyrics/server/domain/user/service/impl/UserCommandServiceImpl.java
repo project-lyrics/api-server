@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.user.usecase.command.impl;
+package com.projectlyrics.server.domain.user.service.impl;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
@@ -9,13 +9,13 @@ import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.CommandUserRepository;
 import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
-import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
+import com.projectlyrics.server.domain.user.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class UserAuthService implements UserAuthUseCase {
+public class UserCommandServiceImpl implements UserCommandService {
 
   private final QueryUserRepository queryUserRepository;
   private final CommandUserRepository commandUserRepository;
