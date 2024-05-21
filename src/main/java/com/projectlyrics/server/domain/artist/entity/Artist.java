@@ -2,7 +2,7 @@ package com.projectlyrics.server.domain.artist.entity;
 
 import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
 import com.projectlyrics.server.domain.auth.service.SocialService;
 import com.projectlyrics.server.domain.auth.service.apple.dto.AppleUserInfoResponse;
 import com.projectlyrics.server.global.exception.JwtValidationException;
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import io.jsonwebtoken.Jwts;
 import java.math.BigInteger;
 import java.security.KeyFactory;

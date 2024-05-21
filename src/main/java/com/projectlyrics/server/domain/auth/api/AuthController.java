@@ -4,7 +4,7 @@ import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
 import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
-import com.projectlyrics.server.global.message.SuccessMessage;
+import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

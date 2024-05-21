@@ -5,7 +5,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.global.exception.JwtValidationException;
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

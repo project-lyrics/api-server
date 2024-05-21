@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.common.dto.CursorBasePaginatedResponse;
 import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
