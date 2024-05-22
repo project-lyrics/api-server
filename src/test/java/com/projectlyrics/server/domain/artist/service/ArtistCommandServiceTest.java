@@ -7,13 +7,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.artist.repository.CommandQueryArtistRepository;
-import com.projectlyrics.server.domain.artist.service.impl.ArtistCommandServiceImpl;
+import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
-import com.projectlyrics.server.global.exception.BusinessException;
+import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ArtistCommandServiceTest {
 
   @InjectMocks
-  private ArtistCommandServiceImpl sut;
+  private ArtistCommandService sut;
 
   @Mock
-  private CommandQueryArtistRepository commandArtistRepository;
+  private CommandArtistRepository commandArtistRepository;
+
+  @Mock
+  private QueryArtistRepository queryArtistRepository;
 
   @Captor
   private ArgumentCaptor<Artist> addArtistArgumentCaptor;
@@ -60,13 +63,13 @@ class ArtistCommandServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest("   ", null, "https://~2");
-    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     var updateArtistResponse = sut.updateArtist(artistId, updateArtistRequest);
 
     // then
-    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(updateArtistResponse.name()).isEqualTo(artist.getName());
     assertThat(updateArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
     assertThat(updateArtistResponse.profileImageCdnLink()).isEqualTo(updateArtistRequest.profileImageCdnLink());
@@ -78,14 +81,14 @@ class ArtistCommandServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest(null, null, "http://~2");
-    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     Throwable throwable = catchThrowable(() -> sut.updateArtist(artistId, updateArtistRequest));
 
     // then
-    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
-    assertThat(throwable).isInstanceOf(BusinessException.class);
+    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    assertThat(throwable).isInstanceOf(FeelinException.class);
   }
 
   @Test
@@ -93,23 +96,23 @@ class ArtistCommandServiceTest {
     // given
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
-    given(commandArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     sut.deleteArtist(artistId);
 
     // then
-    then(commandArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(artist.getCommonField().getDeletedAt()).isNotNull();
     assertThat(artist.getCommonField().getDeletedBy()).isNotNull();
     assertThat(artist.getCommonField().getStatus()).isEqualTo(EntityStatusEnum.DELETED);
   }
 
-  private AddArtistRequest createAddArtistRequest() {
-    return new AddArtistRequest("넬", "NELL", "https://~");
+  private ArtistAddRequest createAddArtistRequest() {
+    return new ArtistAddRequest("넬", "NELL", "https://~");
   }
 
-  private UpdateArtistRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
-    return new UpdateArtistRequest(name, englishName, profileImageCdnLink);
+  private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
+    return new ArtistUpdateRequest(name, englishName, profileImageCdnLink);
   }
 }

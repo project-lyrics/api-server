@@ -2,9 +2,9 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
-import com.projectlyrics.server.domain.user.dto.response.LoginResponse;
-import com.projectlyrics.server.domain.user.usecase.command.UserAuthUseCase;
-import com.projectlyrics.server.global.message.SuccessMessage;
+import com.projectlyrics.server.domain.common.message.SuccessMessage;
+import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
+import com.projectlyrics.server.domain.user.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-  private final UserAuthUseCase userAuthUseCase;
+  private final UserCommandService userCommandService;
 
   @PostMapping("/login")
-  public ResponseEntity<SuccessResponse<LoginResponse>> signIn(
+  public ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
       @RequestBody UserLoginRequest loginRequest
   ) {
@@ -30,7 +30,7 @@ public class AuthController {
         .status(HttpStatus.CREATED)
         .body(SuccessResponse.of(
             SuccessMessage.LOGIN_SUCCESS,
-            userAuthUseCase.signIn(socialAccessToken, loginRequest)
+            userCommandService.signIn(socialAccessToken, loginRequest)
         ));
   }
 }

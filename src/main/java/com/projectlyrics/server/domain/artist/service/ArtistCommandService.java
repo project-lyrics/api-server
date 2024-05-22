@@ -1,15 +1,48 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.domain.artist.dto.request.AddArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.request.UpdateArtistRequest;
-import com.projectlyrics.server.domain.artist.dto.response.AddArtistResponse;
-import com.projectlyrics.server.domain.artist.dto.response.UpdateArtistResponse;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
+import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
+import com.projectlyrics.server.global.exception.FeelinException;
+import java.time.Clock;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface ArtistCommandService {
+@RequiredArgsConstructor
+@Transactional
+@Service
+public class ArtistCommandService {
 
-  AddArtistResponse addArtist(AddArtistRequest request);
+  private final CommandArtistRepository commandArtistRepository;
+  private final QueryArtistRepository queryArtistRepository;
+  private final Clock clock;
 
-  UpdateArtistResponse updateArtist(Long artistId, UpdateArtistRequest request);
+  public ArtistAddResponse addArtist(ArtistAddRequest request) {
+    var savedArtist = commandArtistRepository.save(request.toEntity());
+    return ArtistAddResponse.of(savedArtist.getId());
+  }
 
-  void deleteArtist(Long artistId);
+  public ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request) {
+    var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
+        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
+
+    artist.updateIfNotBlank(request.name(), artist::updateName);
+    artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
+    artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
+
+    return ArtistUpdateResponse.from(artist);
+  }
+
+  public void deleteArtist(Long artistId) {
+    var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
+        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
+
+    // TODO: 인증 구현되면 deletedById 값 수정
+    artist.getCommonField().delete(1L, clock.systemDefaultZone());
+  }
 }

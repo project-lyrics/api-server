@@ -4,7 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

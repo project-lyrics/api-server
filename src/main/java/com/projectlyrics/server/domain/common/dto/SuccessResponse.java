@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.common.dto;
 
-import com.projectlyrics.server.global.message.SuccessMessage;
+import com.projectlyrics.server.domain.common.message.SuccessMessage;
 
 public record SuccessResponse<T>(
     String message,

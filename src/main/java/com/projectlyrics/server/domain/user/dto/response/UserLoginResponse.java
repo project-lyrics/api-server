@@ -2,12 +2,12 @@ package com.projectlyrics.server.domain.user.dto.response;
 
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 
-public record LoginResponse(
+public record UserLoginResponse(
     String accessToken,
     String refreshToken
 ) {
-  public static LoginResponse of(AuthToken authToken) {
-    return new LoginResponse(
+  public static UserLoginResponse of(AuthToken authToken) {
+    return new UserLoginResponse(
         authToken.accessToken(),
         authToken.refreshToken()
     );

@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.common.dto;
 
-import com.projectlyrics.server.global.message.ErrorCode;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record ErrorResponse(

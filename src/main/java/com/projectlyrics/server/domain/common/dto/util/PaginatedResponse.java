@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.common.dto;
+package com.projectlyrics.server.domain.common.dto.util;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

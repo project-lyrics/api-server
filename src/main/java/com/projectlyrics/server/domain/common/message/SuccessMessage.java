@@ -1,4 +1,4 @@
-package com.projectlyrics.server.global.message;
+package com.projectlyrics.server.domain.common.message;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

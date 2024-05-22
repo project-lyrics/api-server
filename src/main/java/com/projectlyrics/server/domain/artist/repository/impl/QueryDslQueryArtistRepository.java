@@ -1,7 +1,8 @@
-package com.projectlyrics.server.domain.artist.repository;
+package com.projectlyrics.server.domain.artist.repository.impl;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
+import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryArtistRepositoryImpl implements QueryArtistRepository {
+public class QueryDslQueryArtistRepository implements QueryArtistRepository {
 
   private final JPAQueryFactory jpaQueryFactory;
 
