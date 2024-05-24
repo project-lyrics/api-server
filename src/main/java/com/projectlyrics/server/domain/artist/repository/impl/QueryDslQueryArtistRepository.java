@@ -5,8 +5,10 @@ import static com.querydsl.core.types.dsl.Expressions.anyOf;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -43,14 +45,7 @@ public class QueryDslQueryArtistRepository implements QueryArtistRepository {
         .limit(pageable.getPageSize() + 1)
         .fetch();
 
-    var hasNext = false;
-
-    if (content.size() > pageable.getPageSize()) {
-      content.remove(pageable.getPageSize());
-      hasNext = true;
-    }
-
-    return new SliceImpl<>(content, pageable, hasNext);
+    return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
   }
 
   @Override
@@ -58,24 +53,16 @@ public class QueryDslQueryArtistRepository implements QueryArtistRepository {
     var content = jpaQueryFactory
         .selectFrom(QArtist.artist)
         .where(
-            goeCursorId(cursor)
-                .and(QArtist.artist.commonField.deletedAt.isNull())
-                .and(anyOf(
-                    QArtist.artist.name.contains(query),
-                    QArtist.artist.englishName.contains(query))
-                )
+            goeCursorId(cursor),
+            QArtist.artist.commonField.deletedAt.isNull(),
+            anyOf(
+                QArtist.artist.name.contains(query),
+                QArtist.artist.englishName.contains(query))
         )
         .limit(pageable.getPageSize() + 1)
         .fetch();
 
-    var hasNext = false;
-
-    if (content.size() > pageable.getPageSize()) {
-      content.remove(pageable.getPageSize());
-      hasNext = true;
-    }
-
-    return new SliceImpl<>(content, pageable, hasNext);
+    return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
   }
 
   private BooleanExpression goeCursorId(Long cursor) {
