@@ -15,7 +15,7 @@ public record CursorBasePaginatedResponse<T>(
   public static <T> CursorBasePaginatedResponse<T> of(Slice<T> slice, Long nextCursor, Long cursor) {
     return new CursorBasePaginatedResponse<>(
         slice.hasNext() ? String.valueOf(nextCursor) : null,
-        cursor != null ? String.valueOf(cursor) : null,
+        cursor != null ? String.valueOf(cursor) : String.valueOf(0),
         slice.getNumberOfElements(),
         slice.getSize(),
         slice.getContent()

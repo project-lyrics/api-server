@@ -1,5 +1,7 @@
 package com.projectlyrics.server.domain.artist.repository.impl;
 
+import static com.querydsl.core.types.dsl.Expressions.anyOf;
+
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
@@ -34,7 +36,35 @@ public class QueryDslQueryArtistRepository implements QueryArtistRepository {
   public Slice<Artist> findAllAndNotDeleted(Long cursor, Pageable pageable) {
     var content = jpaQueryFactory
         .selectFrom(QArtist.artist)
-        .where(goeCursorId(cursor), QArtist.artist.commonField.deletedAt.isNull())
+        .where(
+            goeCursorId(cursor),
+            QArtist.artist.commonField.deletedAt.isNull()
+        )
+        .limit(pageable.getPageSize() + 1)
+        .fetch();
+
+    var hasNext = false;
+
+    if (content.size() > pageable.getPageSize()) {
+      content.remove(pageable.getPageSize());
+      hasNext = true;
+    }
+
+    return new SliceImpl<>(content, pageable, hasNext);
+  }
+
+  @Override
+  public Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable) {
+    var content = jpaQueryFactory
+        .selectFrom(QArtist.artist)
+        .where(
+            goeCursorId(cursor)
+                .and(QArtist.artist.commonField.deletedAt.isNull())
+                .and(anyOf(
+                    QArtist.artist.name.contains(query),
+                    QArtist.artist.englishName.contains(query))
+                )
+        )
         .limit(pageable.getPageSize() + 1)
         .fetch();
 
