@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
+import com.projectlyrics.server.domain.common.util.PageUtils;
 import com.projectlyrics.server.global.exception.FeelinException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,16 @@ public class ArtistQueryService {
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
     var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable)
         .map(ArtistGetResponse::from);
-    var nextCursor = artistList.getContent().getLast().id() + 1;
+    var nextCursor = PageUtils.getNextCursorOf(artistList);
 
     return CursorBasePaginatedResponse.of(artistList, nextCursor, cursor);
+  }
+
+  public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
+    var searchedArtists = queryArtistRepository.findAllByQueryAndNotDeleted(query, cursor, pageable)
+        .map(ArtistGetResponse::from);
+    var nextCursor = PageUtils.getNextCursorOf(searchedArtists);
+
+    return CursorBasePaginatedResponse.of(searchedArtists, nextCursor, cursor);
   }
 }

@@ -42,7 +42,8 @@ public class ArtistController implements ArtistControllerSwagger {
 
   @PatchMapping("/{artistId}")
   public ResponseEntity<ArtistUpdateResponse> updateArtist(
-      @PathVariable Long artistId, @RequestBody ArtistUpdateRequest request
+      @PathVariable Long artistId,
+      @RequestBody ArtistUpdateRequest request
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
@@ -50,7 +51,9 @@ public class ArtistController implements ArtistControllerSwagger {
   }
 
   @DeleteMapping("/{artistId}")
-  public ResponseEntity<Void> deleteArtist(@PathVariable Long artistId) {
+  public ResponseEntity<Void> deleteArtist(
+      @PathVariable Long artistId
+  ) {
     artistCommandService.deleteArtist(artistId);
 
     return ResponseEntity
@@ -59,7 +62,9 @@ public class ArtistController implements ArtistControllerSwagger {
   }
 
   @GetMapping("/{artistId}")
-  public ResponseEntity<ArtistGetResponse> getArtist(@PathVariable Long artistId) {
+  public ResponseEntity<ArtistGetResponse> getArtist(
+      @PathVariable Long artistId
+  ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(artistQueryService.getArtist(artistId));
@@ -67,11 +72,22 @@ public class ArtistController implements ArtistControllerSwagger {
 
   @GetMapping
   public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
-      @RequestParam(required = false) Long cursor,
+      @RequestParam(defaultValue = "0L") Long cursor,
       @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
+      @RequestParam(defaultValue = "0") Long cursor,
+      @RequestParam(required = false, defaultValue = "5") int size,
+      @RequestParam String query
+  ) {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));
   }
 }
