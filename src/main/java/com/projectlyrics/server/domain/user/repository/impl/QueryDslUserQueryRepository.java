@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.user.repository.impl;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.QUser;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.user.repository.QueryUserRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryDslQueryUserRepository implements QueryUserRepository {
+public class QueryDslUserQueryRepository implements UserQueryRepository {
 
   private final JPAQueryFactory jpaQueryFactory;
 

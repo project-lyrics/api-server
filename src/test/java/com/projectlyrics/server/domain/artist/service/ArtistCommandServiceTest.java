@@ -10,8 +10,8 @@ import static org.mockito.BDDMockito.then;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.artist.repository.CommandArtistRepository;
-import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.utils.ArtistTestUtil;
@@ -31,10 +31,10 @@ class ArtistCommandServiceTest {
   private ArtistCommandService sut;
 
   @Mock
-  private CommandArtistRepository commandArtistRepository;
+  private ArtistCommandRepository artistCommandRepository;
 
   @Mock
-  private QueryArtistRepository queryArtistRepository;
+  private ArtistQueryRepository artistQueryRepository;
 
   @Captor
   private ArgumentCaptor<Artist> addArtistArgumentCaptor;
@@ -44,13 +44,13 @@ class ArtistCommandServiceTest {
     // given
     var artist = ArtistTestUtil.create();
     var addArtistRequest = createAddArtistRequest();
-    given(commandArtistRepository.save(any(Artist.class))).willReturn(artist);
+    given(artistCommandRepository.save(any(Artist.class))).willReturn(artist);
 
     // when
     sut.addArtist(addArtistRequest);
 
     // then
-    then(commandArtistRepository).should().save(addArtistArgumentCaptor.capture());
+    then(artistCommandRepository).should().save(addArtistArgumentCaptor.capture());
     var captorValue = addArtistArgumentCaptor.getValue();
     assertThat(addArtistRequest.name()).isEqualTo(captorValue.getName());
     assertThat(addArtistRequest.englishName()).isEqualTo(captorValue.getEnglishName());
@@ -63,13 +63,13 @@ class ArtistCommandServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest("   ", null, "https://~2");
-    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     var updateArtistResponse = sut.updateArtist(artistId, updateArtistRequest);
 
     // then
-    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(updateArtistResponse.name()).isEqualTo(artist.getName());
     assertThat(updateArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
     assertThat(updateArtistResponse.profileImageCdnLink()).isEqualTo(updateArtistRequest.profileImageCdnLink());
@@ -81,13 +81,13 @@ class ArtistCommandServiceTest {
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
     var updateArtistRequest = createUpdateArtistRequest(null, null, "http://~2");
-    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     Throwable throwable = catchThrowable(() -> sut.updateArtist(artistId, updateArtistRequest));
 
     // then
-    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(throwable).isInstanceOf(FeelinException.class);
   }
 
@@ -96,13 +96,13 @@ class ArtistCommandServiceTest {
     // given
     Long artistId = 1L;
     var artist = ArtistTestUtil.create();
-    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
     // when
     sut.deleteArtist(artistId);
 
     // then
-    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(artist.getCommonField().getDeletedAt()).isNotNull();
     assertThat(artist.getCommonField().getDeletedBy()).isNotNull();
     assertThat(artist.getCommonField().getStatus()).isEqualTo(EntityStatusEnum.DELETED);

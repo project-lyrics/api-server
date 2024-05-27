@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.List;
 import java.util.Optional;
@@ -27,21 +27,21 @@ class ArtistQueryServiceTest {
   private ArtistQueryService sut;
 
   @Mock
-  private QueryArtistRepository queryArtistRepository;
+  private ArtistQueryRepository artistQueryRepository;
 
   @Test
   void 아티스트의_PK를_전달받아_아티스트_데이터를_조회해_반환한다() {
     // given
     Long artistId = 1L;
     var artist = Mockito.spy(ArtistTestUtil.create());
-    given(queryArtistRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+    given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
     doReturn(artistId).when(artist).getId();
 
     // when
     var getArtistResponse = sut.getArtist(artistId);
 
     // then
-    then(queryArtistRepository).should().findByIdAndNotDeleted(anyLong());
+    then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
     assertThat(getArtistResponse.id()).isEqualTo(artistId);
     assertThat(getArtistResponse.name()).isEqualTo(artist.getName());
     assertThat(getArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
@@ -57,7 +57,7 @@ class ArtistQueryServiceTest {
     var artist2 = spy(ArtistTestUtil.createWithName("잔나비"));
     var artist3 = spy(ArtistTestUtil.createWithName("너드커넥션"));
     var artistList = List.of(artist, artist2, artist3);
-    given(queryArtistRepository.findAllAndNotDeleted(cursor, pageable))
+    given(artistQueryRepository.findAllAndNotDeleted(cursor, pageable))
         .willReturn(new SliceImpl<>(artistList, pageable, true));
     doReturn(5L).when(artist).getId();
     doReturn(6L).when(artist2).getId();
@@ -67,7 +67,7 @@ class ArtistQueryServiceTest {
     var artistListResponse = sut.getArtistList(cursor, pageable);
 
     // then
-    then(queryArtistRepository).should().findAllAndNotDeleted(cursor, pageable);
+    then(artistQueryRepository).should().findAllAndNotDeleted(cursor, pageable);
     assertThat(artistListResponse.currentCursor()).isEqualTo(String.valueOf(cursor));
     assertThat(artistListResponse.nextCursor()).isEqualTo(String.valueOf(artist3.getId() + 1));
     assertThat(artistListResponse.itemSize()).isEqualTo(artistList.size());

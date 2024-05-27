@@ -4,11 +4,10 @@ import static com.querydsl.core.types.dsl.Expressions.anyOf;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
-import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryDslQueryArtistRepository implements QueryArtistRepository {
+public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
 
   private final JPAQueryFactory jpaQueryFactory;
 

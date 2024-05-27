@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.artist.service;
 
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
-import com.projectlyrics.server.domain.artist.repository.QueryArtistRepository;
+import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.common.util.PageUtils;
@@ -16,17 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ArtistQueryService {
 
-  private final QueryArtistRepository queryArtistRepository;
+  private final ArtistQueryRepository artistQueryRepository;
 
   public ArtistGetResponse getArtist(Long artistId) {
-    var artist = queryArtistRepository.findByIdAndNotDeleted(artistId)
+    var artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     return ArtistGetResponse.from(artist);
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-    var artistList = queryArtistRepository.findAllAndNotDeleted(cursor, pageable)
+    var artistList = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
         .map(ArtistGetResponse::from);
     var nextCursor = PageUtils.getNextCursorOf(artistList);
 
@@ -34,7 +34,7 @@ public class ArtistQueryService {
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-    var searchedArtists = queryArtistRepository.findAllByQueryAndNotDeleted(query, cursor, pageable)
+    var searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(query, cursor, pageable)
         .map(ArtistGetResponse::from);
     var nextCursor = PageUtils.getNextCursorOf(searchedArtists);
 
