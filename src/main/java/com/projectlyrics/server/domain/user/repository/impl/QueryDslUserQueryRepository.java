@@ -28,4 +28,17 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
             .fetchOne()
     );
   }
+
+  @Override
+  public Optional<User> findById(Long id) {
+    return Optional.ofNullable(
+        jpaQueryFactory
+            .selectFrom(QUser.user)
+            .where(
+                QUser.user.id.eq(id),
+                QUser.user.commonField.deletedAt.isNull()
+            )
+            .fetchOne()
+    );
+  }
 }

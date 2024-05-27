@@ -1,11 +1,12 @@
 package com.projectlyrics.server.domain.artist.service;
 
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
+import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.common.util.PageUtils;
-import com.projectlyrics.server.global.exception.FeelinException;
+import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,9 @@ public class ArtistQueryService {
 
   private final ArtistQueryRepository artistQueryRepository;
 
-  public ArtistGetResponse getArtist(Long artistId) {
-    var artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
-        .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
-
-    return ArtistGetResponse.from(artist);
+  public Artist getArtistById(long artistId) {
+    return artistQueryRepository.findByIdAndNotDeleted(artistId)
+        .orElseThrow(() -> new NotFoundException(ErrorCode.ARTIST_NOT_FOUND));
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {

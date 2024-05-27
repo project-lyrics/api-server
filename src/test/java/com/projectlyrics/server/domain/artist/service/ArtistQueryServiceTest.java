@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.List;
@@ -38,7 +39,7 @@ class ArtistQueryServiceTest {
     doReturn(artistId).when(artist).getId();
 
     // when
-    var getArtistResponse = sut.getArtist(artistId);
+    var getArtistResponse = ArtistGetResponse.from(sut.getArtistById(artistId));
 
     // then
     then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());

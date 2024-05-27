@@ -67,7 +67,7 @@ public class ArtistController implements ArtistControllerSwagger {
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistQueryService.getArtist(artistId));
+        .body(ArtistGetResponse.from(artistQueryService.getArtistById(artistId)));
   }
 
   @GetMapping
