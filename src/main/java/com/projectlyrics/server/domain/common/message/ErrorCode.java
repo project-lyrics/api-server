@@ -24,6 +24,9 @@ public enum ErrorCode {
 
   // User
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "00600", "The user data could not be found."),
+
+  // Record
+  RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "00600", "The record data could not be found."),
   ;
 
   private final HttpStatus responseStatus;

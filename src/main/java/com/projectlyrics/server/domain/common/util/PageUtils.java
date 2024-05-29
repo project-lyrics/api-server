@@ -1,14 +1,14 @@
 package com.projectlyrics.server.domain.common.util;
 
-import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
+import com.projectlyrics.server.domain.common.dto.util.CursorResponse;
 import org.springframework.data.domain.Slice;
 
 public class PageUtils {
 
-  public static Long getNextCursorOf(Slice<ArtistGetResponse> list) {
+  public static <T extends CursorResponse> long getNextCursorOf(Slice<T> list) {
     if (list.isEmpty())
       return 0L;
 
-    return list.getContent().getLast().id() + 1;
+    return list.getContent().getLast().getId() + 1;
   }
 }
