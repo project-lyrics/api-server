@@ -26,7 +26,7 @@ public class ArtistQueryService {
 
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
     var artistList = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
-        .map(ArtistGetResponse::from);
+        .map(ArtistGetResponse::of);
     var nextCursor = PageUtils.getNextCursorOf(artistList);
 
     return CursorBasePaginatedResponse.of(artistList, nextCursor, cursor);
@@ -34,7 +34,7 @@ public class ArtistQueryService {
 
   public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
     var searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(query, cursor, pageable)
-        .map(ArtistGetResponse::from);
+        .map(ArtistGetResponse::of);
     var nextCursor = PageUtils.getNextCursorOf(searchedArtists);
 
     return CursorBasePaginatedResponse.of(searchedArtists, nextCursor, cursor);

@@ -1,6 +1,5 @@
 package com.projectlyrics.server.domain.common.util;
 
-import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.entity.QArtist;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
@@ -12,7 +11,7 @@ public class QueryDslUtils {
     return cursor == null ? null : QArtist.artist.id.goe(cursor);
   }
 
-  public static boolean checkIfHasNext(Pageable pageable, List<Artist> content) {
+  public static <T> boolean checkIfHasNext(Pageable pageable, List<T> content) {
     if (content.size() > pageable.getPageSize()) {
       content.remove(pageable.getPageSize());
 

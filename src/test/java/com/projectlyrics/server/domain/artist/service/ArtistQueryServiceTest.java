@@ -39,7 +39,7 @@ class ArtistQueryServiceTest {
     doReturn(artistId).when(artist).getId();
 
     // when
-    var getArtistResponse = ArtistGetResponse.from(sut.getArtistById(artistId));
+    var getArtistResponse = ArtistGetResponse.of(sut.getArtistById(artistId));
 
     // then
     then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
@@ -76,5 +76,20 @@ class ArtistQueryServiceTest {
     for (int i = 0; i < artistList.size(); i++) {
       assertThat(artistListResponse.data().get(i).name()).isEqualTo(artistList.get(i).getName());
     }
+  }
+
+  @Test
+  void 비어_있는_아티스트_리스트에_대해_널_예외가_발생하지_않는다() {
+    // given
+    var cursor = 0L;
+    var pageable = PageRequest.of(0, 3);
+    given(artistQueryRepository.findAllAndNotDeleted(cursor, pageable))
+        .willReturn(new SliceImpl<>(List.of(), pageable, true));
+
+    // when
+    var artistsResponse = sut.getArtistList(cursor, pageable);
+
+    // then
+    assertThat(artistsResponse).isNotNull();
   }
 }
