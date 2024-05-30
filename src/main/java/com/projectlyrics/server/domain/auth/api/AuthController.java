@@ -1,6 +1,8 @@
 package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.dto.response.UserTokenValidationResponse;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
@@ -8,6 +10,7 @@ import com.projectlyrics.server.domain.user.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -31,6 +34,28 @@ public class AuthController {
         .body(SuccessResponse.of(
             SuccessMessage.LOGIN_SUCCESS,
             userCommandService.signIn(socialAccessToken, loginRequest)
+        ));
+  }
+
+  @GetMapping("/token")
+  public ResponseEntity<SuccessResponse<UserTokenValidationResponse>> checkToken(
+      @RequestHeader("Authorization") String accessToken
+  ) {
+    return ResponseEntity
+        .ok(SuccessResponse.of(
+            SuccessMessage.TOKEN_VALID_SUCCESS,
+            userCommandService.validateToken(accessToken)
+        ));
+  }
+
+  @PostMapping("/token")
+  public ResponseEntity<SuccessResponse<UserTokenReissueResponse>> reissueToken(
+      @RequestHeader("Authorization") String refreshToken
+  ) {
+    return ResponseEntity
+        .ok(SuccessResponse.of(
+            SuccessMessage.TOKEN_REISSUE_SUCCESS,
+            userCommandService.reissueAccessToken(refreshToken)
         ));
   }
 }

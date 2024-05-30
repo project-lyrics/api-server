@@ -6,11 +6,11 @@ public record SuccessResponse<T>(
     String message,
     T data
 ) {
-  public static <T> SuccessResponse of(SuccessMessage message, T data) {
-    return new SuccessResponse(message.getMessage(), data);
+  public static <T> SuccessResponse<T> of(SuccessMessage message, T data) {
+    return new SuccessResponse<>(message.getMessage(), data);
   }
 
-  public static SuccessResponse of(SuccessMessage message) {
-    return new SuccessResponse(message.getMessage(), null);
+  public static SuccessResponse<Void> of(SuccessMessage message) {
+    return new SuccessResponse<>(message.getMessage(), null);
   }
 }

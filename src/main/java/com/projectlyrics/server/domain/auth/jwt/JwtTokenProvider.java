@@ -1,7 +1,10 @@
 package com.projectlyrics.server.domain.auth.jwt;
 
+import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.*;
+
 import com.projectlyrics.server.domain.auth.authentication.UserAuthentication;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
+import com.projectlyrics.server.domain.auth.jwt.dto.TokenValidationResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -38,7 +41,7 @@ public class JwtTokenProvider {
     );
   }
 
-  private String issueAccessToken(Authentication authentication) {
+  public String issueAccessToken(Authentication authentication) {
     return issueToken(authentication, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_TYPE);
   }
 
@@ -70,19 +73,29 @@ public class JwtTokenProvider {
     return Keys.hmacShaKeyFor(encodedKey.getBytes());   //일반적으로 HMAC (Hash-based Message Authentication Code) 알고리즘 사용
   }
 
-  public JwtValidationType validateToken(String token) {
-    try {
-      getBody(token);
+  public Long readUserIdFrom(String token) {
+    Claims claims = Jwts.parserBuilder()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
 
-      return JwtValidationType.VALID_JWT;
+    return Long.valueOf(claims.get(MEMBER_ID).toString());
+  }
+
+  public TokenValidationResult validateToken(String token) {
+    try {
+      Claims claims = getBody(token);
+
+      return TokenValidationResult.of(VALID_JWT, claims);
     } catch (MalformedJwtException ex) {
-      return JwtValidationType.INVALID_JWT_TOKEN;
+      return TokenValidationResult.of(INVALID_JWT_TOKEN);
     } catch (ExpiredJwtException ex) {
-      return JwtValidationType.EXPIRED_JWT_TOKEN;
+      return TokenValidationResult.of(EXPIRED_JWT_TOKEN);
     } catch (UnsupportedJwtException ex) {
-      return JwtValidationType.UNSUPPORTED_JWT_TOKEN;
+      return TokenValidationResult.of(UNSUPPORTED_JWT_TOKEN);
     } catch (IllegalArgumentException ex) {
-      return JwtValidationType.EMPTY_JWT;
+      return TokenValidationResult.of(EMPTY_JWT);
     }
   }
 
