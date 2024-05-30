@@ -27,7 +27,8 @@ public class UserCommandService {
     return UserLoginResponse.of(getToken(userInfo));
   }
 
-  private AuthToken getToken(UserInfoResponse userinfo) {
+  @Transactional(noRollbackFor = NotFoundException.class)
+  public AuthToken getToken(UserInfoResponse userinfo) {
     long id;
 
     try {
