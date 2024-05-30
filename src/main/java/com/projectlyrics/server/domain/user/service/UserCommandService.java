@@ -1,9 +1,14 @@
 package com.projectlyrics.server.domain.user.service;
 
+import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
+
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
+import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.dto.response.UserTokenValidationResponse;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
+import com.projectlyrics.server.domain.auth.jwt.dto.TokenValidationResult;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
@@ -28,7 +33,7 @@ public class UserCommandService {
   }
 
   @Transactional(noRollbackFor = NotFoundException.class)
-  public AuthToken getToken(UserInfoResponse userinfo) {
+  protected AuthToken getToken(UserInfoResponse userinfo) {
     long id;
 
     try {
@@ -42,5 +47,22 @@ public class UserCommandService {
 
   private User createUser(User user) {
     return userCommandRepository.save(user);
+  }
+
+  public UserTokenValidationResponse validateToken(String token) {
+    TokenValidationResult validationResult = jwtTokenProvider.validateToken(token);
+
+    if (validationResult.jwtValidationType() == VALID_JWT) {
+      return UserTokenValidationResponse.of(true, validationResult.claims().getExpiration());
+    }
+
+    return UserTokenValidationResponse.of(false, null);
+  }
+
+  public UserTokenReissueResponse reissueAccessToken(String refreshToken) {
+    Long userId = jwtTokenProvider.readUserIdFrom(refreshToken);
+    String accessToken = jwtTokenProvider.issueTokens(userId).accessToken();
+
+    return new UserTokenReissueResponse(accessToken);
   }
 }

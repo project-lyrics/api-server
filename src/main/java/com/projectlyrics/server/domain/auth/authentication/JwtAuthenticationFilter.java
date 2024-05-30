@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private boolean isValidToken(String token) {
-    return jwtTokenProvider.validateToken(token) == VALID_JWT;
+    return jwtTokenProvider.validateToken(token).jwtValidationType() == VALID_JWT;
   }
 
   private void setUserIntoContext(String token, HttpServletRequest request) {
