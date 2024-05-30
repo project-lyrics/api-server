@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.auth.dto.response.UserTokenValidationResp
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.jwt.dto.TokenValidationResult;
+import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
@@ -50,7 +51,9 @@ public class UserCommandService {
   }
 
   public UserTokenValidationResponse validateToken(String token) {
-    TokenValidationResult validationResult = jwtTokenProvider.validateToken(token);
+    String extractedToken = TokenUtils.extractToken(token);
+
+    TokenValidationResult validationResult = jwtTokenProvider.validateToken(extractedToken);
 
     if (validationResult.jwtValidationType() == VALID_JWT) {
       return UserTokenValidationResponse.of(true, validationResult.claims().getExpiration());
@@ -60,7 +63,9 @@ public class UserCommandService {
   }
 
   public UserTokenReissueResponse reissueAccessToken(String refreshToken) {
-    Long userId = jwtTokenProvider.readUserIdFrom(refreshToken);
+    String extractedToken = TokenUtils.extractToken(refreshToken);
+
+    Long userId = jwtTokenProvider.readUserIdFrom(extractedToken);
     String accessToken = jwtTokenProvider.issueTokens(userId).accessToken();
 
     return new UserTokenReissueResponse(accessToken);
