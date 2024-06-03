@@ -13,7 +13,6 @@ import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
-import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,17 +32,13 @@ public class UserCommandService {
     return UserLoginResponse.of(getToken(userInfo));
   }
 
-  @Transactional(noRollbackFor = NotFoundException.class)
   protected AuthToken getToken(UserInfoResponse userinfo) {
-    long id;
+    User user = userQueryService.getUserBySocialInfoOrNull(userinfo.socialId(), userinfo.authProvider());
 
-    try {
-      id = userQueryService.getUserBySocialInfo(userinfo.socialId(), userinfo.authProvider()).getId();
-    } catch (NotFoundException e) {
-      id = createUser(userinfo.toEntity()).getId();
-    }
+    if (user == null)
+      user = createUser(userinfo.toEntity());
 
-    return jwtTokenProvider.issueTokens(id);
+    return jwtTokenProvider.issueTokens(user.getId());
   }
 
   private User createUser(User user) {

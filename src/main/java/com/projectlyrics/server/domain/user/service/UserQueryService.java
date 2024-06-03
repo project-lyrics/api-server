@@ -27,9 +27,9 @@ public class UserQueryService {
     };
   }
 
-  public User getUserBySocialInfo(String socialId, AuthProvider authProvider) {
+  public User getUserBySocialInfoOrNull(String socialId, AuthProvider authProvider) {
     return userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(socialId, authProvider)
-        .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        .orElse(null);
   }
 
   public User getUserById(long userId) {
