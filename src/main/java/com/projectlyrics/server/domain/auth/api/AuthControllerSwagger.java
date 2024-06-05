@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
-import com.projectlyrics.server.domain.auth.dto.response.UserTokenValidationResponse;
+import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
@@ -41,23 +41,6 @@ public interface AuthControllerSwagger {
   );
 
   @Operation(
-      summary = "액세스 토큰 유효성 검사 API",
-      description = "액세스 토큰을 검사하여 유효한지 확인합니다."
-  )
-  @ApiResponses(
-      value = {
-          @ApiResponse(responseCode = "200", description = "액세스 토큰이 유효합니다."),
-          @ApiResponse(responseCode = "400", description = "액세스 토큰이 유효하지 않습니다.",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-          @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-      }
-  )
-  ResponseEntity<SuccessResponse<UserTokenValidationResponse>> checkToken(
-      @RequestHeader("Authorization") String accessToken
-  );
-
-  @Operation(
       summary = "액세스 토큰 재발급 API",
       description = "리프레시 토큰을 받아 새로운 액세스 토큰을 발급합니다."
   )
@@ -70,7 +53,7 @@ public interface AuthControllerSwagger {
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<UserTokenValidationResponse>> reissueToken(
+  ResponseEntity<SuccessResponse<UserTokenReissueResponse>> reissueToken(
       @RequestHeader("Authorization") String refreshToken
   );
 }
