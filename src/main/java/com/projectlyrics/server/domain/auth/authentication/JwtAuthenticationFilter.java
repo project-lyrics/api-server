@@ -4,12 +4,9 @@ import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.EXPIRED
 import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtValidationType;
-import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.JwtExpiredException;
 import com.projectlyrics.server.global.exception.JwtValidationException;
 import com.projectlyrics.server.global.handler.FilterExceptionHandler;
 import jakarta.servlet.FilterChain;
@@ -63,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
     if (validationResult == EXPIRED_JWT_TOKEN)
-      throw new JwtExpiredException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+      throw new JwtValidationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
 
     return validationResult == VALID_JWT;
   }

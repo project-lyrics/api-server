@@ -5,7 +5,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.JwtExpiredException;
 import com.projectlyrics.server.global.exception.JwtValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,10 +21,6 @@ public class FilterExceptionHandler {
 
   public void handleFilterException(Exception e, HttpServletResponse response) throws IOException {
     if (e instanceof JwtValidationException exception) {
-      setErrorResponse(exception.getErrorCode().getResponseStatus(), response, exception.getErrorCode());
-    }
-
-    else if (e instanceof JwtExpiredException exception) {
       setErrorResponse(exception.getErrorCode().getResponseStatus(), response, exception.getErrorCode());
     }
   }
