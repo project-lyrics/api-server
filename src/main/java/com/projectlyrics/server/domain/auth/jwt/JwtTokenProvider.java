@@ -4,7 +4,6 @@ import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.*;
 
 import com.projectlyrics.server.domain.auth.authentication.UserAuthentication;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
-import com.projectlyrics.server.domain.auth.jwt.dto.TokenValidationResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -83,19 +82,19 @@ public class JwtTokenProvider {
     return Long.valueOf(claims.get(MEMBER_ID).toString());
   }
 
-  public TokenValidationResult validateToken(String token) {
+  public JwtValidationType validateToken(String token) {
     try {
       Claims claims = getBody(token);
 
-      return TokenValidationResult.of(VALID_JWT, claims);
+      return VALID_JWT;
     } catch (MalformedJwtException ex) {
-      return TokenValidationResult.of(INVALID_JWT_TOKEN);
+      return INVALID_JWT_TOKEN;
     } catch (ExpiredJwtException ex) {
-      return TokenValidationResult.of(EXPIRED_JWT_TOKEN);
+      return EXPIRED_JWT_TOKEN;
     } catch (UnsupportedJwtException ex) {
-      return TokenValidationResult.of(UNSUPPORTED_JWT_TOKEN);
+      return UNSUPPORTED_JWT_TOKEN;
     } catch (IllegalArgumentException ex) {
-      return TokenValidationResult.of(EMPTY_JWT);
+      return EMPTY_JWT;
     }
   }
 
@@ -107,7 +106,7 @@ public class JwtTokenProvider {
         .getBody();
   }
 
-  public Long getUserFromJwt(String token) {
+  public Long getUserIdFromJwt(String token) {
     Claims claims = getBody(token);
     return Long.valueOf(claims.get(MEMBER_ID).toString());
   }

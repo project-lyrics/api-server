@@ -28,7 +28,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
           AuthenticationException authException) throws IOException {
     response.setCharacterEncoding(StandardCharsets.UTF_8.name());
     response.setContentType(APPLICATION_JSON_VALUE);
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INVALID_TOKEN)));
+//    response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INVALID_TOKEN)));
   }
 }
