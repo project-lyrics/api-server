@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class EntityCommonField {
+public abstract class BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -46,7 +46,7 @@ public abstract class EntityCommonField {
   @Column(nullable = true)
   private Long deletedBy;
 
-  protected EntityCommonField() {
+  protected BaseEntity() {
     this.status = EntityStatusEnum.IN_USE;
   }
 

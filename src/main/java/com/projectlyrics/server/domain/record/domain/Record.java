@@ -1,11 +1,9 @@
 package com.projectlyrics.server.domain.record.domain;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.common.entity.EntityCommonField;
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.user.entity.User;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,14 +15,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "records")
 @Entity
-public class Record extends EntityCommonField {
+public class Record extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
