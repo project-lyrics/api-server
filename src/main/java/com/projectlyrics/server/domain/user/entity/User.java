@@ -24,20 +24,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
 @Table(name = "users")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends EntityCommonField {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = true)
   private String email;
-
-  @Embedded
-  private EntityCommonField commonField;
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "auth_id")
@@ -47,7 +43,6 @@ public class User {
   public User(Auth auth, String email) {
     this.auth = auth;
     this.email = email;
-    this.commonField = EntityCommonField.withDefaultValue();
   }
 
   public static User of(

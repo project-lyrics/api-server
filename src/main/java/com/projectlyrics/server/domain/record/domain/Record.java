@@ -22,11 +22,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
 @Table(name = "records")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Record {
+public class Record extends EntityCommonField {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,13 +38,9 @@ public class Record {
   @JoinColumn(name = "artist_id")
   private Artist artist;
 
-  @Embedded
-  private EntityCommonField commonField;
-
   @Builder
   private Record(User user, Artist artist) {
     this.user = user;
     this.artist = artist;
-    this.commonField = EntityCommonField.withDefaultValue();
   }
 }

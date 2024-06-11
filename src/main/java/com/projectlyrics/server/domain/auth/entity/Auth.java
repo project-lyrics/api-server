@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.auth.entity;
 
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,11 +19,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
 @Table(name = "auths")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Auth {
+public class Auth extends EntityCommonField {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

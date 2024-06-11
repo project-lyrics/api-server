@@ -22,11 +22,9 @@ import org.springframework.util.StringUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
 @Table(name = "artists")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Artist {
+public class Artist extends EntityCommonField {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,15 +39,11 @@ public class Artist {
   @Column(nullable = true)
   private String profileImageCdnLink;
 
-  @Embedded
-  private EntityCommonField commonField;
-
   @Builder
   private Artist(String name, String englishName, String profileImageCdnLink) {
     this.name = name;
     this.englishName = englishName;
     this.profileImageCdnLink = profileImageCdnLink;
-    this.commonField = EntityCommonField.withDefaultValue();
   }
 
   public void updateName(String name) {
