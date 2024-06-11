@@ -15,9 +15,9 @@ import com.projectlyrics.server.domain.record.dto.request.RecordGetResponse;
 import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.global.exception.NotFoundException;
-import com.projectlyrics.server.utils.ArtistTestUtil;
-import com.projectlyrics.server.utils.RecordTestUtil;
-import com.projectlyrics.server.utils.UserTestUtil;
+import com.projectlyrics.server.fixture.ArtistFixture;
+import com.projectlyrics.server.fixture.RecordFixture;
+import com.projectlyrics.server.fixture.UserFixture;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -41,13 +41,13 @@ class RecordQueryServiceTest {
   @Test
   void 회원_아이디와_아티스트_아이디로부터_알맞은_레코드를_반환한다() {
     // given
-    User user = UserTestUtil.create();
+    User user = UserFixture.create();
     long userId = 1L;
 
-    Artist artist = ArtistTestUtil.createWithName("검정치마");
+    Artist artist = ArtistFixture.createWithName("검정치마");
     long artistId = 1L;
 
-    Record record = RecordTestUtil.create(user, artist);
+    Record record = RecordFixture.create(user, artist);
 
     given(recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId))
         .willReturn(Optional.of(record));
@@ -78,14 +78,14 @@ class RecordQueryServiceTest {
   @Test
   void 회원_아이디로부터_회원이_등록해둔_모든_레코드를_조회한다() {
     // given
-    User user = UserTestUtil.create();
+    User user = UserFixture.create();
     long userId = 1L;
 
-    Artist artist1 = ArtistTestUtil.createWithName("검정치마");
-    Artist artist2 = ArtistTestUtil.createWithName("초록불꽃소년단");
+    Artist artist1 = ArtistFixture.createWithName("검정치마");
+    Artist artist2 = ArtistFixture.createWithName("초록불꽃소년단");
 
-    Record record1 = spy(RecordTestUtil.create(user, artist1));
-    Record record2 = spy(RecordTestUtil.create(user, artist2));
+    Record record1 = spy(RecordFixture.create(user, artist1));
+    Record record2 = spy(RecordFixture.create(user, artist2));
 
     List<Record> records = List.of(record1, record2);
     long cursor = 5L;

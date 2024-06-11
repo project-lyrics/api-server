@@ -1,8 +1,8 @@
-package com.projectlyrics.server.utils;
+package com.projectlyrics.server.fixture;
 
 import com.projectlyrics.server.domain.user.entity.User;
 
-public class UserTestUtil {
+public class UserFixture {
 
   public static User create() {
     return User.builder()

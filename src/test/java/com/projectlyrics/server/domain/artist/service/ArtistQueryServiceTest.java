@@ -11,7 +11,7 @@ import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.utils.ArtistTestUtil;
+import com.projectlyrics.server.fixture.ArtistFixture;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class ArtistQueryServiceTest {
   void 아티스트의_PK를_전달받아_아티스트_데이터를_조회해_반환한다() {
     // given
     Long artistId = 1L;
-    Artist artist = Mockito.spy(ArtistTestUtil.create());
+    Artist artist = Mockito.spy(ArtistFixture.create());
     given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
     doReturn(artistId).when(artist).getId();
 
@@ -57,9 +57,9 @@ class ArtistQueryServiceTest {
     // given
     long cursor = 5L;
     Pageable pageable = PageRequest.of(0, 3);
-    Artist artist = spy(ArtistTestUtil.createWithName("실리카겔"));
-    Artist artist2 = spy(ArtistTestUtil.createWithName("잔나비"));
-    Artist artist3 = spy(ArtistTestUtil.createWithName("너드커넥션"));
+    Artist artist = spy(ArtistFixture.createWithName("실리카겔"));
+    Artist artist2 = spy(ArtistFixture.createWithName("잔나비"));
+    Artist artist3 = spy(ArtistFixture.createWithName("너드커넥션"));
     List<Artist> artistList = List.of(artist, artist2, artist3);
     given(artistQueryRepository.findAllAndNotDeleted(cursor, pageable))
         .willReturn(new SliceImpl<>(artistList, pageable, true));
