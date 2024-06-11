@@ -28,10 +28,9 @@ public class ArtistQueryRepositoryTest {
     artistCommandRepository.save(artist2);
 
     // when
-    var searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("검정치마", 0L,
-        PageRequest.of(0, 3));
+    var searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("검정치마", 0L, PageRequest.of(0, 3));
 
     // then
-    assertThat(searchedArtists.getContent().getFirst()).isEqualTo(artist1);
+    assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
   }
 }
