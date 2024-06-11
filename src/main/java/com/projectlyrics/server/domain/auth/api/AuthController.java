@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
-      @RequestBody UserLoginRequest loginRequest
+      @RequestBody @Valid UserLoginRequest loginRequest
   ) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
