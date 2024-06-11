@@ -19,11 +19,11 @@ public enum ErrorCode {
 
   // Auth
   INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "00400", "The token is not valid."),
+  WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "00400", "Wrong token type is passed."),
   INVALID_KEY(HttpStatus.UNAUTHORIZED, "00401", "The key is not valid."),
-  ACCESS_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "00601", "The access token is expired."),
+  ACCESS_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "00601", "The token is expired."),
   UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "00601", "It is unsupported authentication provider"),
   REFRESH_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "00601", "The refresh token could not be found."),
-  WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "00601", "Wrong token type is passed."),
 
   // User
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "00600", "The user data could not be found."),
