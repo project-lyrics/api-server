@@ -28,7 +28,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
             .selectFrom(QArtist.artist)
             .where(
                 QArtist.artist.id.eq(artistId),
-                QArtist.artist.commonField.deletedAt.isNull()
+                QArtist.artist.deletedAt.isNull()
             )
             .fetchOne());
   }
@@ -39,7 +39,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
         .selectFrom(QArtist.artist)
         .where(
             goeCursorId(cursor),
-            QArtist.artist.commonField.deletedAt.isNull()
+            QArtist.artist.deletedAt.isNull()
         )
         .limit(pageable.getPageSize() + 1)
         .fetch();
@@ -53,7 +53,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
         .selectFrom(QArtist.artist)
         .where(
             goeCursorId(cursor),
-            QArtist.artist.commonField.deletedAt.isNull(),
+            QArtist.artist.deletedAt.isNull(),
             anyOf(
                 QArtist.artist.name.contains(query),
                 QArtist.artist.englishName.contains(query))

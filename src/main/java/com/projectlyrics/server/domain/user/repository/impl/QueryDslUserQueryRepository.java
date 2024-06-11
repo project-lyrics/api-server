@@ -23,7 +23,7 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
             .where(
                 QUser.user.auth.socialId.eq(socialId),
                 QUser.user.auth.authProvider.eq(authProvider),
-                QUser.user.commonField.deletedAt.isNull()
+                QUser.user.deletedAt.isNull()
             )
             .fetchOne()
     );
@@ -36,7 +36,7 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
             .selectFrom(QUser.user)
             .where(
                 QUser.user.id.eq(id),
-                QUser.user.commonField.deletedAt.isNull()
+                QUser.user.deletedAt.isNull()
             )
             .fetchOne()
     );

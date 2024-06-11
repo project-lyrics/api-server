@@ -26,7 +26,7 @@ public class QueryDslRecordQueryRepository implements RecordQueryRepository {
             .where(
                 QRecord.record.user.id.eq(userId),
                 QRecord.record.artist.id.eq(artistId),
-                QRecord.record.commonField.deletedAt.isNull()
+                QRecord.record.deletedAt.isNull()
             )
             .fetchOne()
     );
@@ -39,7 +39,7 @@ public class QueryDslRecordQueryRepository implements RecordQueryRepository {
         .where(
             cursor == null ? null : QRecord.record.id.goe(cursor),
             QRecord.record.user.id.eq(userId),
-            QRecord.record.commonField.deletedAt.isNull()
+            QRecord.record.deletedAt.isNull()
         )
         .limit(pageable.getPageSize() + 1)
         .fetch();

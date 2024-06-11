@@ -34,6 +34,6 @@ public class RecordCommandService {
   public void deleteRecord(long userId, long artistId) {
     Record record = recordQueryService.getRecordByUserIdAndArtistId(userId, artistId);
 
-    record.getCommonField().delete(userId, Clock.systemDefaultZone());
+    record.delete(userId, Clock.systemDefaultZone());
   }
 }
