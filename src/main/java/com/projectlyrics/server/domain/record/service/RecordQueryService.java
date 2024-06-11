@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +26,9 @@ public class RecordQueryService {
   }
 
   public CursorBasePaginatedResponse<RecordGetResponse> getRecordsByUserId(long userId, long cursor, Pageable pageable) {
-    var records = recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable)
+    Slice<RecordGetResponse> records = recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable)
         .map(RecordGetResponse::of);
-    var nextCursor = PageUtils.getNextCursorOf(records);
+    long nextCursor = PageUtils.getNextCursorOf(records);
 
     return CursorBasePaginatedResponse.of(records, nextCursor, cursor);
   }

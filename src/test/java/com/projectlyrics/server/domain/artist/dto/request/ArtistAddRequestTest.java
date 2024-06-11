@@ -1,10 +1,13 @@
 package com.projectlyrics.server.domain.artist.dto.request;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,10 +19,10 @@ class ArtistAddRequestTest {
   @ValueSource(strings = {"", "     "})
   void 아티스트의_이름이_빈_문자열이나_공백_문자열이라면_validation_에러가_발생한다(String name) {
     // given
-    var addArtistRequest = createAddArtistRequest(name, "NELL", "https://~");
+    ArtistAddRequest addArtistRequest = createAddArtistRequest(name, "NELL", "https://~");
 
     // when
-    var violation = validator.validate(addArtistRequest);
+    Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
 
     // then
     violation.forEach(error -> {
@@ -31,10 +34,10 @@ class ArtistAddRequestTest {
   @ValueSource(strings = {"", "     "})
   void 아티스트의_영어_이름이_문자열이나_빈_문자열_또는_공백_문자열이라면_validation_에러가_발생한다(String englishName) {
     // given
-    var addArtistRequest = createAddArtistRequest("넬", englishName, "https://~");
+    ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", englishName, "https://~");
 
     // when
-    var violation = validator.validate(addArtistRequest);
+    Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
 
     // then
     violation.forEach(error -> {
@@ -45,10 +48,10 @@ class ArtistAddRequestTest {
   @Test
   void 아티스트의_이미지_경로가_https로_시작하지_않는_문자열이라면_validation_에러가_발생한다() {
     // given
-    var addArtistRequest = createAddArtistRequest("넬", "NELL", "imageUrl");
+    ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", "NELL", "imageUrl");
 
     // when
-    var violation = validator.validate(addArtistRequest);
+    Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
 
     // then
     violation.forEach(error -> {

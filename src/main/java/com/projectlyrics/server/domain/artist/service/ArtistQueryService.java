@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.common.util.PageUtils;
 import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +26,21 @@ public class ArtistQueryService {
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-    var artistList = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
-        .map(ArtistGetResponse::of);
-    var nextCursor = PageUtils.getNextCursorOf(artistList);
+    Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
+            .map(ArtistGetResponse::of);
+    long nextCursor = PageUtils.getNextCursorOf(artistSlice);
 
-    return CursorBasePaginatedResponse.of(artistList, nextCursor, cursor);
+    return CursorBasePaginatedResponse.of(artistSlice, nextCursor, cursor);
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-    var searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(query, cursor, pageable)
-        .map(ArtistGetResponse::of);
-    var nextCursor = PageUtils.getNextCursorOf(searchedArtists);
+    Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(
+                query,
+                cursor,
+                pageable
+            )
+            .map(ArtistGetResponse::of);
+    long nextCursor = PageUtils.getNextCursorOf(searchedArtists);
 
     return CursorBasePaginatedResponse.of(searchedArtists, nextCursor, cursor);
   }

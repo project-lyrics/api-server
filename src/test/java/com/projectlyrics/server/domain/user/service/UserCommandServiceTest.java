@@ -37,9 +37,9 @@ class UserCommandServiceTest {
   @Test
   void 리프레쉬_토큰으로부터_새로운_액세스_토큰을_발급한다() {
     // given
-    var accessToken = "access_token";
-    var refreshToken = "refresh_token";
-    var userId = 1L;
+    String accessToken = "access_token";
+    String refreshToken = "refresh_token";
+    long userId = 1L;
 
     given(jwtTokenProvider.readUserIdFrom(refreshToken)).willReturn(userId);
     given(jwtTokenProvider.issueTokens(userId)).willReturn(new AuthToken(accessToken, null));

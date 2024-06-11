@@ -5,10 +5,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.record.dto.request.RecordAddRequest;
 import com.projectlyrics.server.domain.record.repository.RecordCommandRepository;
+import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import com.projectlyrics.server.utils.RecordTestUtil;
@@ -43,11 +45,11 @@ class RecordCommandServiceTest {
   void 전달받은_데이터로_새로운_레코드를_추가한다() {
     // given
     long artistId = 1L;
-    var artist = ArtistTestUtil.createWithName("검정치마");
+    Artist artist = ArtistTestUtil.createWithName("검정치마");
     given(artistQueryService.getArtistById(artistId)).willReturn(artist);
 
     long userId = 1L;
-    var user = UserTestUtil.create();
+    User user = UserTestUtil.create();
     given(userQueryService.getUserById(userId)).willReturn(user);
 
     given(recordCommandRepository.save(any(Record.class))).willReturn(RecordTestUtil.create(user, artist));
@@ -57,7 +59,7 @@ class RecordCommandServiceTest {
 
     // then
     then(recordCommandRepository).should().save(addRecordArgumentCaptor.capture());
-    var captorValue = addRecordArgumentCaptor.getValue();
+    Record captorValue = addRecordArgumentCaptor.getValue();
 
     assertThat(captorValue.getArtist()).isEqualTo(artist);
     assertThat(captorValue.getUser()).isEqualTo(user);

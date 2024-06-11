@@ -8,7 +8,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
+import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.utils.ArtistTestUtil;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,12 +37,12 @@ class ArtistQueryServiceTest {
   void 아티스트의_PK를_전달받아_아티스트_데이터를_조회해_반환한다() {
     // given
     Long artistId = 1L;
-    var artist = Mockito.spy(ArtistTestUtil.create());
+    Artist artist = Mockito.spy(ArtistTestUtil.create());
     given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
     doReturn(artistId).when(artist).getId();
 
     // when
-    var getArtistResponse = ArtistGetResponse.of(sut.getArtistById(artistId));
+    ArtistGetResponse getArtistResponse = ArtistGetResponse.of(sut.getArtistById(artistId));
 
     // then
     then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
@@ -52,12 +55,12 @@ class ArtistQueryServiceTest {
   @Test
   void 아티스트의_데이터를_커서_기반_페이지네이션으로_조회해_반환한다() {
     // given
-    var cursor = 5L;
-    var pageable = PageRequest.of(0, 3);
-    var artist = spy(ArtistTestUtil.createWithName("실리카겔"));
-    var artist2 = spy(ArtistTestUtil.createWithName("잔나비"));
-    var artist3 = spy(ArtistTestUtil.createWithName("너드커넥션"));
-    var artistList = List.of(artist, artist2, artist3);
+    long cursor = 5L;
+    Pageable pageable = PageRequest.of(0, 3);
+    Artist artist = spy(ArtistTestUtil.createWithName("실리카겔"));
+    Artist artist2 = spy(ArtistTestUtil.createWithName("잔나비"));
+    Artist artist3 = spy(ArtistTestUtil.createWithName("너드커넥션"));
+    List<Artist> artistList = List.of(artist, artist2, artist3);
     given(artistQueryRepository.findAllAndNotDeleted(cursor, pageable))
         .willReturn(new SliceImpl<>(artistList, pageable, true));
     doReturn(5L).when(artist).getId();
@@ -65,7 +68,7 @@ class ArtistQueryServiceTest {
     doReturn(7L).when(artist3).getId();
 
     // when
-    var artistListResponse = sut.getArtistList(cursor, pageable);
+    CursorBasePaginatedResponse<ArtistGetResponse> artistListResponse = sut.getArtistList(cursor, pageable);
 
     // then
     then(artistQueryRepository).should().findAllAndNotDeleted(cursor, pageable);
@@ -79,15 +82,15 @@ class ArtistQueryServiceTest {
   }
 
   @Test
-  void 비어_있는_아티스트_리스트에_대해_널_예외가_발생하지_않는다() {
+  void 비어_있는_아티스트_리스트에_대해_null_예외가_발생하지_않는다() {
     // given
-    var cursor = 0L;
-    var pageable = PageRequest.of(0, 3);
+    long cursor = 0L;
+    Pageable pageable = PageRequest.of(0, 3);
     given(artistQueryRepository.findAllAndNotDeleted(cursor, pageable))
         .willReturn(new SliceImpl<>(List.of(), pageable, true));
 
     // when
-    var artistsResponse = sut.getArtistList(cursor, pageable);
+    CursorBasePaginatedResponse<ArtistGetResponse> artistsResponse = sut.getArtistList(cursor, pageable);
 
     // then
     assertThat(artistsResponse).isNotNull();
