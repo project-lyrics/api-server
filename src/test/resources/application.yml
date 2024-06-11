@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/lyrics
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:tcp://localhost:9092/feelin
+    username: feelin
+    password: 1234
+    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
