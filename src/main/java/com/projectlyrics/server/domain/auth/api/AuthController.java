@@ -40,7 +40,8 @@ public class AuthController {
       @RequestHeader("Authorization") String refreshToken
   ) {
     return ResponseEntity
-        .ok(SuccessResponse.of(
+        .status(HttpStatus.OK)
+        .body(SuccessResponse.of(
             SuccessMessage.TOKEN_REISSUE_SUCCESS,
             userCommandService.reissueAccessToken(refreshToken)
         ));
