@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.artist.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.fixture.ArtistFixture;
+import com.projectlyrics.server.common.fixture.ArtistFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

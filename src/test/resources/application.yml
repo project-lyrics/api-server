@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    open-in-view: false
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+jwt:
+  secret: asdfasdfasdfasdfasdfasdfasdfasdf

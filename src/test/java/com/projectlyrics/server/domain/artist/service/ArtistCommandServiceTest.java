@@ -15,7 +15,7 @@ import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.fixture.ArtistFixture;
+import com.projectlyrics.server.common.fixture.ArtistFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

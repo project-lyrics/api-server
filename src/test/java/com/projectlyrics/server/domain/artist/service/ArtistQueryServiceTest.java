@@ -11,7 +11,7 @@ import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.fixture.ArtistFixture;
+import com.projectlyrics.server.common.fixture.ArtistFixture;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

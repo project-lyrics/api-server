@@ -1,4 +1,4 @@
-package com.projectlyrics.server.fixture;
+package com.projectlyrics.server.common.fixture;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.record.domain.Record;
