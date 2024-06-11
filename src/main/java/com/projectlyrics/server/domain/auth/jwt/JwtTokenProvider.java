@@ -28,8 +28,11 @@ public class JwtTokenProvider {
   private static final long ACCESS_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L * 14;
   private static final long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 1000L * 14;
 
-  @Value("${jwt.secret}")
-  private String JWT_SECRET;
+  private final String jwtSecret;
+
+  public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret) {
+    this.jwtSecret = jwtSecret;
+  }
 
   public AuthToken issueTokens(long id) {
     UserAuthentication authentication = UserAuthentication.of(id);
@@ -68,7 +71,7 @@ public class JwtTokenProvider {
   }
 
   private SecretKey getSigningKey() {
-    String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes()); //SecretKey 통해 서명 생성
+    String encodedKey = Base64.getEncoder().encodeToString(jwtSecret.getBytes()); //SecretKey 통해 서명 생성
     return Keys.hmacShaKeyFor(encodedKey.getBytes());   //일반적으로 HMAC (Hash-based Message Authentication Code) 알고리즘 사용
   }
 

@@ -31,8 +31,9 @@ public class UserCommandService {
   protected AuthToken getToken(UserInfoResponse userinfo) {
     User user = userQueryService.getUserBySocialInfoOrNull(userinfo.socialId(), userinfo.authProvider());
 
-    if (user == null)
+    if (user == null) {
       user = createUser(userinfo.toEntity());
+    }
 
     return jwtTokenProvider.issueTokens(user.getId());
   }
