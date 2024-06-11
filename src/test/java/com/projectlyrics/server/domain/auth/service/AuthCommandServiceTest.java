@@ -1,29 +1,25 @@
-package com.projectlyrics.server.domain.user.service;
+package com.projectlyrics.server.domain.auth.service;
 
-import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.INVALID_JWT_TOKEN;
-import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
-import com.projectlyrics.server.domain.auth.jwt.dto.TokenValidationResult;
+import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
-import io.jsonwebtoken.Claims;
-import java.util.Date;
+import com.projectlyrics.server.domain.user.service.UserQueryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class UserCommandServiceTest {
+class AuthCommandServiceTest {
 
   @InjectMocks
-  private UserCommandService sut;
+  private AuthCommandService sut;
 
   @Mock
   private UserCommandRepository userCommandRepository;

@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueRespons
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
-import com.projectlyrics.server.domain.user.service.UserCommandService;
+import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-  private final UserCommandService userCommandService;
+  private final AuthCommandService authCommandService;
 
   @PostMapping("/login")
   public ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
@@ -31,7 +31,7 @@ public class AuthController {
         .status(HttpStatus.CREATED)
         .body(SuccessResponse.of(
             SuccessMessage.LOGIN_SUCCESS,
-            userCommandService.signIn(socialAccessToken, loginRequest)
+            authCommandService.signIn(socialAccessToken, loginRequest)
         ));
   }
 
@@ -42,7 +42,7 @@ public class AuthController {
     return ResponseEntity
         .ok(SuccessResponse.of(
             SuccessMessage.TOKEN_REISSUE_SUCCESS,
-            userCommandService.reissueAccessToken(refreshToken)
+            authCommandService.reissueAccessToken(refreshToken)
         ));
   }
 }
