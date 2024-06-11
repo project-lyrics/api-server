@@ -5,6 +5,8 @@ import com.projectlyrics.server.domain.record.domain.QRecord;
 import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +36,7 @@ public class QueryDslRecordQueryRepository implements RecordQueryRepository {
 
   @Override
   public Slice<Record> findAllByUserIdAndNotDeleted(long userId, Long cursor, Pageable pageable) {
-    var content = jpaQueryFactory
+    List<Record> content = jpaQueryFactory
         .selectFrom(QRecord.record)
         .where(
             cursor == null ? null : QRecord.record.id.goe(cursor),

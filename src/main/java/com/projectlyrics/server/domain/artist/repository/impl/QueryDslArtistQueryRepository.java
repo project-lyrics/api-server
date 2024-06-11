@@ -8,6 +8,8 @@ import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +37,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
 
   @Override
   public Slice<Artist> findAllAndNotDeleted(Long cursor, Pageable pageable) {
-    var content = jpaQueryFactory
+    List<Artist> content = jpaQueryFactory
         .selectFrom(QArtist.artist)
         .where(
             goeCursorId(cursor),
@@ -49,7 +51,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
 
   @Override
   public Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable) {
-    var content = jpaQueryFactory
+    List<Artist> content = jpaQueryFactory
         .selectFrom(QArtist.artist)
         .where(
             goeCursorId(cursor),
