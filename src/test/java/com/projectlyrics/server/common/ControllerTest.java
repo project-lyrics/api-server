@@ -3,7 +3,7 @@ package com.projectlyrics.server.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
-import com.projectlyrics.server.domain.auth.service.AuthCommandService;
+import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.record.service.RecordCommandService;
 import com.projectlyrics.server.domain.record.service.RecordQueryService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
@@ -37,6 +37,6 @@ public abstract class ControllerTest {
     protected UserQueryService userQueryService;
 
     @MockBean
-    protected AuthCommandService authCommandService;
+    protected UserCommandService userCommandService;
 
 }

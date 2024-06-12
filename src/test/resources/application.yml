@@ -24,3 +24,5 @@ spring:
 
 jwt:
   secret: asdfasdfasdfasdfasdfasdfasdfasdf
+auth:
+  free-apis: /api/v1/auth/*
