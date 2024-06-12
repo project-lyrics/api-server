@@ -41,7 +41,7 @@ public class RecordController {
   @DeleteMapping("/{artistId}")
   public ResponseEntity<Void> deleteRecord(
       Principal principal,
-      @PathVariable Long artistId
+      @PathVariable(name = "artistId") Long artistId
   ) {
     recordCommandService.deleteRecord(Long.parseLong(principal.getName()), artistId);
 
@@ -68,7 +68,7 @@ public class RecordController {
   @GetMapping("/{artistId}")
   public ResponseEntity<RecordGetResponse> getRecord(
       Principal principal,
-      @PathVariable Long artistId
+      @PathVariable(name = "airtistId") Long artistId
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
