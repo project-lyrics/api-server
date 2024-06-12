@@ -75,16 +75,6 @@ public class JwtTokenProvider {
     return Keys.hmacShaKeyFor(encodedKey.getBytes());   //일반적으로 HMAC (Hash-based Message Authentication Code) 알고리즘 사용
   }
 
-  public Long readUserIdFrom(String token) {
-    Claims claims = Jwts.parserBuilder()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
-
-    return Long.valueOf(claims.get(MEMBER_ID).toString());
-  }
-
   public JwtValidationType validateToken(String token) {
     try {
       Claims claims = getBody(token);

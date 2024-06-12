@@ -46,7 +46,7 @@ public class UserCommandService {
   public UserTokenReissueResponse reissueAccessToken(String refreshToken) {
     String extractedToken = TokenUtils.extractToken(refreshToken);
 
-    Long userId = jwtTokenProvider.readUserIdFrom(extractedToken);
+    Long userId = jwtTokenProvider.getUserIdFromJwt(extractedToken);
     String accessToken = jwtTokenProvider.issueTokens(userId).accessToken();
 
     return new UserTokenReissueResponse(accessToken);
