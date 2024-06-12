@@ -7,7 +7,9 @@ import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
+import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.message.SuccessMessage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,62 +34,79 @@ public class ArtistController implements ArtistControllerSwagger {
   private final ArtistCommandService artistCommandService;
 
   @PostMapping
-  public ResponseEntity<ArtistAddResponse> addArtist(
+  public ResponseEntity<SuccessResponse<ArtistAddResponse>> addArtist(
       @RequestBody @Valid ArtistAddRequest request
   ) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(artistCommandService.addArtist(request));
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_ADD_SUCCESS,
+            artistCommandService.addArtist(request)
+        ));
   }
 
   @PatchMapping("/{artistId}")
-  public ResponseEntity<ArtistUpdateResponse> updateArtist(
+  public ResponseEntity<SuccessResponse<ArtistUpdateResponse>> updateArtist(
       @PathVariable(name = "artistId") Long artistId,
       @RequestBody ArtistUpdateRequest request
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistCommandService.updateArtist(artistId, request));
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_UPDATE_SUCCESS,
+            artistCommandService.updateArtist(artistId, request)
+        ));
   }
 
   @DeleteMapping("/{artistId}")
-  public ResponseEntity<Void> deleteArtist(
+  public ResponseEntity<SuccessResponse<Void>> deleteArtist(
       @PathVariable(name = "artistId") Long artistId
   ) {
     artistCommandService.deleteArtist(artistId);
 
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
-        .body(null);
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_DELETE_SUCCESS
+        ));
   }
 
   @GetMapping("/{artistId}")
-  public ResponseEntity<ArtistGetResponse> getArtist(
+  public ResponseEntity<SuccessResponse<ArtistGetResponse>> getArtist(
       @PathVariable(name = "artistId") Long artistId
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(ArtistGetResponse.of(artistQueryService.getArtistById(artistId)));
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_GET_SUCCESS,
+            ArtistGetResponse.of(artistQueryService.getArtistById(artistId))
+        ));
   }
 
   @GetMapping
-  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
+  public ResponseEntity<SuccessResponse<CursorBasePaginatedResponse<ArtistGetResponse>>> getArtistList(
       @RequestParam(required = false) Long cursor,
       @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_GET_LIST_SUCCESS,
+            artistQueryService.getArtistList(cursor, PageRequest.of(0, size))
+        ));
   }
 
   @GetMapping("/search")
-  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
+  public ResponseEntity<SuccessResponse<CursorBasePaginatedResponse<ArtistGetResponse>>> searchArtist(
       @RequestParam(required = false) Long cursor,
       @RequestParam(required = false, defaultValue = "5") int size,
       @RequestParam String query
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));
+        .body(SuccessResponse.of(
+            SuccessMessage.ARTIST_GET_LIST_BY_NAME_SUCCESS,
+                artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size))
+        ));
   }
 }

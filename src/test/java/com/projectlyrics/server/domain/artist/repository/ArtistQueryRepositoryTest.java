@@ -39,7 +39,7 @@ public class ArtistQueryRepositoryTest {
         PageRequest.of(0, 3));
 
     // then
-    assertThat(searchedArtists.getContent().getFirst()).isEqualTo(artist1);
+    assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
   }
 
   @Test
