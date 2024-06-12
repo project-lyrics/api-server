@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.auth.service;
+package com.projectlyrics.server.domain.user.service;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class AuthCommandService {
+public class UserCommandService {
 
   private final UserCommandRepository userCommandRepository;
   private final JwtTokenProvider jwtTokenProvider;
