@@ -28,8 +28,7 @@ public class RecordQueryService {
   public CursorBasePaginatedResponse<RecordGetResponse> getRecordsByUserId(long userId, long cursor, Pageable pageable) {
     Slice<RecordGetResponse> records = recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable)
         .map(RecordGetResponse::of);
-    long nextCursor = PageUtils.getNextCursorOf(records);
 
-    return CursorBasePaginatedResponse.of(records, nextCursor, cursor);
+    return CursorBasePaginatedResponse.of(records);
   }
 }

@@ -100,9 +100,7 @@ class RecordQueryServiceTest {
 
     // then
     then(recordQueryRepository).should().findAllByUserIdAndNotDeleted(userId, cursor, pageable);
-    assertThat(recordGetAllByUserResponse.currentCursor()).isEqualTo(String.valueOf(cursor));
-    assertThat(recordGetAllByUserResponse.nextCursor()).isEqualTo(String.valueOf(record2.getId() + 1));
-    assertThat(recordGetAllByUserResponse.itemSize()).isEqualTo(records.size());
-    assertThat(recordGetAllByUserResponse.totalSize()).isEqualTo(pageable.getPageSize());
+    assertThat(recordGetAllByUserResponse.hasNext()).isTrue();
+    assertThat(recordGetAllByUserResponse.data().size()).isEqualTo(records.size());
   }
 }

@@ -5,7 +5,6 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.domain.common.util.PageUtils;
 import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +27,8 @@ public class ArtistQueryService {
   public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
     Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
             .map(ArtistGetResponse::of);
-    long nextCursor = PageUtils.getNextCursorOf(artistSlice);
 
-    return CursorBasePaginatedResponse.of(artistSlice, nextCursor, cursor);
+    return CursorBasePaginatedResponse.of(artistSlice);
   }
 
   public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
@@ -40,8 +38,7 @@ public class ArtistQueryService {
                 pageable
             )
             .map(ArtistGetResponse::of);
-    long nextCursor = PageUtils.getNextCursorOf(searchedArtists);
 
-    return CursorBasePaginatedResponse.of(searchedArtists, nextCursor, cursor);
+    return CursorBasePaginatedResponse.of(searchedArtists);
   }
 }
