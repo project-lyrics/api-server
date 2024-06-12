@@ -9,6 +9,7 @@ public class FeelinException extends RuntimeException {
   private final ErrorCode errorCode;
 
   public FeelinException(ErrorCode errorCode) {
+    super(errorCode.getErrorMessage());
     this.errorCode = errorCode;
   }
 

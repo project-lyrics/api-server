@@ -72,10 +72,8 @@ class ArtistQueryServiceTest {
 
     // then
     then(artistQueryRepository).should().findAllAndNotDeleted(cursor, pageable);
-    assertThat(artistListResponse.currentCursor()).isEqualTo(String.valueOf(cursor));
-    assertThat(artistListResponse.nextCursor()).isEqualTo(String.valueOf(artist3.getId() + 1));
-    assertThat(artistListResponse.itemSize()).isEqualTo(artistList.size());
-    assertThat(artistListResponse.totalSize()).isEqualTo(pageable.getPageSize());
+    assertThat(artistListResponse.data().size()).isEqualTo(artistList.size());
+    assertThat(artistListResponse.hasNext()).isTrue();
     for (int i = 0; i < artistList.size(); i++) {
       assertThat(artistListResponse.data().get(i).name()).isEqualTo(artistList.get(i).getName());
     }
