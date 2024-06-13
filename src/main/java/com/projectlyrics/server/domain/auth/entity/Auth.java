@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.auth.entity;
 
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,11 +30,15 @@ public class Auth extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private AuthProvider authProvider;
 
+  @Enumerated
+  private Role role;
+
   @Column(nullable = false)
   private String socialId;
 
-  public Auth(String socialId, AuthProvider authProvider) {
+  public Auth(String socialId, AuthProvider authProvider, Role role) {
     this.socialId = socialId;
     this.authProvider = authProvider;
+    this.role = role;
   }
 }

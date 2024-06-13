@@ -1,8 +1,8 @@
-package com.projectlyrics.server.domain.auth.service.kakao;
+package com.projectlyrics.server.domain.auth.service.social.kakao;
 
-import com.projectlyrics.server.domain.auth.dto.response.UserInfoResponse;
-import com.projectlyrics.server.domain.auth.service.SocialService;
-import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoUserInfoResponse;
+import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
+import com.projectlyrics.server.domain.auth.service.social.SocialService;
+import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ public class KakaoSocialService implements SocialService {
   private final KakaoSocialDataApiClient kakaoApiClient;
 
   @Override
-  public UserInfoResponse getSocialData(String socialAccessToken) {
+  public AuthSocialInfo getSocialData(String socialAccessToken) {
     KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
 
     return kakaoUserInfo.toUserInfo();

@@ -2,6 +2,7 @@ package com.projectlyrics.server.global.handler;
 
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
+import com.projectlyrics.server.global.exception.AuthException;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
         .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
+  }
+
+  @ExceptionHandler(AuthException.class)
+  public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
+    return ResponseEntity
+        .status(e.getErrorCode().getResponseStatus())
+        .body(ErrorResponse.of(e.getErrorCode()));
   }
 }

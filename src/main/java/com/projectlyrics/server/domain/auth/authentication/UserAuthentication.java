@@ -17,8 +17,6 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
   }
 
   public static UserAuthentication of(Long id, String authority) {
-    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
-
-    return new UserAuthentication(id, null, authorities);
+    return new UserAuthentication(id, null, List.of(new SimpleGrantedAuthority(authority)));
   }
 }

@@ -1,11 +1,11 @@
 package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
-import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.common.message.SuccessMessage;
-import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
-import com.projectlyrics.server.domain.user.service.UserCommandService;
+import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-  private final UserCommandService userCommandService;
+  private final AuthCommandService authCommandService;
 
   @PostMapping("/login")
-  public ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
+  public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
       @RequestBody @Valid UserLoginRequest loginRequest
   ) {
@@ -32,19 +32,35 @@ public class AuthController {
         .status(HttpStatus.CREATED)
         .body(SuccessResponse.of(
             SuccessMessage.LOGIN_SUCCESS,
-            userCommandService.signIn(socialAccessToken, loginRequest)
+            authCommandService.signIn(socialAccessToken, loginRequest)
         ));
   }
 
   @PostMapping("/token")
-  public ResponseEntity<SuccessResponse<UserTokenReissueResponse>> reissueToken(
+  public ResponseEntity<SuccessResponse<AuthTokenReissueResponse>> reissueToken(
       @RequestHeader("Authorization") String refreshToken
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(SuccessResponse.of(
             SuccessMessage.TOKEN_REISSUE_SUCCESS,
-            userCommandService.reissueAccessToken(refreshToken)
+            authCommandService.reissueAccessToken(refreshToken)
+        ));
+  }
+
+  @PostMapping("/admin")
+  public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
+      @RequestHeader("Authorization") String socialAccessToken,
+      @RequestHeader("Admin-Secret") String adminSecret,
+      @RequestBody @Valid UserLoginRequest loginRequest
+  ) {
+    authCommandService.validateAdminSecret(adminSecret);
+
+    return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body(SuccessResponse.of(
+            SuccessMessage.ADMIN_CREATE_SUCCESS,
+            authCommandService.signIn(socialAccessToken, loginRequest)
         ));
   }
 }

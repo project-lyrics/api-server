@@ -24,7 +24,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
   @Value("#{'${auth.free-apis}'.split(',')}")
-  String[] authFreeApis;
+  private String[] authFreeApis;
+
+  @Value("#{'${auth.admin-apis}'.split(',')}")
+  private String[] authAdminApis;
 
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -75,6 +78,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(requests ->
             requests
                 .requestMatchers(authFreeApis).permitAll()
+                .requestMatchers(authAdminApis).hasRole("ADMIN")
                 .anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
