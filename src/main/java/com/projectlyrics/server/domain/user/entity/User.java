@@ -4,7 +4,6 @@ import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
-import com.projectlyrics.server.domain.common.entity.EntityCommonField;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

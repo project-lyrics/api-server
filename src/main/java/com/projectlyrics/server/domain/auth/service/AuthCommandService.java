@@ -43,15 +43,6 @@ public class AuthCommandService {
     this.userCommandService = userCommandService;
   }
 
-  /*
-  * behavior of AuthCommandService
-  * 1. sign in user(or admin) with social access token
-  *   - get social data from social service
-  *   - check if user is signed up
-  *     - if signed up, issue token and return login response
-  *     - if not signed up, first create user then issue token and return login response
-  * */
-
   public AuthLoginResponse signIn(String socialAccessToken, UserLoginRequest request) {
     AuthSocialInfo authSocialInfo = getAuthSocialInfo(socialAccessToken, request.authProvider());
     AuthUserSignUpResult userSignUpResult = getSignUpResult(authSocialInfo);
@@ -83,7 +74,7 @@ public class AuthCommandService {
   public AuthTokenReissueResponse reissueAccessToken(String refreshToken) {
     String extractedToken = TokenUtils.extractToken(refreshToken);
 
-    Long userId = jwtTokenProvider.readUserIdFrom(extractedToken);
+    Long userId = jwtTokenProvider.getUserIdFromJwt(extractedToken);
     AuthToken authToken = jwtTokenProvider.issueTokens(userId);
 
     return AuthTokenReissueResponse.from(authToken);
