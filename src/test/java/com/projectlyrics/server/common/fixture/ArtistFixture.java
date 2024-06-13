@@ -1,8 +1,8 @@
-package com.projectlyrics.server.utils;
+package com.projectlyrics.server.common.fixture;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
-public class ArtistTestUtil {
+public class ArtistFixture {
 
   public static Artist create() {
     return Artist.builder()

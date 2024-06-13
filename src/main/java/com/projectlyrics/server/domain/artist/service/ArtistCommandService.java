@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
+import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
@@ -23,12 +24,12 @@ public class ArtistCommandService {
   private final Clock clock;
 
   public ArtistAddResponse addArtist(ArtistAddRequest request) {
-    var savedArtist = artistCommandRepository.save(request.toEntity());
+    Artist savedArtist = artistCommandRepository.save(request.toEntity());
     return ArtistAddResponse.of(savedArtist.getId());
   }
 
   public ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request) {
-    var artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
+    Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     artist.updateIfNotBlank(request.name(), artist::updateName);
@@ -39,10 +40,10 @@ public class ArtistCommandService {
   }
 
   public void deleteArtist(Long artistId) {
-    var artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
+    Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
     // TODO: 인증 구현되면 deletedById 값 수정
-    artist.getCommonField().delete(1L, clock.systemDefaultZone());
+    artist.delete(1L, clock.systemDefaultZone());
   }
 }

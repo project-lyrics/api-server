@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +29,12 @@ public class UserCommandService {
     return UserLoginResponse.of(getToken(userInfo));
   }
 
-  protected AuthToken getToken(UserInfoResponse userinfo) {
+  private AuthToken getToken(UserInfoResponse userinfo) {
     User user = userQueryService.getUserBySocialInfoOrNull(userinfo.socialId(), userinfo.authProvider());
 
-    if (user == null)
+    if (user == null) {
       user = createUser(userinfo.toEntity());
+    }
 
     return jwtTokenProvider.issueTokens(user.getId());
   }
@@ -44,7 +46,7 @@ public class UserCommandService {
   public UserTokenReissueResponse reissueAccessToken(String refreshToken) {
     String extractedToken = TokenUtils.extractToken(refreshToken);
 
-    Long userId = jwtTokenProvider.readUserIdFrom(extractedToken);
+    Long userId = jwtTokenProvider.getUserIdFromJwt(extractedToken);
     AuthToken authToken = jwtTokenProvider.issueTokens(userId);
 
     return UserTokenReissueResponse.from(authToken);

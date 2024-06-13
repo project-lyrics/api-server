@@ -1,10 +1,10 @@
-package com.projectlyrics.server.utils;
+package com.projectlyrics.server.common.fixture;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.user.entity.User;
 
-public class RecordTestUtil {
+public class RecordFixture {
 
   public static Record create(User user, Artist artist) {
     return Record.builder()

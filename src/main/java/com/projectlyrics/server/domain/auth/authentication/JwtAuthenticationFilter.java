@@ -36,12 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+          throws ServletException, IOException {
     try {
       String token = getAccessTokenFromRequest(request);
 
-      if (isValidToken(token, response))
+      if (isValidToken(token, response)) {
         setUserIntoContext(token, request);
+      }
     } catch (RuntimeException e) {
       filterExceptionHandler.handleFilterException(e, response);
     }
@@ -59,8 +61,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private boolean isValidToken(String token, HttpServletResponse response) {
     JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
-    if (validationResult == EXPIRED_JWT_TOKEN)
+    if (validationResult == EXPIRED_JWT_TOKEN) {
       throw new JwtValidationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+    }
 
     return validationResult == VALID_JWT;
   }

@@ -47,7 +47,7 @@ public class ArtistController implements ArtistControllerSwagger {
 
   @PatchMapping("/{artistId}")
   public ResponseEntity<SuccessResponse<ArtistUpdateResponse>> updateArtist(
-      @PathVariable Long artistId,
+      @PathVariable(name = "artistId") Long artistId,
       @RequestBody ArtistUpdateRequest request
   ) {
     return ResponseEntity
@@ -60,7 +60,7 @@ public class ArtistController implements ArtistControllerSwagger {
 
   @DeleteMapping("/{artistId}")
   public ResponseEntity<SuccessResponse<Void>> deleteArtist(
-      @PathVariable Long artistId
+      @PathVariable(name = "artistId") Long artistId
   ) {
     artistCommandService.deleteArtist(artistId);
 
@@ -73,7 +73,7 @@ public class ArtistController implements ArtistControllerSwagger {
 
   @GetMapping("/{artistId}")
   public ResponseEntity<SuccessResponse<ArtistGetResponse>> getArtist(
-      @PathVariable Long artistId
+      @PathVariable(name = "artistId") Long artistId
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)

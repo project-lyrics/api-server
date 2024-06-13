@@ -44,3 +44,5 @@ out/
 
 ### Secrets manager ###
 secrets.*.json
+
+src/main/generated

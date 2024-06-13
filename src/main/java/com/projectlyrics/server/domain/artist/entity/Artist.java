@@ -1,12 +1,11 @@
 package com.projectlyrics.server.domain.artist.entity;
 
-import com.projectlyrics.server.domain.common.entity.EntityCommonField;
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.global.exception.FeelinException;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.global.exception.FeelinException;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,19 +13,17 @@ import jakarta.persistence.Table;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
 @Getter
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
 @Table(name = "artists")
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Artist {
+public class Artist extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,15 +38,11 @@ public class Artist {
   @Column(nullable = true)
   private String profileImageCdnLink;
 
-  @Embedded
-  private EntityCommonField commonField;
-
   @Builder
   private Artist(String name, String englishName, String profileImageCdnLink) {
     this.name = name;
     this.englishName = englishName;
     this.profileImageCdnLink = profileImageCdnLink;
-    this.commonField = EntityCommonField.withDefaultValue();
   }
 
   public void updateName(String name) {
