@@ -31,6 +31,9 @@ auth:
     /api/v1/auth/login
   admin-apis:
     /api/v1/auth/admin/**, /api/v1/artists
+  admin:
+    secret:
+      omg
 
 server:
   port: 8080
