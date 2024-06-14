@@ -27,15 +27,15 @@ public class ArtistQueryRepositoryTest {
   @Test
   void id로_Optional로_감싼_아티스트를_조회한다() {
     // given
-    artistCommandRepository.save(ArtistFixture.create());
+    Artist savedArtist = artistCommandRepository.save(ArtistFixture.create());
 
     // when
-    Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(1L);
+    Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(savedArtist.getId());
 
     // then
     assertAll(
         () -> assertThat(artist).isPresent(),
-        () -> assertThat(artist.get().getId()).isEqualTo(1L),
+        () -> assertThat(artist.get().getId()).isEqualTo(savedArtist.getId()),
         () -> assertThat(artist.get().getDeletedAt()).isNull()
     );
   }
