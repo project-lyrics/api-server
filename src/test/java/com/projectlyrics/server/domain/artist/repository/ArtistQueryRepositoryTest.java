@@ -6,15 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.projectlyrics.server.common.RepositoryTest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.common.fixture.ArtistFixture;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
 import java.util.List;
 
 @RepositoryTest
@@ -27,24 +25,33 @@ public class ArtistQueryRepositoryTest {
   private ArtistCommandRepository artistCommandRepository;
 
   @Test
-  void 아티스트의_데이터를_사용자_입력_쿼리_기반으로_조회해_반환한다() {
+  void id로_Optional로_감싼_아티스트를_조회한다() {
     // given
-    Artist artist1 = ArtistFixture.createWithName("검정치마");
-    Artist artist2 = ArtistFixture.createWithName("구남과여라이딩스텔라");
-    artistCommandRepository.save(artist1);
-    artistCommandRepository.save(artist2);
+    artistCommandRepository.save(ArtistFixture.create());
 
     // when
-    Slice<Artist> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("검정치마", 0L,
-        PageRequest.of(0, 3));
+    Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(1L);
 
     // then
-    assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
+    assertAll(
+        () -> assertThat(artist).isPresent(),
+        () -> assertThat(artist.get().getId()).isEqualTo(1L),
+        () -> assertThat(artist.get().getDeletedAt()).isNull()
+    );
   }
 
   @Test
-  void 아티스트를_페이징으로_조회한다() throws Exception {
-    //given
+  void 존재하지_않는_id로_아티스트를_조회하면_Optional_empty가_반환된다() {
+    // given, when
+    Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(1L);
+
+    // then
+    assertThat(artist).isEmpty();
+  }
+
+  @Test
+  void 커서_기반_페이징으로_아티스트_리스트를_조회한다() throws Exception {
+    // given
     Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
     Artist artist2 = artistCommandRepository.save(ArtistFixture.createWithName("잔나비"));
     Artist artist3 = artistCommandRepository.save(ArtistFixture.createWithName("너드커넥션"));
@@ -53,10 +60,10 @@ public class ArtistQueryRepositoryTest {
     long cursor = 0L;
     Pageable pageable = PageRequest.of(0, 3);
 
-    //when
+    // when
     Slice<Artist> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable);
 
-    //then
+    // then
     assertAll(
         () -> assertThat(artistSlice.getNumber()).isEqualTo(cursor),
         () -> assertThat(artistSlice.getSize()).isEqualTo(artistList.size()),
@@ -64,4 +71,53 @@ public class ArtistQueryRepositoryTest {
         () -> assertThat(artistSlice.getContent()).isEqualTo(artistList)
     );
   }
+
+  @Test
+  void 아티스트_리스트를_조회하는_커서가_최대_id값보다_클_경우_Slice의_content가_비어있다() throws Exception {
+    // given
+    Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
+    List<Artist> artistList = List.of(artist1);
+
+    long cursor = 1000L;
+    Pageable pageable = PageRequest.of(0, 3);
+
+    // when
+    Slice<Artist> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable);
+
+    // then
+    assertAll(
+        () -> assertThat(artistSlice.getSize()).isEqualTo(pageable.getPageSize()),
+        () -> assertThat(artistSlice.getNumberOfElements()).isEqualTo(0),
+        () -> assertThat(artistSlice.getContent()).isEmpty()
+    );
+  }
+
+  @Test
+  void 아티스트의_데이터를_사용자_입력_쿼리_기반으로_조회해_반환한다() {
+    // given
+    Artist artist1 = ArtistFixture.createWithName("검정치마");
+    Artist artist2 = ArtistFixture.createWithName("구남과여라이딩스텔라");
+    artistCommandRepository.save(artist1);
+    artistCommandRepository.save(artist2);
+
+    // when
+    Slice<Artist> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("검정치마", 0L, PageRequest.of(0, 3));
+
+    // then
+    assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
+  }
+
+  @Test
+  void 사용자_입력_쿼리가_아무런_아티스트를_검색하지_못하면_Slice의_content가_비어있다() throws Exception {
+    // given
+    Artist artist1 = ArtistFixture.createWithName("검정치마");
+    artistCommandRepository.save(artist1);
+
+    // when
+    Slice<Artist> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("긴난보이즈", 0L, PageRequest.of(0, 3));
+
+    // then
+    assertThat(searchedArtists.getContent()).isEmpty();
+  }
+
 }
