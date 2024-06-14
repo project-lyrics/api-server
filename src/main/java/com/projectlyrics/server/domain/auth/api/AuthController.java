@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
@@ -26,7 +26,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
-      @RequestBody @Valid UserLoginRequest loginRequest
+      @RequestBody @Valid AuthUserLoginRequest loginRequest
   ) {
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -52,7 +52,7 @@ public class AuthController {
   public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
       @RequestHeader("Admin-Secret") String adminSecret,
-      @RequestBody @Valid UserLoginRequest loginRequest
+      @RequestBody @Valid AuthUserLoginRequest loginRequest
   ) {
     authCommandService.validateAdminSecret(adminSecret);
 

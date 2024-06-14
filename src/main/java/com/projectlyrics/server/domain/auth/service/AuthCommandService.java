@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.service;
 
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
@@ -15,7 +15,6 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
 import com.projectlyrics.server.global.exception.AuthException;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,7 @@ public class AuthCommandService {
     this.userCommandService = userCommandService;
   }
 
-  public AuthLoginResponse signIn(String socialAccessToken, UserLoginRequest request) {
+  public AuthLoginResponse signIn(String socialAccessToken, AuthUserLoginRequest request) {
     AuthSocialInfo authSocialInfo = getAuthSocialInfo(socialAccessToken, request.authProvider());
     AuthUserSignUpResult userSignUpResult = getSignUpResult(authSocialInfo);
 

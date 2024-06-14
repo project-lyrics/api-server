@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
@@ -37,7 +37,7 @@ public interface AuthControllerSwagger {
   )
   ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
-      @RequestBody UserLoginRequest loginRequest
+      @RequestBody AuthUserLoginRequest loginRequest
   );
 
   @Operation(

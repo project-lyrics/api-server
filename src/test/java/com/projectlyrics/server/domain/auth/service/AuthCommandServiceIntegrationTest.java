@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.common.IntegrationTest;
 import com.projectlyrics.server.common.fixture.UserFixture;
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
@@ -48,7 +48,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
     //when
-    AuthLoginResponse response = sut.signIn(accessToken, new UserLoginRequest(AuthProvider.KAKAO, Role.USER));
+    AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER));
 
     //then
     Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
@@ -67,7 +67,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
     //when
     AuthLoginResponse response = sut.signIn(accessToken,
-        new UserLoginRequest(AuthProvider.APPLE, Role.USER));
+        new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER));
 
     //then
     Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
