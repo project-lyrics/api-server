@@ -21,7 +21,6 @@ public class ArtistCommandService {
 
   private final ArtistCommandRepository artistCommandRepository;
   private final ArtistQueryRepository artistQueryRepository;
-  private final Clock clock;
 
   public ArtistAddResponse addArtist(ArtistAddRequest request) {
     Artist savedArtist = artistCommandRepository.save(request.toEntity());
@@ -43,7 +42,6 @@ public class ArtistCommandService {
     Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
         .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
 
-    // TODO: 인증 구현되면 deletedById 값 수정
-    artist.delete(1L, clock.systemDefaultZone());
+    artist.delete(artistId, Clock.systemDefaultZone());
   }
 }
