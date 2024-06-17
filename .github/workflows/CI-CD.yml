@@ -1,7 +1,7 @@
 name: Build Image & Push
 
 on:
-  pull_request:
+  push:
     branches:
       [ "dev" ]
 
