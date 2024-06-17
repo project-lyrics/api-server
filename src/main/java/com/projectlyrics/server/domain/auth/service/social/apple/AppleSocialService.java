@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.auth.service.social.apple;
 
 import com.google.gson.*;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfoResponse;
@@ -32,10 +33,15 @@ public class AppleSocialService implements SocialService {
   private final ApplePublicKeysApiClient appleApiClient;
 
   @Override
+  public AuthProvider getAuthProvider() {
+    return AuthProvider.APPLE;
+  }
+
+  @Override
   public AuthSocialInfo getSocialData(String socialAccessToken) {
     AppleUserInfoResponse appleUserInfo = getUserInfo(socialAccessToken);
 
-    return appleUserInfo.toUserInfo();
+    return appleUserInfo.toAuthUserInfo();
   }
 
   private AppleUserInfoResponse getUserInfo(String accessToken) {

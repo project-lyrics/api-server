@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.auth.service.social.kakao;
 
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
@@ -13,10 +14,15 @@ public class KakaoSocialService implements SocialService {
   private final KakaoSocialDataApiClient kakaoApiClient;
 
   @Override
+  public AuthProvider getAuthProvider() {
+    return AuthProvider.KAKAO;
+  }
+
+  @Override
   public AuthSocialInfo getSocialData(String socialAccessToken) {
     KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
 
-    return kakaoUserInfo.toUserInfo();
+    return kakaoUserInfo.toKakaoUserInfo();
   }
 
   private KakaoUserInfoResponse getUserInfo(String accessToken) {
