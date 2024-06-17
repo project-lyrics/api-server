@@ -3,15 +3,11 @@ package com.projectlyrics.server.domain.artist.api;
 import com.projectlyrics.server.common.ControllerTest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
-import com.projectlyrics.server.domain.common.dto.SuccessResponse;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

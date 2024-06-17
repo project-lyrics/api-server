@@ -3,7 +3,6 @@ package com.projectlyrics.server.domain.auth.api;
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
-import com.projectlyrics.server.domain.common.dto.SuccessResponse;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +34,7 @@ public interface AuthControllerSwagger {
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
+  ResponseEntity<AuthLoginResponse> signIn(
       @RequestHeader("Authorization") String socialAccessToken,
       @RequestBody AuthUserLoginRequest loginRequest
   );
@@ -53,7 +52,7 @@ public interface AuthControllerSwagger {
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<AuthTokenReissueResponse>> reissueToken(
+  ResponseEntity<AuthTokenReissueResponse> reissueToken(
       @RequestHeader("Authorization") String refreshToken
   );
 }
