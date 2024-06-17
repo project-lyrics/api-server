@@ -6,7 +6,7 @@ import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserIn
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("KAKAO")
 @RequiredArgsConstructor
 public class KakaoSocialService implements SocialService {
 

@@ -19,7 +19,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("APPLE")
 @RequiredArgsConstructor
 public class AppleSocialService implements SocialService {
 
