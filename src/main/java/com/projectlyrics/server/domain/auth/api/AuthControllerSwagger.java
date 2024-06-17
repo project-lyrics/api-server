@@ -1,5 +1,7 @@
 package com.projectlyrics.server.domain.auth.api;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,7 +39,7 @@ public interface AuthControllerSwagger {
       }
   )
   ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
-      @RequestHeader("Authorization") String socialAccessToken,
+      @RequestHeader(AUTHORIZATION) String socialAccessToken,
       @RequestBody AuthUserLoginRequest loginRequest
   );
 

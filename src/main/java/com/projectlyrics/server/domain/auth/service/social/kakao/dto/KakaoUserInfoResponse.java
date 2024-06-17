@@ -10,7 +10,7 @@ public record KakaoUserInfoResponse(
         String id,
         KakaoAccount kakaoAccount
 ) {
-  public AuthSocialInfo toUserInfo() {
+  public AuthSocialInfo toKakaoUserInfo() {
     return new AuthSocialInfo(
         AuthProvider.KAKAO,
         id,

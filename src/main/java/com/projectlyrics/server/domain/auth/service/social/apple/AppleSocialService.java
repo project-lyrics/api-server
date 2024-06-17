@@ -35,7 +35,7 @@ public class AppleSocialService implements SocialService {
   public AuthSocialInfo getSocialData(String socialAccessToken) {
     AppleUserInfoResponse appleUserInfo = getUserInfo(socialAccessToken);
 
-    return appleUserInfo.toUserInfo();
+    return appleUserInfo.toAuthUserInfo();
   }
 
   private AppleUserInfoResponse getUserInfo(String accessToken) {

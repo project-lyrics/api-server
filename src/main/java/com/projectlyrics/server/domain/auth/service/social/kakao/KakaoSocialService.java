@@ -16,7 +16,7 @@ public class KakaoSocialService implements SocialService {
   public AuthSocialInfo getSocialData(String socialAccessToken) {
     KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
 
-    return kakaoUserInfo.toUserInfo();
+    return kakaoUserInfo.toKakaoUserInfo();
   }
 
   private KakaoUserInfoResponse getUserInfo(String accessToken) {

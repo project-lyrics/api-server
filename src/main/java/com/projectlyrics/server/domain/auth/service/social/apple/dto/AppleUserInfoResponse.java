@@ -6,7 +6,7 @@ import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 public record AppleUserInfoResponse(
     String id
 ) {
-  public AuthSocialInfo toUserInfo() {
+  public AuthSocialInfo toAuthUserInfo() {
     return new AuthSocialInfo(
         AuthProvider.APPLE,
         id,

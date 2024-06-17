@@ -1,5 +1,8 @@
 package com.projectlyrics.server.domain.auth.api;
 
+import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.ADMIN_SECRET;
+import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
+
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
@@ -25,7 +28,7 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
-      @RequestHeader("Authorization") String socialAccessToken,
+      @RequestHeader(AUTHORIZATION) String socialAccessToken,
       @RequestBody @Valid AuthUserLoginRequest loginRequest
   ) {
     return ResponseEntity
@@ -38,7 +41,7 @@ public class AuthController {
 
   @PostMapping("/token")
   public ResponseEntity<SuccessResponse<AuthTokenReissueResponse>> reissueToken(
-      @RequestHeader("Authorization") String refreshToken
+      @RequestHeader(AUTHORIZATION) String refreshToken
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
@@ -50,8 +53,8 @@ public class AuthController {
 
   @PostMapping("/admin")
   public ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
-      @RequestHeader("Authorization") String socialAccessToken,
-      @RequestHeader("Admin-Secret") String adminSecret,
+      @RequestHeader(AUTHORIZATION) String socialAccessToken,
+      @RequestHeader(ADMIN_SECRET) String adminSecret,
       @RequestBody @Valid AuthUserLoginRequest loginRequest
   ) {
     authCommandService.validateAdminSecret(adminSecret);

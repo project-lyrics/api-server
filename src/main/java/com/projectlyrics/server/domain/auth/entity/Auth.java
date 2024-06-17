@@ -30,7 +30,7 @@ public class Auth extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private AuthProvider authProvider;
 
-  @Enumerated
+  @Enumerated(value = EnumType.STRING)
   private Role role;
 
   @Column(nullable = false)
