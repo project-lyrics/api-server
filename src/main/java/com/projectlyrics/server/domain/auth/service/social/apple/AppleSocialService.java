@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.auth.service.social.apple;
 
 import com.google.gson.*;
+import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfoResponse;
@@ -19,7 +20,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service("APPLE")
+@Service
 @RequiredArgsConstructor
 public class AppleSocialService implements SocialService {
 
@@ -30,6 +31,11 @@ public class AppleSocialService implements SocialService {
   private static final String KEY_HEADER_ALG = "alg";
 
   private final ApplePublicKeysApiClient appleApiClient;
+
+  @Override
+  public AuthProvider getAuthProvider() {
+    return AuthProvider.APPLE;
+  }
 
   @Override
   public AuthSocialInfo getSocialData(String socialAccessToken) {
