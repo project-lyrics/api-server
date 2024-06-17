@@ -24,11 +24,12 @@ public enum ErrorCode {
   UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "00400", "It is unsupported authentication provider"),
   INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "00401", "The token is not valid."),
   INVALID_KEY(HttpStatus.UNAUTHORIZED, "00401", "The key is not valid."),
+  INVALID_AUTH_SECRET_KEY(HttpStatus.UNAUTHORIZED, "00401", "The secret key is not valid."),
 
   // User
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "00404", "The user data could not be found."),
 
-  // Record
+  // Record,
   RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "00404", "The record data could not be found."),
   ;
 

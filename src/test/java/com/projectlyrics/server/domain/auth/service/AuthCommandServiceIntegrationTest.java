@@ -1,32 +1,31 @@
-package com.projectlyrics.server.domain.user.service;
+package com.projectlyrics.server.domain.auth.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.common.IntegrationTest;
 import com.projectlyrics.server.common.fixture.UserFixture;
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.service.kakao.KakaoSocialDataApiClient;
-import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoAccount;
-import com.projectlyrics.server.domain.auth.service.kakao.dto.KakaoUserInfoResponse;
-import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
+import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
+import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
+import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
-class UserCommandServiceIntegrationTest extends IntegrationTest {
+public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
   @Autowired
-  UserCommandService sut;
+  AuthCommandService sut;
 
   @Autowired
   UserCommandRepository userCommandRepository;
@@ -49,7 +48,7 @@ class UserCommandServiceIntegrationTest extends IntegrationTest {
         .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
     //when
-    UserLoginResponse response = sut.signIn(accessToken, new UserLoginRequest(AuthProvider.KAKAO));
+    AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER));
 
     //then
     Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
@@ -67,7 +66,8 @@ class UserCommandServiceIntegrationTest extends IntegrationTest {
         .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
     //when
-    UserLoginResponse response = sut.signIn(accessToken, new UserLoginRequest(AuthProvider.KAKAO));
+    AuthLoginResponse response = sut.signIn(accessToken,
+        new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER));
 
     //then
     Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());

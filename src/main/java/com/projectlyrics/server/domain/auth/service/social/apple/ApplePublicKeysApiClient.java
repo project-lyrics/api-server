@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.auth.service.apple;
+package com.projectlyrics.server.domain.auth.service.social.apple;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

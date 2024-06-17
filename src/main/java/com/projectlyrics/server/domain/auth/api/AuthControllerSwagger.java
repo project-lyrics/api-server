@@ -1,16 +1,19 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import com.projectlyrics.server.domain.auth.dto.request.UserLoginRequest;
-import com.projectlyrics.server.domain.auth.dto.response.UserTokenReissueResponse;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.dto.SuccessResponse;
-import com.projectlyrics.server.domain.user.dto.response.UserLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,9 +38,9 @@ public interface AuthControllerSwagger {
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<UserLoginResponse>> signIn(
-      @RequestHeader("Authorization") String socialAccessToken,
-      @RequestBody UserLoginRequest loginRequest
+  ResponseEntity<SuccessResponse<AuthLoginResponse>> signIn(
+      @RequestHeader(AUTHORIZATION) String socialAccessToken,
+      @RequestBody AuthUserLoginRequest loginRequest
   );
 
   @Operation(
@@ -53,7 +56,7 @@ public interface AuthControllerSwagger {
               content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       }
   )
-  ResponseEntity<SuccessResponse<UserTokenReissueResponse>> reissueToken(
+  ResponseEntity<SuccessResponse<AuthTokenReissueResponse>> reissueToken(
       @RequestHeader("Authorization") String refreshToken
   );
 }
