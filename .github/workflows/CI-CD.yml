@@ -35,7 +35,8 @@ jobs:
           contains(github.ref, 'dev')
         run: |
           echo "${{ secrets.YML }}" > src/main/resources/application.yml
-
+        shell: bash
+        
       - name: build with gradle
         run: |
           ./gradlew build -x test
