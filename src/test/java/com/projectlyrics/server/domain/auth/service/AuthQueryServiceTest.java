@@ -22,50 +22,50 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class AuthQueryServiceTest extends IntegrationTest {
 
-  @Autowired
-  AuthQueryService sut;
+    @Autowired
+    AuthQueryService sut;
 
-  @Autowired
-  UserQueryRepository userQueryRepository;
+    @Autowired
+    UserQueryRepository userQueryRepository;
 
-  @Autowired
-  UserCommandRepository userCommandRepository;
+    @Autowired
+    UserCommandRepository userCommandRepository;
 
-  @MockBean
-  KakaoSocialDataApiClient kakaoSocialDataApiClient;
+    @MockBean
+    KakaoSocialDataApiClient kakaoSocialDataApiClient;
 
-  @Test
-  void 카카오_유저_정보를_조회해야_한다() throws Exception {
-    //given
-    String accessToken = "accessToken";
-    String socialId = "socialId";
-    String email = "email";
-    AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER);
-    given(kakaoSocialDataApiClient.getUserInfo(any()))
-        .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
+    @Test
+    void 카카오_유저_정보를_조회해야_한다() throws Exception {
+        //given
+        String accessToken = "accessToken";
+        String socialId = "socialId";
+        String email = "email";
+        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER);
+        given(kakaoSocialDataApiClient.getUserInfo(any()))
+                .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
 
-    //when
-    AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo(accessToken, request.authProvider());
+        //when
+        AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo(accessToken, request.authProvider());
 
-    //then
-    assertSoftly(s -> {
-      s.assertThat(authSocialInfo.email()).isEqualTo(email);
-      s.assertThat(authSocialInfo.socialId()).isEqualTo(socialId);
-      s.assertThat(authSocialInfo.authProvider()).isEqualTo(AuthProvider.KAKAO);
-    });
-  }
+        //then
+        assertSoftly(s -> {
+            s.assertThat(authSocialInfo.email()).isEqualTo(email);
+            s.assertThat(authSocialInfo.socialId()).isEqualTo(socialId);
+            s.assertThat(authSocialInfo.authProvider()).isEqualTo(AuthProvider.KAKAO);
+        });
+    }
 
-  //TODO apple 로그인 기능 추가 후 테스트 새로 작성해야 함
-  @Test
-  @Disabled("apple 로그인 기능 추가 후 테스트")
-  void 애플_유저_정보를_조회해야_한다() throws Exception {
-    //given
-    AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER);
+    //TODO apple 로그인 기능 추가 후 테스트 새로 작성해야 함
+    @Test
+    @Disabled("apple 로그인 기능 추가 후 테스트")
+    void 애플_유저_정보를_조회해야_한다() throws Exception {
+        //given
+        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER);
 
-    //when
-    AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo("access token", request.authProvider());
+        //when
+        AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo("access token", request.authProvider());
 
-    //then
-    assertThat(authSocialInfo).isNull();
-  }
+        //then
+        assertThat(authSocialInfo).isNull();
+    }
 }

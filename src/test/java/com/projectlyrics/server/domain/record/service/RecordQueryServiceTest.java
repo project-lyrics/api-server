@@ -18,8 +18,10 @@ import com.projectlyrics.server.global.exception.NotFoundException;
 import com.projectlyrics.server.common.fixture.ArtistFixture;
 import com.projectlyrics.server.common.fixture.RecordFixture;
 import com.projectlyrics.server.common.fixture.UserFixture;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,75 +34,75 @@ import org.springframework.data.domain.SliceImpl;
 @ExtendWith(MockitoExtension.class)
 class RecordQueryServiceTest {
 
-  @InjectMocks
-  private RecordQueryService sut;
+    @InjectMocks
+    private RecordQueryService sut;
 
-  @Mock
-  private RecordQueryRepository recordQueryRepository;
+    @Mock
+    private RecordQueryRepository recordQueryRepository;
 
-  @Test
-  void 회원_아이디와_아티스트_아이디로부터_알맞은_레코드를_반환한다() {
-    // given
-    User user = UserFixture.create();
-    long userId = 1L;
+    @Test
+    void 회원_아이디와_아티스트_아이디로부터_알맞은_레코드를_반환한다() {
+        // given
+        User user = UserFixture.create();
+        long userId = 1L;
 
-    Artist artist = ArtistFixture.createWithName("검정치마");
-    long artistId = 1L;
+        Artist artist = ArtistFixture.createWithName("검정치마");
+        long artistId = 1L;
 
-    Record record = RecordFixture.create(user, artist);
+        Record record = RecordFixture.create(user, artist);
 
-    given(recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId))
-        .willReturn(Optional.of(record));
+        given(recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId))
+                .willReturn(Optional.of(record));
 
-    // when
-    Record recordGetResponse = sut.getRecordByUserIdAndArtistId(userId, artistId);
+        // when
+        Record recordGetResponse = sut.getRecordByUserIdAndArtistId(userId, artistId);
 
-    // then
-    then(recordQueryRepository).should().findByUserIdAndArtistIdAndNotDeleted(anyLong(), anyLong());
-    assertThat(recordGetResponse).isEqualTo(record);
-  }
+        // then
+        then(recordQueryRepository).should().findByUserIdAndArtistIdAndNotDeleted(anyLong(), anyLong());
+        assertThat(recordGetResponse).isEqualTo(record);
+    }
 
-  @Test
-  void 회원_아이디_혹은_아티스트_아이디로부터_존재하지_않는_레코드에_대해_예외를_발생시킨다() {
-    // given
-    long userId = 1L;
-    long artistId = 1L;
+    @Test
+    void 회원_아이디_혹은_아티스트_아이디로부터_존재하지_않는_레코드에_대해_예외를_발생시킨다() {
+        // given
+        long userId = 1L;
+        long artistId = 1L;
 
-    given(recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId))
-        .willReturn(Optional.empty());
+        given(recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId))
+                .willReturn(Optional.empty());
 
-    // when, then
-    assertThatThrownBy(() -> sut.getRecordByUserIdAndArtistId(userId, artistId))
-        .isInstanceOf(NotFoundException.class);
-    then(recordQueryRepository).should().findByUserIdAndArtistIdAndNotDeleted(anyLong(), anyLong());
-  }
+        // when, then
+        assertThatThrownBy(() -> sut.getRecordByUserIdAndArtistId(userId, artistId))
+                .isInstanceOf(NotFoundException.class);
+        then(recordQueryRepository).should().findByUserIdAndArtistIdAndNotDeleted(anyLong(), anyLong());
+    }
 
-  @Test
-  void 회원_아이디로부터_회원이_등록해둔_모든_레코드를_조회한다() {
-    // given
-    User user = UserFixture.create();
-    long userId = 1L;
+    @Test
+    void 회원_아이디로부터_회원이_등록해둔_모든_레코드를_조회한다() {
+        // given
+        User user = UserFixture.create();
+        long userId = 1L;
 
-    Artist artist1 = ArtistFixture.createWithName("검정치마");
-    Artist artist2 = ArtistFixture.createWithName("초록불꽃소년단");
+        Artist artist1 = ArtistFixture.createWithName("검정치마");
+        Artist artist2 = ArtistFixture.createWithName("초록불꽃소년단");
 
-    Record record1 = spy(RecordFixture.create(user, artist1));
-    Record record2 = spy(RecordFixture.create(user, artist2));
+        Record record1 = spy(RecordFixture.create(user, artist1));
+        Record record2 = spy(RecordFixture.create(user, artist2));
 
-    List<Record> records = List.of(record1, record2);
-    long cursor = 5L;
-    Pageable pageable = PageRequest.of(0, 2);
-    given(recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable))
-        .willReturn(new SliceImpl<>(records, pageable, true));
-    doReturn(5L).when(record1).getId();
-    doReturn(6L).when(record2).getId();
+        List<Record> records = List.of(record1, record2);
+        long cursor = 5L;
+        Pageable pageable = PageRequest.of(0, 2);
+        given(recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable))
+                .willReturn(new SliceImpl<>(records, pageable, true));
+        doReturn(5L).when(record1).getId();
+        doReturn(6L).when(record2).getId();
 
-    // when
-    CursorBasePaginatedResponse<RecordGetResponse> recordGetAllByUserResponse = sut.getRecordsByUserId(userId, cursor, pageable);
+        // when
+        CursorBasePaginatedResponse<RecordGetResponse> recordGetAllByUserResponse = sut.getRecordsByUserId(userId, cursor, pageable);
 
-    // then
-    then(recordQueryRepository).should().findAllByUserIdAndNotDeleted(userId, cursor, pageable);
-    assertThat(recordGetAllByUserResponse.hasNext()).isTrue();
-    assertThat(recordGetAllByUserResponse.data().size()).isEqualTo(records.size());
-  }
+        // then
+        then(recordQueryRepository).should().findAllByUserIdAndNotDeleted(userId, cursor, pageable);
+        assertThat(recordGetAllByUserResponse.hasNext()).isTrue();
+        assertThat(recordGetAllByUserResponse.data().size()).isEqualTo(records.size());
+    }
 }
