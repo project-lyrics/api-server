@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.common.util.PageUtils;
 import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.record.dto.request.RecordGetResponse;
+import com.projectlyrics.server.domain.record.exception.RecordNotFoundException;
 import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.projectlyrics.server.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class RecordQueryService {
 
     public Record getRecordByUserIdAndArtistId(long userId, long artistId) {
         return recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.RECORD_NOT_FOUND));
+                .orElseThrow(RecordNotFoundException::new);
     }
 
     public CursorBasePaginatedResponse<RecordGetResponse> getRecordsByUserId(long userId, long cursor, Pageable pageable) {
