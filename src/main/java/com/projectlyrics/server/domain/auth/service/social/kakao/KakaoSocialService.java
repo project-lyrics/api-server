@@ -11,21 +11,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KakaoSocialService implements SocialService {
 
-  private final KakaoSocialDataApiClient kakaoApiClient;
+    private final KakaoSocialDataApiClient kakaoApiClient;
 
-  @Override
-  public AuthProvider getAuthProvider() {
-    return AuthProvider.KAKAO;
-  }
+    @Override
+    public AuthProvider getAuthProvider() {
+        return AuthProvider.KAKAO;
+    }
 
-  @Override
-  public AuthSocialInfo getSocialData(String socialAccessToken) {
-    KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
+    @Override
+    public AuthSocialInfo getSocialData(String socialAccessToken) {
+        KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
 
-    return kakaoUserInfo.toKakaoUserInfo();
-  }
+        return kakaoUserInfo.toKakaoUserInfo();
+    }
 
-  private KakaoUserInfoResponse getUserInfo(String accessToken) {
-    return kakaoApiClient.getUserInfo(accessToken);
-  }
+    private KakaoUserInfoResponse getUserInfo(String accessToken) {
+        return kakaoApiClient.getUserInfo(accessToken);
+    }
 }

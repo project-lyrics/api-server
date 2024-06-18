@@ -22,37 +22,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController implements AuthControllerSwagger {
 
-  private final AuthCommandService authCommandService;
+    private final AuthCommandService authCommandService;
 
-  @PostMapping("/login")
-  public ResponseEntity<AuthLoginResponse> signIn(
-      @RequestHeader(AUTHORIZATION) String socialAccessToken,
-      @RequestBody @Valid AuthUserLoginRequest loginRequest
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(authCommandService.signIn(socialAccessToken, loginRequest));
-  }
+    @PostMapping("/login")
+    public ResponseEntity<AuthLoginResponse> signIn(
+            @RequestHeader(AUTHORIZATION) String socialAccessToken,
+            @RequestBody @Valid AuthUserLoginRequest loginRequest
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+    }
 
-  @PostMapping("/token")
-  public ResponseEntity<AuthTokenReissueResponse> reissueToken(
-      @RequestHeader(AUTHORIZATION) String refreshToken
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(authCommandService.reissueAccessToken(refreshToken));
-  }
+    @PostMapping("/token")
+    public ResponseEntity<AuthTokenReissueResponse> reissueToken(
+            @RequestHeader(AUTHORIZATION) String refreshToken
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authCommandService.reissueAccessToken(refreshToken));
+    }
 
-  @PostMapping("/admin")
-  public ResponseEntity<AuthLoginResponse> signIn(
-      @RequestHeader(AUTHORIZATION) String socialAccessToken,
-      @RequestHeader(ADMIN_SECRET) String adminSecret,
-      @RequestBody @Valid AuthUserLoginRequest loginRequest
-  ) {
-    authCommandService.validateAdminSecret(adminSecret);
+    @PostMapping("/admin")
+    public ResponseEntity<AuthLoginResponse> signIn(
+            @RequestHeader(AUTHORIZATION) String socialAccessToken,
+            @RequestHeader(ADMIN_SECRET) String adminSecret,
+            @RequestBody @Valid AuthUserLoginRequest loginRequest
+    ) {
+        authCommandService.validateAdminSecret(adminSecret);
 
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(authCommandService.signIn(socialAccessToken, loginRequest));
-  }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+    }
 }

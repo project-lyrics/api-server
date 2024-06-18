@@ -23,64 +23,64 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig {
 
-  @Value("#{'${auth.free-apis}'.split(',')}")
-  private String[] authFreeApis;
+    @Value("#{'${auth.free-apis}'.split(',')}")
+    private String[] authFreeApis;
 
-  @Value("#{'${auth.admin-apis}'.split(',')}")
-  private String[] authAdminApis;
+    @Value("#{'${auth.admin-apis}'.split(',')}")
+    private String[] authAdminApis;
 
-  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  @Bean
-  @Profile("local")
-  public SecurityFilterChain localHttpSecurity(HttpSecurity http) throws Exception {
-    permitDevelopApis(http);
-    setHttp(http);
+    @Bean
+    @Profile("local")
+    public SecurityFilterChain localHttpSecurity(HttpSecurity http) throws Exception {
+        permitDevelopApis(http);
+        setHttp(http);
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  @Profile("stage")
-  public SecurityFilterChain stageHttpSecurity(HttpSecurity http) throws Exception {
-    permitDevelopApis(http);
-    setHttp(http);
+    @Bean
+    @Profile("stage")
+    public SecurityFilterChain stageHttpSecurity(HttpSecurity http) throws Exception {
+        permitDevelopApis(http);
+        setHttp(http);
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  @Profile("prod")
-  public SecurityFilterChain prodHttpSecurity(HttpSecurity http) throws Exception {
-    setHttp(http);
+    @Bean
+    @Profile("prod")
+    public SecurityFilterChain prodHttpSecurity(HttpSecurity http) throws Exception {
+        setHttp(http);
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  private void permitDevelopApis(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-            .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/docs/**")).permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll());
-  }
+    private void permitDevelopApis(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/docs/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll());
+    }
 
-  // TODO : 비회원 허용 API를 추가적으로 등록해야 함
-  private void setHttp(HttpSecurity http) throws Exception {
-    http
-        .csrf(CsrfConfigurer::disable)
-        .formLogin(FormLoginConfigurer::disable)
-        .httpBasic(HttpBasicConfigurer::disable)
-        .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-        .exceptionHandling(exception ->
-            exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-        .authorizeHttpRequests(requests ->
-            requests
-                .requestMatchers(authFreeApis).permitAll()
-                .requestMatchers(authAdminApis).hasRole("ADMIN")
-                .anyRequest().authenticated()
-        )
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  }
+    // TODO : 비회원 허용 API를 추가적으로 등록해야 함
+    private void setHttp(HttpSecurity http) throws Exception {
+        http
+                .csrf(CsrfConfigurer::disable)
+                .formLogin(FormLoginConfigurer::disable)
+                .httpBasic(HttpBasicConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authorizeHttpRequests(requests ->
+                        requests
+                                .requestMatchers(authFreeApis).permitAll()
+                                .requestMatchers(authAdminApis).hasRole("ADMIN")
+                                .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 }

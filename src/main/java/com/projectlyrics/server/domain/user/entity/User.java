@@ -27,32 +27,32 @@ import lombok.NoArgsConstructor;
 @Entity
 public class User extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = true)
-  private String email;
+    @Column(nullable = true)
+    private String email;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "auth_id")
-  private Auth auth;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "auth_id")
+    private Auth auth;
 
-  @Builder
-  public User(Auth auth, String email) {
-    this.auth = auth;
-    this.email = email;
-  }
+    @Builder
+    public User(Auth auth, String email) {
+        this.auth = auth;
+        this.email = email;
+    }
 
-  public static User of(
-      final String socialId,
-      final String email,
-      final AuthProvider authProvider,
-      final Role role
-  ) {
-    return User.builder()
-        .auth(new Auth(socialId, authProvider, role))
-        .email(email)
-        .build();
-  }
+    public static User of(
+            final String socialId,
+            final String email,
+            final AuthProvider authProvider,
+            final Role role
+    ) {
+        return User.builder()
+                .auth(new Auth(socialId, authProvider, role))
+                .email(email)
+                .build();
+    }
 }

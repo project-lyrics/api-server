@@ -13,8 +13,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -25,56 +27,56 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer ";
 
-  private final JwtTokenProvider jwtTokenProvider;
-  private final FilterExceptionHandler filterExceptionHandler;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final FilterExceptionHandler filterExceptionHandler;
 
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    return super.shouldNotFilter(request);
-  }
-
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-          throws ServletException, IOException {
-    try {
-      String token = getAccessTokenFromRequest(request);
-
-      if (isValidToken(token, response)) {
-        setUserIntoContext(token, request);
-      }
-    } catch (RuntimeException e) {
-      filterExceptionHandler.handleFilterException(e, response);
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return super.shouldNotFilter(request);
     }
 
-    filterChain.doFilter(request, response);
-  }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            String token = getAccessTokenFromRequest(request);
 
-  private String getAccessTokenFromRequest(HttpServletRequest request) {
-    return Optional.ofNullable(request.getHeader(AUTHORIZATION))
-        .filter(t -> t.startsWith(TOKEN_PREFIX))
-        .map(t -> t.replace(TOKEN_PREFIX, ""))
-        .orElseThrow(() -> new JwtValidationException(ErrorCode.WRONG_TOKEN_TYPE));
-  }
+            if (isValidToken(token, response)) {
+                setUserIntoContext(token, request);
+            }
+        } catch (RuntimeException e) {
+            filterExceptionHandler.handleFilterException(e, response);
+        }
 
-  private boolean isValidToken(String token, HttpServletResponse response) {
-    JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
-
-    if (validationResult == EXPIRED_JWT_TOKEN) {
-      throw new JwtValidationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+        filterChain.doFilter(request, response);
     }
 
-    return validationResult == VALID_JWT;
-  }
+    private String getAccessTokenFromRequest(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(AUTHORIZATION))
+                .filter(t -> t.startsWith(TOKEN_PREFIX))
+                .map(t -> t.replace(TOKEN_PREFIX, ""))
+                .orElseThrow(() -> new JwtValidationException(ErrorCode.WRONG_TOKEN_TYPE));
+    }
 
-  private void setUserIntoContext(String token, HttpServletRequest request) {
-    UserAuthentication authentication = UserAuthentication.of(getUserId(token));
-    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-  }
+    private boolean isValidToken(String token, HttpServletResponse response) {
+        JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
-  private long getUserId(String token) {
-    return jwtTokenProvider.getUserIdFromJwt(token);
-  }
+        if (validationResult == EXPIRED_JWT_TOKEN) {
+            throw new JwtValidationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+        }
+
+        return validationResult == VALID_JWT;
+    }
+
+    private void setUserIntoContext(String token, HttpServletRequest request) {
+        UserAuthentication authentication = UserAuthentication.of(getUserId(token));
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private long getUserId(String token) {
+        return jwtTokenProvider.getUserIdFromJwt(token);
+    }
 }

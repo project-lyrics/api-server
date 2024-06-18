@@ -24,69 +24,69 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ArtistCommandServiceIntegrationTest extends IntegrationTest {
 
-  @Autowired
-  ArtistCommandService sut;
+    @Autowired
+    ArtistCommandService sut;
 
-  @Autowired
-  ArtistCommandRepository artistCommandRepository;
+    @Autowired
+    ArtistCommandRepository artistCommandRepository;
 
-  @Autowired
-  ArtistQueryRepository artistQueryRepository;
+    @Autowired
+    ArtistQueryRepository artistQueryRepository;
 
-  @Test
-  void 새로운_아티스트를_추가한다() throws Exception {
-    //given
-    ArtistAddRequest request = createAddArtistRequest();
+    @Test
+    void 새로운_아티스트를_추가한다() throws Exception {
+        //given
+        ArtistAddRequest request = createAddArtistRequest();
 
-    //when
-    ArtistAddResponse response = sut.addArtist(request);
+        //when
+        ArtistAddResponse response = sut.addArtist(request);
 
-    //then
-    Artist artist = artistQueryRepository.findByIdAndNotDeleted(response.id()).get();
-    assertAll(
-        () -> assertThat(artist.getName()).isEqualTo(request.name()),
-        () -> assertThat(artist.getEnglishName()).isEqualTo(request.englishName()),
-        () -> assertThat(artist.getProfileImageCdnLink()).isEqualTo(request.profileImageCdnLink()),
-        () -> assertThat(artist.isInUse()).isTrue()
-    );
-  }
+        //then
+        Artist artist = artistQueryRepository.findByIdAndNotDeleted(response.id()).get();
+        assertAll(
+                () -> assertThat(artist.getName()).isEqualTo(request.name()),
+                () -> assertThat(artist.getEnglishName()).isEqualTo(request.englishName()),
+                () -> assertThat(artist.getProfileImageCdnLink()).isEqualTo(request.profileImageCdnLink()),
+                () -> assertThat(artist.isInUse()).isTrue()
+        );
+    }
 
-  @Test
-  void 아티스트를_수정한다() throws Exception {
-    //given
-    Artist savedArtist = artistCommandRepository.save(ArtistFixture.create());
-    ArtistUpdateRequest request = createUpdateArtistRequest("너드커넥션", "Nerd Connection", "https://~2");
+    @Test
+    void 아티스트를_수정한다() throws Exception {
+        //given
+        Artist savedArtist = artistCommandRepository.save(ArtistFixture.create());
+        ArtistUpdateRequest request = createUpdateArtistRequest("너드커넥션", "Nerd Connection", "https://~2");
 
-    //when
-    ArtistUpdateResponse response = sut.updateArtist(savedArtist.getId(), request);
+        //when
+        ArtistUpdateResponse response = sut.updateArtist(savedArtist.getId(), request);
 
-    //then
-    Artist artist = artistQueryRepository.findByIdAndNotDeleted(response.id()).get();
-    assertAll(
-        () -> assertThat(artist.getName()).isEqualTo(request.name()),
-        () -> assertThat(artist.getEnglishName()).isEqualTo(request.englishName()),
-        () -> assertThat(artist.getProfileImageCdnLink()).isEqualTo(request.profileImageCdnLink())
-    );
-  }
+        //then
+        Artist artist = artistQueryRepository.findByIdAndNotDeleted(response.id()).get();
+        assertAll(
+                () -> assertThat(artist.getName()).isEqualTo(request.name()),
+                () -> assertThat(artist.getEnglishName()).isEqualTo(request.englishName()),
+                () -> assertThat(artist.getProfileImageCdnLink()).isEqualTo(request.profileImageCdnLink())
+        );
+    }
 
-  @Test
-  void 없는_아티스트를_수정할_경우_예외가_발생해야_한다() throws Exception {
-    //given
-    ArtistUpdateRequest request = createUpdateArtistRequest("너드커넥션", "Nerd Connection", "https://~2");
+    @Test
+    void 없는_아티스트를_수정할_경우_예외가_발생해야_한다() throws Exception {
+        //given
+        ArtistUpdateRequest request = createUpdateArtistRequest("너드커넥션", "Nerd Connection", "https://~2");
 
-    //when
-    Throwable throwable = catchThrowable(() -> sut.updateArtist(1L, request));
+        //when
+        Throwable throwable = catchThrowable(() -> sut.updateArtist(1L, request));
 
-    //then
-    assertThat(throwable).isInstanceOf(FeelinException.class)
-        .hasMessage(ErrorCode.ARTIST_NOT_FOUND.getErrorMessage());
-  }
+        //then
+        assertThat(throwable).isInstanceOf(FeelinException.class)
+                .hasMessage(ErrorCode.ARTIST_NOT_FOUND.getErrorMessage());
+    }
 
-  private ArtistAddRequest createAddArtistRequest() {
-    return new ArtistAddRequest("넬", "NELL", "https://~");
-  }
+    private ArtistAddRequest createAddArtistRequest() {
+        return new ArtistAddRequest("넬", "NELL", "https://~");
+    }
 
-  private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
-    return new ArtistUpdateRequest(name, englishName, profileImageCdnLink);
-  }
+    private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
+        return new ArtistUpdateRequest(name, englishName, profileImageCdnLink);
+    }
 }

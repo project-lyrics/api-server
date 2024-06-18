@@ -28,66 +28,66 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ArtistController implements ArtistControllerSwagger {
 
-  private final ArtistQueryService artistQueryService;
-  private final ArtistCommandService artistCommandService;
+    private final ArtistQueryService artistQueryService;
+    private final ArtistCommandService artistCommandService;
 
-  @PostMapping
-  public ResponseEntity<ArtistAddResponse> addArtist(
-      @RequestBody @Valid ArtistAddRequest request
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(artistCommandService.addArtist(request));
-  }
+    @PostMapping
+    public ResponseEntity<ArtistAddResponse> addArtist(
+            @RequestBody @Valid ArtistAddRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(artistCommandService.addArtist(request));
+    }
 
-  @PatchMapping("/{artistId}")
-  public ResponseEntity<ArtistUpdateResponse> updateArtist(
-      @PathVariable(name = "artistId") Long artistId,
-      @RequestBody ArtistUpdateRequest request
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(artistCommandService.updateArtist(artistId, request));
-  }
+    @PatchMapping("/{artistId}")
+    public ResponseEntity<ArtistUpdateResponse> updateArtist(
+            @PathVariable(name = "artistId") Long artistId,
+            @RequestBody ArtistUpdateRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(artistCommandService.updateArtist(artistId, request));
+    }
 
-  @DeleteMapping("/{artistId}")
-  public ResponseEntity<Void> deleteArtist(
-      @PathVariable(name = "artistId") Long artistId
-  ) {
-    artistCommandService.deleteArtist(artistId);
+    @DeleteMapping("/{artistId}")
+    public ResponseEntity<Void> deleteArtist(
+            @PathVariable(name = "artistId") Long artistId
+    ) {
+        artistCommandService.deleteArtist(artistId);
 
-    return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
-  }
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 
-  @GetMapping("/{artistId}")
-  public ResponseEntity<ArtistGetResponse> getArtist(
-      @PathVariable(name = "artistId") Long artistId
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(ArtistGetResponse.of(artistQueryService.getArtistById(artistId)));
-  }
+    @GetMapping("/{artistId}")
+    public ResponseEntity<ArtistGetResponse> getArtist(
+            @PathVariable(name = "artistId") Long artistId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ArtistGetResponse.of(artistQueryService.getArtistById(artistId)));
+    }
 
-  @GetMapping
-  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
-      @RequestParam(required = false) Long cursor,
-      @RequestParam(defaultValue = "10") int size
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
-  }
+    @GetMapping
+    public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+    }
 
-  @GetMapping("/search")
-  public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
-      @RequestParam(required = false) Long cursor,
-      @RequestParam(required = false, defaultValue = "5") int size,
-      @RequestParam String query
-  ) {
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));
-  }
+    @GetMapping("/search")
+    public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam String query
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));
+    }
 }

@@ -24,53 +24,53 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
-  @Autowired
-  AuthCommandService sut;
+    @Autowired
+    AuthCommandService sut;
 
-  @Autowired
-  UserCommandRepository userCommandRepository;
+    @Autowired
+    UserCommandRepository userCommandRepository;
 
-  @Autowired
-  UserQueryRepository userQueryRepository;
+    @Autowired
+    UserQueryRepository userQueryRepository;
 
-  @Autowired
-  JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
-  @MockBean
-  KakaoSocialDataApiClient kakaoSocialDataApiClient;
+    @MockBean
+    KakaoSocialDataApiClient kakaoSocialDataApiClient;
 
-  @Test
-  void 카카오_계정으로_로그인_해야_한다() throws Exception {
-    //given
-    String accessToken = "accessToken";
-    User savedUser = userCommandRepository.save(UserFixture.createKakao());
-    given(kakaoSocialDataApiClient.getUserInfo(any()))
-        .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
+    @Test
+    void 카카오_계정으로_로그인_해야_한다() throws Exception {
+        //given
+        String accessToken = "accessToken";
+        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        given(kakaoSocialDataApiClient.getUserInfo(any()))
+                .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
-    //when
-    AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER));
+        //when
+        AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER));
 
-    //then
-    Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
-    assertThat(userId).isEqualTo(savedUser.getId());
-  }
+        //then
+        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        assertThat(userId).isEqualTo(savedUser.getId());
+    }
 
-  //TODO apple 로그인 기능 추가 후 테스트
-  @Test
-  @Disabled("apple 로그인 기능 추가 후 테스트")
-  void 애플_계정으로_로그인_해야_한다() throws Exception {
-    //given
-    String accessToken = "accessToken";
-    User savedUser = userCommandRepository.save(UserFixture.createApple());
-    given(kakaoSocialDataApiClient.getUserInfo(any()))
-        .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
+    //TODO apple 로그인 기능 추가 후 테스트
+    @Test
+    @Disabled("apple 로그인 기능 추가 후 테스트")
+    void 애플_계정으로_로그인_해야_한다() throws Exception {
+        //given
+        String accessToken = "accessToken";
+        User savedUser = userCommandRepository.save(UserFixture.createApple());
+        given(kakaoSocialDataApiClient.getUserInfo(any()))
+                .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
-    //when
-    AuthLoginResponse response = sut.signIn(accessToken,
-        new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER));
+        //when
+        AuthLoginResponse response = sut.signIn(accessToken,
+                new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER));
 
-    //then
-    Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
-    assertThat(userId).isEqualTo(savedUser.getId());
-  }
+        //then
+        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        assertThat(userId).isEqualTo(savedUser.getId());
+    }
 }

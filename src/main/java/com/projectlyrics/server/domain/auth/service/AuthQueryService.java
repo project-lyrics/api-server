@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthQueryService {
 
-  private final SocialServiceFactory socialServiceFactory;
+    private final SocialServiceFactory socialServiceFactory;
 
-  public AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {
-    SocialService socialService = socialServiceFactory.getSocialServiceFrom(authProvider);
+    public AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {
+        SocialService socialService = socialServiceFactory.getSocialServiceFrom(authProvider);
 
-    return socialService.getSocialData(socialAccessToken);
-  }
+        return socialService.getSocialData(socialAccessToken);
+    }
 }

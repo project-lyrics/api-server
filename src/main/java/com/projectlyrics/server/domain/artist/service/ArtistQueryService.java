@@ -17,28 +17,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ArtistQueryService {
 
-  private final ArtistQueryRepository artistQueryRepository;
+    private final ArtistQueryRepository artistQueryRepository;
 
-  public Artist getArtistById(long artistId) {
-    return artistQueryRepository.findByIdAndNotDeleted(artistId)
-        .orElseThrow(() -> new NotFoundException(ErrorCode.ARTIST_NOT_FOUND));
-  }
+    public Artist getArtistById(long artistId) {
+        return artistQueryRepository.findByIdAndNotDeleted(artistId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ARTIST_NOT_FOUND));
+    }
 
-  public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-    Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
-            .map(ArtistGetResponse::of);
+    public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
+        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
+                .map(ArtistGetResponse::of);
 
-    return CursorBasePaginatedResponse.of(artistSlice);
-  }
+        return CursorBasePaginatedResponse.of(artistSlice);
+    }
 
-  public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-    Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(
-                query,
-                cursor,
-                pageable
-            )
-            .map(ArtistGetResponse::of);
+    public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
+        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(
+                        query,
+                        cursor,
+                        pageable
+                )
+                .map(ArtistGetResponse::of);
 
-    return CursorBasePaginatedResponse.of(searchedArtists);
-  }
+        return CursorBasePaginatedResponse.of(searchedArtists);
+    }
 }

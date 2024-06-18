@@ -16,34 +16,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ArtistControllerTest extends ControllerTest {
 
-  @Test
-  @WithMockUser
-  void 아티스트를_추가해야_한다() throws Exception {
-    //given
-    ArtistAddRequest request = new ArtistAddRequest("라디오헤드", "radiohead", "https://~");
+    @Test
+    @WithMockUser
+    void 아티스트를_추가해야_한다() throws Exception {
+        //given
+        ArtistAddRequest request = new ArtistAddRequest("라디오헤드", "radiohead", "https://~");
 
-    //when then
-    mockMvc.perform(post("/api/v1/artists")
-            .with(csrf())
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(request)))
-        .andDo(print())
-        .andExpect(status().isCreated());
-  }
+        //when then
+        mockMvc.perform(post("/api/v1/artists")
+                        .with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+    }
 
-  @Test
-  @WithMockUser
-  void 아티스트를_수정해야_한다() throws Exception {
-    //given
-    ArtistUpdateRequest request = new ArtistUpdateRequest("라디오헤드", "radiohead", "https://~");
+    @Test
+    @WithMockUser
+    void 아티스트를_수정해야_한다() throws Exception {
+        //given
+        ArtistUpdateRequest request = new ArtistUpdateRequest("라디오헤드", "radiohead", "https://~");
 
-    //when then
-    mockMvc.perform(patch("/api/v1/artists/{artistId}", 1)
-            .with(csrf())
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(request)))
-        .andExpect(status().isOk());
-  }
+        //when then
+        mockMvc.perform(patch("/api/v1/artists/{artistId}", 1)
+                        .with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
 }

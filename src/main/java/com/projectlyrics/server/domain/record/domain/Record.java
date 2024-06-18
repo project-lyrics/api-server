@@ -24,21 +24,21 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Record extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "artist_id")
-  private Artist artist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 
-  @Builder
-  private Record(User user, Artist artist) {
-    this.user = user;
-    this.artist = artist;
-  }
+    @Builder
+    private Record(User user, Artist artist) {
+        this.user = user;
+        this.artist = artist;
+    }
 }

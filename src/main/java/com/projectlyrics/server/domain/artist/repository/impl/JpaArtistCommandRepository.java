@@ -5,5 +5,5 @@ import org.springframework.data.repository.Repository;
 
 public interface JpaArtistCommandRepository extends Repository<Artist, Long> {
 
-  Artist save(Artist entity);
+    Artist save(Artist entity);
 }

@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 
 public interface SocialService {
 
-  AuthSocialInfo getSocialData(String socialAccessToken);
-  AuthProvider getAuthProvider();
+    AuthSocialInfo getSocialData(String socialAccessToken);
+
+    AuthProvider getAuthProvider();
 }

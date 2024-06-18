@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -18,34 +19,34 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class QueryDslRecordQueryRepository implements RecordQueryRepository {
 
-  private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
-  @Override
-  public Optional<Record> findByUserIdAndArtistIdAndNotDeleted(long userId, long artistId) {
-    return Optional.ofNullable(
-        jpaQueryFactory
-            .selectFrom(QRecord.record)
-            .where(
-                QRecord.record.user.id.eq(userId),
-                QRecord.record.artist.id.eq(artistId),
-                QRecord.record.deletedAt.isNull()
-            )
-            .fetchOne()
-    );
-  }
+    @Override
+    public Optional<Record> findByUserIdAndArtistIdAndNotDeleted(long userId, long artistId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(QRecord.record)
+                        .where(
+                                QRecord.record.user.id.eq(userId),
+                                QRecord.record.artist.id.eq(artistId),
+                                QRecord.record.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
 
-  @Override
-  public Slice<Record> findAllByUserIdAndNotDeleted(long userId, Long cursor, Pageable pageable) {
-    List<Record> content = jpaQueryFactory
-        .selectFrom(QRecord.record)
-        .where(
-            cursor == null ? null : QRecord.record.id.goe(cursor),
-            QRecord.record.user.id.eq(userId),
-            QRecord.record.deletedAt.isNull()
-        )
-        .limit(pageable.getPageSize() + 1)
-        .fetch();
+    @Override
+    public Slice<Record> findAllByUserIdAndNotDeleted(long userId, Long cursor, Pageable pageable) {
+        List<Record> content = jpaQueryFactory
+                .selectFrom(QRecord.record)
+                .where(
+                        cursor == null ? null : QRecord.record.id.goe(cursor),
+                        QRecord.record.user.id.eq(userId),
+                        QRecord.record.deletedAt.isNull()
+                )
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
 
-    return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
-  }
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
 }

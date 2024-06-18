@@ -5,5 +5,5 @@ import org.springframework.data.repository.Repository;
 
 public interface JpaRecordCommandRepository extends Repository<Record, Long> {
 
-  Record save(Record entity);
+    Record save(Record entity);
 }
