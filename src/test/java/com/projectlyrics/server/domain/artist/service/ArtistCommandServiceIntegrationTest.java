@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.artist.repository.impl.JpaArtistCommandRepository;
@@ -78,7 +79,7 @@ class ArtistCommandServiceIntegrationTest extends IntegrationTest {
         Throwable throwable = catchThrowable(() -> sut.updateArtist(1L, request));
 
         //then
-        assertThat(throwable).isInstanceOf(FeelinException.class)
+        assertThat(throwable).isInstanceOf(ArtistNotFoundException.class)
                 .hasMessage(ErrorCode.ARTIST_NOT_FOUND.getErrorMessage());
     }
 
