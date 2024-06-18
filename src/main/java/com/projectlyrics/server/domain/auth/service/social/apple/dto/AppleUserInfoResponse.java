@@ -4,13 +4,13 @@ import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 
 public record AppleUserInfoResponse(
-    String id
+        String id
 ) {
-  public AuthSocialInfo toAuthUserInfo() {
-    return new AuthSocialInfo(
-        AuthProvider.APPLE,
-        id,
-        ""
-    );
-  }
+    public AuthSocialInfo toAuthUserInfo() {
+        return new AuthSocialInfo(
+                AuthProvider.APPLE,
+                id,
+                ""
+        );
+    }
 }

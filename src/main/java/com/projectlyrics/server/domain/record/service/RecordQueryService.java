@@ -18,17 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RecordQueryService {
 
-  private final RecordQueryRepository recordQueryRepository;
+    private final RecordQueryRepository recordQueryRepository;
 
-  public Record getRecordByUserIdAndArtistId(long userId, long artistId) {
-    return recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId)
-        .orElseThrow(() -> new NotFoundException(ErrorCode.RECORD_NOT_FOUND));
-  }
+    public Record getRecordByUserIdAndArtistId(long userId, long artistId) {
+        return recordQueryRepository.findByUserIdAndArtistIdAndNotDeleted(userId, artistId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RECORD_NOT_FOUND));
+    }
 
-  public CursorBasePaginatedResponse<RecordGetResponse> getRecordsByUserId(long userId, long cursor, Pageable pageable) {
-    Slice<RecordGetResponse> records = recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable)
-        .map(RecordGetResponse::of);
+    public CursorBasePaginatedResponse<RecordGetResponse> getRecordsByUserId(long userId, long cursor, Pageable pageable) {
+        Slice<RecordGetResponse> records = recordQueryRepository.findAllByUserIdAndNotDeleted(userId, cursor, pageable)
+                .map(RecordGetResponse::of);
 
-    return CursorBasePaginatedResponse.of(records);
-  }
+        return CursorBasePaginatedResponse.of(records);
+    }
 }

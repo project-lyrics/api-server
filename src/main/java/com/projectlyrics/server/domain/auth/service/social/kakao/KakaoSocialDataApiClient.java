@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(name = "kakaoSocialDataApiClient", url = "https://kapi.kakao.com")
 public interface KakaoSocialDataApiClient {
 
-  @GetMapping(value = "/v2/user/me")
-  KakaoUserInfoResponse getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken);
+    @GetMapping(value = "/v2/user/me")
+    KakaoUserInfoResponse getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken);
 }

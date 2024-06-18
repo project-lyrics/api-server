@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableFeignClients(basePackageClasses = {
-    KakaoSocialDataApiClient.class,
-    ApplePublicKeysApiClient.class
+        KakaoSocialDataApiClient.class,
+        ApplePublicKeysApiClient.class
 })
 public class FeignClientConfig {
 

@@ -23,22 +23,22 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Auth extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Enumerated(value = EnumType.STRING)
-  private AuthProvider authProvider;
+    @Enumerated(value = EnumType.STRING)
+    private AuthProvider authProvider;
 
-  @Enumerated(value = EnumType.STRING)
-  private Role role;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
-  @Column(nullable = false)
-  private String socialId;
+    @Column(nullable = false)
+    private String socialId;
 
-  public Auth(String socialId, AuthProvider authProvider, Role role) {
-    this.socialId = socialId;
-    this.authProvider = authProvider;
-    this.role = role;
-  }
+    public Auth(String socialId, AuthProvider authProvider, Role role) {
+        this.socialId = socialId;
+        this.authProvider = authProvider;
+        this.role = role;
+    }
 }

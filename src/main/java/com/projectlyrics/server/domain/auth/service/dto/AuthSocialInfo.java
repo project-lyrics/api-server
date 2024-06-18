@@ -5,11 +5,11 @@ import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.user.entity.User;
 
 public record AuthSocialInfo(
-    AuthProvider authProvider,
-    String socialId,
-    String email
+        AuthProvider authProvider,
+        String socialId,
+        String email
 ) {
-  public User toEntity(Role role) {
-    return User.of(socialId, email, authProvider, role);
-  }
+    public User toEntity(Role role) {
+        return User.of(socialId, email, authProvider, role);
+    }
 }

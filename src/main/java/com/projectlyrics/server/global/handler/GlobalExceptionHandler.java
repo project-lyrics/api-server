@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(FeignException.class)
-  public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
-    return ResponseEntity
-        .status(HttpStatus.UNAUTHORIZED)
-        .body(ErrorResponse.of(ErrorCode.INVALID_TOKEN));
-  }
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of(ErrorCode.INVALID_TOKEN));
+    }
 
-  @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-    return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
-  }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
+    }
 
-  @ExceptionHandler(AuthException.class)
-  public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
-    return ResponseEntity
-        .status(e.getErrorCode().getResponseStatus())
-        .body(ErrorResponse.of(e.getErrorCode()));
-  }
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getResponseStatus())
+                .body(ErrorResponse.of(e.getErrorCode()));
+    }
 }

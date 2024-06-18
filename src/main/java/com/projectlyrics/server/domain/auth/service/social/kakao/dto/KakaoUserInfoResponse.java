@@ -10,11 +10,11 @@ public record KakaoUserInfoResponse(
         String id,
         KakaoAccount kakaoAccount
 ) {
-  public AuthSocialInfo toKakaoUserInfo() {
-    return new AuthSocialInfo(
-        AuthProvider.KAKAO,
-        id,
-        kakaoAccount.email()
-    );
-  }
+    public AuthSocialInfo toKakaoUserInfo() {
+        return new AuthSocialInfo(
+                AuthProvider.KAKAO,
+                id,
+                kakaoAccount.email()
+        );
+    }
 }

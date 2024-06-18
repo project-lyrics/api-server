@@ -9,11 +9,11 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record AuthUserLoginRequest(
-    @NotNull(message = "로그인 종류가 입력되지 않았습니다.")
-    @Schema(description = "로그인 타입")
-    AuthProvider authProvider,
-    @NotNull(message = "사용자 역할이 입력되지 않았습니다.")
-    @Schema(description = "사용자 역할")
-    Role role
+        @NotNull(message = "로그인 종류가 입력되지 않았습니다.")
+        @Schema(description = "로그인 타입")
+        AuthProvider authProvider,
+        @NotNull(message = "사용자 역할이 입력되지 않았습니다.")
+        @Schema(description = "사용자 역할")
+        Role role
 ) {
 }

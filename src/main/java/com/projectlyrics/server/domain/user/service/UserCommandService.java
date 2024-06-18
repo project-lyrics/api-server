@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserCommandService {
 
-  private final UserCommandRepository userCommandRepository;
+    private final UserCommandRepository userCommandRepository;
 
-  public User create(User user) {
-    return userCommandRepository.save(user);
-  }
+    public User create(User user) {
+        return userCommandRepository.save(user);
+    }
 }

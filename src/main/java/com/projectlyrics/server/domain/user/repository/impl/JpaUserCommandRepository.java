@@ -5,5 +5,5 @@ import org.springframework.data.repository.Repository;
 
 public interface JpaUserCommandRepository extends Repository<User, Long> {
 
-  User save(User entity);
+    User save(User entity);
 }
