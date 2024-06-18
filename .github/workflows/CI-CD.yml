@@ -34,7 +34,7 @@ jobs:
         if: |
           contains(github.ref, 'dev')
         run: |
-          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+          echo "${{ secrets.YML }}" > src/main/resources/application.yml
 
       - name: build with gradle
         run: |
