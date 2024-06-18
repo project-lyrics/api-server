@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.user.service;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.global.exception.NotFoundException;
 
@@ -21,7 +22,7 @@ public class UserQueryService {
 
     public User getUserById(long userId) {
         return userQueryRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException::new);
     }
 
     public Optional<User> getUserBySocialInfo(String socialId, AuthProvider authProvider) {
