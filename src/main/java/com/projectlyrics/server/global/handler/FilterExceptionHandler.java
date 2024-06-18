@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.global.exception.JwtValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

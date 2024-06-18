@@ -10,7 +10,6 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
-import com.projectlyrics.server.global.exception.NotFoundException;
 
 import java.util.Optional;
 
