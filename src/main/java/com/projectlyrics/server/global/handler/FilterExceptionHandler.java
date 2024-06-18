@@ -5,7 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.JwtValidationException;
+import com.projectlyrics.server.global.exception.FeelinException;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class FilterExceptionHandler {
     private final ObjectMapper objectMapper;
 
     public void handleFilterException(Exception e, HttpServletResponse response) throws IOException {
-        if (e instanceof JwtValidationException exception) {
+        if (e instanceof FeelinException exception) {
             setErrorResponse(exception.getErrorCode().getResponseStatus(), response, exception.getErrorCode());
         }
     }

@@ -4,10 +4,10 @@ import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.EXPIRED
 import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import com.projectlyrics.server.domain.auth.exception.AccessTokenExpiredException;
+import com.projectlyrics.server.domain.auth.exception.WrongTokenTypeException;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtValidationType;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.JwtValidationException;
 import com.projectlyrics.server.global.handler.FilterExceptionHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,14 +57,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return Optional.ofNullable(request.getHeader(AUTHORIZATION))
                 .filter(t -> t.startsWith(TOKEN_PREFIX))
                 .map(t -> t.replace(TOKEN_PREFIX, ""))
-                .orElseThrow(() -> new JwtValidationException(ErrorCode.WRONG_TOKEN_TYPE));
+                .orElseThrow(WrongTokenTypeException::new);
     }
 
     private boolean isValidToken(String token, HttpServletResponse response) {
         JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
         if (validationResult == EXPIRED_JWT_TOKEN) {
-            throw new JwtValidationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+            throw new AccessTokenExpiredException();
         }
 
         return validationResult == VALID_JWT;

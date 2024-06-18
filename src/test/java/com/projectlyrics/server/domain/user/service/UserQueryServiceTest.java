@@ -7,9 +7,9 @@ import com.projectlyrics.server.common.IntegrationTest;
 import com.projectlyrics.server.common.fixture.UserFixture;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
-import com.projectlyrics.server.global.exception.NotFoundException;
 
 import java.util.Optional;
 
@@ -43,7 +43,7 @@ public class UserQueryServiceTest extends IntegrationTest {
     void 존재하지_않는_id로_유저를_조회하면_예외가_발생한다() throws Exception {
         //given, when, then
         assertThatThrownBy(() -> sut.getUserById(1L))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class UserQueryServiceTest extends IntegrationTest {
 
         //when
         User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO)
-                .orElseThrow(() -> new NotFoundException(null));
+                .orElseThrow(UserNotFoundException::new);
 
         //then
         assertThat(user).isEqualTo(savedUser);

@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
@@ -31,7 +32,7 @@ public class ArtistCommandService {
 
     public ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request) {
         Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
-                .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
+                .orElseThrow(ArtistNotFoundException::new);
 
         artist.updateIfNotBlank(request.name(), artist::updateName);
         artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
@@ -42,7 +43,7 @@ public class ArtistCommandService {
 
     public void deleteArtist(Long artistId) {
         Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
-                .orElseThrow(() -> new FeelinException(ErrorCode.ARTIST_NOT_FOUND));
+                .orElseThrow(ArtistNotFoundException::new);
 
         artist.delete(artistId, Clock.systemDefaultZone());
     }

@@ -2,11 +2,10 @@ package com.projectlyrics.server.domain.auth.service.social.apple;
 
 import com.google.gson.*;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.exception.InvalidPublicKeyException;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfoResponse;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.JwtValidationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
@@ -83,7 +82,7 @@ public class AppleSocialService implements SocialService {
         JsonObject matchingPublicKey = findMatchingPublicKey(publicKeyList, kid, alg);
 
         if (Objects.isNull(matchingPublicKey)) {
-            throw new JwtValidationException(ErrorCode.INVALID_KEY);
+            throw new InvalidPublicKeyException();
         }
 
         return getPublicKey(matchingPublicKey);
@@ -125,7 +124,7 @@ public class AppleSocialService implements SocialService {
 
             return keyFactory.generatePublic(publicKeySpec);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException exception) {
-            throw new JwtValidationException(ErrorCode.INVALID_KEY);
+            throw new InvalidPublicKeyException();
         }
     }
 }

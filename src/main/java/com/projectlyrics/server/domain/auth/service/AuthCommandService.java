@@ -3,18 +3,17 @@ package com.projectlyrics.server.domain.auth.service;
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
+import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.service.dto.AuthUserSignUpResult;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
-import com.projectlyrics.server.global.exception.AuthException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +80,7 @@ public class AuthCommandService {
 
     public void validateAdminSecret(String secret) {
         if (!adminSecret.equals(secret)) {
-            throw new AuthException(ErrorCode.INVALID_KEY);
+            throw new InvalidAdminKeyException();
         }
     }
 }

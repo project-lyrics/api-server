@@ -10,11 +10,12 @@ import static org.mockito.Mockito.spy;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.record.dto.request.RecordGetResponse;
+import com.projectlyrics.server.domain.record.exception.RecordNotFoundException;
 import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.global.exception.NotFoundException;
 import com.projectlyrics.server.common.fixture.ArtistFixture;
 import com.projectlyrics.server.common.fixture.RecordFixture;
 import com.projectlyrics.server.common.fixture.UserFixture;
@@ -73,7 +74,8 @@ class RecordQueryServiceTest {
 
         // when, then
         assertThatThrownBy(() -> sut.getRecordByUserIdAndArtistId(userId, artistId))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(RecordNotFoundException.class)
+                .hasMessage(ErrorCode.RECORD_NOT_FOUND.getErrorMessage());
         then(recordQueryRepository).should().findByUserIdAndArtistIdAndNotDeleted(anyLong(), anyLong());
     }
 
