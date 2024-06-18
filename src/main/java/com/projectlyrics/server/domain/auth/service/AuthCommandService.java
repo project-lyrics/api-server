@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.auth.service;
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
+import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.service.dto.AuthUserSignUpResult;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
@@ -81,7 +82,7 @@ public class AuthCommandService {
 
     public void validateAdminSecret(String secret) {
         if (!adminSecret.equals(secret)) {
-            throw new AuthException(ErrorCode.INVALID_KEY);
+            throw new InvalidAdminKeyException();
         }
     }
 }
