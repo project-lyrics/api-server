@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.util.AuthBuilder;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import jakarta.persistence.CascadeType;
@@ -42,17 +43,5 @@ public class User extends BaseEntity {
     public User(Auth auth, String email) {
         this.auth = auth;
         this.email = email;
-    }
-
-    public static User of(
-            final String socialId,
-            final String email,
-            final AuthProvider authProvider,
-            final Role role
-    ) {
-        return User.builder()
-                .auth(new Auth(socialId, authProvider, role))
-                .email(email)
-                .build();
     }
 }

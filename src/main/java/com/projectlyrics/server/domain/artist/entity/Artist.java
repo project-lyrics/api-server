@@ -1,9 +1,8 @@
 package com.projectlyrics.server.domain.artist.entity;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.FeelinException;
+import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
+import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -57,7 +56,7 @@ public class Artist extends BaseEntity {
 
     public void updateProfileImageCdnLink(String profileImageCdnLink) {
         if (!profileImageCdnLink.startsWith("https://")) {
-            throw new FeelinException(ErrorCode.ARTIST_UPDATE_NOT_VALID);
+            throw new DomainInvalidUrlException();
         }
 
         this.profileImageCdnLink = profileImageCdnLink;

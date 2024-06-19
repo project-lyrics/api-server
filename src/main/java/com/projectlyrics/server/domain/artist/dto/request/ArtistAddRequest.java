@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.artist.dto.request;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.entity.util.ArtistBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 
@@ -17,10 +18,6 @@ public record ArtistAddRequest(
 ) {
 
     public Artist toEntity() {
-        return Artist.builder()
-                .name(this.name)
-                .englishName(this.englishName)
-                .profileImageCdnLink(this.profileImageCdnLink)
-                .build();
+        return ArtistBuilder.build(name, englishName, profileImageCdnLink);
     }
 }

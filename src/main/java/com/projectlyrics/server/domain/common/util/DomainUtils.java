@@ -5,6 +5,11 @@ import com.projectlyrics.server.global.exception.DomainNullFieldException;
 
 public class DomainUtils {
 
+    public static <T extends Enum> void checkEnum(T enumField) {
+        if (enumField == null)
+            throw new DomainNullFieldException();
+    }
+
     public static void checkString(String string) {
         if (string == null || string.isBlank())
             throw new DomainNullFieldException();

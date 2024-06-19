@@ -11,10 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -36,6 +33,7 @@ public class Auth extends BaseEntity {
     @Column(nullable = false)
     private String socialId;
 
+    @Builder
     public Auth(String socialId, AuthProvider authProvider, Role role) {
         this.socialId = socialId;
         this.authProvider = authProvider;
