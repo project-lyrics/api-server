@@ -16,6 +16,8 @@ public class DomainUtils {
     }
 
     public static void checkUrl(String url) {
+        checkString(url);
+
         if (!url.startsWith("https://") || !url.startsWith("http://"))
             throw new DomainInvalidUrlException();
     }
