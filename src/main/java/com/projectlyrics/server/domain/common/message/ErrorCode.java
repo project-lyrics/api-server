@@ -15,7 +15,7 @@ public enum ErrorCode {
 
     // Auth
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "01000", "The refresh token could not be found."),
-    ACCESS_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "The token is expired."),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "The token is expired."),
     WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "Wrong token type is passed."),
     UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "The token is not valid."),
