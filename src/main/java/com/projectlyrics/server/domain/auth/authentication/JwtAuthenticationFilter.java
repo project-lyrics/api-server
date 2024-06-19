@@ -8,7 +8,6 @@ import com.projectlyrics.server.domain.auth.exception.AccessTokenExpiredExceptio
 import com.projectlyrics.server.domain.auth.exception.WrongTokenTypeException;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtValidationType;
-import com.projectlyrics.server.global.handler.FilterExceptionHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +17,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,12 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_PREFIX = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final FilterExceptionHandler filterExceptionHandler;
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return super.shouldNotFilter(request);
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -46,11 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isValidToken(token, response)) {
                 setUserIntoContext(token, request);
             }
-        } catch (RuntimeException e) {
-            filterExceptionHandler.handleFilterException(e, response);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+        } finally {
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String getAccessTokenFromRequest(HttpServletRequest request) {

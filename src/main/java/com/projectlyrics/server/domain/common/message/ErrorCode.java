@@ -12,6 +12,7 @@ public enum ErrorCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "00000", "Invalid request."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "00001", "Invalid input value is passed."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "00002", "An unexpected error occurred on the server."),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "00003", "Not Found"),
 
     // Auth
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "01000", "The refresh token could not be found."),

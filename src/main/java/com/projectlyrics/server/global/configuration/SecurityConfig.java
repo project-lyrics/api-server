@@ -4,8 +4,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationEntryPoint;
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationFilter;
+import com.projectlyrics.server.global.handler.FilterExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,6 +34,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final FilterExceptionHandler filterExceptionHandler;
 
     @Bean
     @Profile("local")
@@ -63,6 +67,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/docs/**")).permitAll()
+                .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll());
     }
 
@@ -81,6 +86,8 @@ public class SecurityConfig {
                                 .requestMatchers(authAdminApis).hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(filterExceptionHandler, JwtAuthenticationFilter.class);
     }
 }
