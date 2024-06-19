@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(name = "user")
 @Entity
 public class User extends BaseEntity {
 
