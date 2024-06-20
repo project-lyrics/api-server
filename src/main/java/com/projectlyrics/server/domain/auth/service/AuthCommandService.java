@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.auth.service;
 
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
@@ -24,8 +25,8 @@ public class AuthCommandService {
 
     private final String adminSecret;
     private final AuthQueryService authQueryService;
-    private final UserQueryService userQueryService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
 
     public AuthCommandService(
@@ -41,31 +42,12 @@ public class AuthCommandService {
         this.userCommandService = userCommandService;
     }
 
-    public AuthLoginResponse signIn(String socialAccessToken, AuthUserLoginRequest request) {
-        AuthSocialInfo authSocialInfo = getAuthSocialInfo(socialAccessToken, request.authProvider());
-        AuthUserSignUpResult userSignUpResult = getSignUpResult(authSocialInfo);
+    public AuthLoginResponse signIn(AuthUserLoginRequest request) {
+        User user = userQueryService.getUserBySocialInfo(request.socialAccessToken(), request.authProvider());
 
         return AuthLoginResponse.of(
-                jwtTokenProvider.issueTokens(userSignUpResult.user().getId()),
-                userSignUpResult.isRegistered()
+                jwtTokenProvider.issueTokens(user.getId())
         );
-    }
-
-    private User signUp(AuthSocialInfo authSocialInfo) {
-        return userCommandService.create(authSocialInfo.toEntity(Role.USER));
-    }
-
-    private AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {
-        return authQueryService.getAuthSocialInfo(socialAccessToken, authProvider);
-    }
-
-    private AuthUserSignUpResult getSignUpResult(AuthSocialInfo authSocialInfo) {
-        return userQueryService.getUserBySocialInfo(authSocialInfo.socialId(), authSocialInfo.authProvider())
-                .map(user -> new AuthUserSignUpResult(user, true))
-                .orElseGet(() -> {
-                    User user = signUp(authSocialInfo);
-                    return new AuthUserSignUpResult(user, false);
-                });
     }
 
     public AuthTokenReissueResponse reissueAccessToken(String refreshToken) {

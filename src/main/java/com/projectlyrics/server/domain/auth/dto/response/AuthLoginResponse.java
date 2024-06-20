@@ -4,14 +4,12 @@ import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 
 public record AuthLoginResponse(
         String accessToken,
-        String refreshToken,
-        boolean isRegistered
+        String refreshToken
 ) {
-    public static AuthLoginResponse of(AuthToken authToken, boolean isRegistered) {
+    public static AuthLoginResponse of(AuthToken authToken) {
         return new AuthLoginResponse(
                 authToken.accessToken(),
-                authToken.refreshToken(),
-                isRegistered
+                authToken.refreshToken()
         );
     }
 }

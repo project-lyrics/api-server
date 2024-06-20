@@ -38,7 +38,6 @@ public interface AuthControllerSwagger {
             }
     )
     ResponseEntity<AuthLoginResponse> signIn(
-            @RequestHeader(AUTHORIZATION) String socialAccessToken,
             @RequestBody AuthUserLoginRequest loginRequest
     );
 

@@ -23,7 +23,8 @@ public class UserQueryService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public Optional<User> getUserBySocialInfo(String socialId, AuthProvider authProvider) {
-        return userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(socialId, authProvider);
+    public User getUserBySocialInfo(String socialId, AuthProvider authProvider) {
+        return userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(socialId, authProvider)
+                .orElseThrow(UserNotFoundException::new);
     }
 }

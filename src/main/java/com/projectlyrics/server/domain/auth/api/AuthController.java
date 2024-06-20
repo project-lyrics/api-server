@@ -3,6 +3,8 @@ package com.projectlyrics.server.domain.auth.api;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.ADMIN_SECRET;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
 
+import com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -24,14 +28,23 @@ public class AuthController implements AuthControllerSwagger {
 
     private final AuthCommandService authCommandService;
 
-    @PostMapping("/login")
+    @PostMapping("/sign-in")
     public ResponseEntity<AuthLoginResponse> signIn(
-            @RequestHeader(AUTHORIZATION) String socialAccessToken,
             @RequestBody @Valid AuthUserLoginRequest loginRequest
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+                .body(authCommandService.signIn(loginRequest));
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<AuthSignUpRequest> signUp(
+            Principal principal,
+            @RequestBody @Valid AuthSignUpRequest request
+    ) {
+        return ResponseEntity
+                .ok().build();
+//                .ok(authCommandService.signUp(Long.parseLong(principal.getName()), request));
     }
 
     @PostMapping("/token")
@@ -45,7 +58,6 @@ public class AuthController implements AuthControllerSwagger {
 
     @PostMapping("/admin")
     public ResponseEntity<AuthLoginResponse> signIn(
-            @RequestHeader(AUTHORIZATION) String socialAccessToken,
             @RequestHeader(ADMIN_SECRET) String adminSecret,
             @RequestBody @Valid AuthUserLoginRequest loginRequest
     ) {
@@ -53,6 +65,6 @@ public class AuthController implements AuthControllerSwagger {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+                .body(authCommandService.signIn(loginRequest));
     }
 }
