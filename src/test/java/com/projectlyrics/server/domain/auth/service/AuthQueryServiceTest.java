@@ -40,7 +40,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
         String accessToken = "accessToken";
         String socialId = "socialId";
         String email = "email";
-        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER);
+        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.KAKAO);
         given(kakaoSocialDataApiClient.getUserInfo(any()))
                 .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
 
@@ -60,7 +60,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
     @Disabled("apple 로그인 기능 추가 후 테스트")
     void 애플_유저_정보를_조회해야_한다() throws Exception {
         //given
-        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER);
+        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.APPLE);
 
         //when
         AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo("access token", request.authProvider());

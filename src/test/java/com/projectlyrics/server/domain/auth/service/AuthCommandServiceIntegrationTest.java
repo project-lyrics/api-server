@@ -48,7 +48,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
         //when
-        AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER));
+        AuthLoginResponse response = sut.signIn(accessToken, new AuthUserLoginRequest(AuthProvider.KAKAO));
 
         //then
         Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
@@ -67,7 +67,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
         //when
         AuthLoginResponse response = sut.signIn(accessToken,
-                new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER));
+                new AuthUserLoginRequest(AuthProvider.APPLE));
 
         //then
         Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());

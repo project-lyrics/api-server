@@ -37,7 +37,7 @@ public class SecurityConfig {
     private final FilterExceptionHandler filterExceptionHandler;
 
     @Bean
-    @Profile("local")
+    @Profile({"local", "test"})
     public SecurityFilterChain localHttpSecurity(HttpSecurity http) throws Exception {
         permitDevelopApis(http);
         setHttp(http);
@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/docs/**")).permitAll()
-                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll());
     }
 
