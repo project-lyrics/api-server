@@ -30,7 +30,7 @@ public class AuthController implements AuthControllerSwagger {
             @RequestBody @Valid AuthUserLoginRequest loginRequest
     ) {
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(authCommandService.signIn(socialAccessToken, loginRequest));
     }
 

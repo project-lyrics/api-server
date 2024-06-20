@@ -46,7 +46,6 @@ public class AuthCommandService {
         AuthUserSignUpResult userSignUpResult = getSignUpResult(authSocialInfo);
 
         return AuthLoginResponse.of(
-                request.role(),
                 jwtTokenProvider.issueTokens(userSignUpResult.user().getId()),
                 userSignUpResult.isRegistered()
         );
