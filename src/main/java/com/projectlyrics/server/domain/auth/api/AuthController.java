@@ -3,9 +3,8 @@ package com.projectlyrics.server.domain.auth.api;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.ADMIN_SECRET;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
 
-import com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -30,16 +27,15 @@ public class AuthController implements AuthControllerSwagger {
 
     @PostMapping("/sign-in")
     public ResponseEntity<AuthLoginResponse> signIn(
-            @RequestBody @Valid AuthUserLoginRequest loginRequest
+            @RequestBody @Valid AuthSignInRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.signIn(loginRequest));
+                .body(authCommandService.signIn(request));
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<AuthSignUpRequest> signUp(
-            Principal principal,
             @RequestBody @Valid AuthSignUpRequest request
     ) {
         return ResponseEntity
@@ -59,7 +55,7 @@ public class AuthController implements AuthControllerSwagger {
     @PostMapping("/admin")
     public ResponseEntity<AuthLoginResponse> signIn(
             @RequestHeader(ADMIN_SECRET) String adminSecret,
-            @RequestBody @Valid AuthUserLoginRequest loginRequest
+            @RequestBody @Valid AuthSignInRequest loginRequest
     ) {
         authCommandService.validateAdminSecret(adminSecret);
 

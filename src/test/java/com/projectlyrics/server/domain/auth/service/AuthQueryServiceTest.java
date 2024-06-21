@@ -6,9 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
@@ -40,7 +39,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
         String accessToken = "accessToken";
         String socialId = "socialId";
         String email = "email";
-        AuthUserLoginRequest request = new AuthUserLoginRequest(accessToken, AuthProvider.KAKAO);
+        AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.KAKAO);
         given(kakaoSocialDataApiClient.getUserInfo(any()))
                 .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
 
@@ -61,7 +60,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
     void 애플_유저_정보를_조회해야_한다() throws Exception {
         //given
         String accessToken = "access token";
-        AuthUserLoginRequest request = new AuthUserLoginRequest(accessToken, AuthProvider.APPLE);
+        AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.APPLE);
 
         //when
         AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo(accessToken, request.authProvider());

@@ -1,14 +1,9 @@
 package com.projectlyrics.server.domain.auth.service;
 
-import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
-import com.projectlyrics.server.domain.auth.service.dto.AuthUserSignUpResult;
-import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import com.projectlyrics.server.domain.common.util.TokenUtils;
@@ -42,7 +37,7 @@ public class AuthCommandService {
         this.userCommandService = userCommandService;
     }
 
-    public AuthLoginResponse signIn(AuthUserLoginRequest request) {
+    public AuthLoginResponse signIn(AuthSignInRequest request) {
         User user = userQueryService.getUserBySocialInfo(request.socialAccessToken(), request.authProvider());
 
         return AuthLoginResponse.of(

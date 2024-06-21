@@ -6,10 +6,9 @@ import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.common.IntegrationTest;
 import com.projectlyrics.server.common.fixture.UserFixture;
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
@@ -48,7 +47,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
         //when
-        AuthLoginResponse response = sut.signIn(new AuthUserLoginRequest(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO));
+        AuthLoginResponse response = sut.signIn(new AuthSignInRequest(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO));
 
         //then
         Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
@@ -66,7 +65,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .willReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())));
 
         //when
-        AuthLoginResponse response = sut.signIn(new AuthUserLoginRequest(accessToken, AuthProvider.APPLE));
+        AuthLoginResponse response = sut.signIn(new AuthSignInRequest(accessToken, AuthProvider.APPLE));
 
         //then
         Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
