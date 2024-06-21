@@ -62,10 +62,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void validateToken(String token) {
         JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
-        if (validationResult == VALID_JWT)
+        if (validationResult.equals(VALID_JWT))
             return;
 
-        if (validationResult == EXPIRED_JWT_TOKEN)
+        if (validationResult.equals(EXPIRED_JWT_TOKEN))
             throw new TokenExpiredException();
 
         throw new InvalidTokenException();

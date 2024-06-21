@@ -3,12 +3,19 @@ package com.projectlyrics.server.domain.common.util;
 import com.projectlyrics.server.global.exception.DomainEmptyException;
 import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
+import lombok.NoArgsConstructor;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
-public class DomainUtils {
+import static lombok.AccessLevel.PRIVATE;
 
-    public static <T extends Enum> void checkEnum(T enumField) {
+@NoArgsConstructor(access = PRIVATE)
+public final class DomainUtils {
+
+    public static  <T extends Enum> void checkEnum(T enumField) {
         if (isNull(enumField))
             throw new DomainNullFieldException();
     }
@@ -24,8 +31,11 @@ public class DomainUtils {
     public static void checkUrl(String url) {
         checkString(url);
 
-        if (!url.startsWith("https://") && !url.startsWith("http://"))
+        try {
+            new URI(url).toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             throw new DomainInvalidUrlException();
+        }
     }
 
     private static boolean isNull(Object object) {
