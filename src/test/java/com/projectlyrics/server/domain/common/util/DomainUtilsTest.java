@@ -4,6 +4,7 @@ import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DomainUtilsTest {
@@ -43,7 +44,7 @@ class DomainUtilsTest {
         assertThatThrownBy(() -> DomainUtils.checkUrl(invalidUrl))
                 .isInstanceOf(DomainInvalidUrlException.class);
 
-        DomainUtils.checkUrl(httpUrl);
-        DomainUtils.checkUrl(httpsUrl);
+        assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpUrl));
+        assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpsUrl));
     }
 }
