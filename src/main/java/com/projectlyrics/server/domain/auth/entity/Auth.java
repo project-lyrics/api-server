@@ -41,4 +41,8 @@ public class Auth extends BaseEntity {
         this.authProvider = authProvider;
         this.role = role;
     }
+
+    public static Auth of(String socialId, AuthProvider authProvider) {
+        return new Auth(socialId, authProvider, Role.USER);
+    }
 }

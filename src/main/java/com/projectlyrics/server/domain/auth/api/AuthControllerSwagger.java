@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.auth.api;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,7 +34,7 @@ public interface AuthControllerSwagger {
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    ResponseEntity<AuthLoginResponse> signIn(
+    ResponseEntity<AuthTokenResponse> signIn(
             @RequestBody AuthSignInRequest loginRequest
     );
 

@@ -27,7 +27,6 @@ public class AppleSocialService implements SocialService {
 
     private static final String JSON_KEY_KEYS = "keys";
     private static final String TOKEN_DELIMITER = "\\.";
-    private static final String TOKEN_PREFIX = "Bearer ";
     private static final String KEY_HEADER_KID = "kid";
     private static final String KEY_HEADER_ALG = "alg";
 
@@ -57,7 +56,7 @@ public class AppleSocialService implements SocialService {
         Claims userInfo = Jwts.parserBuilder()
                 .setSigningKey(publicKey)
                 .build()
-                .parseClaimsJws(getTokenFromBearerString(accessToken))
+                .parseClaimsJws(accessToken)
                 .getBody();
 
         JsonObject userInfoObject = (JsonObject) JsonParser.parseString(new Gson().toJson(userInfo));
@@ -75,7 +74,7 @@ public class AppleSocialService implements SocialService {
     // 해당 키를 기준으로 Json에서 Key 객체로 변환해 반환하는 작업을 거친다.
     private PublicKey makePublicKey(String accessToken, JsonArray publicKeyList) {
         String[] decodeArray = accessToken.split(TOKEN_DELIMITER);
-        String header = new String(Base64.getDecoder().decode(getTokenFromBearerString(decodeArray[0])));
+        String header = new String(Base64.getDecoder().decode(decodeArray[0]));
 
         JsonElement kid = ((JsonObject) JsonParser.parseString(header)).get(KEY_HEADER_KID);
         JsonElement alg = ((JsonObject) JsonParser.parseString(header)).get(KEY_HEADER_ALG);
@@ -86,10 +85,6 @@ public class AppleSocialService implements SocialService {
         }
 
         return getPublicKey(matchingPublicKey);
-    }
-
-    private String getTokenFromBearerString(String token) {
-        return token.substring(TOKEN_PREFIX.length());
     }
 
     private JsonObject findMatchingPublicKey(JsonArray publicKeyList, JsonElement kid, JsonElement alg) {

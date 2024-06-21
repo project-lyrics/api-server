@@ -2,7 +2,7 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.common.ControllerTest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -21,7 +21,7 @@ class AuthControllerTest extends ControllerTest {
         //given
         String socialAccessToken = "socialAccessToken";
         AuthSignInRequest request = new AuthSignInRequest(socialAccessToken, AuthProvider.KAKAO);
-        AuthLoginResponse response = new AuthLoginResponse("access token", "refresh token");
+        AuthTokenResponse response = new AuthTokenResponse("access token", "refresh token");
         given(authCommandService.signIn(any()))
                 .willReturn(response);
 

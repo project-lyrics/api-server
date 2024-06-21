@@ -1,11 +1,15 @@
 package com.projectlyrics.server.domain.auth.service;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
+import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
+import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
@@ -37,10 +41,14 @@ public class AuthCommandService {
         this.userCommandService = userCommandService;
     }
 
-    public AuthLoginResponse signIn(AuthSignInRequest request) {
-        User user = userQueryService.getUserBySocialInfo(request.socialAccessToken(), request.authProvider());
+    public AuthTokenResponse signIn(AuthSignInRequest request) {
+        AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
+                request.socialAccessToken(),
+                request.authProvider()
+        );
+        User user = userQueryService.getUserBySocialInfo(socialInfo.socialId(), request.authProvider());
 
-        return AuthLoginResponse.of(
+        return AuthTokenResponse.of(
                 jwtTokenProvider.issueTokens(user.getId())
         );
     }
@@ -58,5 +66,29 @@ public class AuthCommandService {
         if (!adminSecret.equals(secret)) {
             throw new InvalidAdminKeyException();
         }
+    }
+
+    public AuthTokenResponse signUp(AuthSignUpRequest request) {
+        validateAgreeToTerms(request.isAbove14(), request.termsOfService(), request.privacyPolicy());
+        AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
+                request.socialAccessToken(),
+                request.authProvider()
+        );
+
+        User user = createUser(request, socialInfo);
+
+        return AuthTokenResponse.of(
+                jwtTokenProvider.issueTokens(user.getId())
+        );
+    }
+
+    private void validateAgreeToTerms(boolean above14, boolean termsOfService, boolean privacyPolicy) {
+        if (!(above14 && termsOfService && privacyPolicy)) {
+            throw new NotAgreeToTermsException();
+        }
+    }
+
+    private User createUser(AuthSignUpRequest request, AuthSocialInfo socialInfo) {
+        return userCommandService.create(User.from(socialInfo, request));
     }
 }

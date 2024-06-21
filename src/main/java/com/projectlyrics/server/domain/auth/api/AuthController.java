@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class AuthController implements AuthControllerSwagger {
     private final AuthCommandService authCommandService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<AuthLoginResponse> signIn(
+    public ResponseEntity<AuthTokenResponse> signIn(
             @RequestBody @Valid AuthSignInRequest request
     ) {
         return ResponseEntity
@@ -35,12 +35,11 @@ public class AuthController implements AuthControllerSwagger {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<AuthSignUpRequest> signUp(
+    public ResponseEntity<AuthTokenResponse> signUp(
             @RequestBody @Valid AuthSignUpRequest request
     ) {
         return ResponseEntity
-                .ok().build();
-//                .ok(authCommandService.signUp(Long.parseLong(principal.getName()), request));
+                .ok(authCommandService.signUp(request));
     }
 
     @PostMapping("/token")
@@ -53,7 +52,7 @@ public class AuthController implements AuthControllerSwagger {
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<AuthLoginResponse> signIn(
+    public ResponseEntity<AuthTokenResponse> signIn(
             @RequestHeader(ADMIN_SECRET) String adminSecret,
             @RequestBody @Valid AuthSignInRequest loginRequest
     ) {

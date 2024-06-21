@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "The token is not valid."),
     INVALID_KEY(HttpStatus.UNAUTHORIZED, "01005", "The key is not valid."),
     INVALID_AUTH_SECRET_KEY(HttpStatus.UNAUTHORIZED, "01006", "The secret key is not valid."),
+    NOT_AGREE_TO_TERMS(HttpStatus.BAD_REQUEST, "01007", "Not agree to terms and conditions"),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
