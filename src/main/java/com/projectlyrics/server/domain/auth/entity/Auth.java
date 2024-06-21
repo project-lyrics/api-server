@@ -13,6 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
+
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,10 +36,21 @@ public class Auth extends BaseEntity {
     @Column(nullable = false)
     private String socialId;
 
-    @Builder
-    public Auth(String socialId, AuthProvider authProvider, Role role) {
-        this.socialId = socialId;
+    public static Auth of(AuthProvider authProvider, Role role, String socialId) {
+        checkEnum(authProvider);
+        checkEnum(role);
+        checkString(socialId);
+
+        return new Auth(
+                authProvider,
+                role,
+                socialId
+        );
+    }
+
+    private Auth(AuthProvider authProvider, Role role, String socialId) {
         this.authProvider = authProvider;
         this.role = role;
+        this.socialId = socialId;
     }
 }

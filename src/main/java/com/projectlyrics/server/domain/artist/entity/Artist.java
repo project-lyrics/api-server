@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.artist.entity;
 
+import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.common.util.DomainUtils;
 import jakarta.persistence.Column;
@@ -11,12 +12,11 @@ import jakarta.persistence.Table;
 
 import java.util.function.Consumer;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.StringUtils;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkUrl;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -38,7 +38,18 @@ public class Artist extends BaseEntity {
     @Column(nullable = true)
     private String profileImageCdnLink;
 
-    @Builder
+    public static Artist from(ArtistAddRequest dto) {
+        checkString(dto.name());
+        checkString(dto.englishName());
+        checkUrl(dto.profileImageCdnLink());
+
+        return new Artist(
+                dto.name(),
+                dto.englishName(),
+                dto.profileImageCdnLink()
+        );
+    }
+
     private Artist(String name, String englishName, String profileImageCdnLink) {
         this.name = name;
         this.englishName = englishName;

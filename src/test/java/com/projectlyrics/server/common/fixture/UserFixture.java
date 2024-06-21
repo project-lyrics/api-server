@@ -8,22 +8,20 @@ import com.projectlyrics.server.domain.user.entity.User;
 public class UserFixture {
 
     public static User create() {
-        return User.builder()
-                .email("abcde@gmail.com")
-                .build();
+        return User.of(null, "test@test.com");
     }
 
     public static User createKakao() {
-        return User.builder()
-                .email("test@test.com")
-                .auth(new Auth("socialId", AuthProvider.KAKAO, Role.USER))
-                .build();
+        return User.of(
+                Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"),
+                "test@test.com"
+        );
     }
 
     public static User createApple() {
-        return User.builder()
-                .email("test@test.com")
-                .auth(new Auth("socialId", AuthProvider.APPLE, Role.USER))
-                .build();
+        return User.of(
+                Auth.of(AuthProvider.APPLE, Role.USER, "socialId"),
+                "test@test.com"
+        );
     }
 }

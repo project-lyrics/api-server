@@ -1,10 +1,7 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.entity.Auth;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.util.AuthBuilder;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,10 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -39,9 +37,14 @@ public class User extends BaseEntity {
     @JoinColumn(name = "auth_id")
     private Auth auth;
 
-    @Builder
-    public User(Auth auth, String email) {
-        this.auth = auth;
+    public static User of(Auth auth, String email) {
+        checkString(email);
+
+        return new User(auth, email);
+    }
+
+    private User(Auth auth, String email) {
         this.email = email;
+        this.auth = auth;
     }
 }
