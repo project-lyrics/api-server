@@ -4,6 +4,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationEntryPoint;
 import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationFilter;
+import com.projectlyrics.server.domain.auth.authentication.UndefinedAccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UndefinedAccessHandler undefinedAccessHandler;
 
     @Bean
     @Profile("local")
@@ -73,13 +75,16 @@ public class SecurityConfig {
                 .formLogin(FormLoginConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(exception -> {
+                    exception.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                    exception.accessDeniedHandler(undefinedAccessHandler);
+                })
                 .authorizeHttpRequests(requests ->
                         requests
                                 .requestMatchers(authFreeApis).permitAll()
                                 .requestMatchers(authAdminApis).hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/**").authenticated()
+                                .anyRequest().denyAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

@@ -1,6 +1,5 @@
 package com.projectlyrics.server.domain.artist.dto.request;
 
-import com.projectlyrics.server.domain.artist.entity.Artist;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 
@@ -15,12 +14,4 @@ public record ArtistAddRequest(
         @Pattern(regexp = "^https://.*", message = "이미지 경로는 https://로 시작해야 합니다.")
         String profileImageCdnLink
 ) {
-
-    public Artist toEntity() {
-        return Artist.builder()
-                .name(this.name)
-                .englishName(this.englishName)
-                .profileImageCdnLink(this.profileImageCdnLink)
-                .build();
-    }
 }

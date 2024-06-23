@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.auth.service;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
+import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
@@ -53,7 +54,10 @@ public class AuthCommandService {
     }
 
     private User signUp(AuthSocialInfo authSocialInfo) {
-        return userCommandService.create(authSocialInfo.toEntity(Role.USER));
+        return userCommandService.create(User.of(
+                Auth.of(authSocialInfo.authProvider(), Role.USER, authSocialInfo.socialId()),
+                authSocialInfo.email()
+        ));
     }
 
     private AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {

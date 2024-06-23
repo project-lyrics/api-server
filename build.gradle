@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'checkstyle'
 }
 
 group = 'com.project-lyrics'
@@ -65,11 +64,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-checkstyle {
-    ignoreFailures = true
-    maxWarnings = 0
-    configFile = file("${rootDir}/checkstyle.xml")
-    toolVersion = "10.13.0"
 }

@@ -8,8 +8,6 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
-import com.projectlyrics.server.global.exception.FeelinException;
 
 import java.time.Clock;
 
@@ -26,7 +24,7 @@ public class ArtistCommandService {
     private final ArtistQueryRepository artistQueryRepository;
 
     public ArtistAddResponse addArtist(ArtistAddRequest request) {
-        Artist savedArtist = artistCommandRepository.save(request.toEntity());
+        Artist savedArtist = artistCommandRepository.save(Artist.from(request));
         return ArtistAddResponse.of(savedArtist.getId());
     }
 
