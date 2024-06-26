@@ -79,11 +79,11 @@ class ArtistCommandServiceTest {
     }
 
     @Test
-    void 아티스트_데이터_수정_시_profileImageCdnLink가_https로_시작하지_않는다면_에러가_발생한다() {
+    void 아티스트_데이터_수정_시_profileImageCdnLink가_url형식이_아니면_에러가_발생한다() {
         // given
         Long artistId = 1L;
         Artist artist = ArtistFixture.create();
-        ArtistUpdateRequest updateArtistRequest = createUpdateArtistRequest(null, null, "http://~2");
+        ArtistUpdateRequest updateArtistRequest = createUpdateArtistRequest("name", "name", "asdfa");
         given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
 
         // when
