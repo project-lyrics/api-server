@@ -3,13 +3,12 @@ package com.projectlyrics.server.domain.auth.service;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
-import com.projectlyrics.server.domain.auth.entity.Auth;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
-import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
+import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
@@ -25,8 +24,8 @@ public class AuthCommandService {
     private final String adminSecret;
     private final AuthQueryService authQueryService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
 
     public AuthCommandService(
             @Value("${auth.admin.secret}") String adminSecret,
@@ -69,26 +68,15 @@ public class AuthCommandService {
     }
 
     public AuthTokenResponse signUp(AuthSignUpRequest request) {
-        validateAgreeToTerms(request.terms());
         AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
                 request.socialAccessToken(),
                 request.authProvider()
         );
 
-        User user = createUser(request, socialInfo);
+        User user = userCommandService.create(User.createUser(socialInfo, request));
 
         return AuthTokenResponse.of(
                 jwtTokenProvider.issueTokens(user.getId())
         );
-    }
-
-    private void validateAgreeToTerms(AuthSignUpRequest.TermsInput terms) {
-        if (!(terms.agree())) {
-            throw new NotAgreeToTermsException();
-        }
-    }
-
-    private User createUser(AuthSignUpRequest request, AuthSocialInfo socialInfo) {
-        return userCommandService.create(User.from(socialInfo, request));
     }
 }

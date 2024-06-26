@@ -13,10 +13,13 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "00001", "Invalid input value is passed."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "00002", "An unexpected error occurred on the server."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "00003", "Not Found"),
+    NULL_FIELD(HttpStatus.BAD_REQUEST, "00003", "Some field is missing."),
+    EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00004", "Some field is empty."),
+    INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00005", "URL should start with http:// or https://."),
 
     // Auth
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "01000", "The refresh token could not be found."),
-    ACCESS_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "The token is expired."),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "The token is expired."),
     WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "Wrong token type is passed."),
     UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "The token is not valid."),
@@ -33,7 +36,7 @@ public enum ErrorCode {
 
     // Record,
     RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
-    ;
+    INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The username must be at least one character long and include letters, numbers, or a combination of both.");
 
     private final HttpStatus responseStatus;
     private final String errorCode;

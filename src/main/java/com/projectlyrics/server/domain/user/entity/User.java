@@ -2,12 +2,12 @@ package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.entity.Auth;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,10 +19,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -42,30 +43,28 @@ public class User extends BaseEntity {
     @JoinColumn(name = "auth_id")
     private Auth auth;
 
-    @Column(nullable = false)
-    private String username;
+    @Embedded
+    private Username username;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+    @Embedded
+    private UserMetaInfo info;
 
-    private int birthYear;
-
+    @Embedded
     private TermsAgreements termsAgreements;
 
-    @Builder
-    public User(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
+    private User(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
+        checkString(email);
         this.email = email;
         this.auth = auth;
-        this.username = username;
-        this.gender = gender;
-        this.birthYear = birthYear;
+        this.username = new Username(username);
+        this.info = new UserMetaInfo(gender, birthYear);
         this.termsAgreements = termsAgreements;
     }
 
-    public static User from(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
+    public static User createUser(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
         return new User(
                 socialInfo.email(),
-                new Auth(socialInfo.socialId(), socialInfo.authProvider(), Role.USER),
+                Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
                 request.username(),
                 request.gender(),
                 request.birthYear().getValue(),
@@ -73,15 +72,7 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(
-            final String socialId,
-            final String email,
-            final AuthProvider authProvider,
-            final Role role
-    ) {
-        return User.builder()
-                .auth(new Auth(socialId, authProvider, role))
-                .email(email)
-                .build();
+    public static User of(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
+        return new User(email, auth, username, gender, birthYear, termsAgreements);
     }
 }

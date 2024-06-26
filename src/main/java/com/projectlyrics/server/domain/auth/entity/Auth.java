@@ -11,10 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -36,13 +36,21 @@ public class Auth extends BaseEntity {
     @Column(nullable = false)
     private String socialId;
 
-    public Auth(String socialId, AuthProvider authProvider, Role role) {
-        this.socialId = socialId;
-        this.authProvider = authProvider;
-        this.role = role;
+    public static Auth of(AuthProvider authProvider, Role role, String socialId) {
+        checkEnum(authProvider);
+        checkEnum(role);
+        checkString(socialId);
+
+        return new Auth(
+                authProvider,
+                role,
+                socialId
+        );
     }
 
-    public static Auth of(String socialId, AuthProvider authProvider) {
-        return new Auth(socialId, authProvider, Role.USER);
+    private Auth(AuthProvider authProvider, Role role, String socialId) {
+        this.authProvider = authProvider;
+        this.role = role;
+        this.socialId = socialId;
     }
 }

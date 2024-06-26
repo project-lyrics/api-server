@@ -1,0 +1,10 @@
+package com.projectlyrics.server.domain.user.exception;
+
+import com.projectlyrics.server.domain.common.message.ErrorCode;
+import com.projectlyrics.server.global.exception.FeelinException;
+
+public class InvalidUsernameException extends FeelinException {
+    public InvalidUsernameException() {
+        super(ErrorCode.INVALID_USERNAME);
+    }
+}

@@ -4,7 +4,8 @@ import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.EXPIRED
 import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.projectlyrics.server.domain.auth.exception.AccessTokenExpiredException;
+import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
+import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
 import com.projectlyrics.server.domain.auth.exception.WrongTokenTypeException;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtValidationType;
@@ -38,10 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = getAccessTokenFromRequest(request);
 
-            if (isValidToken(token, response)) {
-                setUserIntoContext(token, request);
-            }
-        } catch (Exception e) {
+            validateToken(token);
+            setUserIntoContext(token, request);
+        } catch (RuntimeException e) {
             log.debug(e.getMessage());
         } finally {
             filterChain.doFilter(request, response);
@@ -55,14 +55,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElseThrow(WrongTokenTypeException::new);
     }
 
-    private boolean isValidToken(String token, HttpServletResponse response) {
+    private void validateToken(String token) {
         JwtValidationType validationResult = jwtTokenProvider.validateToken(token);
 
-        if (validationResult == EXPIRED_JWT_TOKEN) {
-            throw new AccessTokenExpiredException();
-        }
+        if (validationResult.equals(VALID_JWT))
+            return;
 
-        return validationResult == VALID_JWT;
+        if (validationResult.equals(EXPIRED_JWT_TOKEN))
+            throw new TokenExpiredException();
+
+        throw new InvalidTokenException();
     }
 
     private void setUserIntoContext(String token, HttpServletRequest request) {
