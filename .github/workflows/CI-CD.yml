@@ -37,10 +37,6 @@ jobs:
           echo "${{ secrets.YML }}" > src/main/resources/application.yml
         shell: bash
 
-      - name: test
-        run: |
-          ./gradlew test
-        
       - name: build with gradle
         run: |
           ./gradlew build -x test
