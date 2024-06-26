@@ -69,7 +69,7 @@ public class AuthCommandService {
     }
 
     public AuthTokenResponse signUp(AuthSignUpRequest request) {
-        validateAgreeToTerms(request.isAbove14(), request.termsOfService(), request.privacyPolicy());
+        validateAgreeToTerms(request.terms());
         AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
                 request.socialAccessToken(),
                 request.authProvider()
@@ -82,8 +82,8 @@ public class AuthCommandService {
         );
     }
 
-    private void validateAgreeToTerms(boolean above14, boolean termsOfService, boolean privacyPolicy) {
-        if (!(above14 && termsOfService && privacyPolicy)) {
+    private void validateAgreeToTerms(AuthSignUpRequest.TermsInput terms) {
+        if (!(terms.agree())) {
             throw new NotAgreeToTermsException();
         }
     }

@@ -10,17 +10,14 @@ import lombok.NoArgsConstructor;
 public class TermsAgreements {
 
     @Column(nullable = false)
-    boolean above14;
+    private boolean agree;
 
     @Column(nullable = false)
-    boolean termsOfService;
+    private String agreement;
 
-    @Column(nullable = false)
-    boolean privacyPolicy;
 
-    public TermsAgreements(boolean above14, boolean termsOfService, boolean privacyPolicy) {
-        this.above14 = above14;
-        this.termsOfService = termsOfService;
-        this.privacyPolicy = privacyPolicy;
+    public TermsAgreements(boolean agree, String agreement) {
+        this.agree = agree;
+        this.agreement = agreement;
     }
 }

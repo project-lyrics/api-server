@@ -69,7 +69,7 @@ public class User extends BaseEntity {
                 request.username(),
                 request.gender(),
                 request.birthYear().getValue(),
-                new TermsAgreements(request.isAbove14(), request.termsOfService(), request.privacyPolicy())
+                new TermsAgreements(request.terms().agree(), request.terms().agreement())
         );
     }
 
