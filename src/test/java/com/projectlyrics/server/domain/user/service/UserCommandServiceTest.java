@@ -19,7 +19,7 @@ class UserCommandServiceTest extends IntegrationTest {
     @Test
     void 유저_엔티티를_등록해야_한다() throws Exception {
         //given
-        User savedUser = sut.create(UserFixture.createKakao());
+        User savedUser = sut.create(UserFixture.create());
 
         //when
         User user = userQueryService.getUserById(savedUser.getId());

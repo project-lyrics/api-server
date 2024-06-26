@@ -30,7 +30,7 @@ public class UserQueryServiceTest extends IntegrationTest {
     @Test
     void id로_유저를_조회해야_한다() throws Exception {
         //given
-        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
         User user = sut.getUserById(savedUser.getId());
@@ -49,7 +49,7 @@ public class UserQueryServiceTest extends IntegrationTest {
     @Test
     void 소셜_정보로_유저를_조회해야_한다() throws Exception {
         //given
-        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
         User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO);

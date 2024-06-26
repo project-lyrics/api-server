@@ -64,7 +64,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     void 카카오_계정으로_로그인_해야_한다() throws Exception {
         //given
         String socialAccessToken = "accessToken";
-        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        User savedUser = userCommandRepository.save(UserFixture.builder().kakao().build());
         doReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
@@ -102,7 +102,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     void 애플_계정으로_로그인_해야_한다() throws Exception {
         //given
         String accessToken = "accessToken";
-        User savedUser = userCommandRepository.save(UserFixture.createApple());
+        User savedUser = userCommandRepository.save(UserFixture.builder().apple().build());
         doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId(), savedUser.getEmail()))
                 .when(appleSocialService).getSocialData(any());
 
@@ -117,7 +117,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     @Test
     void 회원가입_해야_한다() throws Exception {
         //given
-        User user = UserFixture.createKakao();
+        User user = UserFixture.create();
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
@@ -141,7 +141,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     @Test
     void 회원가입할_때_약관에_동의하지_않은_경우_예외가_발생해야_한다() throws Exception {
         //given
-        User user = UserFixture.createKakao();
+        User user = UserFixture.create();
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
@@ -150,6 +150,8 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 new AuthSignUpRequest.TermsInput(false, "agreement")
         );
+        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when then
         assertThatThrownBy(() -> sut.signUp(request))
