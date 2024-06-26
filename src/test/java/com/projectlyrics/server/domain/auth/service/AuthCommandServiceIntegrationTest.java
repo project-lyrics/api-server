@@ -9,8 +9,10 @@ import static org.mockito.Mockito.doReturn;
 import com.projectlyrics.server.common.IntegrationTest;
 import com.projectlyrics.server.common.fixture.UserFixture;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.apple.ApplePublicKeysApiClient;
@@ -19,6 +21,7 @@ import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserIn
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
+import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
@@ -31,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.time.Year;
 import java.util.Optional;
 
 public class AuthCommandServiceIntegrationTest extends IntegrationTest {
@@ -101,11 +105,71 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         User savedUser = userCommandRepository.save(UserFixture.createApple());
         doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId(), savedUser.getEmail()))
                 .when(appleSocialService).getSocialData(any());
+
         //when
         AuthTokenResponse response = sut.signIn(new AuthSignInRequest(accessToken, AuthProvider.APPLE));
 
         //then
         Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
         assertThat(userId).isEqualTo(savedUser.getId());
+    }
+
+    @Test
+    void 회원가입_해야_한다() throws Exception {
+        //given
+        User user = UserFixture.createKakao();
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "username",
+                Gender.MALE,
+                Year.of(1999),
+                new AuthSignUpRequest.TermsInput(true, "agreement")
+        );
+        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+
+        //when
+        AuthTokenResponse response = sut.signUp(request);
+
+        //then
+        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getAuth().getSocialId(), AuthProvider.KAKAO).get();
+        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        assertThat(userId).isEqualTo(findUser.getId());
+    }
+
+    @Test
+    void 회원가입할_때_약관에_동의하지_않은_경우_예외가_발생해야_한다() throws Exception {
+        //given
+        User user = UserFixture.createKakao();
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "username",
+                Gender.MALE,
+                Year.of(1999),
+                new AuthSignUpRequest.TermsInput(false, "agreement")
+        );
+
+        //when then
+        assertThatThrownBy(() -> sut.signUp(request))
+                .isInstanceOf(NotAgreeToTermsException.class);
+    }
+
+    @Test
+    void 소셜_인증에_실패한_경우_회원가입에_실패해야_한다() throws Exception {
+        //given
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "username",
+                Gender.MALE,
+                Year.of(1999),
+                new AuthSignUpRequest.TermsInput(true, "agreement")
+        );
+
+        //when then
+        assertThatThrownBy(() -> sut.signUp(request))
+                .isInstanceOf(FeignException.class);
     }
 }
