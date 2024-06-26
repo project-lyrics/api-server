@@ -64,7 +64,7 @@ jobs:
           key: ${{ secrets.KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker ps -q --filter ancestor=${{ secrets.DOCKERHUB_USERNAME }}/feelin-api | xargs sudo docker stop | xargs sudo docker rm
+            sudo docker ps -q --filter "name=feelin_container" -a | xargs sudo docker stop | xargs sudo docker rm
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api
             sudo docker run -d --name feelin_container -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api
             sudo docker image prune -f
