@@ -20,7 +20,7 @@ class ArtistControllerTest extends ControllerTest {
     @WithMockUser
     void 아티스트를_추가해야_한다() throws Exception {
         //given
-        ArtistAddRequest request = new ArtistAddRequest("라디오헤드", "radiohead", "https://~");
+        ArtistAddRequest request = new ArtistAddRequest("라디오헤드", "radiohead", "https://lll.kk");
 
         //when then
         mockMvc.perform(post("/api/v1/artists")
@@ -36,7 +36,7 @@ class ArtistControllerTest extends ControllerTest {
     @WithMockUser
     void 아티스트를_수정해야_한다() throws Exception {
         //given
-        ArtistUpdateRequest request = new ArtistUpdateRequest("라디오헤드", "radiohead", "https://~");
+        ArtistUpdateRequest request = new ArtistUpdateRequest("라디오헤드", "radiohead", "https://kkk.ll");
 
         //when then
         mockMvc.perform(patch("/api/v1/artists/{artistId}", 1)

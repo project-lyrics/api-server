@@ -53,19 +53,4 @@ public class AuthQueryServiceTest extends IntegrationTest {
             s.assertThat(authSocialInfo.authProvider()).isEqualTo(AuthProvider.KAKAO);
         });
     }
-
-    //TODO apple 로그인 기능 추가 후 테스트 새로 작성해야 함
-    @Test
-    @Disabled("apple 로그인 기능 추가 후 테스트")
-    void 애플_유저_정보를_조회해야_한다() throws Exception {
-        //given
-        String accessToken = "access token";
-        AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.APPLE);
-
-        //when
-        AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo(accessToken, request.authProvider());
-
-        //then
-        assertThat(authSocialInfo).isNull();
-    }
 }
