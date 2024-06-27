@@ -1,16 +1,14 @@
 package com.projectlyrics.server.domain.auth.service;
 
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
-import com.projectlyrics.server.domain.auth.entity.Auth;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.exception.InvalidAdminKeyException;
+import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
-import com.projectlyrics.server.domain.auth.service.dto.AuthUserSignUpResult;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
 import com.projectlyrics.server.domain.common.util.TokenUtils;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
@@ -25,9 +23,9 @@ public class AuthCommandService {
 
     private final String adminSecret;
     private final AuthQueryService authQueryService;
-    private final UserQueryService userQueryService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
 
     public AuthCommandService(
             @Value("${auth.admin.secret}") String adminSecret,
@@ -42,35 +40,16 @@ public class AuthCommandService {
         this.userCommandService = userCommandService;
     }
 
-    public AuthLoginResponse signIn(String socialAccessToken, AuthUserLoginRequest request) {
-        AuthSocialInfo authSocialInfo = getAuthSocialInfo(socialAccessToken, request.authProvider());
-        AuthUserSignUpResult userSignUpResult = getSignUpResult(authSocialInfo);
-
-        return AuthLoginResponse.of(
-                request.role(),
-                jwtTokenProvider.issueTokens(userSignUpResult.user().getId()),
-                userSignUpResult.isRegistered()
+    public AuthTokenResponse signIn(AuthSignInRequest request) {
+        AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
+                request.socialAccessToken(),
+                request.authProvider()
         );
-    }
+        User user = userQueryService.getUserBySocialInfo(socialInfo.socialId(), request.authProvider());
 
-    private User signUp(AuthSocialInfo authSocialInfo) {
-        return userCommandService.create(User.of(
-                Auth.of(authSocialInfo.authProvider(), Role.USER, authSocialInfo.socialId()),
-                authSocialInfo.email()
-        ));
-    }
-
-    private AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {
-        return authQueryService.getAuthSocialInfo(socialAccessToken, authProvider);
-    }
-
-    private AuthUserSignUpResult getSignUpResult(AuthSocialInfo authSocialInfo) {
-        return userQueryService.getUserBySocialInfo(authSocialInfo.socialId(), authSocialInfo.authProvider())
-                .map(user -> new AuthUserSignUpResult(user, true))
-                .orElseGet(() -> {
-                    User user = signUp(authSocialInfo);
-                    return new AuthUserSignUpResult(user, false);
-                });
+        return AuthTokenResponse.of(
+                jwtTokenProvider.issueTokens(user.getId())
+        );
     }
 
     public AuthTokenReissueResponse reissueAccessToken(String refreshToken) {
@@ -86,5 +65,18 @@ public class AuthCommandService {
         if (!adminSecret.equals(secret)) {
             throw new InvalidAdminKeyException();
         }
+    }
+
+    public AuthTokenResponse signUp(AuthSignUpRequest request) {
+        AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
+                request.socialAccessToken(),
+                request.authProvider()
+        );
+
+        User user = userCommandService.create(User.createUser(socialInfo, request));
+
+        return AuthTokenResponse.of(
+                jwtTokenProvider.issueTokens(user.getId())
+        );
     }
 }

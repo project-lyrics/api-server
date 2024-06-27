@@ -6,9 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
@@ -40,7 +39,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
         String accessToken = "accessToken";
         String socialId = "socialId";
         String email = "email";
-        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.KAKAO, Role.USER);
+        AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.KAKAO);
         given(kakaoSocialDataApiClient.getUserInfo(any()))
                 .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
 
@@ -53,19 +52,5 @@ public class AuthQueryServiceTest extends IntegrationTest {
             s.assertThat(authSocialInfo.socialId()).isEqualTo(socialId);
             s.assertThat(authSocialInfo.authProvider()).isEqualTo(AuthProvider.KAKAO);
         });
-    }
-
-    //TODO apple 로그인 기능 추가 후 테스트 새로 작성해야 함
-    @Test
-    @Disabled("apple 로그인 기능 추가 후 테스트")
-    void 애플_유저_정보를_조회해야_한다() throws Exception {
-        //given
-        AuthUserLoginRequest request = new AuthUserLoginRequest(AuthProvider.APPLE, Role.USER);
-
-        //when
-        AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo("access token", request.authProvider());
-
-        //then
-        assertThat(authSocialInfo).isNull();
     }
 }

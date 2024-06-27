@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.common.util;
 
+import com.projectlyrics.server.global.exception.DomainEmptyException;
 import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class DomainUtilsTest {
         assertThatThrownBy(() -> DomainUtils.checkString(nullString))
                 .isInstanceOf(DomainNullFieldException.class);
         assertThatThrownBy(() -> DomainUtils.checkString(emptyString))
-                .isInstanceOf(DomainNullFieldException.class);
+                .isInstanceOf(DomainEmptyException.class);
     }
 
     @Test()
@@ -38,7 +39,7 @@ class DomainUtilsTest {
         String invalidUrl = "invalidUrl";
 
         String httpUrl = "http://validUrl.com";
-        String httpsUrl = "https://validUrl.com";
+        String httpsUrl = "https://validurl.com";
 
         // when
         assertThatThrownBy(() -> DomainUtils.checkUrl(invalidUrl))

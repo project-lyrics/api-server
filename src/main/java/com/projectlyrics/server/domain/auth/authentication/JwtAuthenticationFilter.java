@@ -4,12 +4,11 @@ import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.EXPIRED
 import static com.projectlyrics.server.domain.auth.jwt.JwtValidationType.VALID_JWT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
 import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
+import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
 import com.projectlyrics.server.domain.auth.exception.WrongTokenTypeException;
 import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.JwtValidationType;
-import com.projectlyrics.server.global.handler.FilterExceptionHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,11 +18,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -31,25 +32,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_PREFIX = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final FilterExceptionHandler filterExceptionHandler;
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return super.shouldNotFilter(request);
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
             String token = getAccessTokenFromRequest(request);
+
             validateToken(token);
             setUserIntoContext(token, request);
         } catch (RuntimeException e) {
-            filterExceptionHandler.handleFilterException(e, response);
+            log.debug(e.getMessage());
+        } finally {
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String getAccessTokenFromRequest(HttpServletRequest request) {

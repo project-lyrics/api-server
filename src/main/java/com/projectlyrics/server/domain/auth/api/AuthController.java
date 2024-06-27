@@ -3,10 +3,11 @@ package com.projectlyrics.server.domain.auth.api;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.ADMIN_SECRET;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
 
-import com.projectlyrics.server.domain.auth.dto.request.AuthUserLoginRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
-import com.projectlyrics.server.domain.auth.dto.response.AuthLoginResponse;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,14 +25,21 @@ public class AuthController implements AuthControllerSwagger {
 
     private final AuthCommandService authCommandService;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> signIn(
-            @RequestHeader(AUTHORIZATION) String socialAccessToken,
-            @RequestBody @Valid AuthUserLoginRequest loginRequest
+    @PostMapping("/sign-in")
+    public ResponseEntity<AuthTokenResponse> signIn(
+            @RequestBody @Valid AuthSignInRequest request
     ) {
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+                .status(HttpStatus.OK)
+                .body(authCommandService.signIn(request));
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<AuthTokenResponse> signUp(
+            @RequestBody @Valid AuthSignUpRequest request
+    ) {
+        return ResponseEntity
+                .ok(authCommandService.signUp(request));
     }
 
     @PostMapping("/token")
@@ -44,15 +52,14 @@ public class AuthController implements AuthControllerSwagger {
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<AuthLoginResponse> signIn(
-            @RequestHeader(AUTHORIZATION) String socialAccessToken,
+    public ResponseEntity<AuthTokenResponse> signIn(
             @RequestHeader(ADMIN_SECRET) String adminSecret,
-            @RequestBody @Valid AuthUserLoginRequest loginRequest
+            @RequestBody @Valid AuthSignInRequest loginRequest
     ) {
         authCommandService.validateAdminSecret(adminSecret);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(authCommandService.signIn(socialAccessToken, loginRequest));
+                .body(authCommandService.signIn(loginRequest));
     }
 }

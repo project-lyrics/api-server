@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error(e.getMessage());
+        log.error("", e);
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getResponseStatus())
                 .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));

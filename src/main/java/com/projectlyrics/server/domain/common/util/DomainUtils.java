@@ -5,9 +5,7 @@ import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import lombok.NoArgsConstructor;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -16,13 +14,11 @@ import static lombok.AccessLevel.PRIVATE;
 public final class DomainUtils {
 
     public static  <T extends Enum> void checkEnum(T enumField) {
-        if (isNull(enumField))
-            throw new DomainNullFieldException();
+        checkNull(enumField);
     }
 
     public static void checkString(String string) {
-        if (isNull(string))
-            throw new DomainNullFieldException();
+        checkNull(string);
 
         if (string.isEmpty())
             throw new DomainEmptyException();
@@ -33,12 +29,14 @@ public final class DomainUtils {
 
         try {
             new URI(url).toURL();
-        } catch (URISyntaxException | MalformedURLException e) {
+        } catch (Exception e) {
             throw new DomainInvalidUrlException();
         }
     }
 
-    private static boolean isNull(Object object) {
-        return Objects.isNull(object);
+    public static void checkNull(Object object) {
+        if (Objects.isNull(object)) {
+            throw new DomainNullFieldException();
+        }
     }
 }

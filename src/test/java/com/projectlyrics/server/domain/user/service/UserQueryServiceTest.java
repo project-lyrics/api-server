@@ -30,7 +30,7 @@ public class UserQueryServiceTest extends IntegrationTest {
     @Test
     void id로_유저를_조회해야_한다() throws Exception {
         //given
-        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
         User user = sut.getUserById(savedUser.getId());
@@ -49,22 +49,21 @@ public class UserQueryServiceTest extends IntegrationTest {
     @Test
     void 소셜_정보로_유저를_조회해야_한다() throws Exception {
         //given
-        User savedUser = userCommandRepository.save(UserFixture.createKakao());
+        User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
-        User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO)
-                .orElseThrow(UserNotFoundException::new);
+        User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO);
 
         //then
         assertThat(user).isEqualTo(savedUser);
     }
 
     @Test
-    void 소셜_정보로_없는_유저를_조회하면_Optional_empty을_반환해야_한다() throws Exception {
-        //given, when
-        Optional<User> user = sut.getUserBySocialInfo("socialId", AuthProvider.KAKAO);
+    void 소셜_정보로_없는_유저를_조회하면_예외가_발생해야_한다() throws Exception {
+        //given
 
-        //then
-        assertThat(user).isEmpty();
+        //when then
+        assertThatThrownBy(() -> sut.getUserBySocialInfo("socialId", AuthProvider.KAKAO))
+                .isInstanceOf(UserNotFoundException.class);
     }
 }

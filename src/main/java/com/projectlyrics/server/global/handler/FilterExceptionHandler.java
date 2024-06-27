@@ -6,24 +6,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.global.exception.FeelinException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
-public class FilterExceptionHandler {
+public class FilterExceptionHandler extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
 
-    public void handleFilterException(Exception e, HttpServletResponse response) throws IOException {
-        if (e instanceof FeelinException exception) {
-            setErrorResponse(exception.getErrorCode().getResponseStatus(), response, exception.getErrorCode());
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try {
+            filterChain.doFilter(request, response);
+        } catch (FeelinException e) {
+            setErrorResponse(e.getErrorCode().getResponseStatus(), response, e.getErrorCode());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, response, ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 

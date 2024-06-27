@@ -17,7 +17,8 @@ public class SocialServiceFactory {
         socialServiceMap = new HashMap<>();
 
         socialServiceList.forEach(
-                socialService -> socialServiceMap.put(socialService.getAuthProvider(), socialService));
+                socialService -> socialServiceMap.put(socialService.getAuthProvider(), socialService)
+        );
     }
 
     public SocialService getSocialServiceFrom(AuthProvider authProvider) {

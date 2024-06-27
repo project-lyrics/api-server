@@ -19,7 +19,7 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MYSQL;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:test;NON_KEYWORDS=USER;MODE=MYSQL;DB_CLOSE_DELAY=-1
     username: sa
     password:
 
@@ -28,7 +28,7 @@ jwt:
 
 auth:
   free-apis:
-    /api/v1/auth/login
+    /api/v1/auth/sign-in,/api/v1/auth/sign-up
   admin-apis:
     /api/v1/auth/admin/**, /api/v1/artists
   admin:
