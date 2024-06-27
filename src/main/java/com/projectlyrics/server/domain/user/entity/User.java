@@ -29,7 +29,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkStrin
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user")
+@Table(name = "users")
 @Entity
 public class User extends BaseEntity {
 
