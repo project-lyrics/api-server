@@ -29,6 +29,8 @@ public enum ErrorCode {
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
+    INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The username must be at least one character long and include letters, numbers, or a combination of both."),
+    INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
 
     // Artist
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "The artist data could not be found."),
@@ -36,7 +38,7 @@ public enum ErrorCode {
 
     // Record,
     RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
-    INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The username must be at least one character long and include letters, numbers, or a combination of both.");
+    ;
 
     private final HttpStatus responseStatus;
     private final String errorCode;

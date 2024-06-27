@@ -23,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
@@ -54,6 +55,7 @@ public class User extends BaseEntity {
 
     private User(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
         checkString(email);
+        checkNull(auth);
         this.email = email;
         this.auth = auth;
         this.username = new Username(username);

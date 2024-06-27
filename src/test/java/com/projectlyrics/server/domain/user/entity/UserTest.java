@@ -2,7 +2,9 @@ package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
+import com.projectlyrics.server.domain.user.exception.InvalidAgeException;
 import com.projectlyrics.server.domain.user.exception.InvalidUsernameException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -47,5 +49,41 @@ class UserTest {
                         new AuthSignUpRequest.TermsInput(true, "agreement")
                 )))
                 .isInstanceOf(InvalidUsernameException.class);
+    }
+
+    @Test
+    void 유저를_생성할_때_약관동의하지_않으면_예외가_발생해야_한다() throws Exception {
+        //given
+        AuthSignUpRequest.TermsInput agreement = new AuthSignUpRequest.TermsInput(false, "agreement");
+
+        //when then
+        assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId", "email"),
+                new AuthSignUpRequest(
+                        "socialAccessToken",
+                        AuthProvider.KAKAO,
+                        "username",
+                        Gender.MALE,
+                        Year.of(1999),
+                        agreement
+                )))
+                .isInstanceOf(NotAgreeToTermsException.class);
+    }
+
+    @Test
+    void 유저를_생성할_때_만14세_아래면_예외가_발생해야_한다() throws Exception {
+        //given
+        Year year = Year.now().minusYears(13);
+        
+        //when then
+        assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId", "email"),
+                new AuthSignUpRequest(
+                        "socialAccessToken",
+                        AuthProvider.KAKAO,
+                        "username",
+                        Gender.MALE,
+                        year,
+                        new AuthSignUpRequest.TermsInput(true, "agreement")
+                )))
+                .isInstanceOf(InvalidAgeException.class);
     }
 }
