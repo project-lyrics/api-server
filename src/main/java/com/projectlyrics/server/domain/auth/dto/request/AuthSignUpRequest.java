@@ -29,7 +29,7 @@ public record AuthSignUpRequest(
 
         @DateTimeFormat(pattern = "yyyy")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy", timezone = "Asia/Seoul")
-        @Schema(description = "출생년도", nullable = true)
+        @Schema(description = "출생년도", nullable = true, implementation = String.class)
         Year birthYear,
 
         @Valid
