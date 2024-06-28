@@ -72,18 +72,18 @@ public class ArtistController implements ArtistControllerSwagger {
 
     @GetMapping
     public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
-            @RequestParam(required = false) Long cursor,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+                .body(artistQueryService.getArtistList(cursor, PageRequest.ofSize(size)));
     }
 
     @GetMapping("/search")
     public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
-            @RequestParam(required = false) Long cursor,
-            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam String query
     ) {
         return ResponseEntity
