@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import lombok.*;
@@ -29,45 +30,39 @@ public class Artist extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
-    private String englishName;
+    @Column
+    private String imageUrl;
 
-    @Column(nullable = true)
-    private String profileImageCdnLink;
+    public static Artist of(String name, String imageUrl) {
+        return new Artist(name, imageUrl);
+    }
 
     public static Artist from(ArtistAddRequest dto) {
-        checkString(dto.name());
-        checkString(dto.englishName());
-        checkUrl(dto.profileImageCdnLink());
-
         return new Artist(
                 dto.name(),
-                dto.englishName(),
-                dto.profileImageCdnLink()
+                dto.imageUrl()
         );
     }
 
-    private Artist(String name, String englishName, String profileImageCdnLink) {
+    private Artist(String name, String imageUrl) {
+        checkString(name);
+        Optional.ofNullable(imageUrl)
+                .ifPresent(DomainUtils::checkUrl);
         this.name = name;
-        this.englishName = englishName;
-        this.profileImageCdnLink = profileImageCdnLink;
+        this.imageUrl = imageUrl;
     }
 
     public void updateName(String name) {
         this.name = name;
     }
 
-    public void updateEnglishName(String englishName) {
-        this.englishName = englishName;
-    }
+    public void updateImageUrl(String imageUrl) {
+        DomainUtils.checkUrl(imageUrl);
 
-    public void updateProfileImageCdnLink(String profileImageCdnLink) {
-        DomainUtils.checkUrl(profileImageCdnLink);
-
-        this.profileImageCdnLink = profileImageCdnLink;
+        this.imageUrl = imageUrl;
     }
 
     public void updateIfNotBlank(String value, Consumer<String> updater) {

@@ -58,8 +58,8 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
                         goeCursorId(cursor),
                         QArtist.artist.deletedAt.isNull(),
                         anyOf(
-                                QArtist.artist.name.contains(query),
-                                QArtist.artist.englishName.contains(query))
+                                QArtist.artist.name.contains(query)
+                        )
                 )
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

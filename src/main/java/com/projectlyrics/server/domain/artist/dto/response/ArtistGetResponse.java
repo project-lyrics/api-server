@@ -6,7 +6,6 @@ import com.projectlyrics.server.domain.common.dto.util.CursorResponse;
 public record ArtistGetResponse(
         Long id,
         String name,
-        String englishName,
         String profileImageCdnLink
 ) implements CursorResponse {
 
@@ -14,8 +13,7 @@ public record ArtistGetResponse(
         return new ArtistGetResponse(
                 artist.getId(),
                 artist.getName(),
-                artist.getEnglishName(),
-                artist.getProfileImageCdnLink()
+                artist.getImageUrl()
         );
     }
 

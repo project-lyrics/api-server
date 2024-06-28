@@ -19,22 +19,7 @@ class ArtistAddRequestTest {
     @ValueSource(strings = {"", "     "})
     void 아티스트의_이름이_빈_문자열이나_공백_문자열이라면_validation_에러가_발생한다(String name) {
         // given
-        ArtistAddRequest addArtistRequest = createAddArtistRequest(name, "NELL", "https://~");
-
-        // when
-        Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
-
-        // then
-        violation.forEach(error -> {
-            assertThat(error.getMessage()).isEqualTo("빈 문자열 또는 공백 문자열은 허용하지 않습니다.");
-        });
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "     "})
-    void 아티스트의_영어_이름이_문자열이나_빈_문자열_또는_공백_문자열이라면_validation_에러가_발생한다(String englishName) {
-        // given
-        ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", englishName, "https://~");
+        ArtistAddRequest addArtistRequest = createAddArtistRequest(name, "https://~");
 
         // when
         Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
@@ -48,7 +33,7 @@ class ArtistAddRequestTest {
     @Test
     void 아티스트의_이미지_경로가_https로_시작하지_않는_문자열이라면_validation_에러가_발생한다() {
         // given
-        ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", "NELL", "imageUrl");
+        ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", "imageUrl");
 
         // when
         Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
@@ -59,7 +44,7 @@ class ArtistAddRequestTest {
         });
     }
 
-    private ArtistAddRequest createAddArtistRequest(String name, String englishName, String profileImageCdnLink) {
-        return new ArtistAddRequest(name, englishName, profileImageCdnLink);
+    private ArtistAddRequest createAddArtistRequest(String name, String profileImageCdnLink) {
+        return new ArtistAddRequest(name, profileImageCdnLink);
     }
 }

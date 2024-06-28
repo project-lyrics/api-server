@@ -56,8 +56,7 @@ class ArtistCommandServiceTest {
         then(artistCommandRepository).should().save(addArtistArgumentCaptor.capture());
         Artist captorValue = addArtistArgumentCaptor.getValue();
         assertThat(addArtistRequest.name()).isEqualTo(captorValue.getName());
-        assertThat(addArtistRequest.englishName()).isEqualTo(captorValue.getEnglishName());
-        assertThat(addArtistRequest.profileImageCdnLink()).isEqualTo(captorValue.getProfileImageCdnLink());
+        assertThat(addArtistRequest.imageUrl()).isEqualTo(captorValue.getImageUrl());
     }
 
     @Test
@@ -74,7 +73,6 @@ class ArtistCommandServiceTest {
         // then
         then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
         assertThat(updateArtistResponse.name()).isEqualTo(artist.getName());
-        assertThat(updateArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
         assertThat(updateArtistResponse.profileImageCdnLink()).isEqualTo(updateArtistRequest.profileImageCdnLink());
     }
 
@@ -112,10 +110,10 @@ class ArtistCommandServiceTest {
     }
 
     private ArtistAddRequest createAddArtistRequest() {
-        return new ArtistAddRequest("넬", "NELL", "https://~");
+        return new ArtistAddRequest("넬", "https://~");
     }
 
     private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
-        return new ArtistUpdateRequest(name, englishName, profileImageCdnLink);
+        return new ArtistUpdateRequest(name, profileImageCdnLink);
     }
 }

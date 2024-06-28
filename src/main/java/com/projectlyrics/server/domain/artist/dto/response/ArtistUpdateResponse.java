@@ -5,7 +5,6 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 public record ArtistUpdateResponse(
         Long id,
         String name,
-        String englishName,
         String profileImageCdnLink
 ) {
 
@@ -13,8 +12,7 @@ public record ArtistUpdateResponse(
         return new ArtistUpdateResponse(
                 artist.getId(),
                 artist.getName(),
-                artist.getEnglishName(),
-                artist.getProfileImageCdnLink()
+                artist.getImageUrl()
         );
     }
 }
