@@ -10,6 +10,7 @@ import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.service.AuthQueryService;
+import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.record.service.RecordCommandService;
 import com.projectlyrics.server.domain.record.service.RecordQueryService;
@@ -66,6 +67,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthQueryService authQueryService;
+
+    @MockBean
+    protected FavoriteArtistCommandService favoriteArtistCommandService;
 
     protected String accessToken;
 
