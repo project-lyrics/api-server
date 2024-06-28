@@ -51,6 +51,16 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
+    public List<Artist> findAllByIds(List<Long> artistIds) {
+        return jpaQueryFactory.selectFrom(QArtist.artist)
+                .where(
+                        QArtist.artist.id.in(artistIds),
+                        QArtist.artist.deletedAt.isNull()
+                )
+                .fetch();
+    }
+
+    @Override
     public Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
