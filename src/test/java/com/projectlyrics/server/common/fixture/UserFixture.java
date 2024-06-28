@@ -8,6 +8,8 @@ import com.projectlyrics.server.domain.user.entity.TermsAgreements;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.entity.Username;
 
+import java.util.List;
+
 public class UserFixture {
 
     private String email = "test@test.com";
@@ -15,7 +17,7 @@ public class UserFixture {
     private String username = "username";
     private Gender gender = Gender.MALE;
     private int birthYear = 1999;
-    private TermsAgreements termsAgreements = new TermsAgreements(true, "agreement");
+    private List<TermsAgreements> termsAgreements = List.of(new TermsAgreements(true, "title", "agreement"));
 
     private UserFixture() {}
 
@@ -26,8 +28,8 @@ public class UserFixture {
                 "username",
                 Gender.MALE,
                 1999,
-                new TermsAgreements(true, "agreement")
-        );
+                List.of(new TermsAgreements(true, "title", "agreement")
+                ));
     }
 
     public static UserFixture builder() {
@@ -74,7 +76,7 @@ public class UserFixture {
     }
 
     public UserFixture terms(TermsAgreements termsAgreements) {
-        this.termsAgreements = termsAgreements;
+        this.termsAgreements.add(termsAgreements);
         return this;
     }
 }

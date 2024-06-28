@@ -16,12 +16,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
@@ -50,31 +53,36 @@ public class User extends BaseEntity {
     @Embedded
     private UserMetaInfo info;
 
-    @Embedded
-    private TermsAgreements termsAgreements;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TermsAgreements> termsAgreements;
 
-    private User(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
+    private User(String email, Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
         checkString(email);
         checkNull(auth);
+        checkNull(termsAgreements);
         this.email = email;
         this.auth = auth;
         this.username = new Username(username);
         this.info = new UserMetaInfo(gender, birthYear);
         this.termsAgreements = termsAgreements;
+        termsAgreements.forEach(terms -> terms.setUser(this));
     }
 
     public static User createUser(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
+        List<TermsAgreements> termsList = request.terms().stream()
+                .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
+                .toList();
         return new User(
                 socialInfo.email(),
                 Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
                 request.username(),
                 request.gender(),
                 request.birthYear().getValue(),
-                new TermsAgreements(request.terms().agree(), request.terms().agreement())
+                termsList
         );
     }
 
-    public static User of(String email, Auth auth, String username, Gender gender, int birthYear, TermsAgreements termsAgreements) {
+    public static User of(String email, Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
         return new User(email, auth, username, gender, birthYear, termsAgreements);
     }
 }

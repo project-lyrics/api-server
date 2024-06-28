@@ -35,6 +35,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
 public class AuthCommandServiceIntegrationTest extends IntegrationTest {
@@ -124,7 +125,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(true, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
         doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
@@ -148,7 +149,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(false, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
         doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
@@ -167,7 +168,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(true, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
 
         //when then
