@@ -55,7 +55,7 @@ public interface ArtistControllerSwagger {
             description = "아티스트의 데이터의 목록을 조회합니다."
     )
     public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
-            @Parameter(description = "이전에 응답 받은 nextCursor 값. 응답 받은 값이 없다면 해당 값을 비워서 요청합니다.")
+            @Parameter(description = "이전에 응답 받은 cursor 값. 응답 받은 값이 없다면 해당 값을 비워서 요청합니다.")
             @RequestParam(required = false) Long cursor,
             @Parameter(description = "조회할 데이터의 최대 크기")
             @RequestParam(defaultValue = "10") int size
