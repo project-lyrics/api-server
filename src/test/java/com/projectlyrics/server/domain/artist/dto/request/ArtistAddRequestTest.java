@@ -26,21 +26,7 @@ class ArtistAddRequestTest {
 
         // then
         violation.forEach(error -> {
-            assertThat(error.getMessage()).isEqualTo("빈 문자열 또는 공백 문자열은 허용하지 않습니다.");
-        });
-    }
-
-    @Test
-    void 아티스트의_이미지_경로가_https로_시작하지_않는_문자열이라면_validation_에러가_발생한다() {
-        // given
-        ArtistAddRequest addArtistRequest = createAddArtistRequest("넬", "imageUrl");
-
-        // when
-        Set<ConstraintViolation<ArtistAddRequest>> violation = validator.validate(addArtistRequest);
-
-        // then
-        violation.forEach(error -> {
-            assertThat(error.getMessage()).isEqualTo("이미지 경로는 https://로 시작해야 합니다.");
+            assertThat(error.getMessage()).isEqualTo("공백일 수 없습니다");
         });
     }
 

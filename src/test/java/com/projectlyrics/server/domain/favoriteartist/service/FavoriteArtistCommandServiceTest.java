@@ -56,7 +56,7 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
 
         //then
         PageRequest pageRequest = PageRequest.ofSize(5);
-        Slice<FavoriteArtist> favoriteArtistSlice = favoriteArtistQueryRepository.findAllByUserId(user.getId(), artist1.getId(), pageRequest);
+        Slice<FavoriteArtist> favoriteArtistSlice = favoriteArtistQueryRepository.findAllByUserId(user.getId(), null, pageRequest);
         List<Artist> artistList = List.of(artist1, artist2, artist3);
         assertSoftly(s -> {
             s.assertThat(favoriteArtistSlice.getContent()).hasSize(3);
