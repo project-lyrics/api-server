@@ -41,7 +41,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(
-                        goeCursorId(cursor),
+                        QueryDslUtils.gtCursorId(cursor, QArtist.artist.id),
                         QArtist.artist.deletedAt.isNull()
                 )
                 .limit(pageable.getPageSize() + 1)
@@ -65,7 +65,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(
-                        goeCursorId(cursor),
+                        QueryDslUtils.gtCursorId(cursor, QArtist.artist.id),
                         QArtist.artist.deletedAt.isNull(),
                         anyOf(
                                 QArtist.artist.name.contains(query)
@@ -75,9 +75,5 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
                 .fetch();
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
-    }
-
-    private BooleanExpression goeCursorId(Long cursor) {
-        return cursor == null ? null : QArtist.artist.id.goe(cursor);
     }
 }
