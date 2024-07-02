@@ -41,7 +41,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(
-                        goeCursorId(cursor),
+                        QueryDslUtils.gtCursorId(cursor, QArtist.artist.id),
                         QArtist.artist.deletedAt.isNull()
                 )
                 .limit(pageable.getPageSize() + 1)
@@ -51,23 +51,29 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
+    public List<Artist> findAllByIds(List<Long> artistIds) {
+        return jpaQueryFactory.selectFrom(QArtist.artist)
+                .where(
+                        QArtist.artist.id.in(artistIds),
+                        QArtist.artist.deletedAt.isNull()
+                )
+                .fetch();
+    }
+
+    @Override
     public Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(
-                        goeCursorId(cursor),
+                        QueryDslUtils.gtCursorId(cursor, QArtist.artist.id),
                         QArtist.artist.deletedAt.isNull(),
                         anyOf(
-                                QArtist.artist.name.contains(query),
-                                QArtist.artist.englishName.contains(query))
+                                QArtist.artist.name.contains(query)
+                        )
                 )
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
-    }
-
-    private BooleanExpression goeCursorId(Long cursor) {
-        return cursor == null ? null : QArtist.artist.id.goe(cursor);
     }
 }

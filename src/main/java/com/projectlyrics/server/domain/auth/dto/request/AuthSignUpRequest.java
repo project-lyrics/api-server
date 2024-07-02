@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Year;
+import java.util.List;
 
 public record AuthSignUpRequest(
         @NotBlank
@@ -33,7 +34,7 @@ public record AuthSignUpRequest(
         Year birthYear,
 
         @Valid
-        TermsInput terms
+        List<TermsInput> terms
 ) {
 
     public record TermsInput(
@@ -42,8 +43,11 @@ public record AuthSignUpRequest(
             boolean agree,
 
             @NotNull
-            @Schema(description = "약관 내용")
+            @Schema(description = "약관 제목")
+            String title,
 
-            String agreement) {
+            @Schema(description = "약관 내용 링크")
+            String agreement
+    ) {
     }
 }

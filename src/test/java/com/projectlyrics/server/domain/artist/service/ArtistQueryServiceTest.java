@@ -50,8 +50,7 @@ class ArtistQueryServiceTest {
         then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
         assertThat(getArtistResponse.id()).isEqualTo(artistId);
         assertThat(getArtistResponse.name()).isEqualTo(artist.getName());
-        assertThat(getArtistResponse.englishName()).isEqualTo(artist.getEnglishName());
-        assertThat(getArtistResponse.profileImageCdnLink()).isEqualTo(artist.getProfileImageCdnLink());
+        assertThat(getArtistResponse.imageUrl()).isEqualTo(artist.getImageUrl());
     }
 
     @Test

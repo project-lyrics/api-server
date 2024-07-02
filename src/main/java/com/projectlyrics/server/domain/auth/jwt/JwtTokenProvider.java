@@ -82,14 +82,14 @@ public class JwtTokenProvider {
             Claims claims = getBody(token);
 
             return VALID_JWT;
-        } catch (MalformedJwtException ex) {
-            return INVALID_JWT_TOKEN;
         } catch (ExpiredJwtException ex) {
             return EXPIRED_JWT_TOKEN;
         } catch (UnsupportedJwtException ex) {
             return UNSUPPORTED_JWT_TOKEN;
         } catch (IllegalArgumentException ex) {
             return EMPTY_JWT;
+        } catch (Exception ex) {
+            return INVALID_JWT_TOKEN;
         }
     }
 

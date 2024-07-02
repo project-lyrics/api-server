@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class UserTest {
                         "username",
                         Gender.MALE,
                         Year.of(1999),
-                        new AuthSignUpRequest.TermsInput(true, "agreement")
+                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
                 )));
     }
 
@@ -46,7 +47,7 @@ class UserTest {
                         tooLongUsername,
                         Gender.MALE,
                         Year.of(1999),
-                        new AuthSignUpRequest.TermsInput(true, "agreement")
+                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
                 )))
                 .isInstanceOf(InvalidUsernameException.class);
     }
@@ -54,7 +55,7 @@ class UserTest {
     @Test
     void 유저를_생성할_때_약관동의하지_않으면_예외가_발생해야_한다() throws Exception {
         //given
-        AuthSignUpRequest.TermsInput agreement = new AuthSignUpRequest.TermsInput(false, "agreement");
+        List<AuthSignUpRequest.TermsInput> agreement = List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"));
 
         //when then
         assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId", "email"),
@@ -82,7 +83,7 @@ class UserTest {
                         "username",
                         Gender.MALE,
                         year,
-                        new AuthSignUpRequest.TermsInput(true, "agreement")
+                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
                 )))
                 .isInstanceOf(InvalidAgeException.class);
     }

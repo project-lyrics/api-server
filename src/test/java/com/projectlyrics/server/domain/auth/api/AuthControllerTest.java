@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.time.Year;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -86,7 +87,7 @@ class AuthControllerTest extends ControllerTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(true, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
         AuthTokenResponse response = new AuthTokenResponse("access token", "refresh token");
         given(authCommandService.signUp(any()))
@@ -110,7 +111,7 @@ class AuthControllerTest extends ControllerTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(false, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
         NotAgreeToTermsException e = new NotAgreeToTermsException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
@@ -135,7 +136,7 @@ class AuthControllerTest extends ControllerTest {
                 "username",
                 Gender.MALE,
                 Year.of(1999),
-                new AuthSignUpRequest.TermsInput(false, "agreement")
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
         given(authCommandService.signUp(any()))

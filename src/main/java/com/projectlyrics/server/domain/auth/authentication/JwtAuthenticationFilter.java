@@ -15,10 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -31,21 +33,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String TOKEN_PREFIX = "Bearer ";
 
+    @Value("#{'${auth.free-apis}'.split(',')}")
+    private String[] excludePath;
+
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return Arrays.asList(excludePath).contains(path);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            String token = getAccessTokenFromRequest(request);
+        String token = getAccessTokenFromRequest(request);
 
-            validateToken(token);
-            setUserIntoContext(token, request);
-        } catch (RuntimeException e) {
-            log.debug(e.getMessage());
-        } finally {
-            filterChain.doFilter(request, response);
-        }
+        validateToken(token);
+
+        setUserIntoContext(token, request);
+        filterChain.doFilter(request, response);
     }
 
     private String getAccessTokenFromRequest(HttpServletRequest request) {

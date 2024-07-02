@@ -33,8 +33,7 @@ public class ArtistCommandService {
                 .orElseThrow(ArtistNotFoundException::new);
 
         artist.updateIfNotBlank(request.name(), artist::updateName);
-        artist.updateIfNotBlank(request.englishName(), artist::updateEnglishName);
-        artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateProfileImageCdnLink);
+        artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateImageUrl);
 
         return ArtistUpdateResponse.from(artist);
     }

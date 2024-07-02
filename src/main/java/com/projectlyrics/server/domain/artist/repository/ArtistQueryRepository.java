@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.artist.repository;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
@@ -14,4 +15,6 @@ public interface ArtistQueryRepository {
     Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable);
 
     Slice<Artist> findAllAndNotDeleted(Long cursor, Pageable pageable);
+
+    List<Artist> findAllByIds(List<Long> artistIds);
 }
