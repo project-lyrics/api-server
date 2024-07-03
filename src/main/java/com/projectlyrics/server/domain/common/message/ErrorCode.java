@@ -16,6 +16,7 @@ public enum ErrorCode {
     NULL_FIELD(HttpStatus.BAD_REQUEST, "00003", "Some field is missing."),
     EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00004", "Some field is empty."),
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00005", "URL should start with http:// or https://."),
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00006", "Resource not found."),
 
     // Auth
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "01000", "The refresh token could not be found."),
