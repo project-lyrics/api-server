@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         if (Objects.isNull(fieldError))
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(ErrorResponse.of(ErrorCode.VALIDATION_REQUEST_FIELD_MISSING));
+                    .body(ErrorResponse.of(ErrorCode.BAD_REQUEST));
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

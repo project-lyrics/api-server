@@ -10,15 +10,14 @@ public enum ErrorCode {
 
     // Common
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "00000", "Invalid request."),
-    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "00001", "Invalid input value is passed."),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "00001", "Some request field is missing or invalid."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "00002", "An unexpected error occurred on the server."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "00003", "Not Found"),
-    NULL_FIELD(HttpStatus.BAD_REQUEST, "00003", "Some field is missing."),
-    EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00004", "Some field is empty."),
-    INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00005", "URL should start with http:// or https://."),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00006", "Resource not found."),
-    VALIDATION_REQUEST_FIELD_MISSING(HttpStatus.BAD_REQUEST, "00007", "some validation request field is missing."),
-    INVALID_REQUEST_FIELD(HttpStatus.BAD_REQUEST, "00008", "Invalid request field is passed."),
+    NULL_FIELD(HttpStatus.BAD_REQUEST, "00004", "Some field is missing."),
+    EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00005", "Some field is empty."),
+    INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
+    INVALID_REQUEST_FIELD(HttpStatus.BAD_REQUEST, "00008", "Some request field is not valid."),
 
 
     // Auth
