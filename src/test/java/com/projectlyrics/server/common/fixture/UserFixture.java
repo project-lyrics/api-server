@@ -23,7 +23,6 @@ public class UserFixture {
 
     public static User create() {
         return User.of(
-                "test@test.com",
                 Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"),
                 "username",
                 Gender.MALE,
@@ -37,12 +36,7 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(email, auth, username, gender, birthYear, termsAgreements);
-    }
-
-    public UserFixture email(String email) {
-        this.email = email;
-        return this;
+        return User.of(auth, username, gender, birthYear, termsAgreements);
     }
 
     public UserFixture auth(Auth auth) {

@@ -9,8 +9,7 @@ public record AppleUserInfoResponse(
     public AuthSocialInfo toAuthUserInfo() {
         return new AuthSocialInfo(
                 AuthProvider.APPLE,
-                id,
-                ""
+                id
         );
     }
 }

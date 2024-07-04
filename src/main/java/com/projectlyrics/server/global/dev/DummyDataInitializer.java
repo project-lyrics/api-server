@@ -46,7 +46,7 @@ public class DummyDataInitializer {
         artistCommandRepository.save(Artist.of("artist3", null));
         artistCommandRepository.save(Artist.of("artist4", null));
         artistCommandRepository.save(Artist.of("artist5", null));
-        User user = userCommandRepository.save(User.of("test@test.com", Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"), "test1", Gender.MALE, 1999, List.of(new TermsAgreements(true, "약관1", "약관 내용"))));
+        User user = userCommandRepository.save(User.of(Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"), "test1", Gender.MALE, 1999, List.of(new TermsAgreements(true, "약관1", "약관 내용"))));
         AuthToken authToken = tokenProvider.issueTokens(user.getId());
         log.info("accessToken: {}", authToken.accessToken());
         log.info("refreshToken: {}", authToken.refreshToken());

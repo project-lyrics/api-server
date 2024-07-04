@@ -40,9 +40,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String email;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "auth_id")
     private Auth auth;
@@ -56,11 +53,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TermsAgreements> termsAgreements;
 
-    private User(String email, Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
-        checkString(email);
+    private User(Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
         checkNull(auth);
         checkNull(termsAgreements);
-        this.email = email;
         this.auth = auth;
         this.username = new Username(username);
         this.info = new UserMetaInfo(gender, birthYear);
@@ -73,7 +68,6 @@ public class User extends BaseEntity {
                 .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
                 .toList();
         return new User(
-                socialInfo.email(),
                 Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
                 request.username(),
                 request.gender(),
@@ -82,7 +76,7 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(String email, Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
-        return new User(email, auth, username, gender, birthYear, termsAgreements);
+    public static User of(Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+        return new User(auth, username, gender, birthYear, termsAgreements);
     }
 }
