@@ -66,7 +66,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String socialAccessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().kakao().build());
-        doReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount(savedUser.getEmail())))
+        doReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
@@ -81,7 +81,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     void 없는_유저인_경우_로그인에_실패해야_한다() throws Exception {
         //given
         String socialAccessToken = "accessToken";
-        doReturn(new KakaoUserInfoResponse("socialId", new KakaoAccount("email")))
+        doReturn(new KakaoUserInfoResponse("socialId", new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when then
@@ -104,7 +104,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String accessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().apple().build());
-        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId(), savedUser.getEmail()))
+        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId()))
                 .when(appleSocialService).getSocialData(any());
 
         //when
@@ -127,7 +127,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
+        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
@@ -151,7 +151,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount(user.getEmail())))
+        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when then

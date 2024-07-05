@@ -38,17 +38,15 @@ public class AuthQueryServiceTest extends IntegrationTest {
         //given
         String accessToken = "accessToken";
         String socialId = "socialId";
-        String email = "email";
         AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.KAKAO);
         given(kakaoSocialDataApiClient.getUserInfo(any()))
-                .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount(email)));
+                .willReturn(new KakaoUserInfoResponse(socialId, new KakaoAccount()));
 
         //when
         AuthSocialInfo authSocialInfo = sut.getAuthSocialInfo(accessToken, request.authProvider());
 
         //then
         assertSoftly(s -> {
-            s.assertThat(authSocialInfo.email()).isEqualTo(email);
             s.assertThat(authSocialInfo.socialId()).isEqualTo(socialId);
             s.assertThat(authSocialInfo.authProvider()).isEqualTo(AuthProvider.KAKAO);
         });
