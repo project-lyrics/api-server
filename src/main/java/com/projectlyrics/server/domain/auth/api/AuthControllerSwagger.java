@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,11 +26,18 @@ public interface AuthControllerSwagger {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200"),
-                    @ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "500", description = "서버 내부에 오류가 발생했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "200", description = "성공",
+                            content = @Content(schema = @Schema(implementation = AuthTokenResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00001", description = "일부 필드가 잘못된 값으로 입력되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00002", description = "서버 내부에 오류가 발생했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00008", description = "{요청 필드 중 하나}가 입력되지 않았습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "01004", description = "토큰이 유효하지 않습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "02000", description = "해당 사용자를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
             }
     )
     ResponseEntity<AuthTokenResponse> signIn(
@@ -38,15 +46,18 @@ public interface AuthControllerSwagger {
 
     @Operation(
             summary = "사용자 가입 API",
-            description = "사용자 정보를 받아 사용자를 가입시킵니다."
+            description = "소셜 액세스 토큰과 소셜 플랫폼 종류, 사용자가 입력한 가입 정보를 받아 사용자를 가입시킵니다."
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "사용자 가입이 완료되었습니다."),
-                    @ApiResponse(responseCode = "400", description = "요청한 값이 유효하지 않습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "200", description = "성공",
+                            content = @Content(schema = @Schema(implementation = AuthTokenResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00001", description = "일부 필드가 잘못된 값으로 입력되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00002", description = "서버 내부에 오류가 발생했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "00008", description = "{요청 필드 중 하나}가 입력되지 않았습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
             }
     )
     ResponseEntity<AuthTokenResponse> signUp(
@@ -59,7 +70,10 @@ public interface AuthControllerSwagger {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "액세스 토큰이 재발급되었습니다."),
+                    @ApiResponse(responseCode = "200", description = "성공",
+                            content = @Content(schema = @Schema(implementation = AuthTokenReissueResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "01002", description = "잘못된 토큰 형식으로 입력되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "400", description = "리프레시 토큰이 유효하지 않습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
