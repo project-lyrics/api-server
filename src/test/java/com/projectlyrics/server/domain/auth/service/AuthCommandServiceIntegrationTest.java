@@ -122,7 +122,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -146,7 +146,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
@@ -165,7 +165,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))

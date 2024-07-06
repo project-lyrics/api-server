@@ -23,7 +23,7 @@ public record AuthSignUpRequest(
 
         @NotBlank(message = "닉네임이 입력되지 않았습니다.")
         @Schema(description = "닉네임")
-        String username,
+        String nickname,
 
         @Schema(description = "성별", nullable = true)
         Gender gender,

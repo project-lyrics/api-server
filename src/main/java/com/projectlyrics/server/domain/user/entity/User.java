@@ -6,11 +6,8 @@ import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +24,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -69,7 +65,7 @@ public class User extends BaseEntity {
                 .toList();
         return new User(
                 Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
-                request.username(),
+                request.nickname(),
                 request.gender(),
                 request.birthYear().getValue(),
                 termsList

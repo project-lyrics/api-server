@@ -98,7 +98,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -122,7 +122,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
@@ -147,7 +147,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))

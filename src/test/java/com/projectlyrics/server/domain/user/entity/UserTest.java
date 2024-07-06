@@ -27,7 +27,7 @@ class UserTest {
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
-                        "username",
+                        "nickname",
                         Gender.MALE,
                         Year.of(1999),
                         List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -62,7 +62,7 @@ class UserTest {
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
-                        "username",
+                        "nickname",
                         Gender.MALE,
                         Year.of(1999),
                         agreement
@@ -80,7 +80,7 @@ class UserTest {
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
-                        "username",
+                        "nickname",
                         Gender.MALE,
                         year,
                         List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
