@@ -21,8 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class AuthControllerTest extends ControllerTest {
 
@@ -41,6 +40,21 @@ class AuthControllerTest extends ControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)));
+    }
+
+    @Test
+    void 로그인할_때_소셜_액세스_토큰을_입력하지_않은_클라이언트는_() throws Exception {
+        //given
+        AuthSignInRequest request = new AuthSignInRequest(null, AuthProvider.KAKAO);
+        ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+
+        //when then
+        mockMvc.perform(post("/api/v1/auth/sign-in")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.INVALID_REQUEST_FIELD.getErrorCode()));
     }
 
     @Test
@@ -84,7 +98,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -108,7 +122,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
@@ -133,7 +147,7 @@ class AuthControllerTest extends ControllerTest {
         AuthSignUpRequest request = new AuthSignUpRequest(
                 "socialAccessToken",
                 AuthProvider.KAKAO,
-                "username",
+                "nickname",
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))

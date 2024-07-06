@@ -1,6 +1,5 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.ADMIN_SECRET;
 import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
@@ -49,17 +48,5 @@ public class AuthController implements AuthControllerSwagger {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authCommandService.reissueAccessToken(refreshToken));
-    }
-
-    @PostMapping("/admin")
-    public ResponseEntity<AuthTokenResponse> signIn(
-            @RequestHeader(ADMIN_SECRET) String adminSecret,
-            @RequestBody @Valid AuthSignInRequest loginRequest
-    ) {
-        authCommandService.validateAdminSecret(adminSecret);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(authCommandService.signIn(loginRequest));
     }
 }

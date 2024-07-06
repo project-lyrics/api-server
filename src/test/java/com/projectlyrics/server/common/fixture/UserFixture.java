@@ -14,7 +14,7 @@ public class UserFixture {
 
     private String email = "test@test.com";
     private Auth auth = Auth.of(AuthProvider.KAKAO, Role.USER, "socialId");
-    private String username = "username";
+    private String username = "nickname";
     private Gender gender = Gender.MALE;
     private int birthYear = 1999;
     private List<TermsAgreements> termsAgreements = List.of(new TermsAgreements(true, "title", "agreement"));
@@ -24,7 +24,7 @@ public class UserFixture {
     public static User create() {
         return User.of(
                 Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"),
-                "username",
+                "nickname",
                 Gender.MALE,
                 1999,
                 List.of(new TermsAgreements(true, "title", "agreement")
