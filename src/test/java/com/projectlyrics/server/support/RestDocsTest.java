@@ -47,7 +47,7 @@ public abstract class RestDocsTest extends ControllerTest {
         String enumValues = Arrays.stream(enumClass.getEnumConstants())
                 .map(Enum::name)
                 .collect(Collectors.joining(", "));
-        return " (종류: " + enumValues + ")";
+        return " (enum: " + enumValues + ")";
     }
 
     @BeforeEach
