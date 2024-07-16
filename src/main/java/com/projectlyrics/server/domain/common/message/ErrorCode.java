@@ -17,30 +17,31 @@ public enum ErrorCode {
     EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00005", "Some field is empty."),
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
-    INVALID_REQUEST_FIELD(HttpStatus.BAD_REQUEST, "00008", "Some request field is not valid."),
-
 
     // Auth
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "01000", "The refresh token could not be found."),
-    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "The token is expired."),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "토큰이 만료되었습니다."),
     WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "잘못된 토큰 형식으로 입력되었습니다."),
     UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "토큰이 유효하지 않습니다."),
     INVALID_KEY(HttpStatus.UNAUTHORIZED, "01005", "The key is not valid."),
-    INVALID_AUTH_SECRET_KEY(HttpStatus.UNAUTHORIZED, "01006", "The secret key is not valid."),
-    NOT_AGREE_TO_TERMS(HttpStatus.BAD_REQUEST, "01007", "Not agree to terms and conditions"),
+    NOT_AGREE_TO_TERMS(HttpStatus.BAD_REQUEST, "01007", "약관에 동의하지 않았습니다."),
+    NO_TOKEN_PROVIDED(HttpStatus.UNAUTHORIZED, "01008", "인증 토큰이 존재하지 않습니다."),
+    INVALID_TOKEN_PREFIX(HttpStatus.BAD_REQUEST, "01009", "Bearer 인증 형식이 아닙니다."),
+    INVALID_SOCIAL_TOKEN(HttpStatus.UNAUTHORIZED, "01010", "유효하지 않은 소셜 인증 토큰입니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
     INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The nickname must be at least one character long and include letters, numbers, or a combination of both."),
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
+    INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),
 
     // Artist,
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "해당 아티스트를 조회할 수 없습니다."),
     ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "03001", "The data to be updated failed validation."),
 
     // Record,
-    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found.");
+    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
+    ;
 
     private final HttpStatus responseStatus;
     private final String errorCode;

@@ -24,7 +24,7 @@ public class ArtistCommandService {
     private final ArtistQueryRepository artistQueryRepository;
 
     public ArtistAddResponse addArtist(ArtistAddRequest request) {
-        Artist savedArtist = artistCommandRepository.save(Artist.from(request));
+        Artist savedArtist = artistCommandRepository.save(Artist.of(request));
         return ArtistAddResponse.of(savedArtist.getId());
     }
 

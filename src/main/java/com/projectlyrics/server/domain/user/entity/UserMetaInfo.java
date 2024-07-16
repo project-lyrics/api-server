@@ -16,8 +16,10 @@ import java.time.Year;
 public class UserMetaInfo {
 
     public static final long MINIMUM_AGE = 14;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     private int birthYear;
 
     UserMetaInfo(Gender gender, int birthYear) {

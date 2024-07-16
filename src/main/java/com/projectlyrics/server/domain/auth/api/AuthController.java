@@ -1,26 +1,24 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
-
+import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
-public class AuthController implements AuthControllerSwagger {
+public class AuthController {
 
     private final AuthCommandService authCommandService;
 
@@ -42,11 +40,16 @@ public class AuthController implements AuthControllerSwagger {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<AuthTokenReissueResponse> reissueToken(
-            @RequestHeader(AUTHORIZATION) String refreshToken
+    public ResponseEntity<AuthTokenResponse> reissueToken(
+            @RequestBody @Valid TokenReissueRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.reissueAccessToken(refreshToken));
+                .body(authCommandService.reissueAccessToken(request.refreshToken()));
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<Void> validateToken() {
+        return ResponseEntity.ok().build();
     }
 }

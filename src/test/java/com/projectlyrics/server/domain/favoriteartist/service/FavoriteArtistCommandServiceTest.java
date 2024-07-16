@@ -1,8 +1,8 @@
 package com.projectlyrics.server.domain.favoriteartist.service;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.ArtistFixture;
-import com.projectlyrics.server.common.fixture.UserFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.UserFixture;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
