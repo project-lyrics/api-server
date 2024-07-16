@@ -40,7 +40,7 @@ public abstract class ControllerTest {
     protected ObjectMapper mapper;
 
     @Autowired
-    private JwtProvider jwtProvider;
+    protected JwtProvider jwtProvider;
 
     @MockBean
     protected ArtistCommandService artistCommandService;
@@ -69,11 +69,13 @@ public abstract class ControllerTest {
     @MockBean
     protected FavoriteArtistCommandService favoriteArtistCommandService;
 
-    protected String accessToken;
+    public String accessToken;
+    public String refreshToken;
 
     @BeforeEach
     public void setUp() {
         AuthToken authToken = jwtProvider.issueTokens(1L, "nickname");
         accessToken = authToken.accessToken();
+        refreshToken = authToken.refreshToken();
     }
 }
