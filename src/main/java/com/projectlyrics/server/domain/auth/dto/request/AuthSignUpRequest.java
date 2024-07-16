@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.auth.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.Gender;
+import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +25,10 @@ public record AuthSignUpRequest(
         @NotBlank(message = "닉네임이 입력되지 않았습니다.")
         @Schema(description = "닉네임")
         String nickname,
+
+        @NotNull
+        @Schema(description = "프로필 이미지", implementation = ProfileCharacter.class)
+        ProfileCharacter profileCharacter,
 
         @Schema(description = "성별", nullable = true)
         Gender gender,

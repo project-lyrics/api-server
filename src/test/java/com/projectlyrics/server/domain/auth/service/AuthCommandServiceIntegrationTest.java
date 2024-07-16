@@ -22,6 +22,7 @@ import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialData
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
 import com.projectlyrics.server.domain.user.entity.Gender;
+import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
@@ -123,6 +124,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -147,6 +149,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
@@ -166,6 +169,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))

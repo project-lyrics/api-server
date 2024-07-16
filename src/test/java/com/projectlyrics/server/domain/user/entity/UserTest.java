@@ -28,6 +28,7 @@ class UserTest {
                         "socialAccessToken",
                         AuthProvider.KAKAO,
                         "nickname",
+                        ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         Year.of(1999),
                         List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -45,6 +46,7 @@ class UserTest {
                         "socialAccessToken",
                         AuthProvider.KAKAO,
                         tooLongUsername,
+                        ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         Year.of(1999),
                         List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -63,6 +65,7 @@ class UserTest {
                         "socialAccessToken",
                         AuthProvider.KAKAO,
                         "nickname",
+                        ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         Year.of(1999),
                         agreement
@@ -81,6 +84,7 @@ class UserTest {
                         "socialAccessToken",
                         AuthProvider.KAKAO,
                         "nickname",
+                        ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         year,
                         List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
