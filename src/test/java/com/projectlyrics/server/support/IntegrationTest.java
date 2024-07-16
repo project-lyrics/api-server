@@ -1,6 +1,6 @@
-package com.projectlyrics.server.common;
+package com.projectlyrics.server.support;
 
-import com.projectlyrics.server.common.db.DatabaseCleanerExtension;
+import com.projectlyrics.server.support.db.DatabaseCleanerExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 

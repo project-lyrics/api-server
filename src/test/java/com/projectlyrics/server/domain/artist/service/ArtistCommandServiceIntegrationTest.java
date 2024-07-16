@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.ArtistFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;

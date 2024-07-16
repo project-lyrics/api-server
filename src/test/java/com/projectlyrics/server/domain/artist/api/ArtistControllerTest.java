@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.artist.api;
 
-import com.projectlyrics.server.common.ControllerTest;
+import com.projectlyrics.server.support.ControllerTest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
 import org.junit.jupiter.api.Test;

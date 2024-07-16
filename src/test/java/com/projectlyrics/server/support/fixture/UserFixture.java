@@ -1,4 +1,4 @@
-package com.projectlyrics.server.common.fixture;
+package com.projectlyrics.server.support.fixture;
 
 import com.projectlyrics.server.domain.auth.entity.Auth;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;

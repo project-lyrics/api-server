@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import com.projectlyrics.server.common.ControllerTest;
+import com.projectlyrics.server.support.ControllerTest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;

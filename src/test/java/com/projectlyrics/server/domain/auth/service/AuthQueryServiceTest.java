@@ -5,7 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.projectlyrics.server.common.IntegrationTest;
+import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
@@ -14,7 +14,6 @@ import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccoun
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;

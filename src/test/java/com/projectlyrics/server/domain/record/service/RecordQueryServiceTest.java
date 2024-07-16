@@ -16,9 +16,9 @@ import com.projectlyrics.server.domain.record.dto.request.RecordGetResponse;
 import com.projectlyrics.server.domain.record.exception.RecordNotFoundException;
 import com.projectlyrics.server.domain.record.repository.RecordQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.common.fixture.ArtistFixture;
-import com.projectlyrics.server.common.fixture.RecordFixture;
-import com.projectlyrics.server.common.fixture.UserFixture;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.RecordFixture;
+import com.projectlyrics.server.support.fixture.UserFixture;
 
 import java.util.List;
 import java.util.Optional;

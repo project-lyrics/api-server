@@ -29,6 +29,8 @@ public enum ErrorCode {
     INVALID_KEY(HttpStatus.UNAUTHORIZED, "01005", "The key is not valid."),
     INVALID_AUTH_SECRET_KEY(HttpStatus.UNAUTHORIZED, "01006", "The secret key is not valid."),
     NOT_AGREE_TO_TERMS(HttpStatus.BAD_REQUEST, "01007", "Not agree to terms and conditions"),
+    NO_TOKEN_PROVIDED(HttpStatus.UNAUTHORIZED, "01008", "인증 토큰이 존재하지 않습니다."),
+    INVALID_TOKEN_PREFIX(HttpStatus.BAD_REQUEST, "01009", "Bearer 인증 형식이 아닙니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
@@ -41,7 +43,7 @@ public enum ErrorCode {
     ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "03001", "The data to be updated failed validation."),
 
     // Record,
-    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found.")
+    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
     ;
 
     private final HttpStatus responseStatus;

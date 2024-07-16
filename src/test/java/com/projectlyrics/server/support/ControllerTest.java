@@ -1,13 +1,13 @@
-package com.projectlyrics.server.common;
+package com.projectlyrics.server.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
-import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationEntryPoint;
-import com.projectlyrics.server.domain.auth.authentication.JwtAuthenticationFilter;
-import com.projectlyrics.server.domain.auth.authentication.UndefinedAccessHandler;
-import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
-import com.projectlyrics.server.domain.auth.jwt.dto.AuthToken;
+import com.projectlyrics.server.domain.auth.authentication.AuthContext;
+import com.projectlyrics.server.domain.auth.authentication.TokenExtractor;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
+import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.service.AuthQueryService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
@@ -15,8 +15,7 @@ import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.record.service.RecordCommandService;
 import com.projectlyrics.server.domain.record.service.RecordQueryService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
-import com.projectlyrics.server.global.configuration.SecurityConfig;
-import com.projectlyrics.server.global.handler.FilterExceptionHandler;
+import com.projectlyrics.server.global.configuration.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,12 +25,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest
 @Import({
-        JwtTokenProvider.class,
-        FilterExceptionHandler.class,
-        SecurityConfig.class,
-        JwtAuthenticationFilter.class,
-        JwtAuthenticationEntryPoint.class,
-        UndefinedAccessHandler.class
+        ClockConfig.class,
+        AuthContext.class,
+        JwtExtractor.class,
+        JwtProvider.class,
+        TokenExtractor.class,
 })
 public abstract class ControllerTest {
 
@@ -42,7 +40,7 @@ public abstract class ControllerTest {
     protected ObjectMapper mapper;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtProvider jwtProvider;
 
     @MockBean
     protected ArtistCommandService artistCommandService;
@@ -75,7 +73,7 @@ public abstract class ControllerTest {
 
     @BeforeEach
     public void setUp() {
-        AuthToken authToken = jwtTokenProvider.issueTokens(1L);
+        AuthToken authToken = jwtProvider.issueTokens(1L, "nickname");
         accessToken = authToken.accessToken();
     }
 }

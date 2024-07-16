@@ -1,4 +1,4 @@
-package com.projectlyrics.server.common.db;
+package com.projectlyrics.server.support.db;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
