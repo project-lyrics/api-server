@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
-public class AuthController implements AuthControllerSwagger {
+public class AuthController {
 
     private final AuthCommandService authCommandService;
 
