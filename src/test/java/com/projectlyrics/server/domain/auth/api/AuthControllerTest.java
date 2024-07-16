@@ -17,7 +17,9 @@ import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.support.RestDocsTest;
 import feign.FeignException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -29,6 +31,7 @@ import java.util.List;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -305,5 +308,60 @@ class AuthControllerTest extends RestDocsTest {
                 fieldWithPath("refreshToken").type(JsonFieldType.STRING)
                         .description("Refresh Token")
         };
+    }
+
+    @Test
+    void 유효한_토큰이면_200응답을_해야_한다() throws Exception {
+        //when then
+        mockMvc.perform(get("/api/v1/auth/validate-token")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                                resource(ResourceSnippetParameters.builder()
+                                        .tag("Auth API")
+                                        .summary("토큰 검증 API")
+                                        .requestHeaders(getAuthorizationHeader())
+                                        .build())
+                        )
+                );
+    }
+
+    @Test
+    void 만료된_토큰이면_400응답을_해야_한다() throws Exception {
+        //given
+        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoidGVzdDEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcyMTEzNTI2MCwiZXhwIjoxNzIxMTM1MjYwfQ.Xj-lRRIWkYj_7JlfLl0hcjEfgABrnL7s8M2aBCdN71U";
+
+        //when then
+        mockMvc.perform(get("/api/v1/auth/validate-token")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredToken))
+                .andExpect(status().isBadRequest())
+                .andDo(restDocs.document(
+                                resource(ResourceSnippetParameters.builder()
+                                        .tag("Auth API")
+                                        .summary("토큰 검증 API")
+                                        .requestHeaders(getAuthorizationHeader())
+                                        .responseSchema(Schema.schema(ERROR_RESPONSE_SCHEMA))
+                                        .build())
+                        )
+                );
+    }
+
+    @Test
+    void 유효하지_않은_토큰이면_401응답을_해야_한다() throws Exception {
+        //given
+
+        //when then
+        mockMvc.perform(get("/api/v1/auth/validate-token")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + "invalidToken"))
+                .andExpect(status().isUnauthorized())
+                .andDo(restDocs.document(
+                                resource(ResourceSnippetParameters.builder()
+                                        .tag("Auth API")
+                                        .summary("토큰 검증 API")
+                                        .requestHeaders(getAuthorizationHeader())
+                                        .responseSchema(Schema.schema(ERROR_RESPONSE_SCHEMA))
+                                        .build())
+                        )
+                );
     }
 }
