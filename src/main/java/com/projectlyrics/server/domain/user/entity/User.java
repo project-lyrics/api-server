@@ -8,6 +8,8 @@ import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +43,10 @@ public class User extends BaseEntity {
     private Auth auth;
 
     @Embedded
-    private Username username;
+    private Username nickname;
+
+    @Enumerated(EnumType.STRING)
+    private ProfileCharacter profileCharacter;
 
     @Embedded
     private UserMetaInfo info;
@@ -49,11 +54,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TermsAgreements> termsAgreements;
 
-    private User(Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+    private User(Auth auth, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
         checkNull(auth);
         checkNull(termsAgreements);
         this.auth = auth;
-        this.username = new Username(username);
+        this.nickname = new Username(nickname);
+        this.profileCharacter = profileCharacter;
         this.info = new UserMetaInfo(gender, birthYear);
         this.termsAgreements = termsAgreements;
         termsAgreements.forEach(terms -> terms.setUser(this));
@@ -66,13 +72,14 @@ public class User extends BaseEntity {
         return new User(
                 Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
                 request.nickname(),
+                request.profileCharacter(),
                 request.gender(),
                 request.birthYear().getValue(),
                 termsList
         );
     }
 
-    public static User of(Auth auth, String username, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
-        return new User(auth, username, gender, birthYear, termsAgreements);
+    public static User of(Auth auth, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+        return new User(auth, nickname, profileCharacter, gender, birthYear, termsAgreements);
     }
 }

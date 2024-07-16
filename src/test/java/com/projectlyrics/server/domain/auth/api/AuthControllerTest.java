@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.user.entity.Gender;
+import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
@@ -99,6 +100,7 @@ class AuthControllerTest extends ControllerTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
@@ -123,6 +125,7 @@ class AuthControllerTest extends ControllerTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
@@ -148,6 +151,7 @@ class AuthControllerTest extends ControllerTest {
                 "socialAccessToken",
                 AuthProvider.KAKAO,
                 "nickname",
+                ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))

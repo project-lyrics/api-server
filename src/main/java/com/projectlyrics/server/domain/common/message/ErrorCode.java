@@ -34,13 +34,15 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
     INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The nickname must be at least one character long and include letters, numbers, or a combination of both."),
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
+    INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),
 
     // Artist,
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "해당 아티스트를 조회할 수 없습니다."),
     ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "03001", "The data to be updated failed validation."),
 
     // Record,
-    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found.");
+    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found.")
+    ;
 
     private final HttpStatus responseStatus;
     private final String errorCode;
