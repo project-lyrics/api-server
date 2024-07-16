@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/artists")
 @RestController
-public class ArtistController implements ArtistControllerSwagger {
+public class ArtistController {
 
     private final ArtistQueryService artistQueryService;
     private final ArtistCommandService artistCommandService;
