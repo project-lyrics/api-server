@@ -5,7 +5,6 @@ import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
@@ -51,11 +50,11 @@ public class AuthCommandService {
         );
     }
 
-    public AuthTokenReissueResponse reissueAccessToken(String refreshToken) {
+    public AuthTokenResponse reissueAccessToken(String refreshToken) {
         JwtClaim jwtClaim = jwtExtractor.parseJwtClaim(refreshToken);
         AuthToken authToken = jwtProvider.issueTokens(jwtClaim);
 
-        return AuthTokenReissueResponse.from(authToken);
+        return AuthTokenResponse.of(authToken);
     }
 
     public AuthTokenResponse signUp(AuthSignUpRequest request) {

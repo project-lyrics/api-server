@@ -2,10 +2,8 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -71,7 +69,7 @@ public interface AuthControllerSwagger {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "성공",
-                            content = @Content(schema = @Schema(implementation = AuthTokenReissueResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                            content = @Content(schema = @Schema(implementation = AuthTokenResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "01002", description = "잘못된 토큰 형식으로 입력되었습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "400", description = "리프레시 토큰이 유효하지 않습니다.",
@@ -80,7 +78,7 @@ public interface AuthControllerSwagger {
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
-    ResponseEntity<AuthTokenReissueResponse> reissueToken(
+    ResponseEntity<AuthTokenResponse> reissueToken(
             @RequestHeader("Authorization") String refreshToken
     );
 }
