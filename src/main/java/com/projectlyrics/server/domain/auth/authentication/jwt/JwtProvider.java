@@ -48,7 +48,7 @@ public class JwtProvider {
         );
     }
 
-    public String issueAccessToken(JwtClaim jwtClaim) {
+    private String issueAccessToken(JwtClaim jwtClaim) {
         return issueToken(jwtClaim, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_TYPE);
     }
 
