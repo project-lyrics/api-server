@@ -3,15 +3,13 @@ package com.projectlyrics.server.domain.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.UserFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.UserFixture;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

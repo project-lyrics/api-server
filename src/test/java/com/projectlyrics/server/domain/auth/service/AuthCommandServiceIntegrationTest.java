@@ -3,21 +3,19 @@ package com.projectlyrics.server.domain.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.UserFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.UserFixture;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
-import com.projectlyrics.server.domain.auth.jwt.JwtTokenProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.auth.service.social.apple.ApplePublicKeysApiClient;
 import com.projectlyrics.server.domain.auth.service.social.apple.AppleSocialService;
-import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfoResponse;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
@@ -28,16 +26,12 @@ import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import feign.FeignException;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 
 public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
@@ -54,7 +48,10 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     AuthQueryService authQueryService;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
+
+    @Autowired
+    JwtExtractor jwtExtractor;
 
     @SpyBean
     KakaoSocialDataApiClient kakaoSocialDataApiClient;
@@ -74,7 +71,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthTokenResponse response = sut.signIn(new AuthSignInRequest(socialAccessToken, AuthProvider.KAKAO));
 
         //then
-        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(savedUser.getId());
     }
 
@@ -112,7 +109,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthTokenResponse response = sut.signIn(new AuthSignInRequest(accessToken, AuthProvider.APPLE));
 
         //then
-        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(savedUser.getId());
     }
 
@@ -137,7 +134,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
         //then
         User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getAuth().getSocialId(), AuthProvider.KAKAO).get();
-        Long userId = jwtTokenProvider.getUserIdFromJwt(response.accessToken());
+        Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(findUser.getId());
     }
 

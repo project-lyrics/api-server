@@ -4,7 +4,6 @@ import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTH
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenReissueResponse;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import jakarta.validation.Valid;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
-public class AuthController implements AuthControllerSwagger {
+public class AuthController {
 
     private final AuthCommandService authCommandService;
 
@@ -42,7 +41,7 @@ public class AuthController implements AuthControllerSwagger {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<AuthTokenReissueResponse> reissueToken(
+    public ResponseEntity<AuthTokenResponse> reissueToken(
             @RequestHeader(AUTHORIZATION) String refreshToken
     ) {
         return ResponseEntity

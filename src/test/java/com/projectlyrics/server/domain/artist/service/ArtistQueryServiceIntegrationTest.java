@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.ArtistFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
@@ -16,7 +16,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ArtistQueryServiceIntegrationTest extends IntegrationTest {
 

@@ -3,9 +3,9 @@ package com.projectlyrics.server.domain.artist.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.projectlyrics.server.common.RepositoryTest;
+import com.projectlyrics.server.support.RepositoryTest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.common.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
 
 import java.util.Optional;
 

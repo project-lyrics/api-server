@@ -1,7 +1,11 @@
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.epages.restdocs-api-spec' version '0.18.4'
+    id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 group = 'com.project-lyrics'
@@ -24,7 +28,6 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
@@ -59,7 +62,37 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     testRuntimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
+    swaggerUI 'org.webjars:swagger-ui:4.11.1'
+}
+
+swaggerSources {
+    sample {
+        setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+    }
+}
+
+openapi3 {
+    servers = [
+            { url = "https://api.feelinapp.com" },
+            { url = "http://localhost:8080" }
+    ]
+    title = "API 문서"
+    description = "Feelin API Docs"
+    version = "0.0.1"
+    format = "yaml"
+}
+
+tasks.withType(GenerateSwaggerUI) {
+    dependsOn 'openapi3'
+}
+
+bootJar {
+    dependsOn generateSwaggerUISample
+    from("${generateSwaggerUISample.outputDir}") {
+        into 'static/docs'
+    }
 }
 
 tasks.named('test') {

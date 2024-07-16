@@ -1,4 +1,4 @@
-package com.projectlyrics.server.common.db;
+package com.projectlyrics.server.support.db;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;

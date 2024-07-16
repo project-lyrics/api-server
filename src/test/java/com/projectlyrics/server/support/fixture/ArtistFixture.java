@@ -1,6 +1,5 @@
-package com.projectlyrics.server.common.fixture;
+package com.projectlyrics.server.support.fixture;
 
-import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
 public class ArtistFixture {

@@ -22,9 +22,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+        log.info(e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(ErrorCode.INVALID_TOKEN));
+                .body(ErrorResponse.of(ErrorCode.INVALID_SOCIAL_TOKEN));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -50,16 +51,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        FieldError fieldError = e.getBindingResult().getFieldError();
-
-        if (Objects.isNull(fieldError))
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ErrorResponse.of(ErrorCode.BAD_REQUEST));
-
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(ErrorCode.INVALID_REQUEST_FIELD, fieldError.getDefaultMessage()));
+                .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
     }
 
     @ExceptionHandler(Exception.class)

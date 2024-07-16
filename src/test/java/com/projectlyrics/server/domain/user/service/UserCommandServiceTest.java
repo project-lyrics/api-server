@@ -2,8 +2,8 @@ package com.projectlyrics.server.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.projectlyrics.server.common.IntegrationTest;
-import com.projectlyrics.server.common.fixture.UserFixture;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.UserFixture;
 import com.projectlyrics.server.domain.user.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
