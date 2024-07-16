@@ -2,17 +2,20 @@ package com.projectlyrics.server.support.fixture;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
+import java.util.Optional;
+
 public class ArtistFixture {
 
+    private static long id = 1;
     private String name = "아티스트 이름";
     private String imageUrl = "https://asdf.com";
 
     public static Artist create() {
-        return Artist.of("아티스트 이름", "https://asdf.com");
+        return Artist.withId(id++, "아티스트 이름", "https://asdf.com");
     }
 
     public static Artist createWithName(String name) {
-        return Artist.of(name, "https://asdf.com");
+        return Artist.withId(id++, name, "https://asdf.com");
     }
 
     private ArtistFixture() {}
@@ -32,6 +35,6 @@ public class ArtistFixture {
     }
 
     public Artist build() {
-        return Artist.of(name, imageUrl);
+        return Artist.withId(id++, name, imageUrl);
     }
 }

@@ -17,7 +17,6 @@ import lombok.*;
 import org.springframework.util.StringUtils;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkUrl;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -36,23 +35,32 @@ public class Artist extends BaseEntity {
     @Column
     private String imageUrl;
 
+    private Artist(Long id, String name, String imageUrl) {
+        checkString(name);
+        Optional.ofNullable(imageUrl)
+                .ifPresent(DomainUtils::checkUrl);
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
+
+    private Artist(String name, String imageUrl) {
+        this(null, name, imageUrl);
+    }
+
+    public static Artist withId(Long id, String name, String imageUrl) {
+        return new Artist(id, name, imageUrl);
+    }
+
     public static Artist of(String name, String imageUrl) {
         return new Artist(name, imageUrl);
     }
 
-    public static Artist from(ArtistAddRequest dto) {
+    public static Artist of(ArtistAddRequest dto) {
         return new Artist(
                 dto.name(),
                 dto.imageUrl()
         );
-    }
-
-    private Artist(String name, String imageUrl) {
-        checkString(name);
-        Optional.ofNullable(imageUrl)
-                .ifPresent(DomainUtils::checkUrl);
-        this.name = name;
-        this.imageUrl = imageUrl;
     }
 
     public void updateName(String name) {

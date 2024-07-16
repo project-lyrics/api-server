@@ -40,10 +40,7 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Favorite Artist API")
                         .summary("관심 아티스트 리스트 추가 API")
-                        .requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).type(SimpleType.STRING)
-                                        .description("Bearer ${accessToken}")
-                        )
+                        .requestHeaders(getAuthorizationHeader())
                         .requestFields(
                                 fieldWithPath("artistIds").type(JsonFieldType.ARRAY)
                                         .description("Artist Id 배열(number) ex) [1, 2, 3]")

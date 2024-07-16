@@ -1,7 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
-import static com.projectlyrics.server.domain.auth.api.util.AuthHttpHeaders.AUTHORIZATION;
-
+import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
@@ -10,9 +9,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,10 +41,15 @@ public class AuthController {
 
     @PostMapping("/token")
     public ResponseEntity<AuthTokenResponse> reissueToken(
-            @RequestHeader(AUTHORIZATION) String refreshToken
+            @RequestBody @Valid TokenReissueRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.reissueAccessToken(refreshToken));
+                .body(authCommandService.reissueAccessToken(request.refreshToken()));
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<Void> validateToken() {
+        return ResponseEntity.ok().build();
     }
 }
