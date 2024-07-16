@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +21,14 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 @Getter
 @Entity
-@Table(name = "favorite_artists")
+@Table(
+        name = "favorite_artists",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "userArtist",
+                        columnNames = {"user_id", "artist_id"}
+                )
+        })
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FavoriteArtist extends BaseEntity {
