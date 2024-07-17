@@ -15,27 +15,21 @@ import java.util.List;
 
 public record AuthSignUpRequest(
         @NotBlank(message = "소셜 엑세스 토큰이 입력되지 않았습니다.")
-        @Schema(description = "소셜 엑세스 토큰")
         String socialAccessToken,
 
         @NotNull(message = "로그인 종류가 입력되지 않았습니다.")
-        @Schema(description = "소셜 로그인 제공 서비스", implementation = AuthProvider.class)
         AuthProvider authProvider,
 
         @NotBlank(message = "닉네임이 입력되지 않았습니다.")
-        @Schema(description = "닉네임")
         String nickname,
 
         @NotNull
-        @Schema(description = "프로필 이미지", implementation = ProfileCharacter.class)
         ProfileCharacter profileCharacter,
 
-        @Schema(description = "성별", nullable = true)
         Gender gender,
 
         @DateTimeFormat(pattern = "yyyy")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy", timezone = "Asia/Seoul")
-        @Schema(description = "출생년도", nullable = true, implementation = String.class)
         Year birthYear,
 
         @Valid
@@ -44,14 +38,12 @@ public record AuthSignUpRequest(
 
     public record TermsInput(
             @NotNull(message = "약관 동의가 입력되지 않았습니다.")
-            @Schema(description = "약관 동의")
             boolean agree,
 
             @NotNull(message = "약관 제목이 입력되지 않았습니다.")
-            @Schema(description = "약관 제목")
             String title,
 
-            @Schema(description = "약관 내용 링크")
+            @NotNull
             String agreement
     ) {
     }
