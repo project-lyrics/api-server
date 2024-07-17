@@ -31,7 +31,7 @@ public enum ErrorCode {
     INVALID_SOCIAL_TOKEN(HttpStatus.UNAUTHORIZED, "01010", "유효하지 않은 소셜 인증 토큰입니다."),
 
     // User
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "The user data could not be found."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "해당 유저가 존재하지 않습니다."),
     INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The nickname must be at least one character long and include letters, numbers, or a combination of both."),
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
     INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),

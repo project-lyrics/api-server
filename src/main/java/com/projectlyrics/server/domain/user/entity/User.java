@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
@@ -58,7 +59,7 @@ public class User extends BaseEntity {
             ProfileCharacter profileCharacter,
             Role role,
             Gender gender,
-            int birthYear,
+            Integer birthYear,
             List<TermsAgreements> termsAgreements
     ) {
         checkNull(socialInfo);
@@ -83,12 +84,12 @@ public class User extends BaseEntity {
                 request.profileCharacter(),
                 Role.USER,
                 request.gender(),
-                request.birthYear().getValue(),
+                Objects.nonNull(request.birthYear()) ? request.birthYear().getValue() : null,
                 termsList
         );
     }
 
-    public static User of(SocialInfo socialInfo, String nickname, ProfileCharacter profileCharacter, Role role, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+    public static User of(SocialInfo socialInfo, String nickname, ProfileCharacter profileCharacter, Role role, Gender gender, Integer birthYear, List<TermsAgreements> termsAgreements) {
         return new User(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 }

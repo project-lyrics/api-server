@@ -124,7 +124,7 @@ class AuthControllerTest extends RestDocsTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
-        AuthTokenResponse response = new AuthTokenResponse("access token", "refresh token");
+        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
         given(authCommandService.signUp(any()))
                 .willReturn(response);
 

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Year;
+import java.util.Objects;
 
 @Getter
 @Embeddable
@@ -20,15 +21,18 @@ public class UserMetaInfo {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private int birthYear;
+    private Integer birthYear;
 
-    UserMetaInfo(Gender gender, int birthYear) {
+    UserMetaInfo(Gender gender, Integer birthYear) {
         validateAge(birthYear);
         this.gender = gender;
         this.birthYear = birthYear;
     }
 
-    private void validateAge(int birthYear) {
+    private void validateAge(Integer birthYear) {
+        if (Objects.isNull(birthYear)) {
+            return;
+        }
         Year minusBirthYears = Year.now().minusYears(MINIMUM_AGE);
         if (minusBirthYears.isBefore(Year.of(birthYear))) {
             throw new InvalidAgeException();

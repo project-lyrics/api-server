@@ -147,7 +147,7 @@ class ArtistControllerTest extends RestDocsTest {
     }
 
     @Test
-    void 검색어가_null이거나_공백인_경우_아티스트를_검색하면_빈_데이터와_200응답을_해야_힌디() throws Exception {
+    void 검색어가_null이거나_공백인_경우_아티스트를_검색하면_빈_데이터와_200응답을_해야_한다() throws Exception {
         //given
         CursorBasePaginatedResponse<ArtistGetResponse> response = new CursorBasePaginatedResponse<>(
                 null,
