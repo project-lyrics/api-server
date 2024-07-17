@@ -4,24 +4,29 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 
 import java.util.Optional;
 
-public class ArtistFixture {
+public class ArtistFixture extends BaseFixture {
 
-    private static long id = 1;
+    private Long id;
     private String name = "아티스트 이름";
     private String imageUrl = "https://asdf.com";
 
     public static Artist create() {
-        return Artist.withId(id++, "아티스트 이름", "https://asdf.com");
+        return Artist.withId(getUniqueId(), "아티스트 이름", "https://asdf.com");
     }
 
     public static Artist createWithName(String name) {
-        return Artist.withId(id++, name, "https://asdf.com");
+        return Artist.withId(getUniqueId(), name, "https://asdf.com");
     }
 
     private ArtistFixture() {}
 
     public static ArtistFixture builder() {
         return new ArtistFixture();
+    }
+
+    public ArtistFixture id(long id) {
+        this.id = id;
+        return this;
     }
 
     public ArtistFixture name(String name) {
@@ -35,6 +40,6 @@ public class ArtistFixture {
     }
 
     public Artist build() {
-        return Artist.withId(id++, name, imageUrl);
+        return Artist.withId(id, name, imageUrl);
     }
 }

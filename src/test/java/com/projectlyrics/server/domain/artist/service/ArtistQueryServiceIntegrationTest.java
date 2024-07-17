@@ -11,11 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 class ArtistQueryServiceIntegrationTest extends IntegrationTest {
 
@@ -84,6 +88,37 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
                     s.assertThat(response.hasNext()).isFalse();
                     s.assertThat(response.data().size()).isEqualTo(1);
                     s.assertThat(response.data().get(0).name()).isEqualTo(artist1.getName());
+                }
+        );
+    }
+
+    @Test
+    void ti가_포함된_아티스트를_검색한다() {
+        // given
+        String query = "ti";
+        long cursor = 5L;
+        Pageable pageable = PageRequest.of(0, 3);
+        ArrayList<Artist> artistList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Artist artist = ArtistFixture.builder().id(i).name("artist" + i).build();
+            artistCommandRepository.save(artist);
+            artistList.add(artist);
+        }
+
+        // when
+        CursorBasePaginatedResponse<ArtistGetResponse> response = sut.searchArtists(query, cursor, pageable);
+
+        // then
+        assertSoftly(s -> {
+                    s.assertThat(response.hasNext()).isTrue();
+                    s.assertThat(response.nextCursor()).isEqualTo(8);
+                    s.assertThat(response.data().size()).isEqualTo(3);
+                    s.assertThat(response.data().get(0).id()).isEqualTo(6);
+                    s.assertThat(response.data().get(0).name()).isEqualTo("artist6");
+                    s.assertThat(response.data().get(1).id()).isEqualTo(7);
+                    s.assertThat(response.data().get(1).name()).isEqualTo("artist7");
+                    s.assertThat(response.data().get(2).id()).isEqualTo(8);
+                    s.assertThat(response.data().get(2).name()).isEqualTo("artist8");
                 }
         );
     }
