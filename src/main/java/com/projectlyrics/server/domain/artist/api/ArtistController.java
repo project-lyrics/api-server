@@ -84,7 +84,7 @@ public class ArtistController {
     public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam String query
+            @RequestParam(name = "query") String query
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
