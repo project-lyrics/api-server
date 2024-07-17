@@ -20,6 +20,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
@@ -145,10 +146,35 @@ class ArtistControllerTest extends RestDocsTest {
                 .andDo(getArtistSearchDocument());
     }
 
+    @Test
+    void 검색어가_null이거나_공백인_경우_아티스트를_검색하면_빈_데이터와_200응답을_해야_힌디() throws Exception {
+        //given
+        CursorBasePaginatedResponse<ArtistGetResponse> response = new CursorBasePaginatedResponse<>(
+                null,
+                false,
+                new ArrayList<>()
+        );
+
+        //when then
+        mockMvc.perform(get("/api/v1/artists/search")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("query", " ")
+                        .param("cursor", "1")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(response)))
+                .andDo(print())
+                .andDo(getArtistSearchDocument());
+    }
+
     private RestDocumentationResultHandler getArtistSearchDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
-        queryParams[pagingQueryParameters.length] = parameterWithName("query").type(SimpleType.STRING).description("검색어");
+        queryParams[pagingQueryParameters.length] = parameterWithName("query")
+                .type(SimpleType.STRING)
+                .optional()
+                .description("검색어 (null이거나 빈 값이면 빈 리스트 반환)");
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Artist API")
@@ -157,16 +183,20 @@ class ArtistControllerTest extends RestDocsTest {
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                        .optional()
                                         .description("다음 cursor에 쓰일 값"),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
                                         .description("다음 데이터 존재 여부"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY)
                                         .description("데이터"),
                                 fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                        .optional()
                                         .description("아티스트 id"),
                                 fieldWithPath("data[].name").type(JsonFieldType.STRING)
+                                        .optional()
                                         .description("아티스트 이름"),
                                 fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
+                                        .optional()
                                         .description("아티스트 이미지")
                         )
                         .responseSchema(Schema.schema("Artist List Response"))
