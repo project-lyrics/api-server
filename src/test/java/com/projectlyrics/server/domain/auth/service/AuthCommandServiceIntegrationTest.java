@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
@@ -175,5 +177,27 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //when then
         assertThatThrownBy(() -> sut.signUp(request))
                 .isInstanceOf(FeignException.class);
+    }
+
+    @Test
+    void 이미_있는_유저인_경우_회원가입에_실패_해야_한다() throws Exception {
+        //given
+        User user = userCommandRepository.save(UserFixture.create());
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "nickname",
+                ProfileCharacter.POOP_HAIR,
+                Gender.MALE,
+                Year.of(1999),
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+        );
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+
+        //when then
+        assertThatThrownBy(() -> sut.signUp(request))
+                .isInstanceOf(AlreadyExistsUserException.class)
+                .hasMessage(ErrorCode.ALREADY_EXISTS_USER.getErrorMessage());
     }
 }
