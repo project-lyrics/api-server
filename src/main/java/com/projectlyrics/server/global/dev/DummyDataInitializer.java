@@ -3,7 +3,7 @@ package com.projectlyrics.server.global.dev;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
-import com.projectlyrics.server.domain.auth.entity.Auth;
+import com.projectlyrics.server.domain.auth.entity.SocialInfo;
 import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
@@ -47,7 +47,7 @@ public class DummyDataInitializer {
         artistCommandRepository.save(Artist.of("artist3", null));
         artistCommandRepository.save(Artist.of("artist4", null));
         artistCommandRepository.save(Artist.of("artist5", null));
-        User user = userCommandRepository.save(User.of(Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"), "test1", ProfileCharacter.SHORT_HAIR, Gender.MALE, 1999, List.of(new TermsAgreements(true, "약관1", "약관 내용"))));
+        User user = userCommandRepository.save(User.of(SocialInfo.of(AuthProvider.KAKAO, Role.USER, "socialId"), "test1", ProfileCharacter.SHORT_HAIR, Gender.MALE, 1999, List.of(new TermsAgreements(true, "약관1", "약관 내용"))));
         AuthToken authToken = tokenProvider.issueTokens(user.getId(), user.getNickname().getValue());
         log.info("accessToken: {}", authToken.accessToken());
         log.info("refreshToken: {}", authToken.refreshToken());

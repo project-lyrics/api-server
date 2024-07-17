@@ -21,7 +21,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkStrin
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "auths")
 @Entity
-public class Auth extends BaseEntity {
+public class SocialInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,19 +36,19 @@ public class Auth extends BaseEntity {
     @Column(nullable = false)
     private String socialId;
 
-    public static Auth of(AuthProvider authProvider, Role role, String socialId) {
+    public static SocialInfo of(AuthProvider authProvider, Role role, String socialId) {
         checkEnum(authProvider);
         checkEnum(role);
         checkString(socialId);
 
-        return new Auth(
+        return new SocialInfo(
                 authProvider,
                 role,
                 socialId
         );
     }
 
-    private Auth(AuthProvider authProvider, Role role, String socialId) {
+    private SocialInfo(AuthProvider authProvider, Role role, String socialId) {
         this.authProvider = authProvider;
         this.role = role;
         this.socialId = socialId;

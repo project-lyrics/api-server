@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.entity.Auth;
+import com.projectlyrics.server.domain.auth.entity.SocialInfo;
 import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
@@ -40,7 +40,7 @@ public class User extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "auth_id")
-    private Auth auth;
+    private SocialInfo socialInfo;
 
     @Embedded
     private Username nickname;
@@ -54,10 +54,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TermsAgreements> termsAgreements;
 
-    private User(Auth auth, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
-        checkNull(auth);
+    private User(SocialInfo socialInfo, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+        checkNull(socialInfo);
         checkNull(termsAgreements);
-        this.auth = auth;
+        this.socialInfo = socialInfo;
         this.nickname = new Username(nickname);
         this.profileCharacter = profileCharacter;
         this.info = new UserMetaInfo(gender, birthYear);
@@ -70,7 +70,7 @@ public class User extends BaseEntity {
                 .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
                 .toList();
         return new User(
-                Auth.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
+                SocialInfo.of(socialInfo.authProvider(), Role.USER, socialInfo.socialId()),
                 request.nickname(),
                 request.profileCharacter(),
                 request.gender(),
@@ -79,7 +79,7 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(Auth auth, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
-        return new User(auth, nickname, profileCharacter, gender, birthYear, termsAgreements);
+    public static User of(SocialInfo socialInfo, String nickname, ProfileCharacter profileCharacter, Gender gender, int birthYear, List<TermsAgreements> termsAgreements) {
+        return new User(socialInfo, nickname, profileCharacter, gender, birthYear, termsAgreements);
     }
 }

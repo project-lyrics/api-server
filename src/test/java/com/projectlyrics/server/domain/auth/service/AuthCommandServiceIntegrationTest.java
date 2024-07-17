@@ -64,7 +64,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String socialAccessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().kakao().build());
-        doReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(savedUser.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
@@ -102,7 +102,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String accessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().apple().build());
-        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId()))
+        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getSocialInfo().getSocialId()))
                 .when(appleSocialService).getSocialData(any());
 
         //when
@@ -126,14 +126,14 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
         AuthTokenResponse response = sut.signUp(request);
 
         //then
-        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getAuth().getSocialId(), AuthProvider.KAKAO).get();
+        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get();
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(findUser.getId());
     }
@@ -151,7 +151,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when then

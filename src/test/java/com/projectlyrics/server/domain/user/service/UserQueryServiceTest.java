@@ -50,7 +50,7 @@ public class UserQueryServiceTest extends IntegrationTest {
         User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
-        User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO);
+        User user = sut.getUserBySocialInfo(savedUser.getSocialInfo().getSocialId(), AuthProvider.KAKAO);
 
         //then
         assertThat(user).isEqualTo(savedUser);
