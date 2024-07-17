@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.repository.impl;
 
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.QUser;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,5 +43,15 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
                         )
                         .fetchOne()
         );
+    }
+
+    @Override
+    public boolean existsBySocialInfo(SocialInfo socialInfo) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(QUser.user)
+                        .where(QUser.user.socialInfo.eq(socialInfo))
+                        .fetchOne()
+        ).isPresent();
     }
 }

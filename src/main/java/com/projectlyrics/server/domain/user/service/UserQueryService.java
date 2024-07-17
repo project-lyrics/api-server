@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.user.service;
 
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
@@ -24,5 +25,9 @@ public class UserQueryService {
     public User getUserBySocialInfo(String socialId, AuthProvider authProvider) {
         return userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(socialId, authProvider)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    public boolean existsBySocialInfo(SocialInfo socialInfo) {
+        return userQueryRepository.existsBySocialInfo(socialInfo);
     }
 }
