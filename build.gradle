@@ -80,7 +80,7 @@ openapi3 {
     ]
     title = "API 문서"
     description = "Feelin API Docs"
-    version = "0.0.1"
+    version = "0.0.2"
     format = "yaml"
 }
 
