@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.user.repository.impl;
 
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.QUser;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
@@ -23,8 +23,8 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
                 jpaQueryFactory
                         .selectFrom(QUser.user)
                         .where(
-                                QUser.user.auth.socialId.eq(socialId),
-                                QUser.user.auth.authProvider.eq(authProvider),
+                                QUser.user.socialInfo.socialId.eq(socialId),
+                                QUser.user.socialInfo.authProvider.eq(authProvider),
                                 QUser.user.deletedAt.isNull()
                         )
                         .fetchOne()

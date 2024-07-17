@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.user.repository;
 
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.User;
 
 import java.util.Optional;

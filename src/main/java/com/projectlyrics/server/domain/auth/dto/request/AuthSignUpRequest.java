@@ -1,10 +1,9 @@
 package com.projectlyrics.server.domain.auth.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,8 +1,6 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.entity.SocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -38,8 +36,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "auth_id")
+    @Embedded
     private SocialInfo socialInfo;
 
     @Embedded

@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;

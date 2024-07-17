@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.auth.dto.request;
 
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import jakarta.validation.constraints.NotNull;
 
 public record AuthSignInRequest(

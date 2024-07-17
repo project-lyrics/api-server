@@ -1,8 +1,8 @@
 package com.projectlyrics.server.support.fixture;
 
-import com.projectlyrics.server.domain.auth.entity.SocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.Role;
 import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.TermsAgreements;

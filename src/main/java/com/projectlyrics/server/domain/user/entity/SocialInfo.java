@@ -1,31 +1,19 @@
-package com.projectlyrics.server.domain.auth.entity;
+package com.projectlyrics.server.domain.user.entity;
 
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
+@Embeddable
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "auths")
-@Entity
-public class SocialInfo extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SocialInfo {
 
     @Enumerated(value = EnumType.STRING)
     private AuthProvider authProvider;
