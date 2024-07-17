@@ -7,7 +7,9 @@ import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
+import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
@@ -63,6 +65,9 @@ public class AuthCommandService {
                 request.authProvider()
         );
 
+        if (userQueryService.existsBySocialInfo(SocialInfo.of(socialInfo.authProvider(), socialInfo.socialId()))) {
+            throw new AlreadyExistsUserException();
+        }
         User user = userCommandService.create(User.createUser(socialInfo, request));
 
         return AuthTokenResponse.of(

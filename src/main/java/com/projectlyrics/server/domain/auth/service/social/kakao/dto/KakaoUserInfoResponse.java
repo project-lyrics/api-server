@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.auth.service.social.kakao.dto;
 
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 
 public record KakaoUserInfoResponse(
         String id,

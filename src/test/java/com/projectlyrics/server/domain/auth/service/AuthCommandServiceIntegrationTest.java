@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
@@ -12,7 +14,7 @@ import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.apple.AppleSocialService;
@@ -64,7 +66,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String socialAccessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().kakao().build());
-        doReturn(new KakaoUserInfoResponse(savedUser.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(savedUser.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
@@ -102,7 +104,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String accessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().apple().build());
-        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getAuth().getSocialId()))
+        doReturn(new AuthSocialInfo(AuthProvider.APPLE, savedUser.getSocialInfo().getSocialId()))
                 .when(appleSocialService).getSocialData(any());
 
         //when
@@ -126,14 +128,14 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when
         AuthTokenResponse response = sut.signUp(request);
 
         //then
-        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getAuth().getSocialId(), AuthProvider.KAKAO).get();
+        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get();
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(findUser.getId());
     }
@@ -151,7 +153,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
-        doReturn(new KakaoUserInfoResponse(user.getAuth().getSocialId(), new KakaoAccount()))
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         //when then
@@ -175,5 +177,27 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //when then
         assertThatThrownBy(() -> sut.signUp(request))
                 .isInstanceOf(FeignException.class);
+    }
+
+    @Test
+    void 이미_있는_유저인_경우_회원가입에_실패_해야_한다() throws Exception {
+        //given
+        User user = userCommandRepository.save(UserFixture.create());
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "nickname",
+                ProfileCharacter.POOP_HAIR,
+                Gender.MALE,
+                Year.of(1999),
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+        );
+        doReturn(new KakaoUserInfoResponse(user.getSocialInfo().getSocialId(), new KakaoAccount()))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+
+        //when then
+        assertThatThrownBy(() -> sut.signUp(request))
+                .isInstanceOf(AlreadyExistsUserException.class)
+                .hasMessage(ErrorCode.ALREADY_EXISTS_USER.getErrorMessage());
     }
 }

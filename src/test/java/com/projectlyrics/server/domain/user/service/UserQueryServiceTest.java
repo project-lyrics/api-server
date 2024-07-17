@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.UserFixture;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
@@ -50,7 +50,7 @@ public class UserQueryServiceTest extends IntegrationTest {
         User savedUser = userCommandRepository.save(UserFixture.create());
 
         //when
-        User user = sut.getUserBySocialInfo(savedUser.getAuth().getSocialId(), AuthProvider.KAKAO);
+        User user = sut.getUserBySocialInfo(savedUser.getSocialInfo().getSocialId(), AuthProvider.KAKAO);
 
         //then
         assertThat(user).isEqualTo(savedUser);

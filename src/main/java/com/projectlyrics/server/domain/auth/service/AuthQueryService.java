@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.auth.service;
 
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.SocialServiceFactory;
 import lombok.RequiredArgsConstructor;

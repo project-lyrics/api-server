@@ -1,8 +1,8 @@
 package com.projectlyrics.server.support.fixture;
 
-import com.projectlyrics.server.domain.auth.entity.Auth;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
-import com.projectlyrics.server.domain.auth.entity.enumerate.Role;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.Role;
 import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.TermsAgreements;
@@ -13,20 +13,22 @@ import java.util.List;
 public class UserFixture {
 
     private String email = "test@test.com";
-    private Auth auth = Auth.of(AuthProvider.KAKAO, Role.USER, "socialId");
+    private SocialInfo socialInfo = SocialInfo.of(AuthProvider.KAKAO, "socialId");
     private String nickname = "nickname";
     private ProfileCharacter profileCharacter = ProfileCharacter.POOP_HAIR;
     private Gender gender = Gender.MALE;
     private int birthYear = 1999;
+    private Role role = Role.USER;
     private List<TermsAgreements> termsAgreements = List.of(new TermsAgreements(true, "title", "agreement"));
 
     private UserFixture() {}
 
     public static User create() {
         return User.of(
-                Auth.of(AuthProvider.KAKAO, Role.USER, "socialId"),
+                SocialInfo.of(AuthProvider.KAKAO, "socialId"),
                 "nickname",
                 ProfileCharacter.POOP_HAIR,
+                Role.USER,
                 Gender.MALE,
                 1999,
                 List.of(new TermsAgreements(true, "title", "agreement")
@@ -38,21 +40,26 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(auth, nickname, profileCharacter, gender, birthYear, termsAgreements);
+        return User.of(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
-    public UserFixture auth(Auth auth) {
-        this.auth = auth;
+    public UserFixture role(Role role) {
+        this.role = role;
+        return this;
+    }
+
+    public UserFixture auth(SocialInfo socialInfo) {
+        this.socialInfo = socialInfo;
         return this;
     }
 
     public UserFixture kakao() {
-        this.auth = Auth.of(AuthProvider.KAKAO, Role.USER, "socialId");
+        this.socialInfo = SocialInfo.of(AuthProvider.KAKAO, "socialId");
         return this;
     }
 
     public UserFixture apple() {
-        this.auth = Auth.of(AuthProvider.APPLE, Role.USER, "socialId");
+        this.socialInfo = SocialInfo.of(AuthProvider.APPLE, "socialId");
         return this;
     }
 

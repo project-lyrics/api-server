@@ -1,0 +1,38 @@
+package com.projectlyrics.server.domain.user.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
+
+@Getter
+@Embeddable
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class SocialInfo {
+
+    @Enumerated(value = EnumType.STRING)
+    private AuthProvider authProvider;
+
+    @Column(nullable = false)
+    private String socialId;
+
+    public static SocialInfo of(AuthProvider authProvider, String socialId) {
+        checkEnum(authProvider);
+        checkString(socialId);
+
+        return new SocialInfo(
+                authProvider,
+                socialId
+        );
+    }
+
+    private SocialInfo(AuthProvider authProvider, String socialId) {
+        this.authProvider = authProvider;
+        this.socialId = socialId;
+    }
+}

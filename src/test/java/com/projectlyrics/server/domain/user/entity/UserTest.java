@@ -1,20 +1,16 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.user.exception.InvalidAgeException;
 import com.projectlyrics.server.domain.user.exception.InvalidUsernameException;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 

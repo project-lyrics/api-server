@@ -6,7 +6,8 @@ import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.auth.entity.enumerate.AuthProvider;
+import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
@@ -17,7 +18,6 @@ import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.support.RestDocsTest;
 import feign.FeignException;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -150,6 +150,32 @@ class AuthControllerTest extends RestDocsTest {
                 List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
         );
         NotAgreeToTermsException e = new NotAgreeToTermsException();
+        ErrorResponse response = ErrorResponse.of(e.getErrorCode());
+        given(authCommandService.signUp(any()))
+                .willThrow(e);
+
+        //when then
+        mockMvc.perform(post("/api/v1/auth/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(mapper.writeValueAsString(response)))
+                .andDo(getSignUpDocument(false));
+    }
+
+    @Test
+    void 회원가입할_때_이미_있는_유저인_경우_400응답을_해야_한다() throws Exception {
+        //given
+        AuthSignUpRequest request = new AuthSignUpRequest(
+                "socialAccessToken",
+                AuthProvider.KAKAO,
+                "nickname",
+                ProfileCharacter.POOP_HAIR,
+                Gender.MALE,
+                Year.of(1999),
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+        );
+        AlreadyExistsUserException e = new AlreadyExistsUserException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
         given(authCommandService.signUp(any()))
                 .willThrow(e);
