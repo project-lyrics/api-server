@@ -18,27 +18,21 @@ public class SocialInfo {
     @Enumerated(value = EnumType.STRING)
     private AuthProvider authProvider;
 
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
-
     @Column(nullable = false)
     private String socialId;
 
-    public static SocialInfo of(AuthProvider authProvider, Role role, String socialId) {
+    public static SocialInfo of(AuthProvider authProvider, String socialId) {
         checkEnum(authProvider);
-        checkEnum(role);
         checkString(socialId);
 
         return new SocialInfo(
                 authProvider,
-                role,
                 socialId
         );
     }
 
-    private SocialInfo(AuthProvider authProvider, Role role, String socialId) {
+    private SocialInfo(AuthProvider authProvider, String socialId) {
         this.authProvider = authProvider;
-        this.role = role;
         this.socialId = socialId;
     }
 }

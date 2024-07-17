@@ -13,20 +13,22 @@ import java.util.List;
 public class UserFixture {
 
     private String email = "test@test.com";
-    private SocialInfo socialInfo = SocialInfo.of(AuthProvider.KAKAO, Role.USER, "socialId");
+    private SocialInfo socialInfo = SocialInfo.of(AuthProvider.KAKAO, "socialId");
     private String nickname = "nickname";
     private ProfileCharacter profileCharacter = ProfileCharacter.POOP_HAIR;
     private Gender gender = Gender.MALE;
     private int birthYear = 1999;
+    private Role role = Role.USER;
     private List<TermsAgreements> termsAgreements = List.of(new TermsAgreements(true, "title", "agreement"));
 
     private UserFixture() {}
 
     public static User create() {
         return User.of(
-                SocialInfo.of(AuthProvider.KAKAO, Role.USER, "socialId"),
+                SocialInfo.of(AuthProvider.KAKAO, "socialId"),
                 "nickname",
                 ProfileCharacter.POOP_HAIR,
+                Role.USER,
                 Gender.MALE,
                 1999,
                 List.of(new TermsAgreements(true, "title", "agreement")
@@ -38,7 +40,12 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(socialInfo, nickname, profileCharacter, gender, birthYear, termsAgreements);
+        return User.of(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+    }
+
+    public UserFixture role(Role role) {
+        this.role = role;
+        return this;
     }
 
     public UserFixture auth(SocialInfo socialInfo) {
@@ -47,12 +54,12 @@ public class UserFixture {
     }
 
     public UserFixture kakao() {
-        this.socialInfo = SocialInfo.of(AuthProvider.KAKAO, Role.USER, "socialId");
+        this.socialInfo = SocialInfo.of(AuthProvider.KAKAO, "socialId");
         return this;
     }
 
     public UserFixture apple() {
-        this.socialInfo = SocialInfo.of(AuthProvider.APPLE, Role.USER, "socialId");
+        this.socialInfo = SocialInfo.of(AuthProvider.APPLE, "socialId");
         return this;
     }
 
