@@ -56,7 +56,7 @@ public abstract class RestDocsTest extends ControllerTest {
 
     protected static ParameterDescriptorWithType[] getPagingQueryParameters() {
         return new ParameterDescriptorWithType[]{
-                parameterWithName("cursor").type(SimpleType.STRING)
+                parameterWithName("cursor").type(SimpleType.NUMBER)
                         .optional()
                         .description("이전에 응답 받은 nextCursor 값, 해당 cursor보다 큰 id를 가진 아티스트 조회"),
                 parameterWithName("size").type(SimpleType.NUMBER)
