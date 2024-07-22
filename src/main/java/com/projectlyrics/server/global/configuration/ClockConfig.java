@@ -2,7 +2,9 @@ package com.projectlyrics.server.global.configuration;
 
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.TimeZone;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +14,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClockConfig {
 
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
+
     @Bean
     public Clock clock() {
-        return Clock.systemDefaultZone();
+        return Clock.system(ZoneId.of("Asia/Seoul"));
     }
 }
