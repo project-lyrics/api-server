@@ -10,8 +10,9 @@ import com.projectlyrics.server.domain.user.entity.User;
 
 import java.util.List;
 
-public class UserFixture {
+public class UserFixture extends BaseFixture {
 
+    private Long id;
     private String email = "test@test.com";
     private SocialInfo socialInfo = SocialInfo.of(AuthProvider.KAKAO, "socialId");
     private String nickname = "nickname";
@@ -24,7 +25,8 @@ public class UserFixture {
     private UserFixture() {}
 
     public static User create() {
-        return User.of(
+        return User.withId(
+                getUniqueId(),
                 SocialInfo.of(AuthProvider.KAKAO, "socialId"),
                 "nickname",
                 ProfileCharacter.POOP_HAIR,
@@ -40,11 +42,16 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+        return User.withId(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
     public UserFixture role(Role role) {
         this.role = role;
+        return this;
+    }
+
+    public UserFixture id(Long id) {
+        this.id = id;
         return this;
     }
 
