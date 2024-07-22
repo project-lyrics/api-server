@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
+import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +20,31 @@ import java.util.List;
 public class FavoriteArtistCommandService {
 
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
+    private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
     private final UserQueryService userQueryService;
     private final ArtistQueryService artistQueryService;
 
     public void saveAll(Long userId, CreateFavoriteArtistListRequest request) {
         User user = userQueryService.getUserById(userId);
+
+        List<Artist> userFavoriteArtistList = getUserFavoriteArtistList(userId);
+
         List<Artist> artistList = artistQueryService.getArtistsByIds(request.artistIds());
-        List<FavoriteArtist> favoriteArtistList = artistList.stream()
+        List<FavoriteArtist> newFavoriteArtistList = artistList.stream()
                 .map(artist -> FavoriteArtist.of(user, artist))
                 .toList();
-        favoriteArtistCommandRepository.saveAll(favoriteArtistList);
+
+        newFavoriteArtistList.forEach(newFavoriteArtist -> {
+            if (!userFavoriteArtistList.contains(newFavoriteArtist.getArtist())) {
+                favoriteArtistCommandRepository.save(newFavoriteArtist);
+            }
+        });
+    }
+
+    private List<Artist> getUserFavoriteArtistList(Long userId) {
+        return favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
+                .stream()
+                .map(FavoriteArtist::getArtist)
+                .toList();
     }
 }

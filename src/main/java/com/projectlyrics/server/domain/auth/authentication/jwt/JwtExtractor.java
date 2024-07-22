@@ -8,12 +8,14 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
+@Slf4j
 @Component
 public class JwtExtractor {
 
@@ -37,6 +39,7 @@ public class JwtExtractor {
         } catch (ExpiredJwtException e) {
             throw new TokenExpiredException();
         } catch (JwtException e) {
+            log.info(e.getMessage());
             throw new InvalidTokenException();
         }
     }
