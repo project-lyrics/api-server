@@ -2,14 +2,20 @@ package com.projectlyrics.server.domain.favoriteartist.api;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
+import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FavoriteArtistController {
 
     private final FavoriteArtistCommandService favoriteArtistCommandService;
+    private final FavoriteArtistQueryService favoriteArtistQueryService;
 
     @PostMapping("/batch")
     public ResponseEntity<Void> saveAll(
@@ -27,5 +34,19 @@ public class FavoriteArtistController {
         favoriteArtistCommandService.saveAll(authContext.getId(), request);
         return ResponseEntity.ok()
                 .build();
+    }
+
+    @GetMapping("")
+    public ResponseEntity<CursorBasePaginatedResponse<FavoriteArtistResponse>> findAll(
+            @Authenticated AuthContext authContext,
+            @RequestParam(name = "cursor", required = false) Long cursorId,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        CursorBasePaginatedResponse<FavoriteArtistResponse> response = favoriteArtistQueryService.findFavoriteArtists
+                (authContext.getId(),
+                        cursorId,
+                        PageRequest.of(0, size)
+                );
+        return ResponseEntity.ok(response);
     }
 }

@@ -43,14 +43,23 @@ public class FavoriteArtist extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Artist artist;
 
-    private FavoriteArtist(User user, Artist artist) {
+    private FavoriteArtist(Long id, User user, Artist artist) {
         checkNull(user);
         checkNull(artist);
+        this.id = id;
         this.user = user;
         this.artist = artist;
     }
 
+    public FavoriteArtist(User user, Artist artist) {
+        this(null, user, artist);
+    }
+
     public static FavoriteArtist of(User user, Artist artist) {
         return new FavoriteArtist(user, artist);
+    }
+
+    public static FavoriteArtist withId(Long id, User user, Artist artist) {
+        return new FavoriteArtist(id, user, artist);
     }
 }
