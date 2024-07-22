@@ -54,6 +54,7 @@ public class User extends BaseEntity {
     private List<TermsAgreements> termsAgreements;
 
     private User(
+            Long id,
             SocialInfo socialInfo,
             String nickname,
             ProfileCharacter profileCharacter,
@@ -74,6 +75,31 @@ public class User extends BaseEntity {
         termsAgreements.forEach(terms -> terms.setUser(this));
     }
 
+    private User(
+            SocialInfo socialInfo,
+            String nickname,
+            ProfileCharacter profileCharacter,
+            Role role,
+            Gender gender,
+            Integer birthYear,
+            List<TermsAgreements> termsAgreements
+    ) {
+        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+    }
+
+    public static User withId(
+            Long id,
+            SocialInfo socialInfo,
+            String nickname,
+            ProfileCharacter profileCharacter,
+            Role role,
+            Gender gender,
+            Integer birthYear,
+            List<TermsAgreements> termsAgreements
+    ) {
+        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+    }
+
     public static User createUser(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
         List<TermsAgreements> termsList = request.terms().stream()
                 .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
@@ -89,7 +115,15 @@ public class User extends BaseEntity {
         );
     }
 
-    public static User of(SocialInfo socialInfo, String nickname, ProfileCharacter profileCharacter, Role role, Gender gender, Integer birthYear, List<TermsAgreements> termsAgreements) {
+    public static User of(
+            SocialInfo socialInfo,
+            String nickname,
+            ProfileCharacter profileCharacter,
+            Role role,
+            Gender gender,
+            Integer birthYear,
+            List<TermsAgreements> termsAgreements
+    ) {
         return new User(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 }
