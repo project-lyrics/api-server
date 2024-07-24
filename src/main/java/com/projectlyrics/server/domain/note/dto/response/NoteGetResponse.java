@@ -24,8 +24,8 @@ public record NoteGetResponse(
         return new NoteGetResponse(
                 note.getId(),
                 note.getContent(),
-                note.getLyrics(),
-                note.getBackground().name(),
+                note.getLyrics().getContent(),
+                note.getLyrics().getBackground().name(),
                 note.getNoteStatus().name(),
                 note.getCreatedAt(),
                 note.getPublisher().getId(),

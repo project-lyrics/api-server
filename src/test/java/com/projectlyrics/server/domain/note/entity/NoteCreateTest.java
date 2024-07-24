@@ -46,23 +46,32 @@ class NoteCreateTest {
     }
 
     @Test
-    void 널_노트_배경색에_대해_예외를_발생시켜야_한다() {
+    void 가사가_없는_경우에도_노트를_생성해야_한다() {
         // given
         Artist artist = ArtistFixture.create();
         User publisher = UserFixture.create();
         Song song = SongFixture.create(artist);
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
-                "lyrics",
                 null,
+                NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
                 publisher.getId(),
                 song.getId()
         );
 
-        // when & then
-        assertThatThrownBy(() -> NoteCreate.from(request, publisher, song))
-                .isInstanceOf(DomainNullFieldException.class);
+        // when
+        NoteCreate result = NoteCreate.from(request, publisher, song);
+
+        // then
+        assertAll(
+                () -> assertThat(result.content()).isEqualTo(request.content()),
+                () -> assertThat(result.lyrics()).isEqualTo(request.lyrics()),
+                () -> assertThat(result.background()).isEqualTo(request.background()),
+                () -> assertThat(result.status()).isEqualTo(request.status()),
+                () -> assertThat(result.publisher()).isEqualTo(publisher),
+                () -> assertThat(result.song()).isEqualTo(song)
+        );
     }
 
     @Test

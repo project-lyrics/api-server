@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.projectlyrics.server.domain.note.entity.QNote.*;
+
 @Repository
 @RequiredArgsConstructor
 public class QueryDslNoteQueryRepository implements NoteQueryRepository {
@@ -22,10 +24,11 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     @Override
     public Slice<Note> findAllByUserId(Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
-                .selectFrom(QNote.note)
+                .selectFrom(note)
+                .leftJoin(note.lyrics).fetchJoin()
                 .where(
-                        QNote.note.publisher.id.eq(userId),
-                        QueryDslUtils.gtCursorId(cursorId, QNote.note.id)
+                        note.publisher.id.eq(userId),
+                        QueryDslUtils.gtCursorId(cursorId, note.id)
                 )
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

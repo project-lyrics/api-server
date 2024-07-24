@@ -64,8 +64,8 @@ class NoteCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.getContent().size()).isEqualTo(1),
                 () -> assertThat(result.getContent().getFirst().getId()).isEqualTo(note.getId()),
                 () -> assertThat(result.getContent().getFirst().getContent()).isEqualTo(note.getContent()),
-                () -> assertThat(result.getContent().getFirst().getLyrics()).isEqualTo(note.getLyrics()),
-                () -> assertThat(result.getContent().getFirst().getBackground()).isEqualTo(note.getBackground()),
+                () -> assertThat(result.getContent().getFirst().getLyrics().getContent()).isEqualTo(note.getLyrics().getContent()),
+                () -> assertThat(result.getContent().getFirst().getLyrics().getBackground()).isEqualTo(note.getLyrics().getBackground()),
                 () -> assertThat(result.getContent().getFirst().getNoteStatus()).isEqualTo(note.getNoteStatus()),
                 () -> assertThat(result.getContent().getFirst().getPublisher().getId()).isEqualTo(note.getPublisher().getId()),
                 () -> assertThat(result.getContent().getFirst().getSong().getId()).isEqualTo(note.getSong().getId())

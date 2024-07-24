@@ -21,11 +21,11 @@ public class Note extends BaseEntity {
     private Long id;
 
     private String content;
-    private String lyrics;
-    @Enumerated(EnumType.STRING)
-    private NoteBackground background;
     @Enumerated(EnumType.STRING)
     private NoteStatus noteStatus;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Lyrics lyrics;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User publisher;
@@ -36,40 +36,43 @@ public class Note extends BaseEntity {
     private Note(
             Long id,
             String content,
-            String lyrics,
-            NoteBackground background,
+            Lyrics lyrics,
             NoteStatus noteStatus,
             User publisher,
             Song song
     ) {
         this.id = id;
         this.content = content;
-        this.lyrics = lyrics;
-        this.background = background;
         this.noteStatus = noteStatus;
         this.publisher = publisher;
         this.song = song;
+        addLyrics(lyrics);
     }
 
     private Note(
             String content,
-            String lyrics,
-            NoteBackground background,
+            Lyrics lyrics,
             NoteStatus noteStatus,
             User publisher,
             Song song
     ) {
-        this(null, content, lyrics, background, noteStatus, publisher, song);
+        this(null, content, lyrics, noteStatus, publisher, song);
     }
 
     public static Note create(NoteCreate noteCreate) {
         return new Note(
                 noteCreate.content(),
-                noteCreate.lyrics(),
-                noteCreate.background(),
+                Lyrics.of(noteCreate.lyrics(), noteCreate.background()),
                 noteCreate.status(),
                 noteCreate.publisher(),
                 noteCreate.song()
         );
+    }
+
+    private void addLyrics(Lyrics lyrics) {
+        if (lyrics != null) {
+            this.lyrics = lyrics;
+            lyrics.setNote(this);
+        }
     }
 }
