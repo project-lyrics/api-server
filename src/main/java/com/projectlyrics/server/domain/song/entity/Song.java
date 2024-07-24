@@ -14,6 +14,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 @Getter
 @Entity
+@Table(name = "songs")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Song extends BaseEntity {
