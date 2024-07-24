@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
-
 @Getter
 @Entity
 @Table(name = "songs")
@@ -41,13 +39,6 @@ public class Song extends BaseEntity {
             String imageUrl,
             Artist artist
     ) {
-        checkNull(spotifyId);
-        checkNull(name);
-        checkNull(releaseDate);
-        checkNull(albumName);
-        checkNull(imageUrl);
-        checkNull(artist);
-
         this.id = id;
         this.spotifyId = spotifyId;
         this.name = name;

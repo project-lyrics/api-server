@@ -5,6 +5,8 @@ import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 
 import java.time.LocalDate;
 
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
+
 public record SongCreate(
         String spotifyId,
         String name,
@@ -15,6 +17,8 @@ public record SongCreate(
 ) {
 
     public static SongCreate from(SongCreateRequest request, Artist artist) {
+        checkNull(artist);
+
         return new SongCreate(
                 request.spotifyId(),
                 request.name(),
