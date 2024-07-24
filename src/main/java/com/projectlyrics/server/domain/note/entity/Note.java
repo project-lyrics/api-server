@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.note.entity;
 
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "notes")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Note {
+public class Note extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,7 @@ public class Note {
     @Enumerated(EnumType.STRING)
     private NoteBackground background;
     @Enumerated(EnumType.STRING)
-    private NoteStatus status;
+    private NoteStatus noteStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User publisher;
@@ -37,7 +38,7 @@ public class Note {
             String content,
             String lyrics,
             NoteBackground background,
-            NoteStatus status,
+            NoteStatus noteStatus,
             User publisher,
             Song song
     ) {
@@ -45,7 +46,7 @@ public class Note {
         this.content = content;
         this.lyrics = lyrics;
         this.background = background;
-        this.status = status;
+        this.noteStatus = noteStatus;
         this.publisher = publisher;
         this.song = song;
     }
@@ -54,11 +55,11 @@ public class Note {
             String content,
             String lyrics,
             NoteBackground background,
-            NoteStatus status,
+            NoteStatus noteStatus,
             User publisher,
             Song song
     ) {
-        this(null, content, lyrics, background, status, publisher, song);
+        this(null, content, lyrics, background, noteStatus, publisher, song);
     }
 
     public static Note create(NoteCreate noteCreate) {

@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.note.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteStatusException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -25,6 +26,6 @@ public enum NoteStatus {
         return Arrays.stream(NoteStatus.values())
                 .filter(noteStatus -> noteStatus.type.equals(type))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(InvalidNoteStatusException::new);
     }
 }
