@@ -33,4 +33,19 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
     }
+
+    @Override
+    public Slice<Song> findAllByQuery(String query, Long cursorId, Pageable pageable) {
+        List<Song> content = jpaQueryFactory
+                .selectFrom(QSong.song)
+                .where(
+                        QSong.song.name.containsIgnoreCase(query),
+                        QSong.song.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, QSong.song.id)
+                )
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
 }
