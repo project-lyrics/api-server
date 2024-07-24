@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.note.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -14,6 +15,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.FavoriteArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,9 @@ class NoteQueryServiceTest extends IntegrationTest {
 
     @Autowired
     ArtistCommandRepository artistCommandRepository;
+
+    @Autowired
+    FavoriteArtistCommandRepository favoriteArtistCommandRepository;
 
     @Autowired
     SongCommandRepository songCommandRepository;
@@ -61,12 +66,61 @@ class NoteQueryServiceTest extends IntegrationTest {
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 5);
+
+        // then
         assertAll(
                 () -> assertThat(result.data().size()).isEqualTo(4),
                 () -> assertThat(result.data().get(0).id()).isEqualTo(note4.getId()),
                 () -> assertThat(result.data().get(1).id()).isEqualTo(note3.getId()),
                 () -> assertThat(result.data().get(2).id()).isEqualTo(note2.getId()),
                 () -> assertThat(result.data().get(3).id()).isEqualTo(note1.getId())
+        );
+    }
+
+    @Test
+    void 사용자가_좋아하는_아티스트와_관련된_노트를_최신순으로_조회해야_한다() {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist unlikedArtist = artistCommandRepository.save(ArtistFixture.create());
+        Song unlikedArtistSong = songCommandRepository.save(SongFixture.create(unlikedArtist));
+        Artist likedArtist = artistCommandRepository.save(ArtistFixture.create());
+        Song likedArtistSong = songCommandRepository.save(SongFixture.create(likedArtist));
+        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, likedArtist));
+
+        NoteCreateRequest unlikedArtistSongNoteRequest = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                unlikedArtistSong.getId()
+        );
+
+        NoteCreateRequest likedArtistSongNoteRequest = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                likedArtistSong.getId()
+        );
+
+        noteCommandService.create(unlikedArtistSongNoteRequest);
+        noteCommandService.create(unlikedArtistSongNoteRequest);
+        Note likedArtistSongNote1 = noteCommandService.create(likedArtistSongNoteRequest);
+        Note likedArtistSongNote2 = noteCommandService.create(likedArtistSongNoteRequest);
+        Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest);
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getRecentNotes(user.getId(), null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(3),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(likedArtistSongNote3.getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(likedArtistSongNote2.getId()),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(likedArtistSongNote1.getId())
         );
     }
 }
