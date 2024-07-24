@@ -40,7 +40,7 @@ class NoteQueryServiceTest extends IntegrationTest {
     NoteQueryService sut;
 
     @Test
-    void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_조회해야_한다() {
+    void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_최신순으로_조회해야_한다() {
         // given
         User user = userCommandRepository.save(UserFixture.create());
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
@@ -57,14 +57,16 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note1 = noteCommandService.create(request);
         Note note2 = noteCommandService.create(request);
         Note note3 = noteCommandService.create(request);
+        Note note4 = noteCommandService.create(request);
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 5);
         assertAll(
-                () -> assertThat(result.data().size()).isEqualTo(3),
-                () -> assertThat(result.data().get(0).id()).isEqualTo(note1.getId()),
-                () -> assertThat(result.data().get(1).id()).isEqualTo(note2.getId()),
-                () -> assertThat(result.data().get(2).id()).isEqualTo(note3.getId())
+                () -> assertThat(result.data().size()).isEqualTo(4),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(note4.getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(note3.getId()),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(note2.getId()),
+                () -> assertThat(result.data().get(3).id()).isEqualTo(note1.getId())
         );
     }
 }

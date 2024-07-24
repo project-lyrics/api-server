@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.note.repository.impl;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
-import com.projectlyrics.server.domain.note.entity.QNote;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         note.publisher.id.eq(userId),
                         QueryDslUtils.gtCursorId(cursorId, note.id)
                 )
+                .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
