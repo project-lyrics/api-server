@@ -2,8 +2,8 @@ package com.projectlyrics.server.domain.song.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 import com.projectlyrics.server.domain.song.entity.Song;
-import com.projectlyrics.server.domain.song.entity.SongCreate;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
@@ -32,17 +32,17 @@ class SongCommandServiceTest extends IntegrationTest {
     void 곡을_저장해야_한다() throws Exception {
         // given
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        SongCreate songCreate = new SongCreate(
+        SongCreateRequest request = new SongCreateRequest(
                 "spotifyId",
                 "name",
                 LocalDate.now(),
                 "albumName",
                 "imageUrl",
-                artist
-            );
+                artist.getId()
+        );
 
         // when
-        Song song = sut.create(songCreate);
+        Song song = sut.create(request);
 
         // then
         Slice<Song> result = songQueryRepository.findAllByArtistId(artist.getId(), null, PageRequest.ofSize(5));

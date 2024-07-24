@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.song.entity;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 
 import java.time.LocalDate;
 
@@ -12,4 +13,15 @@ public record SongCreate(
         String imageUrl,
         Artist artist
 ) {
+
+    public static SongCreate from(SongCreateRequest request, Artist artist) {
+        return new SongCreate(
+                request.spotifyId(),
+                request.name(),
+                request.releaseDate(),
+                request.albumName(),
+                request.imageUrl(),
+                artist
+        );
+    }
 }

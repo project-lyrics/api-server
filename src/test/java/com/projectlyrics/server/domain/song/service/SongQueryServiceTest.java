@@ -4,8 +4,8 @@ package com.projectlyrics.server.domain.song.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
-import com.projectlyrics.server.domain.song.entity.SongCreate;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,15 +33,15 @@ class SongQueryServiceTest extends IntegrationTest {
     void 검색어를_기반으로_제목이_일치하는_곡을_조회해야_한다() throws Exception {
         // given
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        SongCreate songCreate = new SongCreate(
+        SongCreateRequest request = new SongCreateRequest(
                 "spotifyId",
                 "No Pain",
                 LocalDate.now(),
                 "albumName",
                 "imageUrl",
-                artist
+                artist.getId()
         );
-        songCommandService.create(songCreate);
+        songCommandService.create(request);
 
         // when
         CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongs("no", null, 5);
