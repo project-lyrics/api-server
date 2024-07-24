@@ -1,0 +1,35 @@
+package com.projectlyrics.server.domain.note.repository.impl;
+
+import com.projectlyrics.server.domain.common.util.QueryDslUtils;
+import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.note.entity.QNote;
+import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class QueryDslNoteQueryRepository implements NoteQueryRepository {
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Slice<Note> findAllByUserId(Long userId, Long cursorId, Pageable pageable) {
+        List<Note> content = jpaQueryFactory
+                .selectFrom(QNote.note)
+                .where(
+                        QNote.note.publisher.id.eq(userId),
+                        QueryDslUtils.gtCursorId(cursorId, QNote.note.id)
+                )
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+}

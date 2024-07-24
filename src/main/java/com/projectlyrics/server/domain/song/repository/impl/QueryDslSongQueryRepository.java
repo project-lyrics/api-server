@@ -12,6 +12,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,5 +48,18 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .fetch();
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
+    public Optional<Song> findById(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(QSong.song)
+                        .where(
+                                QSong.song.id.eq(id),
+                                QSong.song.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
     }
 }
