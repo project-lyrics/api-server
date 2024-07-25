@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.note.repository.impl;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -108,5 +109,18 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .fetch();
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
+    public long countDraftNotesByUserId(Long userId) {
+        return jpaQueryFactory
+                .select(note.count())
+                .from(note)
+                .where(
+                        note.publisher.id.eq(userId),
+                        note.noteStatus.eq(NoteStatus.DRAFT),
+                        note.deletedAt.isNull()
+                )
+                .fetchOne();
     }
 }

@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteCreate;
+import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.entity.NoteUpdate;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
@@ -35,7 +36,14 @@ public class NoteCommandService {
         Song song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
 
+        if (request.status().equals(NoteStatus.DRAFT)) {
+            checkDrafts(publisher.getId());
+        }
         return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, song)));
+    }
+
+    private void checkDrafts(long publisherId) {
+        Note.checkDraftNumber(noteQueryRepository.countDraftNotesByUserId(publisherId));
     }
 
     public void delete(long publisherId, long noteId) {

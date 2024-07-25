@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
+import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -74,6 +77,29 @@ class NoteCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.getContent().getFirst().getPublisher().getId()).isEqualTo(note.getPublisher().getId()),
                 () -> assertThat(result.getContent().getFirst().getSong().getId()).isEqualTo(note.getSong().getId())
         );
+    }
+
+    @Test
+    void 노트_저장시에_해당_노트의_상태가_드래프트인_경우_드래프트_개수를_체크해야_한다() throws Exception {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.DRAFT,
+                user.getId(),
+                song.getId()
+        );
+
+        IntStream.range(0, 20)
+                .forEach(i -> sut.create(request));
+
+        // when, then
+        assertThatThrownBy(() -> sut.create(request))
+                .isInstanceOf(TooManyDraftsException.class);
     }
 
     @Test

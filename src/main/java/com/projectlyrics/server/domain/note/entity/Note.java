@@ -1,13 +1,11 @@
 package com.projectlyrics.server.domain.note.entity;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -17,6 +15,8 @@ import java.util.Objects;
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Note extends BaseEntity {
+
+    private static final long maxDraftNumber = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,6 +105,12 @@ public class Note extends BaseEntity {
     private void updateNoteStatus(NoteStatus noteStatus) {
         if (!Objects.isNull(noteStatus)) {
             this.noteStatus = noteStatus;
+        }
+    }
+
+    public static void checkDraftNumber(long draftNumber) {
+        if (draftNumber >= maxDraftNumber) {
+            throw new TooManyDraftsException();
         }
     }
 }
