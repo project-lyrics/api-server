@@ -35,7 +35,7 @@ class SongCommandServiceTest extends IntegrationTest {
         SongCreateRequest request = new SongCreateRequest(
                 "spotifyId",
                 "name",
-                LocalDate.now(),
+                LocalDate.EPOCH,
                 "albumName",
                 "imageUrl",
                 artist.getId()
