@@ -1,9 +1,12 @@
 package com.projectlyrics.server.domain.note.service;
 
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteCreate;
+import com.projectlyrics.server.domain.note.entity.NoteUpdate;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
@@ -41,5 +44,13 @@ public class NoteCommandService {
                 .ifPresentOrElse(
                         noteCommandRepository::delete,
                         () -> { throw new InvalidNoteDeletionException(); });
+    }
+
+    public Note update(NoteUpdateRequest request) {
+        Note note = noteQueryRepository.findById(request.noteId())
+                .filter(foundNote -> foundNote.isPublisher(request.publisherId()))
+                .orElseThrow(InvalidNoteUpdateException::new);
+
+        return note.update(NoteUpdate.from(request));
     }
 }

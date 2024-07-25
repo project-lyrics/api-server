@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @Entity
 @Table(name = "notes")
@@ -70,7 +72,7 @@ public class Note extends BaseEntity {
     }
 
     private void addLyrics(Lyrics lyrics) {
-        if (lyrics != null) {
+        if (!Objects.isNull(lyrics)) {
             this.lyrics = lyrics;
             lyrics.setNote(this);
         }
@@ -78,5 +80,31 @@ public class Note extends BaseEntity {
 
     public boolean isPublisher(Long userId) {
         return publisher.getId().equals(userId);
+    }
+
+    public Note update(NoteUpdate noteUpdate) {
+        updateContent(noteUpdate.content());
+        updateLyrics(Lyrics.of(noteUpdate.lyrics(), noteUpdate.background()));
+        updateNoteStatus(noteUpdate.status());
+
+        return this;
+    }
+
+    private void updateContent(String content) {
+        if (!content.isEmpty()) {
+            this.content = content;
+        }
+    }
+
+    private void updateLyrics(Lyrics lyrics) {
+        if (!Objects.isNull(lyrics)) {
+            this.lyrics = lyrics;
+        }
+    }
+
+    private void updateNoteStatus(NoteStatus noteStatus) {
+        if (!Objects.isNull(noteStatus)) {
+            this.noteStatus = noteStatus;
+        }
     }
 }

@@ -3,10 +3,12 @@ package com.projectlyrics.server.domain.note.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
@@ -126,5 +128,117 @@ class NoteCommandServiceTest extends IntegrationTest {
         // when, then
         assertThatThrownBy(() -> sut.delete(unknownUser.getId(), note.getId()))
                 .isInstanceOf(InvalidNoteDeletionException.class);
+    }
+
+    @Test
+    void 노트를_수정해야_한다() throws Exception {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest createRequest = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.DRAFT,
+                user.getId(),
+                song.getId()
+        );
+        Note note = sut.create(createRequest);
+
+        NoteUpdateRequest updateRequest = new NoteUpdateRequest(
+                note.getId(),
+                "updated content",
+                "updated lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId()
+        );
+
+        // when
+        Note updatedNote = sut.update(updateRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedNote.getId()).isEqualTo(note.getId()),
+                () -> assertThat(updatedNote.getContent()).isEqualTo(updateRequest.content()),
+                () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo(updateRequest.lyrics()),
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(updateRequest.background()),
+                () -> assertThat(updatedNote.getNoteStatus()).isEqualTo(updateRequest.status()),
+                () -> assertThat(updatedNote.getPublisher().getId()).isEqualTo(user.getId()),
+                () -> assertThat(updatedNote.getSong().getId()).isEqualTo(song.getId())
+        );
+    }
+
+    @Test
+    void 가사가_없는_노트_수정시에_가사가_생긴_경우_가사가_저장되어야_한다() {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest createRequest = new NoteCreateRequest(
+                "content",
+                null,
+                null,
+                NoteStatus.DRAFT,
+                user.getId(),
+                song.getId()
+        );
+        Note note = sut.create(createRequest);
+
+        NoteUpdateRequest updateRequest = new NoteUpdateRequest(
+                note.getId(),
+                "updated content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId()
+        );
+
+        // when
+        Note updatedNote = sut.update(updateRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo(updateRequest.lyrics()),
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(updateRequest.background())
+        );
+    }
+
+    @Test
+    void 사용자가_노트의_작성자가_아닌_경우_수정시_예외를_발생시켜야_한다() throws Exception {
+        // given
+        User publisher = userCommandRepository.save(UserFixture.create());
+        User unknownUser = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest createRequest = new NoteCreateRequest(
+                "content",
+                null,
+                null,
+                NoteStatus.DRAFT,
+                publisher.getId(),
+                song.getId()
+        );
+        Note note = sut.create(createRequest);
+
+        NoteUpdateRequest updateRequest = new NoteUpdateRequest(
+                note.getId(),
+                "updated content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                unknownUser.getId()
+        );
+
+        // when, then
+        assertThatThrownBy(() -> sut.update(updateRequest))
+                .isInstanceOf(InvalidNoteUpdateException.class);
     }
 }

@@ -62,4 +62,129 @@ class NoteTest {
                 () -> assertThat(note.isPublisher(unknownUser.getId())).isFalse()
         );
     }
+
+    @Test
+    void 노트_수정_객체로부터_노트를_수정할_수_있다() {
+        // given
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(ArtistFixture.create());
+        NoteCreate noteCreate = new NoteCreate(
+                "content",
+                null,
+                null,
+                NoteStatus.DRAFT,
+                publisher,
+                song
+        );
+        Note note = Note.create(noteCreate);
+
+        NoteUpdate noteUpdate = new NoteUpdate(
+                "updated content",
+                "updated lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED
+        );
+
+        // when
+        Note updatedNote = note.update(noteUpdate);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedNote.getContent()).isEqualTo("updated content"),
+                () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo("updated lyrics"),
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.WHITE),
+                () -> assertThat(updatedNote.getNoteStatus()).isEqualTo(NoteStatus.PUBLISHED),
+                () -> assertThat(updatedNote.getPublisher()).isEqualTo(publisher)
+        );
+    }
+
+    @Test
+    void 노트_수정_객체의_내용이_비었으면_수정하지_않는다() {
+        // given
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(ArtistFixture.create());
+        NoteCreate noteCreate = new NoteCreate(
+                "content",
+                null,
+                null,
+                NoteStatus.PUBLISHED,
+                publisher,
+                song
+        );
+        Note note = Note.create(noteCreate);
+
+        NoteUpdate noteUpdate = new NoteUpdate(
+                "",
+                "updated lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED
+        );
+
+        // when
+        Note updatedNote = note.update(noteUpdate);
+
+        // then
+        assertThat(updatedNote.getContent()).isEqualTo("content");
+    }
+
+    @Test
+    void 노트_수정_객체의_가사가_비었으면_수정하지_않는다() {
+        // given
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(ArtistFixture.create());
+        NoteCreate noteCreate = new NoteCreate(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                publisher,
+                song
+        );
+        Note note = Note.create(noteCreate);
+
+        NoteUpdate noteUpdate = new NoteUpdate(
+                "updated content",
+                "",
+                null,
+                NoteStatus.PUBLISHED
+        );
+
+        // when
+        Note updatedNote = note.update(noteUpdate);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo("lyrics"),
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.WHITE)
+        );
+    }
+
+    @Test
+    void 노트_수정_객체의_상태가_비었으면_수정하지_않는다() {
+        // given
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(ArtistFixture.create());
+        NoteCreate noteCreate = new NoteCreate(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                publisher,
+                song
+        );
+        Note note = Note.create(noteCreate);
+
+        NoteUpdate noteUpdate = new NoteUpdate(
+                "updated content",
+                "updated lyrics",
+                NoteBackground.WHITE,
+                null
+        );
+
+        // when
+        Note updatedNote = note.update(noteUpdate);
+
+        // then
+        assertThat(updatedNote.getNoteStatus()).isEqualTo(NoteStatus.PUBLISHED);
+    }
 }
