@@ -5,15 +5,18 @@ import com.projectlyrics.server.global.exception.DomainInvalidUrlException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.*;
 
 class DomainUtilsTest {
 
     @Test()
     void Enum_타입의_필드에_대해_null_체크를_한다() {
         // given
-        Enum nullEnum = null;;
+        Enum nullEnum = null;
+        ;
 
         // when
         assertThatThrownBy(() -> DomainUtils.checkEnum(nullEnum))
@@ -47,5 +50,17 @@ class DomainUtilsTest {
 
         assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpUrl));
         assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpsUrl));
+    }
+
+    @Test
+    void LocalDateTime_객체에_대해_포맷팅을_한다() {
+        // given
+        LocalDateTime time = LocalDateTime.of(2021, 1, 1, 0, 0);
+
+        // when
+        String formattedTime = DomainUtils.formatTime(time);
+
+        // then
+        assertThat(formattedTime).isEqualTo("2021.01.01 00:00");
     }
 }

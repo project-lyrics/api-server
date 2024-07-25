@@ -6,12 +6,16 @@ import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import lombok.NoArgsConstructor;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class DomainUtils {
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 
     public static  <T extends Enum> void checkEnum(T enumField) {
         checkNull(enumField);
@@ -38,5 +42,9 @@ public final class DomainUtils {
         if (Objects.isNull(object)) {
             throw new DomainNullFieldException();
         }
+    }
+
+    public static String formatTime(LocalDateTime time) {
+        return time.format(DATE_TIME_FORMATTER);
     }
 }
