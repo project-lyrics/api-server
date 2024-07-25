@@ -38,4 +38,26 @@ public class NoteQueryService {
 
         return CursorBasePaginatedResponse.of(notes);
     }
+
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByArtistId(Long artistId, boolean hasLyrics, Long cursor, int size) {
+        if (hasLyrics) {
+            return getNotesByArtistIdWithLyrics(artistId, cursor, size);
+        }
+
+        return getNotesByArtistIdWithoutLyrics(artistId, cursor, size);
+    }
+
+    private CursorBasePaginatedResponse<NoteGetResponse> getNotesByArtistIdWithLyrics(Long artistId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByArtistIdAndHasLyrics(artistId, cursor, PageRequest.ofSize(size))
+                .map(NoteGetResponse::from);
+
+        return CursorBasePaginatedResponse.of(notes);
+    }
+
+    private CursorBasePaginatedResponse<NoteGetResponse> getNotesByArtistIdWithoutLyrics(Long artistId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByArtistId(artistId, cursor, PageRequest.ofSize(size))
+                .map(NoteGetResponse::from);
+
+        return CursorBasePaginatedResponse.of(notes);
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.projectlyrics.server.domain.note.entity.QNote.*;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
@@ -20,6 +21,20 @@ import static com.projectlyrics.server.domain.song.entity.QSong.song;
 public class QueryDslNoteQueryRepository implements NoteQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Optional<Note> findById(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(note)
+                        .leftJoin(note.lyrics).fetchJoin()
+                        .where(
+                                note.id.eq(id),
+                                note.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
 
     @Override
     public Slice<Note> findAllByUserId(Long userId, Long cursorId, Pageable pageable) {
@@ -47,6 +62,44 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .where(
                         note.song.artist.id.in(artistsIds),
+                        note.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                )
+                .orderBy(note.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
+    public Slice<Note> findAllByArtistId(Long artistId, Long cursorId, Pageable pageable) {
+        List<Note> content = jpaQueryFactory
+                .selectFrom(note)
+                .leftJoin(note.lyrics).fetchJoin()
+                .join(note.song).fetchJoin()
+                .join(song.artist).fetchJoin()
+                .where(
+                        note.song.artist.id.eq(artistId),
+                        note.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                )
+                .orderBy(note.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
+    public Slice<Note> findAllByArtistIdAndHasLyrics(Long artistId, Long cursorId, Pageable pageable) {
+        List<Note> content = jpaQueryFactory
+                .selectFrom(note)
+                .join(note.lyrics).fetchJoin()
+                .join(note.song).fetchJoin()
+                .join(song.artist).fetchJoin()
+                .where(
+                        note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, note.id)
                 )

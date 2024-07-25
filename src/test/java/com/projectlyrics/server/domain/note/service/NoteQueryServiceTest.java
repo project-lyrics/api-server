@@ -123,4 +123,80 @@ class NoteQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().get(2).id()).isEqualTo(likedArtistSongNote1.getId())
         );
     }
+
+    @Test
+    void 특정_아티스트와_관련된_노트를_최신순으로_조회해야_한다() {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
+        Artist artist2 = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist1));
+
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                song.getId()
+        );
+
+        Note note1 = noteCommandService.create(request);
+        Note note2 = noteCommandService.create(request);
+        Note note3 = noteCommandService.create(request);
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(artist1.getId(), false, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(artist2.getId(), false, null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result1.data().size()).isEqualTo(3),
+                () -> assertThat(result1.data().get(0).id()).isEqualTo(note3.getId()),
+                () -> assertThat(result1.data().get(1).id()).isEqualTo(note2.getId()),
+                () -> assertThat(result1.data().get(2).id()).isEqualTo(note1.getId()),
+                () -> assertThat(result2.data().size()).isEqualTo(0)
+        );
+    }
+
+    @Test
+    void 특정_아티스트와_관련된_노트_중_가사가_있는_것만_최신순으로_조회해야_한다() {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest lyricsRequest = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                song.getId()
+        );
+        NoteCreateRequest noLyricsRequest = new NoteCreateRequest(
+                "content",
+                null,
+                null,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                song.getId()
+        );
+
+        Note note1 = noteCommandService.create(lyricsRequest);
+        Note note2 = noteCommandService.create(noLyricsRequest);
+        Note note3 = noteCommandService.create(lyricsRequest);
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(artist.getId(), true, null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(2),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(note3.getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(note1.getId())
+        );
+    }
 }
