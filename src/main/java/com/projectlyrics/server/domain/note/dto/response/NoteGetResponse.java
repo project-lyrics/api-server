@@ -14,7 +14,7 @@ public record NoteGetResponse(
         LocalDateTime createdAt,
         Long publisherId,
         String publisherNickname,
-        String publisherProfileImageCdnLink,
+        String publisherProfileCharacterType,
         Long songId,
         String songName,
         String songImageUrl
