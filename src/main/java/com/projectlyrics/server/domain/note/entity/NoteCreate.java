@@ -16,7 +16,6 @@ public record NoteCreate(
 ) {
 
     public static NoteCreate from(NoteCreateRequest request, User publisher, Song song) {
-        checkNull(request.background());
         checkNull(request.status());
         checkNull(publisher);
         checkNull(song);

@@ -75,4 +75,8 @@ public class Note extends BaseEntity {
             lyrics.setNote(this);
         }
     }
+
+    public boolean isPublisher(Long userId) {
+        return publisher.getId().equals(userId);
+    }
 }

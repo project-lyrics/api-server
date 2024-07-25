@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class NoteCommandServiceTest extends IntegrationTest {
@@ -70,5 +72,59 @@ class NoteCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.getContent().getFirst().getPublisher().getId()).isEqualTo(note.getPublisher().getId()),
                 () -> assertThat(result.getContent().getFirst().getSong().getId()).isEqualTo(note.getSong().getId())
         );
+    }
+
+    @Test
+    void 노트를_삭제해야_한다() throws Exception {
+        // given
+        User user = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                user.getId(),
+                song.getId()
+        );
+        Note note = sut.create(request);
+
+        // when
+        Slice<Note> beforeResult = noteQueryRepository.findAllByUserId(user.getId(), null, PageRequest.ofSize(5));
+        sut.delete(user.getId(), note.getId());
+        Slice<Note> afterResult = noteQueryRepository.findAllByUserId(user.getId(), null, PageRequest.ofSize(5));
+
+        // then
+        assertAll(
+                () -> assertThat(beforeResult.getContent().size()).isEqualTo(1),
+                () -> assertThat(afterResult.getContent().size()).isEqualTo(0)
+        );
+    }
+
+    @Test
+    void 사용자가_노트의_작성자가_아닌_경우_삭제시_예외를_발생시켜야_한다() throws Exception {
+        // given
+        User publisher = userCommandRepository.save(UserFixture.create());
+        User unknownUser = userCommandRepository.save(UserFixture.create());
+
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        Song song = songCommandRepository.save(SongFixture.create(artist));
+
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.WHITE,
+                NoteStatus.PUBLISHED,
+                publisher.getId(),
+                song.getId()
+        );
+        Note note = sut.create(request);
+
+        // when, then
+        assertThatThrownBy(() -> sut.delete(unknownUser.getId(), note.getId()))
+                .isInstanceOf(InvalidNoteDeletionException.class);
     }
 }

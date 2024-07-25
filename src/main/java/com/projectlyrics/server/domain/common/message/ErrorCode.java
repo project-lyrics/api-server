@@ -47,6 +47,7 @@ public enum ErrorCode {
     NOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "05000", "해당 노트를 조회할 수 없습니다."),
     INVALID_NOTE_BACKGROUND(HttpStatus.BAD_REQUEST, "05001", "올바르지 않은 노트 배경입니다."),
     INVALID_NOTE_STATUS(HttpStatus.BAD_REQUEST, "05002", "올바르지 않은 노트 상태입니다."),
+    INVALID_NOTE_DELETION(HttpStatus.BAD_REQUEST, "05003", "해당 노트를 삭제할 수 없습니다."),
 
     // Song
     SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "06000", "해당 노래를 조회할 수 없습니다."),

@@ -12,7 +12,6 @@ public record NoteCreateRequest(
         String content,
         @Schema(name = "가사")
         String lyrics,
-        @NotNull
         @Schema(name = "배경색")
         NoteBackground background,
         @NotNull
