@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +42,7 @@ class SongQueryServiceTest extends IntegrationTest {
                 "imageUrl",
                 artist.getId()
         );
-        songCommandService.create(request);
+        Song song = songCommandService.create(request);
 
         // when
         CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongs("no", null, 5);
@@ -49,7 +50,12 @@ class SongQueryServiceTest extends IntegrationTest {
         // then
         assertAll(
                 () -> assertThat(result.data().size()).isEqualTo(1),
-                () -> assertThat(result.data().get(0).name()).isEqualTo("No Pain")
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(song.getId()),
+                () -> assertThat(result.data().getFirst().name()).isEqualTo(song.getName()),
+                () -> assertThat(result.data().getFirst().imageUrl()).isEqualTo(song.getImageUrl()),
+                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist.getId()),
+                () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist.getName()),
+                () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist.getImageUrl())
         );
     }
 }

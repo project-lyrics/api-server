@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.projectlyrics.server.domain.song.entity.QSong.song;
+
 @Repository
 @RequiredArgsConstructor
 public class QueryDslSongQueryRepository implements SongQueryRepository {
@@ -23,11 +25,12 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     @Override
     public Slice<Song> findAllByArtistId(Long artistId, Long cursorId, Pageable pageable) {
         List<Song> content = jpaQueryFactory
-                .selectFrom(QSong.song)
+                .selectFrom(song)
+                .join(song.artist).fetchJoin()
                 .where(
-                        QSong.song.artist.id.eq(artistId),
-                        QSong.song.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, QSong.song.id)
+                        song.artist.id.eq(artistId),
+                        song.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, song.id)
                 )
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -38,11 +41,12 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     @Override
     public Slice<Song> findAllByQuery(String query, Long cursorId, Pageable pageable) {
         List<Song> content = jpaQueryFactory
-                .selectFrom(QSong.song)
+                .selectFrom(song)
+                .join(song.artist).fetchJoin()
                 .where(
-                        QSong.song.name.containsIgnoreCase(query),
-                        QSong.song.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, QSong.song.id)
+                        song.name.containsIgnoreCase(query),
+                        song.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, song.id)
                 )
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -54,10 +58,11 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     public Optional<Song> findById(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
-                        .selectFrom(QSong.song)
+                        .selectFrom(song)
+                        .join(song.artist).fetchJoin()
                         .where(
-                                QSong.song.id.eq(id),
-                                QSong.song.deletedAt.isNull()
+                                song.id.eq(id),
+                                song.deletedAt.isNull()
                         )
                         .fetchOne()
         );
