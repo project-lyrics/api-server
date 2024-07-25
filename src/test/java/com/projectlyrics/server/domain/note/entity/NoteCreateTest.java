@@ -46,7 +46,7 @@ class NoteCreateTest {
     }
 
     @Test
-    void 가사가_없는_경우에도_노트를_생성해야_한다() {
+    void 가사가_없는_경우에도_노트_생성_객체를_생성해야_한다() {
         // given
         Artist artist = ArtistFixture.create();
         User publisher = UserFixture.create();
