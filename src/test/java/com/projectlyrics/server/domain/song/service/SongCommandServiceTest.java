@@ -44,6 +44,9 @@ class SongCommandServiceTest extends IntegrationTest {
         // when
         Song song = sut.create(request);
 
+        System.out.println("request.releaseDate() = " + request.releaseDate());
+        System.out.println("song.getReleaseDate() = " + song.getReleaseDate());
+
         // then
         Slice<Song> result = songQueryRepository.findAllByArtistId(artist.getId(), null, PageRequest.ofSize(5));
         assertAll(
