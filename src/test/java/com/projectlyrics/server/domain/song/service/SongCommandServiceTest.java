@@ -8,6 +8,8 @@ import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -28,8 +30,11 @@ class SongCommandServiceTest extends IntegrationTest {
     @Autowired
     SongCommandService sut;
 
+    private static final Logger log = LoggerFactory.getLogger(SongCommandServiceTest.class);
+
     @Test
     void 곡을_저장해야_한다() throws Exception {
+
         // given
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         SongCreateRequest request = new SongCreateRequest(
@@ -44,8 +49,8 @@ class SongCommandServiceTest extends IntegrationTest {
         // when
         Song song = sut.create(request);
 
-        System.out.println("request.releaseDate() = " + request.releaseDate());
-        System.out.println("song.getReleaseDate() = " + song.getReleaseDate());
+        log.info("request release date : {}", request.releaseDate());
+        log.info("song release date : {}", song.getReleaseDate());
 
         // then
         Slice<Song> result = songQueryRepository.findAllByArtistId(artist.getId(), null, PageRequest.ofSize(5));
