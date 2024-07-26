@@ -27,7 +27,7 @@ public class NoteQueryService {
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getRecentNotes(Long userId, Long cursor, int size) {
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesOfFavoriteArtists(Long userId, Long cursor, int size) {
         List<Long> artistsIds = favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
                 .stream()
                 .map(favoriteArtist -> favoriteArtist.getArtist().getId())

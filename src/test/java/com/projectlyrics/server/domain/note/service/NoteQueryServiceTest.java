@@ -110,7 +110,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getRecentNotes(user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesOfFavoriteArtists(user.getId(), null, 5);
 
         // then
         assertAll(
