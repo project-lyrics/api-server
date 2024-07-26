@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Note extends BaseEntity {
 
-    private static final long maxDraftNumber = 20;
+    private static final long MAX_DRAFT_NUMBER = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -109,7 +109,7 @@ public class Note extends BaseEntity {
     }
 
     public static void checkDraftNumber(long draftNumber) {
-        if (draftNumber >= maxDraftNumber) {
+        if (draftNumber >= MAX_DRAFT_NUMBER) {
             throw new TooManyDraftsException();
         }
     }
