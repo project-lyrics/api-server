@@ -12,7 +12,6 @@ public record NoteCreateRequest(
         NoteBackground background,
         @NotNull
         NoteStatus status,
-        Long publisherId,
         Long songId
 ) {
 }

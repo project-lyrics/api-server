@@ -55,14 +55,13 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
 
-        Note note1 = noteCommandService.create(request);
-        Note note2 = noteCommandService.create(request);
-        Note note3 = noteCommandService.create(request);
-        Note note4 = noteCommandService.create(request);
+        Note note1 = noteCommandService.create(request, user.getId());
+        Note note2 = noteCommandService.create(request, user.getId());
+        Note note3 = noteCommandService.create(request, user.getId());
+        Note note4 = noteCommandService.create(request, user.getId());
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 5);
@@ -93,7 +92,6 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 unlikedArtistSong.getId()
         );
 
@@ -102,15 +100,14 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 likedArtistSong.getId()
         );
 
-        noteCommandService.create(unlikedArtistSongNoteRequest);
-        noteCommandService.create(unlikedArtistSongNoteRequest);
-        Note likedArtistSongNote1 = noteCommandService.create(likedArtistSongNoteRequest);
-        Note likedArtistSongNote2 = noteCommandService.create(likedArtistSongNoteRequest);
-        Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest);
+        noteCommandService.create(unlikedArtistSongNoteRequest, user.getId());
+        noteCommandService.create(unlikedArtistSongNoteRequest, user.getId());
+        Note likedArtistSongNote1 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Note likedArtistSongNote2 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result = sut.getRecentNotes(user.getId(), null, 5);
@@ -138,13 +135,12 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
 
-        Note note1 = noteCommandService.create(request);
-        Note note2 = noteCommandService.create(request);
-        Note note3 = noteCommandService.create(request);
+        Note note1 = noteCommandService.create(request, user.getId());
+        Note note2 = noteCommandService.create(request, user.getId());
+        Note note3 = noteCommandService.create(request, user.getId());
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(artist1.getId(), false, null, 5);
@@ -173,7 +169,6 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
         NoteCreateRequest noLyricsRequest = new NoteCreateRequest(
@@ -181,13 +176,12 @@ class NoteQueryServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
 
-        Note note1 = noteCommandService.create(lyricsRequest);
-        Note note2 = noteCommandService.create(noLyricsRequest);
-        Note note3 = noteCommandService.create(lyricsRequest);
+        Note note1 = noteCommandService.create(lyricsRequest, user.getId());
+        Note note2 = noteCommandService.create(noLyricsRequest, user.getId());
+        Note note3 = noteCommandService.create(lyricsRequest, user.getId());
 
         // when
         CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(artist.getId(), true, null, 5);

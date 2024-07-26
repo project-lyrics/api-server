@@ -27,7 +27,6 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                publisher.getId(),
                 song.getId()
         );
 
@@ -56,7 +55,6 @@ class NoteCreateTest {
                 null,
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                publisher.getId(),
                 song.getId()
         );
 
@@ -85,7 +83,6 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 null,
-                publisher.getId(),
                 song.getId()
         );
 
@@ -105,7 +102,6 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                1L,
                 song.getId()
         );
 
@@ -125,7 +121,6 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                publisher.getId(),
                 1L
         );
 

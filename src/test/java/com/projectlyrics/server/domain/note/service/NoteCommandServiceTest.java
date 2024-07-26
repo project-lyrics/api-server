@@ -58,12 +58,11 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
 
         // when
-        Note note = sut.create(request);
+        Note note = sut.create(request, user.getId());
 
         // then
         Slice<Note> result = noteQueryRepository.findAllByUserId(user.getId(), null, PageRequest.ofSize(5));
@@ -90,15 +89,14 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.DRAFT,
-                user.getId(),
                 song.getId()
         );
 
         IntStream.range(0, 20)
-                .forEach(i -> sut.create(request));
+                .forEach(i -> sut.create(request, user.getId()));
 
         // when, then
-        assertThatThrownBy(() -> sut.create(request))
+        assertThatThrownBy(() -> sut.create(request, user.getId()))
                 .isInstanceOf(TooManyDraftsException.class);
     }
 
@@ -115,10 +113,9 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                user.getId(),
                 song.getId()
         );
-        Note note = sut.create(request);
+        Note note = sut.create(request, user.getId());
 
         // when
         Slice<Note> beforeResult = noteQueryRepository.findAllByUserId(user.getId(), null, PageRequest.ofSize(5));
@@ -146,10 +143,9 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.PUBLISHED,
-                publisher.getId(),
                 song.getId()
         );
-        Note note = sut.create(request);
+        Note note = sut.create(request, publisher.getId());
 
         // when, then
         assertThatThrownBy(() -> sut.delete(unknownUser.getId(), note.getId()))
@@ -169,10 +165,9 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.WHITE,
                 NoteStatus.DRAFT,
-                user.getId(),
                 song.getId()
         );
-        Note note = sut.create(createRequest);
+        Note note = sut.create(createRequest, user.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 note.getId(),
@@ -211,10 +206,9 @@ class NoteCommandServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.DRAFT,
-                user.getId(),
                 song.getId()
         );
-        Note note = sut.create(createRequest);
+        Note note = sut.create(createRequest, user.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 note.getId(),
@@ -249,10 +243,9 @@ class NoteCommandServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.DRAFT,
-                publisher.getId(),
                 song.getId()
         );
-        Note note = sut.create(createRequest);
+        Note note = sut.create(createRequest, publisher.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 note.getId(),

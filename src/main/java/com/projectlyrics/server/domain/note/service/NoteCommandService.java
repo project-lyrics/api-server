@@ -30,8 +30,8 @@ public class NoteCommandService {
     private final UserQueryRepository userQueryRepository;
     private final SongQueryRepository songQueryRepository;
 
-    public Note create(NoteCreateRequest request) {
-        User publisher = userQueryRepository.findById(request.publisherId())
+    public Note create(NoteCreateRequest request, Long publisherId) {
+        User publisher = userQueryRepository.findById(publisherId)
                 .orElseThrow(UserNotFoundException::new);
         Song song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
