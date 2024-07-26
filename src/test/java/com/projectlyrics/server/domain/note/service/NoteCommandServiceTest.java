@@ -170,16 +170,14 @@ class NoteCommandServiceTest extends IntegrationTest {
         Note note = sut.create(createRequest, user.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
-                note.getId(),
                 "updated content",
                 "updated lyrics",
                 NoteBackground.WHITE,
-                NoteStatus.PUBLISHED,
-                user.getId()
+                NoteStatus.PUBLISHED
         );
 
         // when
-        Note updatedNote = sut.update(updateRequest);
+        Note updatedNote = sut.update(updateRequest, note.getId(), user.getId());
 
         // then
         assertAll(
@@ -211,16 +209,14 @@ class NoteCommandServiceTest extends IntegrationTest {
         Note note = sut.create(createRequest, user.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
-                note.getId(),
                 "updated content",
                 "lyrics",
                 NoteBackground.WHITE,
-                NoteStatus.PUBLISHED,
-                user.getId()
+                NoteStatus.PUBLISHED
         );
 
         // when
-        Note updatedNote = sut.update(updateRequest);
+        Note updatedNote = sut.update(updateRequest, note.getId(), user.getId());
 
         // then
         assertAll(
@@ -248,16 +244,14 @@ class NoteCommandServiceTest extends IntegrationTest {
         Note note = sut.create(createRequest, publisher.getId());
 
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
-                note.getId(),
                 "updated content",
                 "lyrics",
                 NoteBackground.WHITE,
-                NoteStatus.PUBLISHED,
-                unknownUser.getId()
+                NoteStatus.PUBLISHED
         );
 
         // when, then
-        assertThatThrownBy(() -> sut.update(updateRequest))
+        assertThatThrownBy(() -> sut.update(updateRequest, note.getId(), unknownUser.getId()))
                 .isInstanceOf(InvalidNoteUpdateException.class);
     }
 }

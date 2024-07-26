@@ -54,9 +54,9 @@ public class NoteCommandService {
                         () -> { throw new InvalidNoteDeletionException(); });
     }
 
-    public Note update(NoteUpdateRequest request) {
-        Note note = noteQueryRepository.findById(request.noteId())
-                .filter(foundNote -> foundNote.isPublisher(request.publisherId()))
+    public Note update(NoteUpdateRequest request, Long noteId, Long publisherId) {
+        Note note = noteQueryRepository.findById(noteId)
+                .filter(foundNote -> foundNote.isPublisher(publisherId))
                 .orElseThrow(InvalidNoteUpdateException::new);
 
         return note.update(NoteUpdate.from(request));
