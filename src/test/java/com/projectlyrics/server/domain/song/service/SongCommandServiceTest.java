@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +29,9 @@ class SongCommandServiceTest extends IntegrationTest {
     @Autowired
     SongCommandService sut;
 
+    @Autowired
+    Clock clock;
+
     @Test
     void 곡을_저장해야_한다() throws Exception {
 
@@ -36,7 +40,7 @@ class SongCommandServiceTest extends IntegrationTest {
         SongCreateRequest request = new SongCreateRequest(
                 "spotifyId",
                 "name",
-                LocalDate.EPOCH,
+                LocalDate.now(clock),
                 "albumName",
                 "imageUrl",
                 artist.getId()
