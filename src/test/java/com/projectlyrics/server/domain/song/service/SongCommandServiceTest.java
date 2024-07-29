@@ -9,14 +9,10 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,18 +28,15 @@ class SongCommandServiceTest extends IntegrationTest {
     @Autowired
     SongCommandService sut;
 
-    @SpyBean
-    Clock clock;
-
     @Test
     void 곡을_저장해야_한다() throws Exception {
+
         // given
-        Clock releaseDate = Clock.fixed(Instant.parse("2024-07-10T10:00:00Z"), ZoneOffset.UTC);
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         SongCreateRequest request = new SongCreateRequest(
                 "spotifyId",
                 "name",
-                LocalDate.now(releaseDate),
+                LocalDate.EPOCH,
                 "albumName",
                 "imageUrl",
                 artist.getId()
