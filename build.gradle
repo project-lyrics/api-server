@@ -98,3 +98,7 @@ bootJar {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+test {
+    testLogging.exceptionFormat = TestExceptionFormat.FULL
+}
