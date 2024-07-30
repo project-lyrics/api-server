@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.auth.api;
 
+import com.projectlyrics.server.domain.auth.dto.response.TokenValidateResponse;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
@@ -49,7 +50,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate-token")
-    public ResponseEntity<Void> validateToken() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TokenValidateResponse> validateToken() {
+        return ResponseEntity.ok(new TokenValidateResponse(true));
     }
 }
