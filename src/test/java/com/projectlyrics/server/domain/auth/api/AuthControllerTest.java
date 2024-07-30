@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
@@ -347,6 +348,10 @@ class AuthControllerTest extends RestDocsTest {
                                         .tag("Auth API")
                                         .summary("토큰 검증 API")
                                         .requestHeaders(getAuthorizationHeader())
+                                        .responseFields(
+                                                fieldWithPath("status").type(SimpleType.BOOLEAN)
+                                        )
+                                        .responseSchema(Schema.schema("Token Validate Response"))
                                         .build())
                         )
                 );
