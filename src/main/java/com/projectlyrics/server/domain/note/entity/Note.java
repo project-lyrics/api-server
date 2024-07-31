@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -63,6 +64,17 @@ public class Note extends BaseEntity {
 
     public static Note create(NoteCreate noteCreate) {
         return new Note(
+                noteCreate.content(),
+                Lyrics.of(noteCreate.lyrics(), noteCreate.background()),
+                noteCreate.status(),
+                noteCreate.publisher(),
+                noteCreate.song()
+        );
+    }
+
+    public static Note createWithId(Long id, NoteCreate noteCreate) {
+        return new Note(
+                id,
                 noteCreate.content(),
                 Lyrics.of(noteCreate.lyrics(), noteCreate.background()),
                 noteCreate.status(),

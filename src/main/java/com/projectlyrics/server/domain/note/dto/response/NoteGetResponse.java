@@ -6,6 +6,8 @@ import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 
+import java.time.LocalDateTime;
+
 public record NoteGetResponse(
         Long id,
         String content,
@@ -22,6 +24,18 @@ public record NoteGetResponse(
                 note.getContent(),
                 note.getNoteStatus().name(),
                 DomainUtils.formatTime(note.getCreatedAt()),
+                LyricsGetResponse.from(note.getLyrics()),
+                UserGetResponse.from(note.getPublisher()),
+                SongGetResponse.from(note.getSong())
+        );
+    }
+
+    public static NoteGetResponse of(Note note, LocalDateTime createdAt) {
+        return new NoteGetResponse(
+                note.getId(),
+                note.getContent(),
+                note.getNoteStatus().name(),
+                DomainUtils.formatTime(createdAt),
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
                 SongGetResponse.from(note.getSong())
