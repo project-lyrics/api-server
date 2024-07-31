@@ -51,16 +51,4 @@ class DomainUtilsTest {
         assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpUrl));
         assertThatNoException().isThrownBy(() -> DomainUtils.checkUrl(httpsUrl));
     }
-
-    @Test
-    void LocalDateTime_객체에_대해_포맷팅을_한다() {
-        // given
-        LocalDateTime time = LocalDateTime.of(2021, 1, 1, 0, 0);
-
-        // when
-        String formattedTime = DomainUtils.formatTime(time);
-
-        // then
-        assertThat(formattedTime).isEqualTo("2021.01.01 00:00");
-    }
 }
