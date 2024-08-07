@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.note.api;
 
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
@@ -25,6 +26,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
@@ -33,7 +35,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class NoteControllerTest extends RestDocsTest {
@@ -71,12 +72,10 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("가사 내용")
                                         .optional(),
                                 fieldWithPath("background").type(JsonFieldType.STRING)
-                                        .attributes(key("noteBackgrounds").value(NoteBackground.values()))
-                                        .description("가사 배경색")
+                                        .description("가사 배경색" + getEnumValuesAsString(NoteBackground.class))
                                         .optional(),
                                 fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .attributes(key("noteStatuses").value(NoteStatus.values()))
-                                        .description("노트 등록 상태"),
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
                                 fieldWithPath("songId").type(JsonFieldType.NUMBER)
                                         .description("곡 ID")
                         )
@@ -117,12 +116,10 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("가사 내용")
                                         .optional(),
                                 fieldWithPath("background").type(JsonFieldType.STRING)
-                                        .attributes(key("noteBackgrounds").value(NoteBackground.values()))
                                         .description("가사 배경색")
                                         .optional(),
                                 fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .attributes(key("noteStatuses").value(NoteStatus.values()))
-                                        .description("노트 등록 상태")
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class))
                         )
                         .requestSchema(Schema.schema("Update Note Request"))
                         .build())
@@ -208,24 +205,21 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].content").type(JsonFieldType.STRING)
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
-                                        .attributes(key("noteStatuses").value(NoteStatus.values()))
-                                        .description("노트 등록 상태"),
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
                                         .description("가사 내용")
                                         .optional(),
                                 fieldWithPath("data[].lyrics.background").type(JsonFieldType.STRING)
-                                        .attributes(key("noteBackgrounds").value(NoteBackground.values()))
-                                        .description("가사 배경색")
+                                        .description("가사 배경색" + getEnumValuesAsString(NoteBackground.class))
                                         .optional(),
                                 fieldWithPath("data[].publisher.id").type(JsonFieldType.NUMBER)
                                         .description("게시자 Id"),
                                 fieldWithPath("data[].publisher.nickname").type(JsonFieldType.STRING)
                                         .description("게시자 닉네임"),
                                 fieldWithPath("data[].publisher.profileCharacterType").type(JsonFieldType.STRING)
-                                        .attributes(key("profileCharacterTypes").value(ProfileCharacter.values()))
-                                        .description("게시자 프로필 이미지 타입"),
+                                        .description("게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
                                 fieldWithPath("data[].song.id").type(JsonFieldType.NUMBER)
                                         .description("곡 Id"),
                                 fieldWithPath("data[].song.name").type(JsonFieldType.STRING)
@@ -266,8 +260,10 @@ class NoteControllerTest extends RestDocsTest {
                 .willReturn(response);
 
         // when, then
-        mockMvc.perform(get("/api/v1/notes/artists/{artistId}", 1)
+        mockMvc.perform(get("/api/v1/notes/artists")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("artistId", "1")
+                        .param("hasLyrics", "false")
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -276,23 +272,23 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getArtistNoteListDocument() {
+        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
+        queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
+                .type(SimpleType.NUMBER)
+                .description("아티스트 Id");
+        queryParams[pagingQueryParameters.length + 1] = parameterWithName("hasLyrics")
+                .type(SimpleType.BOOLEAN)
+                .defaultValue("false")
+                .optional()
+                .description("가사가 있는 노트만 조회");
+
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .pathParameters(
-                                parameterWithName("artistId")
-                                        .description("아티스트 Id")
-                        )
-                        .queryParameters(
-                                parameterWithName("hasLyrics")
-                                        .type(SimpleType.BOOLEAN)
-                                        .defaultValue("false")
-                                        .optional()
-                                        .description("가사가 있는 노트만 조회")
-                        )
-                        .queryParameters(getPagingQueryParameters())
+                        .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),
@@ -305,24 +301,21 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].content").type(JsonFieldType.STRING)
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
-                                        .attributes(key("noteStatuses").value(NoteStatus.values()))
-                                        .description("노트 등록 상태"),
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
                                         .description("가사 내용")
                                         .optional(),
                                 fieldWithPath("data[].lyrics.background").type(JsonFieldType.STRING)
-                                        .attributes(key("noteBackgrounds").value(NoteBackground.values()))
-                                        .description("가사 배경색")
+                                        .description("가사 배경색" + getEnumValuesAsString(NoteBackground.class))
                                         .optional(),
                                 fieldWithPath("data[].publisher.id").type(JsonFieldType.NUMBER)
                                         .description("게시자 Id"),
                                 fieldWithPath("data[].publisher.nickname").type(JsonFieldType.STRING)
                                         .description("게시자 닉네임"),
                                 fieldWithPath("data[].publisher.profileCharacterType").type(JsonFieldType.STRING)
-                                        .attributes(key("profileCharacterTypes").value(ProfileCharacter.values()))
-                                        .description("게시자 프로필 이미지 타입"),
+                                        .description("게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
                                 fieldWithPath("data[].song.id").type(JsonFieldType.NUMBER)
                                         .description("곡 Id"),
                                 fieldWithPath("data[].song.name").type(JsonFieldType.STRING)
