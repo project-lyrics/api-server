@@ -88,7 +88,7 @@ public class NoteController {
     @GetMapping("/artists")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfArtist(
             @RequestParam(name = "artistId") Long artistId,
-            @RequestParam(name = "hasLyrics", defaultValue = "false") boolean hasLyrics,
+            @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {

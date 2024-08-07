@@ -279,7 +279,6 @@ class NoteControllerTest extends RestDocsTest {
                 .description("아티스트 Id");
         queryParams[pagingQueryParameters.length + 1] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
-                .defaultValue("false")
                 .optional()
                 .description("가사가 있는 노트만 조회");
 
