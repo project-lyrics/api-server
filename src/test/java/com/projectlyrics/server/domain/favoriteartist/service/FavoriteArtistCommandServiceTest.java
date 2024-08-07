@@ -8,7 +8,6 @@ import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
-import com.projectlyrics.server.domain.record.repository.RecordCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import org.junit.jupiter.api.Test;
@@ -30,9 +29,6 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
 
     @Autowired
     ArtistCommandRepository artistCommandRepository;
-
-    @Autowired
-    RecordCommandRepository repository;
 
     @Autowired
     FavoriteArtistQueryRepository favoriteArtistQueryRepository;
