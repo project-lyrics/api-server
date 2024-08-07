@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.favoriteartist.entity;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.record.domain.Record;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
