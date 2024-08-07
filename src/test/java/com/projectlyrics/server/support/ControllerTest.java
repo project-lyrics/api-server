@@ -15,8 +15,6 @@ import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistQuer
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
-import com.projectlyrics.server.domain.record.service.RecordCommandService;
-import com.projectlyrics.server.domain.record.service.RecordQueryService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,12 +48,6 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ArtistQueryService artistQueryService;
-
-    @MockBean
-    protected RecordCommandService recordCommandService;
-
-    @MockBean
-    protected RecordQueryService recordQueryService;
 
     @MockBean
     protected UserQueryService userQueryService;
