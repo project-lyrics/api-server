@@ -6,6 +6,7 @@ import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import lombok.NoArgsConstructor;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;

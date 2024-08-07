@@ -42,6 +42,17 @@ public enum ErrorCode {
 
     // Record,
     RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
+
+    // Note
+    NOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "05000", "해당 노트를 조회할 수 없습니다."),
+    INVALID_NOTE_BACKGROUND(HttpStatus.BAD_REQUEST, "05001", "올바르지 않은 노트 배경입니다."),
+    INVALID_NOTE_STATUS(HttpStatus.BAD_REQUEST, "05002", "올바르지 않은 노트 상태입니다."),
+    INVALID_NOTE_DELETION(HttpStatus.BAD_REQUEST, "05003", "해당 노트를 삭제할 수 없습니다."),
+    INVALID_NOTE_UPDATE(HttpStatus.BAD_REQUEST, "05004", "해당 노트를 수정할 수 없습니다."),
+    TOO_MANY_DRAFT_NOTE(HttpStatus.BAD_REQUEST, "05005", "임시저장 노트의 개수가 초과되었습니다."),
+
+    // Song
+    SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "06000", "해당 노래를 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;

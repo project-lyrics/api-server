@@ -23,3 +23,10 @@ jobs:
       - name: Test with Gradle
         run: |
           ./gradlew test
+
+      - name: Report Test Result
+        uses: mikepenz/action-junit-report@v3
+        if: failure()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ github.token }}

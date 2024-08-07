@@ -66,6 +66,7 @@ public class User extends BaseEntity {
         checkNull(socialInfo);
         checkNull(termsAgreements);
         checkEnum(role);
+        this.id = id;
         this.socialInfo = socialInfo;
         this.nickname = new Username(nickname);
         this.profileCharacter = profileCharacter;
