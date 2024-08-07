@@ -350,7 +350,7 @@ class AuthControllerTest extends RestDocsTest {
                                         .requestHeaders(getAuthorizationHeader())
                                         .responseFields(
                                                 fieldWithPath("status")
-                                                        .type(SimpleType.BOOLEAN)
+                                                        .type(JsonFieldType.BOOLEAN)
                                                         .description("토큰 유효 여부")
                                         )
                                         .responseSchema(Schema.schema("Token Validate Response"))
