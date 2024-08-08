@@ -32,8 +32,8 @@ class CommentControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andDo(getCreateCommentDocument())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(getCreateCommentDocument());
     }
 
     private RestDocumentationResultHandler getCreateCommentDocument() {
@@ -65,8 +65,8 @@ class CommentControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andDo(getUpdateCommentDocument())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(getUpdateCommentDocument());
     }
 
     private RestDocumentationResultHandler getUpdateCommentDocument() {
@@ -92,8 +92,8 @@ class CommentControllerTest extends RestDocsTest {
         // when, then
         mockMvc.perform(delete("/api/v1/comments/{commentId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andDo(getDeleteCommentDocument())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(getDeleteCommentDocument());
     }
 
     private RestDocumentationResultHandler getDeleteCommentDocument() {
