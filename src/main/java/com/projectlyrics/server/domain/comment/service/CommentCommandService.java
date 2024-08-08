@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.comment.domain.CommentCreate;
 import com.projectlyrics.server.domain.comment.domain.CommentUpdate;
 import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
 import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
+import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
@@ -43,5 +44,14 @@ public class CommentCommandService {
                 .orElseThrow(InvalidCommentUpdateException::new);
 
         return comment.update(CommentUpdate.from(request));
+    }
+
+    public void delete(Long commentId, Long writerId) {
+        commentQueryRepository.findById(commentId)
+                .filter(comment -> comment.isWriter(writerId))
+                .ifPresentOrElse(
+                        commentCommandRepository::delete,
+                        () -> { throw new InvalidCommentDeletionException(); }
+                );
     }
 }

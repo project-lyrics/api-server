@@ -5,6 +5,9 @@ import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
 import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
+import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
+import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
+import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -25,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommentCommandServiceTest extends IntegrationTest {
@@ -43,6 +47,9 @@ class CommentCommandServiceTest extends IntegrationTest {
 
     @Autowired
     NoteCommandRepository noteCommandRepository;
+
+    @Autowired
+    CommentQueryRepository commentQueryRepository;
 
     @Autowired
     CommentCommandService sut;
@@ -106,5 +113,54 @@ class CommentCommandServiceTest extends IntegrationTest {
                 () -> assertThat(updatedComment.getWriter()).isEqualTo(user),
                 () -> assertThat(updatedComment.getNote()).isEqualTo(note)
         );
+    }
+
+    @Test
+    void 댓글의_작성자가_아닌_경우_수정할_수_없어야_한다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        Comment comment = sut.create(commentCreateRequest, user.getId());
+
+        User anonymousUser = userCommandRepository.save(UserFixture.create());
+        CommentUpdateRequest updateRequest = new CommentUpdateRequest("new content");
+
+        // when, then
+        assertThatThrownBy(() -> sut.update(updateRequest, comment.getId(), anonymousUser.getId()))
+                .isInstanceOf(InvalidCommentUpdateException.class);
+    }
+
+    @Test
+    void 댓글을_삭제해야_한다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        Comment comment = sut.create(commentCreateRequest, user.getId());
+
+        // when
+        sut.delete(comment.getId(), user.getId());
+
+        // then
+        assertThat(commentQueryRepository.findById(comment.getId())).isEmpty();
+    }
+
+    @Test
+    void 댓글의_작성자가_아닌_경우_삭제할_수_없어야_한다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        Comment comment = sut.create(commentCreateRequest, user.getId());
+
+        User anonymousUser = userCommandRepository.save(UserFixture.create());
+
+        // when, then
+        assertThatThrownBy(() -> sut.delete(comment.getId(), anonymousUser.getId()))
+                .isInstanceOf(InvalidCommentDeletionException.class);
     }
 }

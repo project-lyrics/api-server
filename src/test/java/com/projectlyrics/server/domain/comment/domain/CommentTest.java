@@ -64,6 +64,29 @@ class CommentTest {
     }
 
     @Test
+    void 작성자가_일치하는지_확인해야_한다() {
+        // given
+        User writer = UserFixture.create();
+        Comment comment = Comment.create(new CommentCreate(
+                "content",
+                writer,
+                NoteFixture.create(writer, SongFixture.create(ArtistFixture.create()))
+        ));
+
+        User anotherUser = UserFixture.create();
+
+        // when
+        boolean isWriter = comment.isWriter(writer.getId());
+        boolean isNotWriter = comment.isWriter(anotherUser.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(isWriter).isTrue(),
+                () -> assertThat(isNotWriter).isFalse()
+        );
+    }
+
+    @Test
     void CommentUpdate_객체로부터_다른_content를_가지는_새로운_Comment_객체를_생성할_수_있다() {
         // given
         Long id = 1L;
