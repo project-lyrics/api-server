@@ -21,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,11 +53,11 @@ class NoteControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andDo(getCreateNoteDocument())
+                .andDo(getNoteCreateDocument())
                 .andExpect(status().isOk());
     }
 
-    private RestDocumentationResultHandler getCreateNoteDocument() {
+    private RestDocumentationResultHandler getNoteCreateDocument() {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
@@ -94,20 +93,24 @@ class NoteControllerTest extends RestDocsTest {
         );
 
         // when, then
-        mockMvc.perform(patch("/api/v1/notes/1")
+        mockMvc.perform(patch("/api/v1/notes/{noteId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(noteUpdateRequest)))
-                .andDo(getUpdateNoteDocument())
+                .andDo(getNoteUpdateDocument())
                 .andExpect(status().isOk());
     }
 
-    private RestDocumentationResultHandler getUpdateNoteDocument() {
+    private RestDocumentationResultHandler getNoteUpdateDocument() {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("노트 수정 API")
                         .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
                         .requestFields(
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("노트 내용"),
@@ -126,6 +129,31 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     @Test
+    void 노트를_삭제하면_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(delete("/api/v1/notes/{noteId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(getNoteDeleteDocument())
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getNoteDeleteDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Note API")
+                        .summary("노트 삭제 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
+                        .requestSchema(Schema.schema("Delete Note Request"))
+                        .build())
+        );
+    }
+
+    @Test
     void 노트를_단건으로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
         // given
         User user = UserFixture.create();
@@ -135,7 +163,7 @@ class NoteControllerTest extends RestDocsTest {
                 .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), LocalDateTime.now()));
 
         // when, then
-        mockMvc.perform(get("/api/v1/notes/1")
+        mockMvc.perform(get("/api/v1/notes/{noteId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -148,6 +176,10 @@ class NoteControllerTest extends RestDocsTest {
                         .tag("Note API")
                         .summary("노트 단건 조회 API")
                         .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
                         .responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("노트 Id"),
