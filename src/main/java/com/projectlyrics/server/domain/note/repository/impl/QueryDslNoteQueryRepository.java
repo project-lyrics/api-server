@@ -49,6 +49,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
+                .leftJoin(note.comments).fetchJoin()
                 .where(
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
@@ -69,6 +70,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
+                .leftJoin(note.comments).fetchJoin()
                 .where(
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
@@ -89,6 +91,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
+                .leftJoin(note.comments).fetchJoin()
                 .where(
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
@@ -109,6 +112,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
+                .leftJoin(note.comments).fetchJoin()
                 .where(
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
