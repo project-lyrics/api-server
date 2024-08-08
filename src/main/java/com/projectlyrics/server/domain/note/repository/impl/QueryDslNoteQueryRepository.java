@@ -29,6 +29,10 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 jpaQueryFactory
                         .selectFrom(note)
                         .leftJoin(note.lyrics).fetchJoin()
+                        .join(note.publisher).fetchJoin()
+                        .join(note.song).fetchJoin()
+                        .join(song.artist).fetchJoin()
+                        .leftJoin(note.comments).fetchJoin()
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull()
