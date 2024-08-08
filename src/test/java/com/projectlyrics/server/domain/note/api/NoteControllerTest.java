@@ -228,7 +228,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("comments[].writer.nickname").type(JsonFieldType.STRING)
                                         .description("댓글 게시자 닉네임"),
                                 fieldWithPath("comments[].writer.profileCharacterType").type(JsonFieldType.STRING)
-                                        .description("댓글 게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class))
+                                        .description("댓글 게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
+                                fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
+                                        .description("좋아요 개수")
                         )
                         .requestSchema(Schema.schema("Note Detail Response"))
                         .build())
@@ -342,7 +344,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이미지 url"),
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
-                                        .description("댓글 개수")
+                                        .description("댓글 개수"),
+                                fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
+                                        .description("좋아요 개수")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -439,7 +443,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이미지 url"),
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
-                                        .description("댓글 개수")
+                                        .description("댓글 개수"),
+                                fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
+                                        .description("좋아요 개수")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()
