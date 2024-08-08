@@ -231,7 +231,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.name").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이름"),
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
-                                        .description("곡 아티스트의 이미지 url")
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -326,7 +328,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.name").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이름"),
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
-                                        .description("곡 아티스트의 이미지 url")
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()

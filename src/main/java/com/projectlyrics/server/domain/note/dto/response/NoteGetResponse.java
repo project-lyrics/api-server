@@ -16,7 +16,8 @@ public record NoteGetResponse(
         LocalDateTime createdAt,
         LyricsGetResponse lyrics,
         UserGetResponse publisher,
-        SongGetResponse song
+        SongGetResponse song,
+        int commentsCount
 ) implements CursorResponse {
 
     public static NoteGetResponse from(Note note) {
@@ -27,7 +28,8 @@ public record NoteGetResponse(
                 note.getCreatedAt(),
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
-                SongGetResponse.from(note.getSong())
+                SongGetResponse.from(note.getSong()),
+                note.getComments().size()
         );
     }
 
@@ -39,7 +41,8 @@ public record NoteGetResponse(
                 createdAt,
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
-                SongGetResponse.from(note.getSong())
+                SongGetResponse.from(note.getSong()),
+                note.getComments().size()
         );
     }
 

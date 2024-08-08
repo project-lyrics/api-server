@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.note.entity;
 
+import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
 import com.projectlyrics.server.domain.song.entity.Song;
@@ -7,7 +8,8 @@ import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -35,6 +37,9 @@ public class Note extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Song song;
+
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     private Note(
             Long id,

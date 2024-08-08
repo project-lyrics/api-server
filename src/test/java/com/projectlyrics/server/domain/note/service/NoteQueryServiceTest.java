@@ -22,6 +22,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -79,21 +83,23 @@ class NoteQueryServiceTest extends IntegrationTest {
     @Test
     void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_최신순으로_조회해야_한다() {
         // given
-        Note note1 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
-        Note note2 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
-        Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
-        Note note4 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        List<Note> notes = new ArrayList<>();
+
+        IntStream.range(0, 10)
+                .forEach(i -> {
+                    Note note = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+                    notes.add(note);
+                });
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 10);
 
         // then
         assertAll(
-                () -> assertThat(result.data().size()).isEqualTo(4),
-                () -> assertThat(result.data().get(0).id()).isEqualTo(note4.getId()),
-                () -> assertThat(result.data().get(1).id()).isEqualTo(note3.getId()),
-                () -> assertThat(result.data().get(2).id()).isEqualTo(note2.getId()),
-                () -> assertThat(result.data().get(3).id()).isEqualTo(note1.getId())
+                () -> assertThat(result.data().size()).isEqualTo(10),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(notes.get(9).getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(notes.get(8).getId()),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(notes.get(7).getId())
         );
     }
 
