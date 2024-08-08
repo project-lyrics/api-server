@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.comment.domain;
 
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comments")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,19 @@ public class Comment {
                 commentCreate.content(),
                 commentCreate.writer(),
                 commentCreate.note()
+        );
+    }
+
+    public boolean isWriter(Long writerId) {
+        return this.writer.getId().equals(writerId);
+    }
+
+    public Comment update(CommentUpdate commentUpdate) {
+        return new Comment(
+                this.id,
+                commentUpdate.content(),
+                this.writer,
+                this.note
         );
     }
 }

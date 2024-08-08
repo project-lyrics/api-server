@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
+import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -19,6 +20,7 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,12 +47,16 @@ class CommentCommandServiceTest extends IntegrationTest {
     @Autowired
     CommentCommandService sut;
 
-    @Test
-    void 노트를_저장해야_한다() {
-        // given
-        User user = userCommandRepository.save(UserFixture.create());
-        Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        Song song = songCommandRepository.save(SongFixture.create(artist));
+    private User user;
+    private Artist artist;
+    private Song song;
+    private Note note;
+
+    @BeforeEach
+    void setUp() {
+        user = userCommandRepository.save(UserFixture.create());
+        artist = artistCommandRepository.save(ArtistFixture.create());
+        song = songCommandRepository.save(SongFixture.create(artist));
         NoteCreateRequest noteCreateRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
@@ -58,8 +64,12 @@ class CommentCommandServiceTest extends IntegrationTest {
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
-        Note note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
+        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
+    }
 
+    @Test
+    void 댓글을_저장해야_한다() {
+        // given
         CommentCreateRequest request = new CommentCreateRequest(
                 "content",
                 note.getId()
@@ -73,6 +83,28 @@ class CommentCommandServiceTest extends IntegrationTest {
                 () -> assertThat(comment.getContent()).isEqualTo(request.content()),
                 () -> assertThat(comment.getWriter()).isEqualTo(user),
                 () -> assertThat(comment.getNote()).isEqualTo(note)
+        );
+    }
+
+    @Test
+    void 댓글을_수정해야_한다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        Comment comment = sut.create(commentCreateRequest, user.getId());
+
+        CommentUpdateRequest updateRequest = new CommentUpdateRequest("new content");
+
+        // when
+        Comment updatedComment = sut.update(updateRequest, comment.getId(), user.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(updatedComment.getContent()).isEqualTo(updateRequest.content()),
+                () -> assertThat(updatedComment.getWriter()).isEqualTo(user),
+                () -> assertThat(updatedComment.getNote()).isEqualTo(note)
         );
     }
 }

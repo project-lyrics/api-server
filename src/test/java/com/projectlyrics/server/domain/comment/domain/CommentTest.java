@@ -62,4 +62,35 @@ class CommentTest {
                 () -> assertThat(comment.getNote()).isEqualTo(note)
         );
     }
+
+    @Test
+    void CommentUpdate_객체로부터_다른_content를_가지는_새로운_Comment_객체를_생성할_수_있다() {
+        // given
+        Long id = 1L;
+        String content = "content";
+        User writer = UserFixture.create();
+        Note note = NoteFixture.create(writer, SongFixture.create(ArtistFixture.create()));
+
+        Comment comment = Comment.createWithId(id, new CommentCreate(
+                content,
+                writer,
+                note
+        ));
+
+        String newContent = "new content";
+        CommentUpdate commentUpdate = new CommentUpdate(
+                newContent
+        );
+
+        // when
+        Comment updatedComment = comment.update(commentUpdate);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedComment.getId()).isEqualTo(id),
+                () -> assertThat(updatedComment.getContent()).isEqualTo(newContent),
+                () -> assertThat(updatedComment.getWriter()).isEqualTo(writer),
+                () -> assertThat(updatedComment.getNote()).isEqualTo(note)
+        );
+    }
 }
