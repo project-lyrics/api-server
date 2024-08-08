@@ -13,6 +13,8 @@ import com.projectlyrics.server.domain.auth.service.AuthQueryService;
 import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistQueryService;
+import com.projectlyrics.server.domain.like.service.LikeCommandService;
+import com.projectlyrics.server.domain.like.service.LikeQueryService;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
@@ -76,6 +78,12 @@ public abstract class ControllerTest {
 
     @MockBean
     protected CommentCommandService commentCommandService;
+
+    @MockBean
+    protected LikeCommandService likeCommandService;
+
+    @MockBean
+    protected LikeQueryService likeQueryService;
 
     public String accessToken;
     public String refreshToken;

@@ -29,4 +29,16 @@ public class QueryDslLikeQueryRepository implements LikeQueryRepository {
                         .fetchOne()
         );
     }
+
+    @Override
+    public long countByNoteId(Long noteId) {
+        return jpaQueryFactory
+                .select(like.count())
+                .from(like)
+                .where(
+                        like.note.id.eq(noteId),
+                        like.deletedAt.isNull()
+                )
+                .fetchOne();
+    }
 }
