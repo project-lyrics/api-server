@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
+import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
@@ -57,6 +58,15 @@ public class NoteController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();
+    }
+
+    @GetMapping("/{noteId}")
+    public ResponseEntity<NoteDetailResponse> getNote(
+            @PathVariable(name = "noteId") Long noteId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(noteQueryService.getNoteById(noteId));
     }
 
     @GetMapping

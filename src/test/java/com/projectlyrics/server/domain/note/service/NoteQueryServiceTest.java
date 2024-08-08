@@ -2,9 +2,12 @@ package com.projectlyrics.server.domain.note.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.comment.domain.Comment;
+import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -14,10 +17,7 @@ import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
-import com.projectlyrics.server.support.fixture.ArtistFixture;
-import com.projectlyrics.server.support.fixture.FavoriteArtistFixture;
-import com.projectlyrics.server.support.fixture.SongFixture;
-import com.projectlyrics.server.support.fixture.UserFixture;
+import com.projectlyrics.server.support.fixture.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,9 @@ class NoteQueryServiceTest extends IntegrationTest {
 
     @Autowired
     NoteCommandService noteCommandService;
+
+    @Autowired
+    CommentCommandRepository commentCommandRepository;
 
     @Autowired
     NoteQueryService sut;
@@ -77,6 +80,31 @@ class NoteQueryServiceTest extends IntegrationTest {
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 likedArtistSong.getId()
+        );
+    }
+
+    @Test
+    void 노트_id와_일치하는_노트를_조회해야_한다() {
+        // given
+        Note note = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Comment comment1 = commentCommandRepository.save(CommentFixture.create(note, user));
+        Comment comment2 = commentCommandRepository.save(CommentFixture.create(note, user));
+
+        // when
+        NoteDetailResponse result = sut.getNoteById(note.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(note.getId()),
+                () -> assertThat(result.content()).isEqualTo(note.getContent()),
+                () -> assertThat(result.lyrics().lyrics()).isEqualTo(note.getLyrics().getContent()),
+                () -> assertThat(result.lyrics().background()).isEqualTo(note.getLyrics().getBackground().getType()),
+                () -> assertThat(result.status()).isEqualTo(note.getNoteStatus().name()),
+                () -> assertThat(result.song().id()).isEqualTo(note.getSong().getId()),
+                () -> assertThat(result.publisher().id()).isEqualTo(note.getPublisher().getId()),
+                () -> assertThat(result.comments().size()).isEqualTo(2),
+                () -> assertThat(result.comments().get(0).id()).isEqualTo(comment1.getId()),
+                () -> assertThat(result.comments().get(1).id()).isEqualTo(comment2.getId())
         );
     }
 
