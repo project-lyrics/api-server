@@ -17,7 +17,8 @@ public record NoteGetResponse(
         LyricsGetResponse lyrics,
         UserGetResponse publisher,
         SongGetResponse song,
-        int commentsCount
+        int commentsCount,
+        int likesCount
 ) implements CursorResponse {
 
     public static NoteGetResponse from(Note note) {
@@ -29,7 +30,8 @@ public record NoteGetResponse(
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
                 SongGetResponse.from(note.getSong()),
-                note.getComments().size()
+                note.getComments().size(),
+                note.getLikes().size()
         );
     }
 
@@ -42,7 +44,8 @@ public record NoteGetResponse(
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
                 SongGetResponse.from(note.getSong()),
-                note.getComments().size()
+                note.getComments().size(),
+                note.getLikes().size()
         );
     }
 

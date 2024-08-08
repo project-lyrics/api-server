@@ -20,7 +20,8 @@ public record NoteDetailResponse(
         UserGetResponse publisher,
         SongGetResponse song,
         int commentsCount,
-        List<CommentGetResponse> comments
+        List<CommentGetResponse> comments,
+        int likesCount
 ) {
 
     public static NoteDetailResponse of(Note note, List<Comment> comments) {
@@ -35,7 +36,8 @@ public record NoteDetailResponse(
                 comments.size(),
                 comments.stream()
                         .map(CommentGetResponse::from)
-                        .toList()
+                        .toList(),
+                note.getLikes().size()
         );
     }
 
@@ -51,7 +53,8 @@ public record NoteDetailResponse(
                 comments.size(),
                 comments.stream()
                         .map(comment -> CommentGetResponse.from(comment, createdAt))
-                        .toList()
+                        .toList(),
+                note.getLikes().size()
         );
     }
 }

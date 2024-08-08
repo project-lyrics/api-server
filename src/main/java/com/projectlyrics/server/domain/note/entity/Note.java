@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.note.entity;
 
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -40,6 +41,9 @@ public class Note extends BaseEntity {
 
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     private Note(
             Long id,

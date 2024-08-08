@@ -58,6 +58,9 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "07000", "해당 댓글을 조회할 수 없습니다."),
     INVALID_COMMENT_UPDATE(HttpStatus.BAD_REQUEST, "07001", "해당 댓글을 수정할 수 없습니다."),
     INVALID_COMMENT_DELETION(HttpStatus.BAD_REQUEST, "07002", "해당 댓글을 삭제할 수 없습니다."),
+
+    // Like
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "08000", "해당 좋아요를 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
