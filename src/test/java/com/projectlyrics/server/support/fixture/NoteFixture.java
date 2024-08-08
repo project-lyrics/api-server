@@ -10,7 +10,7 @@ public class NoteFixture extends BaseFixture {
     private Long id;
     private String content = "노트 내용";
     private NoteStatus status = NoteStatus.PUBLISHED;
-    private Lyrics lyrics = Lyrics.of("가사", NoteBackground.WHITE);
+    private Lyrics lyrics = Lyrics.of("가사", NoteBackground.DEFAULT);
     private User publisher;
     private Song song;
 
@@ -18,7 +18,7 @@ public class NoteFixture extends BaseFixture {
         return Note.createWithId(
                 getUniqueId(),
                 NoteCreate.from(
-                        new NoteCreateRequest("노트 내용", "가사", NoteBackground.WHITE, NoteStatus.PUBLISHED, song.getId()),
+                        new NoteCreateRequest("노트 내용", "가사", NoteBackground.DEFAULT, NoteStatus.PUBLISHED, song.getId()),
                         publisher,
                         song
                 )

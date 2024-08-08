@@ -10,7 +10,17 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum NoteBackground {
 
-    WHITE("white"),
+    DEFAULT("DEFAULT"),
+    SKYBLUE("SKYBLUE"),
+    BLUE("BLUE"),
+    LAVENDER("LAVENDER"),
+    MINT("MINT"),
+    BLACK("BLACK"),
+    BEIGE("BEIGE"),
+    PINKGREEN("PINKGREEN"),
+    RED("RED"),
+    WHITE("WHITE"),
+    RAINBOW("RAINBOW")
     ;
 
     private final String type;

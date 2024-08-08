@@ -56,7 +56,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -87,7 +87,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.DRAFT,
                 song.getId()
         );
@@ -111,7 +111,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -141,7 +141,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -163,7 +163,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteCreateRequest createRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.DRAFT,
                 song.getId()
         );
@@ -172,7 +172,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 "updated content",
                 "updated lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
@@ -211,7 +211,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 "updated content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
@@ -246,7 +246,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         NoteUpdateRequest updateRequest = new NoteUpdateRequest(
                 "updated content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 

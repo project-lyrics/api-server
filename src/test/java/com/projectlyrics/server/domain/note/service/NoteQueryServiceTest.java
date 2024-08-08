@@ -53,7 +53,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -90,7 +90,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         NoteCreateRequest unlikedArtistSongNoteRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 unlikedArtistSong.getId()
         );
@@ -98,7 +98,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         NoteCreateRequest likedArtistSongNoteRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 likedArtistSong.getId()
         );
@@ -133,7 +133,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -167,7 +167,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         NoteCreateRequest lyricsRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );

@@ -16,7 +16,7 @@ class NoteUpdateTest {
         NoteUpdateRequest request = new NoteUpdateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
@@ -38,7 +38,7 @@ class NoteUpdateTest {
         NoteUpdateRequest request = new NoteUpdateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 null
         );
 

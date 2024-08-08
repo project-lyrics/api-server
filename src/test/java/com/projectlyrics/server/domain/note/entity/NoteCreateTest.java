@@ -25,7 +25,7 @@ class NoteCreateTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -53,7 +53,7 @@ class NoteCreateTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 null,
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -81,7 +81,7 @@ class NoteCreateTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 null,
                 song.getId()
         );
@@ -100,7 +100,7 @@ class NoteCreateTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
@@ -119,7 +119,7 @@ class NoteCreateTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 1L
         );

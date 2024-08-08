@@ -81,7 +81,7 @@ class NoteTest {
         NoteUpdate noteUpdate = new NoteUpdate(
                 "updated content",
                 "updated lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
@@ -92,7 +92,7 @@ class NoteTest {
         assertAll(
                 () -> assertThat(updatedNote.getContent()).isEqualTo("updated content"),
                 () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo("updated lyrics"),
-                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.WHITE),
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.DEFAULT),
                 () -> assertThat(updatedNote.getNoteStatus()).isEqualTo(NoteStatus.PUBLISHED),
                 () -> assertThat(updatedNote.getPublisher()).isEqualTo(publisher)
         );
@@ -116,7 +116,7 @@ class NoteTest {
         NoteUpdate noteUpdate = new NoteUpdate(
                 "",
                 "updated lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
@@ -135,7 +135,7 @@ class NoteTest {
         NoteCreate noteCreate = new NoteCreate(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 publisher,
                 song
@@ -155,7 +155,7 @@ class NoteTest {
         // then
         assertAll(
                 () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo("lyrics"),
-                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.WHITE)
+                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.DEFAULT)
         );
     }
 
@@ -167,7 +167,7 @@ class NoteTest {
         NoteCreate noteCreate = new NoteCreate(
                 "content",
                 "lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 publisher,
                 song
@@ -177,7 +177,7 @@ class NoteTest {
         NoteUpdate noteUpdate = new NoteUpdate(
                 "updated content",
                 "updated lyrics",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 null
         );
 

@@ -45,7 +45,7 @@ class NoteControllerTest extends RestDocsTest {
         NoteCreateRequest request = new NoteCreateRequest(
                 "초불소! 초불소! 초!불!소",
                 "나의 꽃이 피는 날이 올 수 있을까",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 1L
         );
@@ -90,7 +90,7 @@ class NoteControllerTest extends RestDocsTest {
         NoteUpdateRequest noteUpdateRequest = new NoteUpdateRequest(
                 "검치는 언제쯤 질릴까",
                 "밖으로 보이는 조그만 점이, 먼지만큼 작아지도록",
-                NoteBackground.WHITE,
+                NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED
         );
 
