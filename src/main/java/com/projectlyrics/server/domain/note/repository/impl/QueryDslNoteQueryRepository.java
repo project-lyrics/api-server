@@ -42,6 +42,9 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
+                .join(note.publisher).fetchJoin()
+                .join(note.song).fetchJoin()
+                .join(song.artist).fetchJoin()
                 .where(
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
@@ -59,6 +62,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
+                .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .where(
@@ -78,6 +82,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
+                .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .where(
@@ -97,6 +102,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .join(note.lyrics).fetchJoin()
+                .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .where(

@@ -2,9 +2,12 @@ package com.projectlyrics.server.domain.note.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.comment.domain.Comment;
+import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -14,12 +17,14 @@ import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
-import com.projectlyrics.server.support.fixture.ArtistFixture;
-import com.projectlyrics.server.support.fixture.FavoriteArtistFixture;
-import com.projectlyrics.server.support.fixture.SongFixture;
-import com.projectlyrics.server.support.fixture.UserFixture;
+import com.projectlyrics.server.support.fixture.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -42,66 +47,94 @@ class NoteQueryServiceTest extends IntegrationTest {
     NoteCommandService noteCommandService;
 
     @Autowired
+    CommentCommandRepository commentCommandRepository;
+
+    @Autowired
     NoteQueryService sut;
 
-    @Test
-    void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_최신순으로_조회해야_한다() {
-        // given
-        User user = userCommandRepository.save(UserFixture.create());
-        Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        Song song = songCommandRepository.save(SongFixture.create(artist));
-        NoteCreateRequest request = new NoteCreateRequest(
-                "content",
-                "lyrics",
-                NoteBackground.DEFAULT,
-                NoteStatus.PUBLISHED,
-                song.getId()
-        );
+    private User user;
+    private Artist unlikedArtist;
+    private Artist likedArtist;
+    private Song unlikedArtistSong;
+    private Song likedArtistSong;
+    private NoteCreateRequest unlikedArtistSongNoteRequest;
+    private NoteCreateRequest likedArtistSongNoteRequest;
 
-        Note note1 = noteCommandService.create(request, user.getId());
-        Note note2 = noteCommandService.create(request, user.getId());
-        Note note3 = noteCommandService.create(request, user.getId());
-        Note note4 = noteCommandService.create(request, user.getId());
-
-        // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 5);
-
-        // then
-        assertAll(
-                () -> assertThat(result.data().size()).isEqualTo(4),
-                () -> assertThat(result.data().get(0).id()).isEqualTo(note4.getId()),
-                () -> assertThat(result.data().get(1).id()).isEqualTo(note3.getId()),
-                () -> assertThat(result.data().get(2).id()).isEqualTo(note2.getId()),
-                () -> assertThat(result.data().get(3).id()).isEqualTo(note1.getId())
-        );
-    }
-
-    @Test
-    void 사용자가_좋아하는_아티스트와_관련된_노트를_최신순으로_조회해야_한다() {
-        // given
-        User user = userCommandRepository.save(UserFixture.create());
-
-        Artist unlikedArtist = artistCommandRepository.save(ArtistFixture.create());
-        Song unlikedArtistSong = songCommandRepository.save(SongFixture.create(unlikedArtist));
-        Artist likedArtist = artistCommandRepository.save(ArtistFixture.create());
-        Song likedArtistSong = songCommandRepository.save(SongFixture.create(likedArtist));
-        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, likedArtist));
-
-        NoteCreateRequest unlikedArtistSongNoteRequest = new NoteCreateRequest(
+    @BeforeEach
+    void setUp() {
+        user = userCommandRepository.save(UserFixture.create());
+        unlikedArtist = artistCommandRepository.save(ArtistFixture.create());
+        likedArtist = artistCommandRepository.save(ArtistFixture.create());
+        unlikedArtistSong = songCommandRepository.save(SongFixture.create(unlikedArtist));
+        likedArtistSong = songCommandRepository.save(SongFixture.create(likedArtist));
+        unlikedArtistSongNoteRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 unlikedArtistSong.getId()
         );
-
-        NoteCreateRequest likedArtistSongNoteRequest = new NoteCreateRequest(
+        likedArtistSongNoteRequest = new NoteCreateRequest(
                 "content",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 likedArtistSong.getId()
         );
+    }
+
+    @Test
+    void 노트_id와_일치하는_노트를_조회해야_한다() {
+        // given
+        Note note = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Comment comment1 = commentCommandRepository.save(CommentFixture.create(note, user));
+        Comment comment2 = commentCommandRepository.save(CommentFixture.create(note, user));
+
+        // when
+        NoteDetailResponse result = sut.getNoteById(note.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(note.getId()),
+                () -> assertThat(result.content()).isEqualTo(note.getContent()),
+                () -> assertThat(result.lyrics().lyrics()).isEqualTo(note.getLyrics().getContent()),
+                () -> assertThat(result.lyrics().background()).isEqualTo(note.getLyrics().getBackground().getType()),
+                () -> assertThat(result.status()).isEqualTo(note.getNoteStatus().name()),
+                () -> assertThat(result.song().id()).isEqualTo(note.getSong().getId()),
+                () -> assertThat(result.publisher().id()).isEqualTo(note.getPublisher().getId()),
+                () -> assertThat(result.comments().size()).isEqualTo(2),
+                () -> assertThat(result.comments().get(0).id()).isEqualTo(comment1.getId()),
+                () -> assertThat(result.comments().get(1).id()).isEqualTo(comment2.getId())
+        );
+    }
+
+    @Test
+    void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_최신순으로_조회해야_한다() {
+        // given
+        List<Note> notes = new ArrayList<>();
+
+        IntStream.range(0, 10)
+                .forEach(i -> {
+                    Note note = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+                    notes.add(note);
+                });
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(user.getId(), null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(10),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(notes.get(9).getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(notes.get(8).getId()),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(notes.get(7).getId())
+        );
+    }
+
+    @Test
+    void 사용자가_좋아하는_아티스트와_관련된_노트를_최신순으로_조회해야_한다() {
+        // given
+        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, likedArtist));
 
         noteCommandService.create(unlikedArtistSongNoteRequest, user.getId());
         noteCommandService.create(unlikedArtistSongNoteRequest, user.getId());
@@ -124,27 +157,13 @@ class NoteQueryServiceTest extends IntegrationTest {
     @Test
     void 특정_아티스트와_관련된_노트를_최신순으로_조회해야_한다() {
         // given
-        User user = userCommandRepository.save(UserFixture.create());
-
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
-        Artist artist2 = artistCommandRepository.save(ArtistFixture.create());
-        Song song = songCommandRepository.save(SongFixture.create(artist1));
-
-        NoteCreateRequest request = new NoteCreateRequest(
-                "content",
-                "lyrics",
-                NoteBackground.DEFAULT,
-                NoteStatus.PUBLISHED,
-                song.getId()
-        );
-
-        Note note1 = noteCommandService.create(request, user.getId());
-        Note note2 = noteCommandService.create(request, user.getId());
-        Note note3 = noteCommandService.create(request, user.getId());
+        Note note1 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Note note2 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(artist1.getId(), false, null, 5);
-        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(artist2.getId(), false, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(likedArtist.getId(), false, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(unlikedArtistSong.getId(), false, null, 5);
 
         // then
         assertAll(
@@ -159,32 +178,20 @@ class NoteQueryServiceTest extends IntegrationTest {
     @Test
     void 특정_아티스트와_관련된_노트_중_가사가_있는_것만_최신순으로_조회해야_한다() {
         // given
-        User user = userCommandRepository.save(UserFixture.create());
-
-        Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        Song song = songCommandRepository.save(SongFixture.create(artist));
-
-        NoteCreateRequest lyricsRequest = new NoteCreateRequest(
-                "content",
-                "lyrics",
-                NoteBackground.DEFAULT,
-                NoteStatus.PUBLISHED,
-                song.getId()
-        );
         NoteCreateRequest noLyricsRequest = new NoteCreateRequest(
                 "content",
                 null,
                 null,
                 NoteStatus.PUBLISHED,
-                song.getId()
+                likedArtistSong.getId()
         );
 
-        Note note1 = noteCommandService.create(lyricsRequest, user.getId());
+        Note note1 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
         Note note2 = noteCommandService.create(noLyricsRequest, user.getId());
-        Note note3 = noteCommandService.create(lyricsRequest, user.getId());
+        Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(artist.getId(), true, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(likedArtist.getId(), true, null, 5);
 
         // then
         assertAll(

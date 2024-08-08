@@ -7,6 +7,7 @@ import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
+import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -14,10 +15,7 @@ import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
-import com.projectlyrics.server.support.fixture.ArtistFixture;
-import com.projectlyrics.server.support.fixture.NoteFixture;
-import com.projectlyrics.server.support.fixture.SongFixture;
-import com.projectlyrics.server.support.fixture.UserFixture;
+import com.projectlyrics.server.support.fixture.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -55,11 +53,11 @@ class NoteControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andDo(getCreateNoteDocument())
+                .andDo(getNoteCreateDocument())
                 .andExpect(status().isOk());
     }
 
-    private RestDocumentationResultHandler getCreateNoteDocument() {
+    private RestDocumentationResultHandler getNoteCreateDocument() {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
@@ -95,20 +93,24 @@ class NoteControllerTest extends RestDocsTest {
         );
 
         // when, then
-        mockMvc.perform(patch("/api/v1/notes/1")
+        mockMvc.perform(patch("/api/v1/notes/{noteId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(noteUpdateRequest)))
-                .andDo(getUpdateNoteDocument())
+                .andDo(getNoteUpdateDocument())
                 .andExpect(status().isOk());
     }
 
-    private RestDocumentationResultHandler getUpdateNoteDocument() {
+    private RestDocumentationResultHandler getNoteUpdateDocument() {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("노트 수정 API")
                         .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
                         .requestFields(
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("노트 내용"),
@@ -122,6 +124,113 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class))
                         )
                         .requestSchema(Schema.schema("Update Note Request"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 노트를_삭제하면_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(delete("/api/v1/notes/{noteId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(getNoteDeleteDocument())
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getNoteDeleteDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Note API")
+                        .summary("노트 삭제 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
+                        .requestSchema(Schema.schema("Delete Note Request"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 노트를_단건으로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        User user = UserFixture.create();
+        Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
+
+        given(noteQueryService.getNoteById(any()))
+                .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), LocalDateTime.now()));
+
+        // when, then
+        mockMvc.perform(get("/api/v1/notes/{noteId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getNoteDetailDocument());
+    }
+
+    private RestDocumentationResultHandler getNoteDetailDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Note API")
+                        .summary("노트 단건 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
+                        )
+                        .responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                        .description("노트 Id"),
+                                fieldWithPath("content").type(JsonFieldType.STRING)
+                                        .description("노트 내용"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING)
+                                        .description("노트 생성 시간"),
+                                fieldWithPath("lyrics.lyrics").type(JsonFieldType.STRING)
+                                        .description("가사 내용")
+                                        .optional(),
+                                fieldWithPath("lyrics.background").type(JsonFieldType.STRING)
+                                        .description("가사 배경색" + getEnumValuesAsString(NoteBackground.class))
+                                        .optional(),
+                                fieldWithPath("publisher.id").type(JsonFieldType.NUMBER)
+                                        .description("게시자 Id"),
+                                fieldWithPath("publisher.nickname").type(JsonFieldType.STRING)
+                                        .description("게시자 닉네임"),
+                                fieldWithPath("publisher.profileCharacterType").type(JsonFieldType.STRING)
+                                        .description("게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
+                                fieldWithPath("song.id").type(JsonFieldType.NUMBER)
+                                        .description("곡 Id"),
+                                fieldWithPath("song.name").type(JsonFieldType.STRING)
+                                        .description("곡 제목"),
+                                fieldWithPath("song.imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 이미지 url"),
+                                fieldWithPath("song.artist.id").type(JsonFieldType.NUMBER)
+                                        .description("곡 아티스트의 id"),
+                                fieldWithPath("song.artist.name").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이름"),
+                                fieldWithPath("song.artist.imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수"),
+                                fieldWithPath("comments").type(JsonFieldType.ARRAY)
+                                        .description("댓글 리스트"),
+                                fieldWithPath("comments[].id").type(JsonFieldType.NUMBER)
+                                        .description("댓글 Id"),
+                                fieldWithPath("comments[].content").type(JsonFieldType.STRING)
+                                        .description("댓글 내용"),
+                                fieldWithPath("comments[].createdAt").type(JsonFieldType.STRING)
+                                        .description("댓글 생성 시간"),
+                                fieldWithPath("comments[].writer.id").type(JsonFieldType.NUMBER)
+                                        .description("댓글 게시자 Id"),
+                                fieldWithPath("comments[].writer.nickname").type(JsonFieldType.STRING)
+                                        .description("댓글 게시자 닉네임"),
+                                fieldWithPath("comments[].writer.profileCharacterType").type(JsonFieldType.STRING)
+                                        .description("댓글 게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class))
+                        )
+                        .requestSchema(Schema.schema("Note Detail Response"))
                         .build())
         );
     }
@@ -231,7 +340,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.name").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이름"),
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
-                                        .description("곡 아티스트의 이미지 url")
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -326,7 +437,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].song.artist.name").type(JsonFieldType.STRING)
                                         .description("곡 아티스트의 이름"),
                                 fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
-                                        .description("곡 아티스트의 이미지 url")
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()

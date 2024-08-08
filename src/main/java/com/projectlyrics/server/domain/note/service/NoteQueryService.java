@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.note.service;
 
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
+import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ public class NoteQueryService {
 
     private final NoteQueryRepository noteQueryRepository;
     private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
+
+    public NoteDetailResponse getNoteById(Long noteId) {
+        return noteQueryRepository.findById(noteId)
+                .map(note -> NoteDetailResponse.of(note, note.getComments()))
+                .orElseThrow();
+    }
 
     public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(Long userId, Long cursor, int size) {
         Slice<NoteGetResponse> notes = noteQueryRepository.findAllByUserId(userId, cursor, PageRequest.ofSize(size))
