@@ -62,11 +62,12 @@ public class NoteController {
 
     @GetMapping("/{noteId}")
     public ResponseEntity<NoteDetailResponse> getNote(
+            @Authenticated AuthContext authContext,
             @PathVariable(name = "noteId") Long noteId
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(noteQueryService.getNoteById(noteId));
+                .body(noteQueryService.getNoteById(authContext.getId(), noteId));
     }
 
     @GetMapping
@@ -97,12 +98,13 @@ public class NoteController {
 
     @GetMapping("/artists")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfArtist(
+            @Authenticated AuthContext authContext,
             @RequestParam(name = "artistId") Long artistId,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(artistId, hasLyrics, cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(authContext.getId(), artistId, hasLyrics, cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

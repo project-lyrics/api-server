@@ -58,7 +58,7 @@ public class Like extends BaseEntity {
         );
     }
 
-    public boolean isUser(User user) {
-        return this.user.equals(user);
+    public boolean isUser(Long userId) {
+        return this.user.getId().equals(userId);
     }
 }

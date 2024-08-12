@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.note.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.dto.response.CommentGetResponse;
+import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
@@ -21,10 +22,11 @@ public record NoteDetailResponse(
         SongGetResponse song,
         int commentsCount,
         List<CommentGetResponse> comments,
-        int likesCount
+        int likesCount,
+        boolean isLiked
 ) {
 
-    public static NoteDetailResponse of(Note note, List<Comment> comments) {
+    public static NoteDetailResponse of(Note note, List<Comment> comments, Long userId) {
         return new NoteDetailResponse(
                 note.getId(),
                 note.getContent(),
@@ -37,11 +39,12 @@ public record NoteDetailResponse(
                 comments.stream()
                         .map(CommentGetResponse::from)
                         .toList(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                isLiked(note.getLikes(), userId)
         );
     }
 
-    public static NoteDetailResponse of(Note note, List<Comment> comments, LocalDateTime createdAt) {
+    public static NoteDetailResponse of(Note note, List<Comment> comments, Long userId, LocalDateTime createdAt) {
         return new NoteDetailResponse(
                 note.getId(),
                 note.getContent(),
@@ -54,7 +57,13 @@ public record NoteDetailResponse(
                 comments.stream()
                         .map(comment -> CommentGetResponse.from(comment, createdAt))
                         .toList(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                isLiked(note.getLikes(), userId)
         );
+    }
+
+    private static boolean isLiked(List<Like> likes, Long userId) {
+        return likes.stream()
+                .anyMatch(like -> like.isUser(userId));
     }
 }

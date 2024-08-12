@@ -91,7 +91,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Comment comment2 = commentCommandRepository.save(CommentFixture.create(note, user));
 
         // when
-        NoteDetailResponse result = sut.getNoteById(note.getId());
+        NoteDetailResponse result = sut.getNoteById(UserFixture.create().getId(), note.getId());
 
         // then
         assertAll(
@@ -162,8 +162,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(likedArtist.getId(), false, null, 5);
-        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(unlikedArtistSong.getId(), false, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(user.getId(), likedArtist.getId(), false, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(user.getId(), unlikedArtistSong.getId(), false, null, 5);
 
         // then
         assertAll(
@@ -191,7 +191,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(likedArtist.getId(), true, null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(user.getId(), likedArtist.getId(), true, null, 5);
 
         // then
         assertAll(

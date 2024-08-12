@@ -159,8 +159,8 @@ class NoteControllerTest extends RestDocsTest {
         User user = UserFixture.create();
         Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
 
-        given(noteQueryService.getNoteById(any()))
-                .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), LocalDateTime.now()));
+        given(noteQueryService.getNoteById(any(), any()))
+                .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), user.getId(), LocalDateTime.now()));
 
         // when, then
         mockMvc.perform(get("/api/v1/notes/{noteId}", 1)
@@ -230,7 +230,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("comments[].writer.profileCharacterType").type(JsonFieldType.STRING)
                                         .description("댓글 게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
                                 fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부")
                         )
                         .requestSchema(Schema.schema("Note Detail Response"))
                         .build())
@@ -245,7 +247,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -275,7 +277,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -346,7 +348,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
                                         .description("댓글 개수"),
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -362,7 +366,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -371,7 +375,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByArtistId(any(), anyBoolean(), any(), anyInt()))
+        given(noteQueryService.getNotesByArtistId(any(), any(), anyBoolean(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -445,7 +449,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
                                         .description("댓글 개수"),
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()
