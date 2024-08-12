@@ -54,7 +54,7 @@ public class FavoriteArtistCommandService {
         favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
                 .filter(favoriteArtist -> favoriteArtist.isUser(userId))
                 .ifPresentOrElse(
-                        favoriteArtist -> favoriteArtist.delete(favoriteArtist.getId(), Clock.systemDefaultZone()),
+                        favoriteArtist -> favoriteArtist.delete(userId, Clock.systemDefaultZone()),
                         () -> { throw new FavoriteArtistNotFoundException(); }
                 );
     }
