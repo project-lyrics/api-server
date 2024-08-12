@@ -64,7 +64,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
-    swaggerUI 'org.webjars:swagger-ui:4.11.1'
+    swaggerUI 'org.webjars:swagger-ui:5.17.14'
 }
 
 swaggerSources {
