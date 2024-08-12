@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.favoriteartist.api;
 
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
@@ -18,16 +19,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +61,35 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                         )
                         .requestSchema(Schema.schema("Create Favorite Artist List Request"))
                         .build())
+        );
+    }
+
+    @Test
+    void 관심_아티스트를_삭제하면_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(delete("/api/v1/favorite-artists")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .queryParam("artistId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getDeleteFavoriteArtistDocument());
+    }
+
+    private RestDocumentationResultHandler getDeleteFavoriteArtistDocument() {
+        ParameterDescriptorWithType[] queryParam = {
+                parameterWithName("artistId").type(SimpleType.NUMBER)
+                        .description("아티스트 id")
+        };
+
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Favorite Artist API")
+                        .summary("관심 아티스트 삭제 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .queryParameters(queryParam)
+                        .requestSchema(Schema.schema("Delete Favorite Artist Request"))
+                        .build()
+                )
         );
     }
 

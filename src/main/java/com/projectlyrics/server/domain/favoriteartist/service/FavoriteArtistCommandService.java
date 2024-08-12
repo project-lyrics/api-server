@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
+import com.projectlyrics.server.domain.favoriteartist.exception.FavoriteArtistNotFoundException;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.List;
 
 @Service
@@ -46,5 +48,14 @@ public class FavoriteArtistCommandService {
                 .stream()
                 .map(FavoriteArtist::getArtist)
                 .toList();
+    }
+
+    public void delete(Long userId, Long artistId) {
+        favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
+                .filter(favoriteArtist -> favoriteArtist.isUser(userId))
+                .ifPresentOrElse(
+                        favoriteArtist -> favoriteArtist.delete(favoriteArtist.getId(), Clock.systemDefaultZone()),
+                        () -> { throw new FavoriteArtistNotFoundException(); }
+                );
     }
 }
