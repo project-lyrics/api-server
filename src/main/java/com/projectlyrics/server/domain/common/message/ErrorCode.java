@@ -64,6 +64,9 @@ public enum ErrorCode {
 
     // Favorite Artist
     FAVORITE_ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "09000", "해당 즐겨찾는 아티스트를 조회할 수 없습니다."),
+
+    // Bookmark
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "10000", "해당 북마크를 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
