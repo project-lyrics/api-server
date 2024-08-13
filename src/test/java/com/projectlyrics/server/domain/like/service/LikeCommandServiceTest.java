@@ -87,9 +87,11 @@ class LikeCommandServiceTest extends IntegrationTest {
         // given
         sut.create(note.getId(), user.getId());
 
-        // when, then
-        assertThatCode(() -> sut.delete(note.getId(), user.getId()))
-                .doesNotThrowAnyException();
+        // when
+        sut.delete(note.getId(), user.getId());
+
+        // then
+        assertThat(likeQueryRepository.findByNoteIdAndUserId(note.getId(), user.getId())).isEmpty();
     }
 
     @Test
