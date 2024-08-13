@@ -39,7 +39,7 @@ public class LikeCommandService {
     public void delete(Long noteId, Long userId) {
         likeQueryRepository.findByNoteIdAndUserId(noteId, userId)
                 .ifPresentOrElse(
-                        like -> like.delete(like.getId(), Clock.systemDefaultZone()),
+                        like -> like.delete(userId, Clock.systemDefaultZone()),
                         () -> { throw new LikeNotFoundException(); }
                 );
     }

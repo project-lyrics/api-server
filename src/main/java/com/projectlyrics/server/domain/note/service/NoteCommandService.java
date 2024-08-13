@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class NoteCommandService {
         noteQueryRepository.findById(noteId)
                 .filter(note -> note.isPublisher(publisherId))
                 .ifPresentOrElse(
-                        noteCommandRepository::delete,
+                        note -> note.delete(publisherId, Clock.systemDefaultZone()),
                         () -> { throw new InvalidNoteDeletionException(); });
     }
 

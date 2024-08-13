@@ -133,7 +133,7 @@ class CommentCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 댓글을_삭제해야_한다() {
+    void 댓글을_soft_delete_방식으로_삭제해야_한다() {
         // given
         CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
                 "content",

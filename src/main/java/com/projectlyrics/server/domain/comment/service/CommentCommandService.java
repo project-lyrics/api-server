@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class CommentCommandService {
         commentQueryRepository.findById(commentId)
                 .filter(comment -> comment.isWriter(writerId))
                 .ifPresentOrElse(
-                        commentCommandRepository::delete,
+                        comment -> comment.delete(writerId, Clock.systemDefaultZone()),
                         () -> { throw new InvalidCommentDeletionException(); }
                 );
     }
