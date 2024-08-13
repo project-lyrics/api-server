@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.note.entity;
 
+import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.like.domain.Like;
@@ -44,6 +45,9 @@ public class Note extends BaseEntity {
 
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     private Note(
             Long id,
@@ -133,5 +137,18 @@ public class Note extends BaseEntity {
         if (draftNumber >= MAX_DRAFT_NUMBER) {
             throw new TooManyDraftsException();
         }
+    }
+
+    public boolean isBookmarked(Long userId) {
+        return bookmarks.stream()
+                .anyMatch(bookmark -> bookmark.isUser(userId));
+    }
+
+    public boolean isAssociatedWithArtist(Long artistId) {
+        if (Objects.isNull(artistId)) {
+            return true;
+        }
+
+        return song.getArtist().getId().equals(artistId);
     }
 }

@@ -110,4 +110,18 @@ public class NoteController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    @GetMapping("/bookmarked")
+    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesBookmarked(
+            @Authenticated AuthContext authContext,
+            @RequestParam(name = "artistId", required = false) Long artistId,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getBookmarkedNotes(artistId, authContext.getId(), cursor, size);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }
