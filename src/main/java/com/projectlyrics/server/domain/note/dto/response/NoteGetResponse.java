@@ -2,13 +2,11 @@ package com.projectlyrics.server.domain.note.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectlyrics.server.domain.common.dto.util.CursorResponse;
-import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record NoteGetResponse(
         Long id,
@@ -21,7 +19,8 @@ public record NoteGetResponse(
         SongGetResponse song,
         int commentsCount,
         int likesCount,
-        boolean isLiked
+        boolean isLiked,
+        boolean isBookmarked
 ) implements CursorResponse {
 
     public static NoteGetResponse of(Note note, Long userId) {
@@ -35,7 +34,8 @@ public record NoteGetResponse(
                 SongGetResponse.from(note.getSong()),
                 note.getComments().size(),
                 note.getLikes().size(),
-                isLiked(note.getLikes(), userId)
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
     }
 
@@ -50,13 +50,9 @@ public record NoteGetResponse(
                 SongGetResponse.from(note.getSong()),
                 note.getComments().size(),
                 note.getLikes().size(),
-                isLiked(note.getLikes(), userId)
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
-    }
-
-    private static boolean isLiked(List<Like> likes, Long userId) {
-        return likes.stream()
-                .anyMatch(like -> like.isUser(userId));
     }
 
     @Override

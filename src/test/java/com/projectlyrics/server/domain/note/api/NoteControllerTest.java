@@ -232,7 +232,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
                                         .description("좋아요 개수"),
                                 fieldWithPath("isLiked").type(JsonFieldType.BOOLEAN)
-                                        .description("사용자의 해당 게시물 좋아요 여부")
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .requestSchema(Schema.schema("Note Detail Response"))
                         .build())
@@ -350,7 +352,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
                                         .description("좋아요 개수"),
                                 fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
-                                        .description("사용자의 해당 게시물 좋아요 여부")
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -451,7 +455,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
                                         .description("좋아요 개수"),
                                 fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
-                                        .description("사용자의 해당 게시물 좋아요 여부")
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()
@@ -547,7 +553,9 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
                                         .description("좋아요 개수"),
                                 fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
-                                        .description("사용자의 해당 게시물 좋아요 여부")
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()
