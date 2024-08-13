@@ -4,6 +4,7 @@ package com.projectlyrics.server.domain.bookmark.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
+import com.projectlyrics.server.domain.bookmark.exception.BookmarkAlreadyExistsException;
 import com.projectlyrics.server.domain.bookmark.exception.BookmarkNotFoundException;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
@@ -82,6 +83,16 @@ class BookmarkCommandServiceTest extends IntegrationTest {
                 () -> assertThat(bookmark.getUser()).isEqualTo(user),
                 () -> assertThat(bookmark.getNote()).isEqualTo(note)
         );
+    }
+
+    @Test
+    void 북마크가_이미_있을_경우_저장하지_않고_예외가_발생해야_한다() {
+        // given
+        sut.create(note.getId(), user.getId());
+
+        // when, then
+        assertThatThrownBy(() -> sut.create(note.getId(), user.getId()))
+                .isInstanceOf(BookmarkAlreadyExistsException.class);
     }
 
     @Test

@@ -22,8 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.stream.IntStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LikeQueryServiceTest extends IntegrationTest {
@@ -52,14 +50,16 @@ class LikeQueryServiceTest extends IntegrationTest {
     @Autowired
     LikeQueryService sut;
 
-    private User user;
+    private User user1;
+    private User user2;
     private Artist artist;
     private Song song;
     private Note note;
 
     @BeforeEach
     void setUp() {
-        user = userCommandRepository.save(UserFixture.create());
+        user1 = userCommandRepository.save(UserFixture.create());
+        user2 = userCommandRepository.save(UserFixture.create());
         artist = artistCommandRepository.save(ArtistFixture.create());
         song = songCommandRepository.save(SongFixture.create(artist));
         NoteCreateRequest noteCreateRequest = new NoteCreateRequest(
@@ -69,15 +69,15 @@ class LikeQueryServiceTest extends IntegrationTest {
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
-        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
+        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user1, song)));
     }
 
     @Test
     void 노트의_좋아요_개수를_조회해야_한다() {
         // given
-        int expectedLikesCount = 10;
-        IntStream.range(0, expectedLikesCount)
-                .forEach(i -> likeCommandService.create(note.getId(), user.getId()));
+        int expectedLikesCount = 2;
+        likeCommandService.create(note.getId(), user1.getId());
+        likeCommandService.create(note.getId(), user2.getId());
 
         // when
         long count = sut.countLikesOfNote(note.getId());

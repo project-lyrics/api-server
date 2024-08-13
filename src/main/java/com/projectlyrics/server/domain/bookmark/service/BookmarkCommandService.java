@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.bookmark.service;
 
 import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
 import com.projectlyrics.server.domain.bookmark.domain.BookmarkCreate;
+import com.projectlyrics.server.domain.bookmark.exception.BookmarkAlreadyExistsException;
 import com.projectlyrics.server.domain.bookmark.exception.BookmarkNotFoundException;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkQueryRepository;
@@ -33,7 +34,14 @@ public class BookmarkCommandService {
         Note note = noteQueryRepository.findById(noteId)
                 .orElseThrow(NoteNotFoundException::new);
 
+        checkIfBookmarkExists(noteId, userId);
+
         return bookmarkCommandRepository.save(Bookmark.create(BookmarkCreate.of(user, note)));
+    }
+
+    private void checkIfBookmarkExists(Long noteId, Long userId) {
+        bookmarkQueryRepository.findByNoteIdAndUserId(noteId, userId)
+                .ifPresent(bookmark -> { throw new BookmarkAlreadyExistsException(); });
     }
 
     public void delete(Long noteId, Long userId) {
