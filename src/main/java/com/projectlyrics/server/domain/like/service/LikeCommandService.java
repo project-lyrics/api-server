@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.like.service;
 
 import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.like.domain.LikeCreate;
+import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.like.exception.LikeNotFoundException;
 import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
 import com.projectlyrics.server.domain.like.repository.LikeQueryRepository;
@@ -33,13 +34,20 @@ public class LikeCommandService {
         Note note = noteQueryRepository.findById(noteId)
                 .orElseThrow(NoteNotFoundException::new);
 
+        checkIfLikeExists(noteId, userId);
+
         return likeCommandRepository.save(Like.create(LikeCreate.of(user, note)));
+    }
+
+    private void checkIfLikeExists(Long noteId, Long userId) {
+        likeQueryRepository.findByNoteIdAndUserId(noteId, userId)
+                .ifPresent(like -> { throw new LikeAlreadyExistsException(); });
     }
 
     public void delete(Long noteId, Long userId) {
         likeQueryRepository.findByNoteIdAndUserId(noteId, userId)
                 .ifPresentOrElse(
-                        like -> like.delete(like.getId(), Clock.systemDefaultZone()),
+                        like -> like.delete(userId, Clock.systemDefaultZone()),
                         () -> { throw new LikeNotFoundException(); }
                 );
     }

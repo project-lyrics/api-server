@@ -36,11 +36,11 @@ public enum ErrorCode {
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
     INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),
 
-    // Artist,
+    // Artist
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "해당 아티스트를 조회할 수 없습니다."),
     ARTIST_UPDATE_NOT_VALID(HttpStatus.BAD_REQUEST, "03001", "The data to be updated failed validation."),
 
-    // Record,
+    // Record
     RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "04000", "The record data could not be found."),
 
     // Note
@@ -61,6 +61,14 @@ public enum ErrorCode {
 
     // Like
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "08000", "해당 좋아요를 조회할 수 없습니다."),
+    LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "08001", "이미 좋아요를 누른 상태입니다."),
+
+    // Favorite Artist
+    FAVORITE_ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "09000", "해당 즐겨찾는 아티스트를 조회할 수 없습니다."),
+
+    // Bookmark
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "10000", "해당 북마크를 조회할 수 없습니다."),
+    BOOKMARK_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "10001", "이미 북마크를 추가한 상태입니다."),
     ;
 
     private final HttpStatus responseStatus;

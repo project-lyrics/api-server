@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.like.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.like.domain.Like;
+import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.like.exception.LikeNotFoundException;
 import com.projectlyrics.server.domain.like.repository.LikeQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
@@ -83,13 +84,25 @@ class LikeCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 좋아요를_삭제해야_한다() {
+    void 좋아요가_이미_있을_경우_저장하지_않고_예외를_발생시켜야_한다() {
         // given
         sut.create(note.getId(), user.getId());
 
         // when, then
-        assertThatCode(() -> sut.delete(note.getId(), user.getId()))
-                .doesNotThrowAnyException();
+        assertThatThrownBy(() -> sut.create(note.getId(), user.getId()))
+                .isInstanceOf(LikeAlreadyExistsException.class);
+    }
+
+    @Test
+    void 좋아요를_삭제해야_한다() {
+        // given
+        sut.create(note.getId(), user.getId());
+
+        // when
+        sut.delete(note.getId(), user.getId());
+
+        // then
+        assertThat(likeQueryRepository.findByNoteIdAndUserId(note.getId(), user.getId())).isEmpty();
     }
 
     @Test

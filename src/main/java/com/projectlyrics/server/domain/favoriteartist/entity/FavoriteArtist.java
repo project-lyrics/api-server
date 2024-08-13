@@ -61,4 +61,8 @@ public class FavoriteArtist extends BaseEntity {
     public static FavoriteArtist withId(Long id, User user, Artist artist) {
         return new FavoriteArtist(id, user, artist);
     }
+
+    public boolean isUser(Long userId) {
+        return user.getId().equals(userId);
+    }
 }

@@ -62,7 +62,7 @@ class LikeTest {
         Like like = Like.create(likeCreate);
 
         // when
-        boolean result = like.isUser(user);
+        boolean result = like.isUser(user.getId());
 
         // then
         assertThat(result).isTrue();

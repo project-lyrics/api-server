@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.like.domain;
+package com.projectlyrics.server.domain.bookmark.domain;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "likes")
+@Table(name = "bookmarks")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like extends BaseEntity {
+public class Bookmark extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Like extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Note note;
 
-    private Like(
+    private Bookmark(
             Long id,
             User user,
             Note note
@@ -36,29 +36,29 @@ public class Like extends BaseEntity {
         this.note = note;
     }
 
-    private Like(
+    private Bookmark(
             User user,
             Note note
     ) {
         this(null, user, note);
     }
 
-    public static Like create(LikeCreate likeCreate) {
-        return new Like(
-                likeCreate.user(),
-                likeCreate.note()
+    public static Bookmark create(BookmarkCreate bookmarkCreate) {
+        return new Bookmark(
+                bookmarkCreate.user(),
+                bookmarkCreate.note()
         );
     }
 
-    public static Like createWithId(Long id, LikeCreate likeCreate) {
-        return new Like(
+    public static Bookmark createWithId(Long id, BookmarkCreate bookmarkCreate) {
+        return new Bookmark(
                 id,
-                likeCreate.user(),
-                likeCreate.note()
+                bookmarkCreate.user(),
+                bookmarkCreate.note()
         );
     }
 
     public boolean isUser(Long userId) {
-        return this.user.getId().equals(userId);
+        return user.getId().equals(userId);
     }
 }

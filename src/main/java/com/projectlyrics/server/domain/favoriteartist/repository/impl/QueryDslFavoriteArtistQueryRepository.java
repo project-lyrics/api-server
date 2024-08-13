@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.projectlyrics.server.domain.favoriteartist.entity.QFavoriteArtist.favoriteArtist;
+
 @Repository
 @RequiredArgsConstructor
 public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQueryRepository {
@@ -26,15 +28,15 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
 
     @Override
     public Slice<FavoriteArtist> findAllByUserId(Long userId, Long cursorId, Pageable pageable) {
-        List<FavoriteArtist> content = jpaQueryFactory.selectFrom(QFavoriteArtist.favoriteArtist)
+        List<FavoriteArtist> content = jpaQueryFactory.selectFrom(favoriteArtist)
                 .where(
-                        QFavoriteArtist.favoriteArtist.user.id.eq(userId),
-                        QFavoriteArtist.favoriteArtist.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, QFavoriteArtist.favoriteArtist.id)
+                        favoriteArtist.user.id.eq(userId),
+                        favoriteArtist.deletedAt.isNull(),
+                        QueryDslUtils.gtCursorId(cursorId, favoriteArtist.id)
                 )
-                .leftJoin(QFavoriteArtist.favoriteArtist.user, QUser.user)
+                .leftJoin(favoriteArtist.user, QUser.user)
                 .fetchJoin()
-                .leftJoin(QFavoriteArtist.favoriteArtist.artist, QArtist.artist)
+                .leftJoin(favoriteArtist.artist, QArtist.artist)
                 .fetchJoin()
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -43,14 +45,27 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
 
     @Override
     public List<FavoriteArtist> findAllByUserIdFetchArtist(Long userId) {
-        return jpaQueryFactory.selectFrom(QFavoriteArtist.favoriteArtist)
+        return jpaQueryFactory.selectFrom(favoriteArtist)
                 .where(
-                        QFavoriteArtist.favoriteArtist.user.id.eq(userId),
-                        QFavoriteArtist.favoriteArtist.deletedAt.isNull()
+                        favoriteArtist.user.id.eq(userId),
+                        favoriteArtist.deletedAt.isNull()
                 )
-                .leftJoin(QFavoriteArtist.favoriteArtist.artist, QArtist.artist)
+                .leftJoin(favoriteArtist.artist, QArtist.artist)
                 .fetchJoin()
                 .fetch();
     }
 
+    @Override
+    public Optional<FavoriteArtist> findByUserIdAndArtistId(Long userId, Long artistId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(favoriteArtist)
+                        .where(
+                                favoriteArtist.user.id.eq(userId),
+                                favoriteArtist.artist.id.eq(artistId),
+                                favoriteArtist.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
 }

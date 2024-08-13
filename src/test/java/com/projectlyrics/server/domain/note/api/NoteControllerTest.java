@@ -159,8 +159,8 @@ class NoteControllerTest extends RestDocsTest {
         User user = UserFixture.create();
         Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
 
-        given(noteQueryService.getNoteById(any()))
-                .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), LocalDateTime.now()));
+        given(noteQueryService.getNoteById(any(), any()))
+                .willReturn(NoteDetailResponse.of(note, List.of(CommentFixture.create(note, user)), user.getId(), LocalDateTime.now()));
 
         // when, then
         mockMvc.perform(get("/api/v1/notes/{noteId}", 1)
@@ -230,7 +230,11 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("comments[].writer.profileCharacterType").type(JsonFieldType.STRING)
                                         .description("댓글 게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
                                 fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .requestSchema(Schema.schema("Note Detail Response"))
                         .build())
@@ -245,7 +249,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -275,7 +279,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -346,7 +350,11 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
                                         .description("댓글 개수"),
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .responseSchema(Schema.schema("Note List Response"))
                         .build()
@@ -362,7 +370,7 @@ class NoteControllerTest extends RestDocsTest {
         List<NoteGetResponse> data = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
-            data.add(NoteGetResponse.of(note, LocalDateTime.now()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
         }
 
         CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
@@ -371,7 +379,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByArtistId(any(), anyBoolean(), any(), anyInt()))
+        given(noteQueryService.getNotesByArtistId(any(), any(), anyBoolean(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -400,7 +408,7 @@ class NoteControllerTest extends RestDocsTest {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
-                        .summary("노트 리스트 조회 API")
+                        .summary("특정 아티스트와 관련된 노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(
@@ -445,7 +453,109 @@ class NoteControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
                                         .description("댓글 개수"),
                                 fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
+                        )
+                        .responseSchema(Schema.schema("Artist's Note List Response"))
+                        .build()
+                )
+        );
+    }
+
+    @Test
+    void 사용자가_북마크했던_노트를_조회하면_200응답과_데이터를_반환해야_한다() throws Exception {
+        // given
+        User user = UserFixture.create();
+
+        List<NoteGetResponse> data = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Note note = NoteFixture.create(user, SongFixture.create(ArtistFixture.create()));
+            data.add(NoteGetResponse.of(note, user.getId(), LocalDateTime.now()));
+        }
+
+        CursorBasePaginatedResponse<NoteGetResponse> response = new CursorBasePaginatedResponse<>(
+                data.get(data.size() - 1).getId(),
+                true,
+                data
+        );
+
+        given(noteQueryService.getBookmarkedNotes(any(), any(), any(), anyInt()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/notes/bookmarked")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("artistId", "1")
+                        .param("cursor", "1")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getBookmarkedNoteListDocument());
+    }
+
+    private RestDocumentationResultHandler getBookmarkedNoteListDocument() {
+        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
+                .type(SimpleType.NUMBER)
+                .description("아티스트 Id");
+
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Note API")
+                        .summary("북마크된 노트 리스트 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .queryParameters(queryParams)
+                        .responseFields(
+                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                        .description("다음 cursor에 쓰일 값"),
+                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 데이터 존재 여부"),
+                                fieldWithPath("data").type(JsonFieldType.ARRAY)
+                                        .description("데이터"),
+                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                        .description("노트 Id"),
+                                fieldWithPath("data[].content").type(JsonFieldType.STRING)
+                                        .description("노트 내용"),
+                                fieldWithPath("data[].status").type(JsonFieldType.STRING)
+                                        .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+                                        .description("노트 생성 시간"),
+                                fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
+                                        .description("가사 내용")
+                                        .optional(),
+                                fieldWithPath("data[].lyrics.background").type(JsonFieldType.STRING)
+                                        .description("가사 배경색" + getEnumValuesAsString(NoteBackground.class))
+                                        .optional(),
+                                fieldWithPath("data[].publisher.id").type(JsonFieldType.NUMBER)
+                                        .description("게시자 Id"),
+                                fieldWithPath("data[].publisher.nickname").type(JsonFieldType.STRING)
+                                        .description("게시자 닉네임"),
+                                fieldWithPath("data[].publisher.profileCharacterType").type(JsonFieldType.STRING)
+                                        .description("게시자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
+                                fieldWithPath("data[].song.id").type(JsonFieldType.NUMBER)
+                                        .description("곡 Id"),
+                                fieldWithPath("data[].song.name").type(JsonFieldType.STRING)
+                                        .description("곡 제목"),
+                                fieldWithPath("data[].song.imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 이미지 url"),
+                                fieldWithPath("data[].song.artist.id").type(JsonFieldType.NUMBER)
+                                        .description("곡 아티스트의 id"),
+                                fieldWithPath("data[].song.artist.name").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이름"),
+                                fieldWithPath("data[].song.artist.imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이미지 url"),
+                                fieldWithPath("data[].commentsCount").type(JsonFieldType.NUMBER)
+                                        .description("댓글 개수"),
+                                fieldWithPath("data[].likesCount").type(JsonFieldType.NUMBER)
+                                        .description("좋아요 개수"),
+                                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 좋아요 여부"),
+                                fieldWithPath("data[].isBookmarked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자의 해당 게시물 북마크 여부")
                         )
                         .responseSchema(Schema.schema("Artist's Note List Response"))
                         .build()

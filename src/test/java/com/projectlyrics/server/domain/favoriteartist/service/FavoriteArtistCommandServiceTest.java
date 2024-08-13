@@ -17,6 +17,7 @@ import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class FavoriteArtistCommandServiceTest extends IntegrationTest {
@@ -62,5 +63,20 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
                 s.assertThat(artistList.contains(favoriteArtist.getArtist())).isTrue();
             });
         });
+    }
+
+    @Test
+    void 관심_아티스트를_soft_delete_해야_한다() throws Exception {
+        // given
+        Artist artist = artistCommandRepository.save(ArtistFixture.createWithName("신지훈"));
+        User user = userCommandRepository.save(UserFixture.create());
+        CreateFavoriteArtistListRequest request = new CreateFavoriteArtistListRequest(List.of(artist.getId()));
+        sut.saveAll(user.getId(), request);
+
+        // when
+        sut.delete(user.getId(), artist.getId());
+
+        // then
+        assertThat(favoriteArtistQueryRepository.findByUserIdAndArtistId(user.getId(), artist.getId())).isEmpty();
     }
 }

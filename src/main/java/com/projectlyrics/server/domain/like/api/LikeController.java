@@ -2,7 +2,7 @@ package com.projectlyrics.server.domain.like.api;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
-import com.projectlyrics.server.domain.like.dto.response.LikesCountResponse;
+import com.projectlyrics.server.domain.like.dto.response.LikesResponse;
 import com.projectlyrics.server.domain.like.service.LikeCommandService;
 import com.projectlyrics.server.domain.like.service.LikeQueryService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class LikeController {
     private final LikeQueryService likeQueryService;
 
     @PostMapping
-    public ResponseEntity<LikesCountResponse> create(
+    public ResponseEntity<LikesResponse> create(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "noteId") Long noteId
     ) {
@@ -27,11 +27,14 @@ public class LikeController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(LikesCountResponse.of(likeQueryService.countLikesOfNote(noteId)));
+                .body(LikesResponse.of(
+                        likeQueryService.countLikesOfNote(noteId),
+                        noteId
+                ));
     }
 
     @DeleteMapping
-    public ResponseEntity<LikesCountResponse> delete(
+    public ResponseEntity<LikesResponse> delete(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "noteId") Long noteId
     ) {
@@ -39,6 +42,9 @@ public class LikeController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(LikesCountResponse.of(likeQueryService.countLikesOfNote(noteId)));
+                .body(LikesResponse.of(
+                        likeQueryService.countLikesOfNote(noteId),
+                        noteId
+                ));
     }
 }

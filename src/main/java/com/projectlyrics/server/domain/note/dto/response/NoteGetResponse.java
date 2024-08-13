@@ -18,10 +18,12 @@ public record NoteGetResponse(
         UserGetResponse publisher,
         SongGetResponse song,
         int commentsCount,
-        int likesCount
+        int likesCount,
+        boolean isLiked,
+        boolean isBookmarked
 ) implements CursorResponse {
 
-    public static NoteGetResponse from(Note note) {
+    public static NoteGetResponse of(Note note, Long userId) {
         return new NoteGetResponse(
                 note.getId(),
                 note.getContent(),
@@ -31,11 +33,13 @@ public record NoteGetResponse(
                 UserGetResponse.from(note.getPublisher()),
                 SongGetResponse.from(note.getSong()),
                 note.getComments().size(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
     }
 
-    public static NoteGetResponse of(Note note, LocalDateTime createdAt) {
+    public static NoteGetResponse of(Note note, Long userId, LocalDateTime createdAt) {
         return new NoteGetResponse(
                 note.getId(),
                 note.getContent(),
@@ -45,7 +49,9 @@ public record NoteGetResponse(
                 UserGetResponse.from(note.getPublisher()),
                 SongGetResponse.from(note.getSong()),
                 note.getComments().size(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
     }
 

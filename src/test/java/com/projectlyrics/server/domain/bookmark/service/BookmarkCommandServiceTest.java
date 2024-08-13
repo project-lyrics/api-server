@@ -1,8 +1,12 @@
-package com.projectlyrics.server.domain.like.service;
+package com.projectlyrics.server.domain.bookmark.service;
+
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
-import com.projectlyrics.server.domain.like.repository.LikeQueryRepository;
+import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
+import com.projectlyrics.server.domain.bookmark.exception.BookmarkAlreadyExistsException;
+import com.projectlyrics.server.domain.bookmark.exception.BookmarkNotFoundException;
+import com.projectlyrics.server.domain.bookmark.repository.BookmarkQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -23,8 +27,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-class LikeQueryServiceTest extends IntegrationTest {
+class BookmarkCommandServiceTest extends IntegrationTest {
 
     @Autowired
     UserCommandRepository userCommandRepository;
@@ -42,24 +48,19 @@ class LikeQueryServiceTest extends IntegrationTest {
     NoteCommandRepository noteCommandRepository;
 
     @Autowired
-    LikeQueryRepository likeQueryRepository;
+    BookmarkQueryRepository bookmarkQueryRepository;
 
     @Autowired
-    LikeCommandService likeCommandService;
+    BookmarkCommandService sut;
 
-    @Autowired
-    LikeQueryService sut;
-
-    private User user1;
-    private User user2;
+    private User user;
     private Artist artist;
     private Song song;
     private Note note;
 
     @BeforeEach
     void setUp() {
-        user1 = userCommandRepository.save(UserFixture.create());
-        user2 = userCommandRepository.save(UserFixture.create());
+        user = userCommandRepository.save(UserFixture.create());
         artist = artistCommandRepository.save(ArtistFixture.create());
         song = songCommandRepository.save(SongFixture.create(artist));
         NoteCreateRequest noteCreateRequest = new NoteCreateRequest(
@@ -69,20 +70,47 @@ class LikeQueryServiceTest extends IntegrationTest {
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
-        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user1, song)));
+        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
     }
 
     @Test
-    void 노트의_좋아요_개수를_조회해야_한다() {
-        // given
-        int expectedLikesCount = 2;
-        likeCommandService.create(note.getId(), user1.getId());
-        likeCommandService.create(note.getId(), user2.getId());
-
+    void 북마크를_저장해야_한다() {
         // when
-        long count = sut.countLikesOfNote(note.getId());
+        Bookmark bookmark = sut.create(note.getId(), user.getId());
 
         // then
-        assertThat(count).isEqualTo(expectedLikesCount);
+        assertAll(
+                () -> assertThat(bookmark.getUser()).isEqualTo(user),
+                () -> assertThat(bookmark.getNote()).isEqualTo(note)
+        );
+    }
+
+    @Test
+    void 북마크가_이미_있을_경우_저장하지_않고_예외가_발생해야_한다() {
+        // given
+        sut.create(note.getId(), user.getId());
+
+        // when, then
+        assertThatThrownBy(() -> sut.create(note.getId(), user.getId()))
+                .isInstanceOf(BookmarkAlreadyExistsException.class);
+    }
+
+    @Test
+    void 북마크를_삭제해야_한다() {
+        // given
+        sut.create(note.getId(), user.getId());
+
+        // when
+        sut.delete(note.getId(), user.getId());
+
+        // then
+        assertThat(bookmarkQueryRepository.findByNoteIdAndUserId(note.getId(), user.getId())).isEmpty();
+    }
+
+    @Test
+    void 존재하지_않는_북마크를_삭제하지_않고_예외가_발생해야_한다() {
+        // when, then
+        assertThatThrownBy(() -> sut.delete(99L, 99L))
+                .isInstanceOf(BookmarkNotFoundException.class);
     }
 }

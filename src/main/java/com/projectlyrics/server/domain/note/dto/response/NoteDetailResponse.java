@@ -21,10 +21,12 @@ public record NoteDetailResponse(
         SongGetResponse song,
         int commentsCount,
         List<CommentGetResponse> comments,
-        int likesCount
+        int likesCount,
+        boolean isLiked,
+        boolean isBookmarked
 ) {
 
-    public static NoteDetailResponse of(Note note, List<Comment> comments) {
+    public static NoteDetailResponse of(Note note, List<Comment> comments, Long userId) {
         return new NoteDetailResponse(
                 note.getId(),
                 note.getContent(),
@@ -37,11 +39,13 @@ public record NoteDetailResponse(
                 comments.stream()
                         .map(CommentGetResponse::from)
                         .toList(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
     }
 
-    public static NoteDetailResponse of(Note note, List<Comment> comments, LocalDateTime createdAt) {
+    public static NoteDetailResponse of(Note note, List<Comment> comments, Long userId, LocalDateTime createdAt) {
         return new NoteDetailResponse(
                 note.getId(),
                 note.getContent(),
@@ -54,7 +58,9 @@ public record NoteDetailResponse(
                 comments.stream()
                         .map(comment -> CommentGetResponse.from(comment, createdAt))
                         .toList(),
-                note.getLikes().size()
+                note.getLikes().size(),
+                note.isLiked(userId),
+                note.isBookmarked(userId)
         );
     }
 }
