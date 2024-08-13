@@ -54,7 +54,9 @@ class LikeControllerTest extends RestDocsTest {
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("noteId").type(JsonFieldType.NUMBER)
+                                        .description("노트 Id")
                         )
                         .requestSchema(Schema.schema("Create Like Request"))
                         .build())
@@ -87,7 +89,9 @@ class LikeControllerTest extends RestDocsTest {
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("likesCount").type(JsonFieldType.NUMBER)
-                                        .description("좋아요 개수")
+                                        .description("좋아요 개수"),
+                                fieldWithPath("noteId").type(JsonFieldType.NUMBER)
+                                        .description("노트 Id")
                         )
                         .requestSchema(Schema.schema("Delete Like Request"))
                         .build())
