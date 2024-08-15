@@ -10,8 +10,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum NoteStatus {
 
-    DRAFT("draft"),
-    PUBLISHED("published"),
+    DRAFT("DRAFT"),
+    PUBLISHED("PUBLISHED"),
     ;
 
     private final String type;

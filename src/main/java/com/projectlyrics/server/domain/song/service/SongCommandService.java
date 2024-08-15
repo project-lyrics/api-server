@@ -20,7 +20,7 @@ public class SongCommandService {
     private final ArtistQueryRepository artistQueryRepository;
 
     public Song create(SongCreateRequest request) {
-        Artist artist = artistQueryRepository.findByIdAndNotDeleted(request.artistId())
+        Artist artist = artistQueryRepository.findById(request.artistId())
                 .orElseThrow(ArtistNotFoundException::new);
 
         return songCommandRepository.save(Song.create(SongCreate.from(request, artist)));

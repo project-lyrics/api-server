@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 public record SongCreate(
+        Long id,
         String spotifyId,
         String name,
         LocalDate releaseDate,
@@ -20,6 +21,7 @@ public record SongCreate(
         checkNull(artist);
 
         return new SongCreate(
+                null,
                 request.spotifyId(),
                 request.name(),
                 request.releaseDate(),

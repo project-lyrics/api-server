@@ -8,78 +8,29 @@ import java.time.LocalDate;
 
 public class SongFixture extends BaseFixture {
 
-    private Long id;
-    private String spotifyId = "spotifyId";
-    private String name = "name";
-    private LocalDate releaseDate = LocalDate.EPOCH;
-    private String albumName = "albumName";
-    private String imageUrl = "imageUrl";
-    private Artist artist;
-
-    public static Song create(Artist artist) {
-        return Song.createWithId(
-                getUniqueId(),
+    public static Song create() {
+        return Song.create(
                 new SongCreate(
-                        "spotifyId",
-                        "name",
-                        LocalDate.EPOCH,
-                        "albumName",
-                        "imageUrl",
-                        artist
+                        getUniqueId(),
+                        "24ebPi6UpTNw2vdzxGbO9n",
+                        "Flying Bob",
+                        LocalDate.parse("2022-09-15"),
+                        "TEEN TROUBLES",
+                        "https://i.scdn.co/image/ab67616d0000b2739c3a4e471c5e82a457dce2c0",
+                        ArtistFixture.create()
                 )
         );
     }
 
-    private SongFixture() {}
-
-    public static SongFixture builder() {
-        return new SongFixture();
-    }
-
-    public SongFixture id(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public SongFixture spotifyId(String spotifyId) {
-        this.spotifyId = spotifyId;
-        return this;
-    }
-
-    public SongFixture name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public SongFixture releaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
-        return this;
-    }
-
-    public SongFixture albumName(String albumName) {
-        this.albumName = albumName;
-        return this;
-    }
-
-    public SongFixture imageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-        return this;
-    }
-
-    public SongFixture artist(Artist artist) {
-        this.artist = artist;
-        return this;
-    }
-
-    public Song build() {
-        return Song.createWithId(
-                id,
+    public static Song create(Artist artist) {
+        return Song.create(
                 new SongCreate(
-                        spotifyId,
-                        name,
-                        releaseDate,
-                        albumName,
-                        imageUrl,
+                        getUniqueId(),
+                        "24ebPi6UpTNw2vdzxGbO9n",
+                        "Flying Bob",
+                        LocalDate.parse("2022-09-15"),
+                        "TEEN TROUBLES",
+                        "https://i.scdn.co/image/ab67616d0000b2739c3a4e471c5e82a457dce2c0",
                         artist
                 )
         );

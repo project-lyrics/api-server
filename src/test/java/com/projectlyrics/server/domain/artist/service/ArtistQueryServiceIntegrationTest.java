@@ -47,9 +47,9 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
     @Test
     void 아티스트의_데이터를_커서_기반_페이지네이션으로_조회한다() throws Exception {
         //given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
-        Artist artist2 = artistCommandRepository.save(ArtistFixture.createWithName("잔나비"));
-        Artist artist3 = artistCommandRepository.save(ArtistFixture.createWithName("너드커넥션"));
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create("실리카겔"));
+        Artist artist2 = artistCommandRepository.save(ArtistFixture.create("잔나비"));
+        Artist artist3 = artistCommandRepository.save(ArtistFixture.create("너드커넥션"));
         List<Artist> artistList = List.of(artist1, artist2, artist3);
 
         long cursor = 0L;
@@ -73,9 +73,9 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
     @Test
     void 검색어_기반으로_아티스트의_데이터를_커서_기반_페이지네이션으로_조회한다() throws Exception {
         //given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
-        artistCommandRepository.save(ArtistFixture.createWithName("잔나비"));
-        artistCommandRepository.save(ArtistFixture.createWithName("너드커넥션"));
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create("실리카겔"));
+        artistCommandRepository.save(ArtistFixture.create("잔나비"));
+        artistCommandRepository.save(ArtistFixture.create("너드커넥션"));
 
         long cursor = 0L;
         Pageable pageable = PageRequest.of(0, 3);
@@ -100,7 +100,7 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
         Pageable pageable = PageRequest.of(0, 3);
         ArrayList<Artist> artistList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Artist artist = ArtistFixture.builder().id(i).name("artist" + i).build();
+            Artist artist = ArtistFixture.create((long) i, "artist" + i);
             artistCommandRepository.save(artist);
             artistList.add(artist);
         }

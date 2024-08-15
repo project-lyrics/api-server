@@ -25,7 +25,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Artist> findByIdAndNotDeleted(Long artistId) {
+    public Optional<Artist> findById(Long artistId) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(QArtist.artist)

@@ -21,7 +21,7 @@ public class ArtistQueryService {
     private final ArtistQueryRepository artistQueryRepository;
 
     public Artist getArtistById(long artistId) {
-        return artistQueryRepository.findByIdAndNotDeleted(artistId)
+        return artistQueryRepository.findById(artistId)
                 .orElseThrow(ArtistNotFoundException::new);
     }
 

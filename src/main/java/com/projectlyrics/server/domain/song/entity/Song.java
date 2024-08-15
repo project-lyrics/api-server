@@ -61,6 +61,7 @@ public class Song extends BaseEntity {
 
     public static Song create(SongCreate songCreate) {
         return new Song(
+                songCreate.id(),
                 songCreate.spotifyId(),
                 songCreate.name(),
                 songCreate.releaseDate(),

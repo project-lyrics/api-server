@@ -37,9 +37,9 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
     @Test
     void 관심_아티스트_리스트를_저장해야_한다() throws Exception {
         //given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("신지훈"));
-        Artist artist2 = artistCommandRepository.save(ArtistFixture.createWithName("너드 커넥션"));
-        Artist artist3 = artistCommandRepository.save(ArtistFixture.createWithName("한로로"));
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
+        Artist artist2 = artistCommandRepository.save(ArtistFixture.create());
+        Artist artist3 = artistCommandRepository.save(ArtistFixture.create());
         CreateFavoriteArtistListRequest request = new CreateFavoriteArtistListRequest(List.of(
                         artist1.getId(),
                         artist2.getId(),
@@ -68,7 +68,7 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
     @Test
     void 관심_아티스트를_soft_delete_해야_한다() throws Exception {
         // given
-        Artist artist = artistCommandRepository.save(ArtistFixture.createWithName("신지훈"));
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
         User user = userCommandRepository.save(UserFixture.create());
         CreateFavoriteArtistListRequest request = new CreateFavoriteArtistListRequest(List.of(artist.getId()));
         sut.saveAll(user.getId(), request);

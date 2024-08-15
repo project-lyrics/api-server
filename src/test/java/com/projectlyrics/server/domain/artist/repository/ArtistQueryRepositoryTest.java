@@ -32,7 +32,7 @@ public class ArtistQueryRepositoryTest {
         Artist savedArtist = artistCommandRepository.save(ArtistFixture.create());
 
         // when
-        Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(savedArtist.getId());
+        Optional<Artist> artist = artistQueryRepository.findById(savedArtist.getId());
 
         // then
         assertAll(
@@ -45,7 +45,7 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 존재하지_않는_id로_아티스트를_조회하면_Optional_empty가_반환된다() {
         // given, when
-        Optional<Artist> artist = artistQueryRepository.findByIdAndNotDeleted(1L);
+        Optional<Artist> artist = artistQueryRepository.findById(1L);
 
         // then
         assertThat(artist).isEmpty();
@@ -54,9 +54,9 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 커서_기반_페이징으로_아티스트_리스트를_조회한다() throws Exception {
         // given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
-        Artist artist2 = artistCommandRepository.save(ArtistFixture.createWithName("잔나비"));
-        Artist artist3 = artistCommandRepository.save(ArtistFixture.createWithName("너드커넥션"));
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
+        Artist artist2 = artistCommandRepository.save(ArtistFixture.create());
+        Artist artist3 = artistCommandRepository.save(ArtistFixture.create());
         List<Artist> artistList = List.of(artist1, artist2, artist3);
 
         long cursor = 0L;
@@ -77,7 +77,7 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 아티스트_리스트를_조회하는_커서가_최대_id값보다_클_경우_Slice의_content가_비어있다() throws Exception {
         // given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.createWithName("실리카겔"));
+        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
         List<Artist> artistList = List.of(artist1);
 
         long cursor = 1000L;
@@ -97,8 +97,8 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 아티스트의_데이터를_사용자_입력_쿼리_기반으로_조회해_반환한다() {
         // given
-        Artist artist1 = ArtistFixture.createWithName("검정치마");
-        Artist artist2 = ArtistFixture.createWithName("구남과여라이딩스텔라");
+        Artist artist1 = ArtistFixture.create("검정치마");
+        Artist artist2 = ArtistFixture.create("구남과여라이딩스텔라");
         artistCommandRepository.save(artist1);
         artistCommandRepository.save(artist2);
 
@@ -112,7 +112,7 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 사용자_입력_쿼리가_아무런_아티스트를_검색하지_못하면_Slice의_content가_비어있다() throws Exception {
         // given
-        Artist artist1 = ArtistFixture.createWithName("검정치마");
+        Artist artist1 = ArtistFixture.create("검정치마");
         artistCommandRepository.save(artist1);
 
         // when

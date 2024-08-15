@@ -2,44 +2,49 @@ package com.projectlyrics.server.support.fixture;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
-import java.util.Optional;
-
 public class ArtistFixture extends BaseFixture {
 
-    private Long id;
-    private String name = "아티스트 이름";
-    private String imageUrl = "https://asdf.com";
-
     public static Artist create() {
-        return Artist.withId(getUniqueId(), "아티스트 이름", "https://asdf.com");
+        return Artist.withId(
+                getUniqueId(),
+                "검정치마",
+                "The Black Skirts",
+                null,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
     }
 
-    public static Artist createWithName(String name) {
-        return Artist.withId(getUniqueId(), name, "https://asdf.com");
+    public static Artist create(Long id) {
+        return Artist.withId(
+                id,
+                "검정치마",
+                "The Black Skirts",
+                null,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
     }
 
-    private ArtistFixture() {}
-
-    public static ArtistFixture builder() {
-        return new ArtistFixture();
+    public static Artist create(String name) {
+        return Artist.withId(
+                getUniqueId(),
+                name,
+                "The Black Skirts",
+                null,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
     }
 
-    public ArtistFixture id(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public ArtistFixture name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public ArtistFixture imageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-        return this;
-    }
-
-    public Artist build() {
-        return Artist.withId(id, name, imageUrl);
+    public static Artist create(Long id, String name) {
+        return Artist.withId(
+                id,
+                name,
+                "The Black Skirts",
+                null,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
     }
 }

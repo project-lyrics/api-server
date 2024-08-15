@@ -1,55 +1,97 @@
 package com.projectlyrics.server.global.dev;
 
+import com.opencsv.CSVReader;
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.entity.ArtistCreate;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
-import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
-import com.projectlyrics.server.domain.user.entity.SocialInfo;
-import com.projectlyrics.server.domain.user.entity.AuthProvider;
-import com.projectlyrics.server.domain.user.entity.Role;
-import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
-import com.projectlyrics.server.domain.user.entity.Gender;
-import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
-import com.projectlyrics.server.domain.user.entity.TermsAgreements;
-import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.song.entity.Song;
+import com.projectlyrics.server.domain.song.entity.SongCreate;
+import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.io.FileReader;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Profile({"dev", "local"})
+@Profile({"dev"})
 @Component
 @RequiredArgsConstructor
 public class DummyDataInitializer {
 
-    private final UserCommandRepository userCommandRepository;
     private final ArtistCommandRepository artistCommandRepository;
-    private final JwtProvider tokenProvider;
+    private final SongCommandRepository songCommandRepository;
 
     @PostConstruct
     public void init() {
-        artistCommandRepository.save(Artist.of("너드 커넥션", null));
-        artistCommandRepository.save(Artist.of("한로로", null));
-        artistCommandRepository.save(Artist.of("신지훈", null));
-        artistCommandRepository.save(Artist.of("하현상", null));
-        artistCommandRepository.save(Artist.of("잔나비", null));
-        artistCommandRepository.save(Artist.of("아이유", null));
-        artistCommandRepository.save(Artist.of("ed sheeran", null));
-        artistCommandRepository.save(Artist.of("10cm", null));
-        artistCommandRepository.save(Artist.of("oasis", null));
-        artistCommandRepository.save(Artist.of("국카스텐", null));
-        artistCommandRepository.save(Artist.of("artist1", null));
-        artistCommandRepository.save(Artist.of("artist2", null));
-        artistCommandRepository.save(Artist.of("artist3", null));
-        artistCommandRepository.save(Artist.of("artist4", null));
-        artistCommandRepository.save(Artist.of("artist5", null));
-        User user = userCommandRepository.save(User.of(SocialInfo.of(AuthProvider.KAKAO, "socialId"), "test1", ProfileCharacter.SHORT_HAIR, Role.USER, Gender.MALE, 1999, List.of(new TermsAgreements(true, "약관1", "약관 내용"))));
-        AuthToken authToken = tokenProvider.issueTokens(user.getId(), user.getNickname().getValue());
-        log.info("accessToken: {}", authToken.accessToken());
-        log.info("refreshToken: {}", authToken.refreshToken());
+        List<Artist> artists = saveInitialArtists();
+        saveInitialSongs(artists);
+    }
+
+    private List<Artist> saveInitialArtists() {
+        List<Artist> artists = new ArrayList<>();
+
+        try {
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/artists.csv"));
+            String[] line;
+
+            while ((line = reader.readNext()) != null) {
+                Long id = Long.parseLong(line[0]);
+                String name = line[1];
+                String secondName = line[2];
+                String thirdName = line[3];
+                String spotifyId = line[4];
+                String imageUrl = line[5];
+
+                ArtistCreate artistCreate = new ArtistCreate(id, name, secondName, thirdName, spotifyId, imageUrl);
+                Artist artist = Artist.create(artistCreate);
+
+                artists.add(artist);
+            }
+        } catch (Exception e) {
+            log.error("failed to read csv file", e);
+        }
+
+        return artistCommandRepository.saveAll(artists);
+    }
+
+    private void saveInitialSongs(List<Artist> artists) {
+        List<Song> songs = new ArrayList<>();
+
+        try {
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/songs.csv"));
+            String[] line;
+
+            while ((line = reader.readNext()) != null) {
+                Long id = Long.parseLong(line[0]);
+                String name = line[1];
+                Long artistId = Long.parseLong(line[2]);
+                String spotifyId = line[3];
+                String imageUrl = line[4];
+                String albumName = line[5];
+                LocalDate releaseDate = LocalDate.parse(line[6]);
+
+                SongCreate songCreate = new SongCreate(id, spotifyId, name, releaseDate, albumName, imageUrl, findArtist(artistId, artists));
+                Song song = Song.create(songCreate);
+
+                songs.add(song);
+            }
+        } catch (Exception e) {
+            log.error("failed to read csv file", e);
+        }
+
+        songCommandRepository.saveAll(songs);
+    }
+
+    private Artist findArtist(Long id, List<Artist> artists) {
+        return artists.stream()
+                .filter(artist -> artist.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 }
