@@ -1,7 +1,6 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
-import com.projectlyrics.server.domain.song.entity.QSong;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,7 +28,6 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .join(song.artist).fetchJoin()
                 .where(
                         song.artist.id.eq(artistId),
-                        song.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, song.id)
                 )
                 .limit(pageable.getPageSize() + 1)
@@ -45,7 +43,6 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .join(song.artist).fetchJoin()
                 .where(
                         song.name.containsIgnoreCase(query),
-                        song.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, song.id)
                 )
                 .limit(pageable.getPageSize() + 1)
@@ -61,8 +58,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                         .selectFrom(song)
                         .join(song.artist).fetchJoin()
                         .where(
-                                song.id.eq(id),
-                                song.deletedAt.isNull()
+                                song.id.eq(id)
                         )
                         .fetchOne()
         );

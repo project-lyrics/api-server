@@ -1,7 +1,6 @@
 package com.projectlyrics.server.domain.song.entity;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 @Table(name = "songs")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Song extends BaseEntity {
+public class Song {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,32 +47,9 @@ public class Song extends BaseEntity {
         this.artist = artist;
     }
 
-    private Song(
-            String spotifyId,
-            String name,
-            LocalDate releaseDate,
-            String albumName,
-            String imageUrl,
-            Artist artist
-    ) {
-        this(null, spotifyId, name, releaseDate, albumName, imageUrl, artist);
-    }
-
     public static Song create(SongCreate songCreate) {
         return new Song(
                 songCreate.id(),
-                songCreate.spotifyId(),
-                songCreate.name(),
-                songCreate.releaseDate(),
-                songCreate.albumName(),
-                songCreate.imageUrl(),
-                songCreate.artist()
-        );
-    }
-
-    public static Song createWithId(Long id, SongCreate songCreate) {
-        return new Song(
-                id,
                 songCreate.spotifyId(),
                 songCreate.name(),
                 songCreate.releaseDate(),

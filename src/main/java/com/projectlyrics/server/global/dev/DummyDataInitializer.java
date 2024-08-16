@@ -41,17 +41,16 @@ public class DummyDataInitializer {
             String[] line;
 
             while ((line = reader.readNext()) != null) {
-                Long id = Long.parseLong(line[0]);
-                String name = line[1];
-                String secondName = line[2];
-                String thirdName = line[3];
-                String spotifyId = line[4];
-                String imageUrl = line[5];
+                ArtistCreate artistCreate = new ArtistCreate(
+                        Long.parseLong(line[0]),
+                        line[1],
+                        line[2],
+                        line[3],
+                        line[4],
+                        line[5]
+                );
 
-                ArtistCreate artistCreate = new ArtistCreate(id, name, secondName, thirdName, spotifyId, imageUrl);
-                Artist artist = Artist.create(artistCreate);
-
-                artists.add(artist);
+                artists.add(Artist.create(artistCreate));
             }
         } catch (Exception e) {
             log.error("failed to read csv file", e);
@@ -68,18 +67,17 @@ public class DummyDataInitializer {
             String[] line;
 
             while ((line = reader.readNext()) != null) {
-                Long id = Long.parseLong(line[0]);
-                String name = line[1];
-                Long artistId = Long.parseLong(line[2]);
-                String spotifyId = line[3];
-                String imageUrl = line[4];
-                String albumName = line[5];
-                LocalDate releaseDate = LocalDate.parse(line[6]);
+                SongCreate songCreate = new SongCreate(
+                        Long.parseLong(line[0]),
+                        line[3],
+                        line[1],
+                        LocalDate.parse(line[6]),
+                        line[5],
+                        line[4],
+                        findArtist(Long.parseLong(line[2]), artists)
+                );
 
-                SongCreate songCreate = new SongCreate(id, spotifyId, name, releaseDate, albumName, imageUrl, findArtist(artistId, artists));
-                Song song = Song.create(songCreate);
-
-                songs.add(song);
+                songs.add(Song.create(songCreate));
             }
         } catch (Exception e) {
             log.error("failed to read csv file", e);
