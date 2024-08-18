@@ -27,7 +27,7 @@ public class DummyDataInitializer {
     private final ArtistCommandRepository artistCommandRepository;
     private final SongCommandRepository songCommandRepository;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         List<Artist> artists = saveInitialArtists();
         saveInitialSongs(artists);
