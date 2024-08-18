@@ -21,7 +21,7 @@ public record SongCreate(
         checkNull(artist);
 
         return new SongCreate(
-                null,
+                request.id(),
                 request.spotifyId(),
                 request.name(),
                 request.releaseDate(),

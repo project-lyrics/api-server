@@ -19,6 +19,7 @@ class SongCreateTest {
         // given
         Artist artist = ArtistFixture.create();
         SongCreateRequest request = new SongCreateRequest(
+                1L,
                 "spotifyId",
                 "name",
                 LocalDate.now(),
@@ -46,6 +47,7 @@ class SongCreateTest {
         // given
         Artist artist = null;
         SongCreateRequest request = new SongCreateRequest(
+                1L,
                 "spotifyId",
                 "name",
                 LocalDate.now(),

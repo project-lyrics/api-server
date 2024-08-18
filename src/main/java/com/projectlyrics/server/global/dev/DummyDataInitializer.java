@@ -71,7 +71,7 @@ public class DummyDataInitializer {
                         Long.parseLong(line[0]),
                         line[3],
                         line[1],
-                        LocalDate.parse(line[6]),
+                        parse(line[6]),
                         line[5],
                         line[4],
                         findArtist(Long.parseLong(line[2]), artists)
@@ -84,6 +84,14 @@ public class DummyDataInitializer {
         }
 
         songCommandRepository.saveAll(songs);
+    }
+
+    private LocalDate parse(String date) {
+        try {
+            return LocalDate.parse(date);
+        } catch (Exception e) {
+            return LocalDate.of(Integer.parseInt(date), 1, 1);
+        }
     }
 
     private Artist findArtist(Long id, List<Artist> artists) {
