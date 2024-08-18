@@ -14,11 +14,12 @@ class SongTest {
     void SongCreate으로부터_Song_객체를_생성해야_한다() throws Exception {
         // given
         SongCreate songCreate = new SongCreate(
-                "spotifyId",
-                "name",
-                LocalDate.now(),
-                "albumName",
-                "imageUrl",
+                1L,
+                "24ebPi6UpTNw2vdzxGbO9n",
+                "Flying Bob",
+                LocalDate.parse("2022-09-15"),
+                "TEEN TROUBLES",
+                "https://i.scdn.co/image/ab67616d0000b2739c3a4e471c5e82a457dce2c0",
                 ArtistFixture.create()
         );
 
@@ -27,35 +28,7 @@ class SongTest {
 
         // then
         assertAll(
-                () -> assertThat(song.getId()).isNull(),
-                () -> assertThat(song.getSpotifyId()).isEqualTo(songCreate.spotifyId()),
-                () -> assertThat(song.getName()).isEqualTo(songCreate.name()),
-                () -> assertThat(song.getReleaseDate()).isEqualTo(songCreate.releaseDate()),
-                () -> assertThat(song.getAlbumName()).isEqualTo(songCreate.albumName()),
-                () -> assertThat(song.getImageUrl()).isEqualTo(songCreate.imageUrl()),
-                () -> assertThat(song.getArtist()).isEqualTo(songCreate.artist())
-        );
-    }
-
-    @Test
-    void id와_SongCreate_으로부터_Song_객체를_생성해야_한다() throws Exception {
-        // given
-        Long id = 1L;
-        SongCreate songCreate = new SongCreate(
-                "spotifyId",
-                "name",
-                LocalDate.now(),
-                "albumName",
-                "imageUrl",
-                ArtistFixture.create()
-        );
-
-        // when
-        Song song = Song.createWithId(id, songCreate);
-
-        // then
-        assertAll(
-                () -> assertThat(song.getId()).isEqualTo(id),
+                () -> assertThat(song.getId()).isEqualTo(songCreate.id()),
                 () -> assertThat(song.getSpotifyId()).isEqualTo(songCreate.spotifyId()),
                 () -> assertThat(song.getName()).isEqualTo(songCreate.name()),
                 () -> assertThat(song.getReleaseDate()).isEqualTo(songCreate.releaseDate()),

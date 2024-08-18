@@ -1,119 +1,89 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
-import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
+import com.projectlyrics.server.support.IntegrationTest;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
-import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
-import com.projectlyrics.server.global.exception.FeelinException;
-import com.projectlyrics.server.support.fixture.ArtistFixture;
-
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class ArtistCommandServiceTest {
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-    @InjectMocks
-    private ArtistCommandService sut;
+class ArtistCommandServiceTest extends IntegrationTest {
 
-    @Mock
-    private ArtistCommandRepository artistCommandRepository;
+    @Autowired
+    ArtistCommandService sut;
 
-    @Mock
-    private ArtistQueryRepository artistQueryRepository;
+    @Autowired
+    ArtistCommandRepository artistCommandRepository;
 
-    @Captor
-    private ArgumentCaptor<Artist> addArtistArgumentCaptor;
+    @Autowired
+    ArtistQueryRepository artistQueryRepository;
 
     @Test
-    void 전달받은_데이터로_새로운_아티스트를_추가한다() {
+    void 새로운_아티스트를_추가한다() {
         // given
-        Artist artist = ArtistFixture.create();
-        ArtistAddRequest addArtistRequest = createAddArtistRequest();
-        given(artistCommandRepository.save(any(Artist.class))).willReturn(artist);
+        ArtistCreateRequest request = new ArtistCreateRequest(
+                "검정치마",
+                "The Black Skirts",
+                null,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
 
         // when
-        sut.addArtist(addArtistRequest);
+        Artist result = sut.create(request);
 
         // then
-        then(artistCommandRepository).should().save(addArtistArgumentCaptor.capture());
-        Artist captorValue = addArtistArgumentCaptor.getValue();
-        assertThat(addArtistRequest.name()).isEqualTo(captorValue.getName());
-        assertThat(addArtistRequest.imageUrl()).isEqualTo(captorValue.getImageUrl());
-    }
-
-    @Test
-    void NULL_또는_공백_빈문자열이_아닌_데이터로만_아티스트의_데이터를_수정한다() {
-        // given
-        Long artistId = 1L;
-        Artist artist = ArtistFixture.create();
-        ArtistUpdateRequest updateArtistRequest = createUpdateArtistRequest("   ", null, "https://~2");
-        given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
-
-        // when
-        ArtistUpdateResponse updateArtistResponse = sut.updateArtist(artistId, updateArtistRequest);
-
-        // then
-        then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
-        assertThat(updateArtistResponse.name()).isEqualTo(artist.getName());
-        assertThat(updateArtistResponse.profileImageCdnLink()).isEqualTo(updateArtistRequest.profileImageCdnLink());
+        assertAll(
+                () -> assertThat(result.getName()).isEqualTo(request.name()),
+                () -> assertThat(result.getSecondName()).isEqualTo(request.secondName()),
+                () -> assertThat(result.getThirdName()).isNull(),
+                () -> assertThat(result.getSpotifyId()).isEqualTo(request.spotifyId()),
+                () -> assertThat(result.getImageUrl()).isEqualTo(request.imageUrl())
+        );
     }
 
     @Test
-    void 아티스트_데이터_수정_시_profileImageCdnLink가_url형식이_아니면_에러가_발생한다() {
+    void 아티스트를_수정할_때_요청의_null_값은_수정하지_않는다() {
         // given
-        Long artistId = 1L;
-        Artist artist = ArtistFixture.create();
-        ArtistUpdateRequest updateArtistRequest = createUpdateArtistRequest("name", "name", "asdfa");
-        given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        ArtistUpdateRequest request = new ArtistUpdateRequest(
+                "초록불꽃소년단",
+                null,
+                "Green Flame Boys",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
 
         // when
-        Throwable throwable = catchThrowable(() -> sut.updateArtist(artistId, updateArtistRequest));
+        Artist result = sut.update(artist.getId(), request);
 
         // then
-        then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
-        assertThat(throwable).isInstanceOf(FeelinException.class);
+        assertAll(
+                () -> assertThat(result.getName()).isEqualTo(request.name()),
+                () -> assertThat(result.getSecondName()).isEqualTo(artist.getSecondName()),
+                () -> assertThat(result.getThirdName()).isEqualTo(request.thirdName()),
+                () -> assertThat(result.getImageUrl()).isEqualTo(request.imageUrl())
+        );
     }
 
     @Test
-    void 아티스트_데이터_삭제_시_soft_delete를_시킨다() {
+    void 존재하지_않는_아티스트를_수정할_경우_예외가_발생해야_한다() throws Exception {
         // given
-        Long artistId = 1L;
-        Artist artist = ArtistFixture.create();
-        given(artistQueryRepository.findByIdAndNotDeleted(artistId)).willReturn(Optional.of(artist));
+        ArtistUpdateRequest request = new ArtistUpdateRequest(
+                "초록불꽃소년단",
+                null,
+                "Green Flame Boys",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
 
-        // when
-        sut.deleteArtist(artistId);
-
-        // then
-        then(artistQueryRepository).should().findByIdAndNotDeleted(anyLong());
-        assertThat(artist.getDeletedAt()).isNotNull();
-        assertThat(artist.getDeletedBy()).isNotNull();
-        assertThat(artist.getStatus()).isEqualTo(EntityStatusEnum.DELETED);
-    }
-
-    private ArtistAddRequest createAddArtistRequest() {
-        return new ArtistAddRequest("넬", "https://~");
-    }
-
-    private ArtistUpdateRequest createUpdateArtistRequest(String name, String englishName, String profileImageCdnLink) {
-        return new ArtistUpdateRequest(name, profileImageCdnLink);
+        // when, then
+        assertThatThrownBy(() -> sut.update(99L, request))
+                .isInstanceOf(ArtistNotFoundException.class);
     }
 }

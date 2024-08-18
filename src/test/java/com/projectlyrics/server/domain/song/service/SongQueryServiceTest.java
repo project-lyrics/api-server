@@ -35,6 +35,7 @@ class SongQueryServiceTest extends IntegrationTest {
         // given
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         SongCreateRequest request = new SongCreateRequest(
+                1L,
                 "spotifyId",
                 "No Pain",
                 LocalDate.now(),

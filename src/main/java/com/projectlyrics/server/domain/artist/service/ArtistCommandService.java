@@ -1,15 +1,16 @@
 package com.projectlyrics.server.domain.artist.service;
 
-import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.artist.entity.ArtistCreate;
+import com.projectlyrics.server.domain.artist.entity.ArtistUpdate;
 import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,25 +24,21 @@ public class ArtistCommandService {
     private final ArtistCommandRepository artistCommandRepository;
     private final ArtistQueryRepository artistQueryRepository;
 
-    public ArtistAddResponse addArtist(ArtistAddRequest request) {
-        Artist savedArtist = artistCommandRepository.save(Artist.of(request));
-        return ArtistAddResponse.of(savedArtist.getId());
+    public Artist create(ArtistCreateRequest request) {
+        return artistCommandRepository.save(Artist.create(ArtistCreate.from(request)));
     }
 
-    public ArtistUpdateResponse updateArtist(Long artistId, ArtistUpdateRequest request) {
-        Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
+    public Artist update(Long artistId, ArtistUpdateRequest request) {
+        Artist artist = artistQueryRepository.findById(artistId)
                 .orElseThrow(ArtistNotFoundException::new);
 
-        artist.updateIfNotBlank(request.name(), artist::updateName);
-        artist.updateIfNotBlank(request.profileImageCdnLink(), artist::updateImageUrl);
-
-        return ArtistUpdateResponse.from(artist);
+        return artist.update(ArtistUpdate.from(request));
     }
 
-    public void deleteArtist(Long artistId) {
-        Artist artist = artistQueryRepository.findByIdAndNotDeleted(artistId)
+    public void delete(Long artistId, Long deletedBy) {
+        Artist artist = artistQueryRepository.findById(artistId)
                 .orElseThrow(ArtistNotFoundException::new);
 
-        artist.delete(artistId, Clock.systemDefaultZone());
+        artist.delete(deletedBy, LocalDateTime.now(Clock.systemDefaultZone()));
     }
 }

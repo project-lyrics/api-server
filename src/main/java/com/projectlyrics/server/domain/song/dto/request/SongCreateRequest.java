@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record SongCreateRequest(
+        @NotNull(message = "곡 ID가 입력되지 않았습니다.")
+        Long id,
         @NotBlank(message = "스포티파이 ID가 입력되지 않았습니다.")
         String spotifyId,
         @NotBlank(message = "곡 제목이 입력되지 않았습니다.")

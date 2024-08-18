@@ -1,12 +1,12 @@
 package com.projectlyrics.server.domain.artist.api;
 
-import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistAddResponse;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistUpdateResponse;
 import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
+import com.projectlyrics.server.domain.auth.authentication.AuthContext;
+import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,32 +35,37 @@ public class ArtistController {
     private final ArtistCommandService artistCommandService;
 
     @PostMapping
-    public ResponseEntity<ArtistAddResponse> addArtist(
-            @RequestBody @Valid ArtistAddRequest request
+    public ResponseEntity<Void> create(
+            @RequestBody @Valid ArtistCreateRequest request
     ) {
+        artistCommandService.create(request);
+
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(artistCommandService.addArtist(request));
+                .status(HttpStatus.OK)
+                .build();
     }
 
     @PatchMapping("/{artistId}")
-    public ResponseEntity<ArtistUpdateResponse> updateArtist(
+    public ResponseEntity<Void> update(
             @PathVariable(name = "artistId") Long artistId,
             @RequestBody ArtistUpdateRequest request
     ) {
+        artistCommandService.update(artistId, request);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(artistCommandService.updateArtist(artistId, request));
+                .build();
     }
 
     @DeleteMapping("/{artistId}")
-    public ResponseEntity<Void> deleteArtist(
+    public ResponseEntity<Void> delete(
+            @Authenticated AuthContext authContext,
             @PathVariable(name = "artistId") Long artistId
     ) {
-        artistCommandService.deleteArtist(artistId);
+        artistCommandService.delete(artistId, authContext.getId());
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
+                .status(HttpStatus.OK)
                 .build();
     }
 

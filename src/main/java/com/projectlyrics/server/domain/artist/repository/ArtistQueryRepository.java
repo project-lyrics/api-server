@@ -10,7 +10,7 @@ import org.springframework.data.domain.Slice;
 
 public interface ArtistQueryRepository {
 
-    Optional<Artist> findByIdAndNotDeleted(Long artistId);
+    Optional<Artist> findById(Long artistId);
 
     Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable);
 

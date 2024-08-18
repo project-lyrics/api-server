@@ -99,7 +99,7 @@ class FavoriteArtistControllerTest extends RestDocsTest {
         ArrayList<FavoriteArtistResponse> data = new ArrayList<>();
         User user = UserFixture.create();
         for (int i = 0; i < 10; i++) {
-            Artist artist = ArtistFixture.createWithName("artist" + i);
+            Artist artist = ArtistFixture.create();
             data.add(FavoriteArtistResponse.of(FavoriteArtistFixture.create(user, artist)));
         }
         CursorBasePaginatedResponse<FavoriteArtistResponse> response = new CursorBasePaginatedResponse<>(

@@ -1,22 +1,14 @@
 package com.projectlyrics.server.domain.artist.entity;
 
-import com.projectlyrics.server.domain.artist.dto.request.ArtistAddRequest;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.common.util.DomainUtils;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 import lombok.*;
 import org.springframework.util.StringUtils;
-
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -28,48 +20,75 @@ public class Artist extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column
+    private String secondName;
+    private String thirdName;
+    private String spotifyId;
     private String imageUrl;
+    private LocalDateTime deletedAt;
+    private Long deletedBy;
 
-    private Artist(Long id, String name, String imageUrl) {
-        checkString(name);
-        Optional.ofNullable(imageUrl)
-                .ifPresent(DomainUtils::checkUrl);
+    private Artist(
+            Long id,
+            String name,
+            String secondName,
+            String thirdName,
+            String spotifyId,
+            String imageUrl
+    ) {
         this.id = id;
         this.name = name;
+        this.secondName = secondName;
+        this.thirdName = thirdName;
+        this.spotifyId = spotifyId;
         this.imageUrl = imageUrl;
     }
 
-    private Artist(String name, String imageUrl) {
-        this(null, name, imageUrl);
+    public static Artist withId(
+            Long id,
+            String name,
+            String secondName,
+            String thirdName,
+            String spotifyId,
+            String imageUrl
+    ) {
+        return new Artist(id, name, secondName, thirdName, spotifyId, imageUrl);
     }
 
-    public static Artist withId(Long id, String name, String imageUrl) {
-        return new Artist(id, name, imageUrl);
-    }
-
-    public static Artist of(String name, String imageUrl) {
-        return new Artist(name, imageUrl);
-    }
-
-    public static Artist of(ArtistAddRequest dto) {
+    public static Artist create(ArtistCreate artistCreate) {
         return new Artist(
-                dto.name(),
-                dto.imageUrl()
+                artistCreate.id(),
+                artistCreate.name(),
+                artistCreate.secondName(),
+                artistCreate.thirdName(),
+                artistCreate.spotifyId(),
+                artistCreate.imageUrl()
         );
     }
 
-    public void updateName(String name) {
+    public Artist update(ArtistUpdate artistUpdate) {
+        updateIfNotBlank(artistUpdate.name(), this::updateName);
+        updateIfNotBlank(artistUpdate.secondName(), this::updateSecondName);
+        updateIfNotBlank(artistUpdate.thirdName(), this::updateThirdName);
+        updateIfNotBlank(artistUpdate.imageUrl(), this::updateImageUrl);
+
+        return this;
+    }
+
+    private void updateName(String name) {
         this.name = name;
     }
 
-    public void updateImageUrl(String imageUrl) {
-        DomainUtils.checkUrl(imageUrl);
+    private void updateSecondName(String name) {
+        this.secondName = name;
+    }
 
+    private void updateThirdName(String name) {
+        this.thirdName = name;
+    }
+
+    private void updateImageUrl(String imageUrl) {
+        DomainUtils.checkUrl(imageUrl);
         this.imageUrl = imageUrl;
     }
 
@@ -77,5 +96,10 @@ public class Artist extends BaseEntity {
         if (StringUtils.hasText(value)) {
             updater.accept(value);
         }
+    }
+
+    public void delete(Long deletedBy, LocalDateTime deletedAt) {
+        this.deletedBy = deletedBy;
+        this.deletedAt = deletedAt;
     }
 }
