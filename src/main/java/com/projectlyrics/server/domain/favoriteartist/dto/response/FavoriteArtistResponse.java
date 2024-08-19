@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.favoriteartist.dto;
+package com.projectlyrics.server.domain.favoriteartist.dto.response;
 
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.common.dto.util.CursorResponse;

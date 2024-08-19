@@ -3,13 +3,16 @@ package com.projectlyrics.server.domain.favoriteartist.api;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.favoriteartist.dto.FavoriteArtistResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistCreateAllResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistDeleteResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,23 +25,27 @@ public class FavoriteArtistController {
     private final FavoriteArtistQueryService favoriteArtistQueryService;
 
     @PostMapping("/batch")
-    public ResponseEntity<Void> saveAll(
+    public ResponseEntity<FavoriteArtistCreateAllResponse> createAll(
             @Authenticated AuthContext authContext,
             @RequestBody @Valid CreateFavoriteArtistListRequest request
     ) {
         favoriteArtistCommandService.saveAll(authContext.getId(), request);
-        return ResponseEntity.ok()
-                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new FavoriteArtistCreateAllResponse(true));
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<FavoriteArtistDeleteResponse> delete(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "artistId") Long artistId
     ) {
         favoriteArtistCommandService.delete(authContext.getId(), artistId);
-        return ResponseEntity.ok()
-                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new FavoriteArtistDeleteResponse(true));
     }
 
     @GetMapping
@@ -47,11 +54,14 @@ public class FavoriteArtistController {
             @RequestParam(name = "cursor", required = false) Long cursorId,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<FavoriteArtistResponse> response = favoriteArtistQueryService.findFavoriteArtists
-                (authContext.getId(),
-                        cursorId,
-                        PageRequest.of(0, size)
-                );
-        return ResponseEntity.ok(response);
+        CursorBasePaginatedResponse<FavoriteArtistResponse> response = favoriteArtistQueryService.findFavoriteArtists(
+                authContext.getId(),
+                cursorId,
+                PageRequest.ofSize(size)
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 }
