@@ -42,7 +42,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByUserId(Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByUserId(boolean hasLyrics, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -51,6 +51,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
+                        QueryDslUtils.hasLyrics(hasLyrics),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, note.id)
@@ -63,7 +64,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistIds(List<Long> artistsIds, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -72,6 +73,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
+                        QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, note.id)
@@ -84,7 +86,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistId(Long artistId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -93,27 +95,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
-                        note.song.artist.id.eq(artistId),
-                        note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
-                )
-                .orderBy(note.id.desc())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
-    }
-
-    @Override
-    public Slice<Note> findAllByArtistIdAndHasLyrics(Long artistId, Long cursorId, Pageable pageable) {
-        List<Note> content = jpaQueryFactory
-                .selectFrom(note)
-                .join(note.lyrics).fetchJoin()
-                .join(note.publisher).fetchJoin()
-                .join(note.song).fetchJoin()
-                .join(song.artist).fetchJoin()
-                .leftJoin(note.comments).fetchJoin()
-                .where(
+                        QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, note.id)

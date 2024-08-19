@@ -8,6 +8,10 @@ public record LyricsGetResponse(
 ) {
 
     public static LyricsGetResponse from(Lyrics lyrics) {
+        if (lyrics == null) {
+            return null;
+        }
+
         return new LyricsGetResponse(
                 lyrics.getContent(),
                 lyrics.getBackground().name()

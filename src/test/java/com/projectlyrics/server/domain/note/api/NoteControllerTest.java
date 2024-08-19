@@ -273,12 +273,13 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByUserId(any(), any(), anyInt()))
+        given(noteQueryService.getNotesByUserId(anyBoolean(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/notes")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("hasLyrics", "false")
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -303,12 +304,13 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesOfFavoriteArtists(any(), any(), anyInt()))
+        given(noteQueryService.getNotesOfFavoriteArtists(anyBoolean(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/notes/favorite-artists")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("hasLyrics", "false")
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -317,12 +319,19 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getNoteListDocument() {
+        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
+                .type(SimpleType.BOOLEAN)
+                .optional()
+                .description("가사가 있는 노트만 조회");
+
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .queryParameters(getPagingQueryParameters())
+                        .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),
@@ -394,7 +403,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByArtistId(any(), any(), anyBoolean(), any(), anyInt()))
+        given(noteQueryService.getNotesByArtistId(anyBoolean(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -497,12 +506,13 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getBookmarkedNotes(any(), any(), any(), anyInt()))
+        given(noteQueryService.getBookmarkedNotes(anyBoolean(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/notes/bookmarked")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("hasLyrics", "false")
                         .param("artistId", "1")
                         .param("cursor", "1")
                         .param("size", "10")
@@ -513,10 +523,14 @@ class NoteControllerTest extends RestDocsTest {
 
     private RestDocumentationResultHandler getBookmarkedNoteListDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
-        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
                 .type(SimpleType.NUMBER)
                 .description("아티스트 Id");
+        queryParams[pagingQueryParameters.length + 1] = parameterWithName("hasLyrics")
+                .type(SimpleType.BOOLEAN)
+                .optional()
+                .description("가사가 있는 노트만 조회");
 
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()

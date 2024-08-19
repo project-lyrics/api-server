@@ -7,6 +7,8 @@ import java.util.List;
 import com.querydsl.core.types.dsl.NumberPath;
 import org.springframework.data.domain.Pageable;
 
+import static com.projectlyrics.server.domain.note.entity.QNote.note;
+
 public class QueryDslUtils {
 
     public static BooleanExpression gtCursorId(Long cursor, NumberPath<Long> id) {
@@ -21,5 +23,9 @@ public class QueryDslUtils {
         }
 
         return false;
+    }
+
+    public static BooleanExpression hasLyrics(boolean hasLyrics) {
+        return hasLyrics ? note.lyrics.isNotNull() : null;
     }
 }
