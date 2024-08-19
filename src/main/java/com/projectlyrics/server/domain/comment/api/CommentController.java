@@ -4,6 +4,9 @@ import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
 import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
+import com.projectlyrics.server.domain.comment.dto.response.CommentCreateResponse;
+import com.projectlyrics.server.domain.comment.dto.response.CommentDeleteResponse;
+import com.projectlyrics.server.domain.comment.dto.response.CommentUpdateResponse;
 import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +22,7 @@ public class CommentController {
     private final CommentCommandService commentCommandService;
 
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<CommentCreateResponse> create(
             @Authenticated AuthContext authContext,
             @RequestBody @Valid CommentCreateRequest request
     ) {
@@ -27,11 +30,11 @@ public class CommentController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
+                .body(new CommentCreateResponse(true));
     }
 
     @PatchMapping("/{commentId}")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<CommentUpdateResponse> update(
             @Authenticated AuthContext authContext,
             @PathVariable(name = "commentId") Long commentId,
             @RequestBody @Valid CommentUpdateRequest request
@@ -40,11 +43,11 @@ public class CommentController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
+                .body(new CommentUpdateResponse(true));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<CommentDeleteResponse> delete(
             @Authenticated AuthContext authContext,
             @PathVariable(name = "commentId") Long commentId
     ) {
@@ -52,6 +55,6 @@ public class CommentController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
+                .body(new CommentDeleteResponse(true));
     }
 }
