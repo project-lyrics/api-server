@@ -23,7 +23,7 @@ public class UserQueryService {
     }
 
     public User getUserBySocialInfo(String socialId, AuthProvider authProvider) {
-        return userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(socialId, authProvider)
+        return userQueryRepository.findBySocialIdAndAuthProvider(socialId, authProvider)
                 .orElseThrow(UserNotFoundException::new);
     }
 

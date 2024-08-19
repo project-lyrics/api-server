@@ -19,7 +19,7 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(String socialId, AuthProvider authProvider) {
+    public Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(QUser.user)

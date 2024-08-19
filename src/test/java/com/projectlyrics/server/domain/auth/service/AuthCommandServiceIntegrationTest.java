@@ -135,7 +135,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         AuthTokenResponse response = sut.signUp(request);
 
         //then
-        User findUser = userQueryRepository.findBySocialIdAndAuthProviderAndNotDeleted(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get();
+        User findUser = userQueryRepository.findBySocialIdAndAuthProvider(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get();
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
         assertThat(userId).isEqualTo(findUser.getId());
     }

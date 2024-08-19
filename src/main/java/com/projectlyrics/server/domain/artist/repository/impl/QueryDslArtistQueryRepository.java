@@ -37,7 +37,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
-    public Slice<Artist> findAllAndNotDeleted(Long cursor, Pageable pageable) {
+    public Slice<Artist> findAll(Long cursor, Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(
@@ -61,7 +61,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
-    public Slice<Artist> findAllByQueryAndNotDeleted(String query, Long cursor, Pageable pageable) {
+    public Slice<Artist> findAllByQuery(String query, Long cursor, Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(QArtist.artist)
                 .where(

@@ -63,7 +63,7 @@ public class ArtistQueryRepositoryTest {
         Pageable pageable = PageRequest.of(0, 3);
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable);
+        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
 
         // then
         assertAll(
@@ -84,7 +84,7 @@ public class ArtistQueryRepositoryTest {
         Pageable pageable = PageRequest.of(0, 3);
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable);
+        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
 
         // then
         assertAll(
@@ -103,7 +103,7 @@ public class ArtistQueryRepositoryTest {
         artistCommandRepository.save(artist2);
 
         // when
-        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("검정치마", 0L, PageRequest.of(0, 3));
+        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("검정치마", 0L, PageRequest.of(0, 3));
 
         // then
         assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
@@ -116,7 +116,7 @@ public class ArtistQueryRepositoryTest {
         artistCommandRepository.save(artist1);
 
         // when
-        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted("긴난보이즈", 0L, PageRequest.of(0, 3));
+        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("긴난보이즈", 0L, PageRequest.of(0, 3));
 
         // then
         assertThat(searchedArtists.getContent()).isEmpty();

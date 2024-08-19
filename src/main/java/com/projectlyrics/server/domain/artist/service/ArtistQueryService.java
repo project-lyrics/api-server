@@ -26,14 +26,14 @@ public class ArtistQueryService {
     }
 
     public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAllAndNotDeleted(cursor, pageable)
+        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(cursor, pageable)
                 .map(ArtistGetResponse::of);
 
         return CursorBasePaginatedResponse.of(artistSlice);
     }
 
     public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQueryAndNotDeleted(
+        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(
                         query,
                         cursor,
                         pageable
