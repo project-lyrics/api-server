@@ -144,7 +144,7 @@ class NoteQueryServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 사용자_id와_일치하는_작성자와_연관된_가사가_없는_노트_리스트를_최신순으로_조회해야_한다() {
+    void 사용자_id와_일치하는_작성자와_연관된_가사가_없는_노트_리스트도_포함하여_최신순으로_조회해야_한다() {
         // given
         List<Note> notes = new ArrayList<>();
 
@@ -254,6 +254,25 @@ class NoteQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().size()).isEqualTo(2),
                 () -> assertThat(result.data().get(0).id()).isEqualTo(bookmarkedNote2.getId()),
                 () -> assertThat(result.data().get(1).id()).isEqualTo(bookmarkedNote1.getId())
+        );
+    }
+
+    @Test
+    void 사용자가_북마크한_노트_중에서_특정_아티스트의_노트만_최신순으로_조회해야_한다() {
+        // given
+        Note bookmarkedNoteOfLikedArtist = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        Note bookmarkedNoteOfUnlikedArtist = noteCommandService.create(unlikedArtistSongNoteRequest, user.getId());
+
+        bookmarkCommandRepository.save(BookmarkFixture.create(user, bookmarkedNoteOfLikedArtist));
+        bookmarkCommandRepository.save(BookmarkFixture.create(user, bookmarkedNoteOfUnlikedArtist));
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), user.getId(), null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(bookmarkedNoteOfLikedArtist.getId())
         );
     }
 

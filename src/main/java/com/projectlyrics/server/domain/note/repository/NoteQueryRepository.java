@@ -14,6 +14,7 @@ public interface NoteQueryRepository {
     Slice<Note> findAllByUserId(boolean hasLyrics, Long userId, Long cursorId, Pageable pageable);
     Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long cursorId, Pageable pageable);
     Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable);
+    Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable);
 
     long countDraftNotesByUserId(Long userId);
 }

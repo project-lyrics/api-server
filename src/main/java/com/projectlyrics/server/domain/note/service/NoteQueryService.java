@@ -4,12 +4,10 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
-import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,13 +54,9 @@ public class NoteQueryService {
     }
 
     public CursorBasePaginatedResponse<NoteGetResponse> getBookmarkedNotes(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
-        Slice<Note> noteSlice = noteQueryRepository.findAllByUserId(hasLyrics, userId, cursor, PageRequest.ofSize(size));
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllBookmarkedAndByArtistId(hasLyrics, artistId, cursor, PageRequest.ofSize(size))
+                .map(note -> NoteGetResponse.of(note, userId));
 
-        List<NoteGetResponse> content = noteSlice.stream()
-                .filter(note -> note.isBookmarked(userId) && note.isAssociatedWithArtist(artistId))
-                .map(note -> NoteGetResponse.of(note, userId))
-                .toList();
-
-        return CursorBasePaginatedResponse.of(new SliceImpl<>(content, noteSlice.getPageable(), noteSlice.hasNext()));
+        return CursorBasePaginatedResponse.of(notes);
     }
 }
