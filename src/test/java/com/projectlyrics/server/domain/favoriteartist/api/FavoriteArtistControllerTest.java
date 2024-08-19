@@ -4,10 +4,9 @@ import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.favoriteartist.dto.FavoriteArtistResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
@@ -19,10 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
@@ -60,6 +57,11 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                                         .description("Artist Id 배열(number) ex) [1, 2, 3]")
                         )
                         .requestSchema(Schema.schema("Create Favorite Artist List Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Create Favorite Artist List Response"))
                         .build())
         );
     }
@@ -88,6 +90,11 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParam)
                         .requestSchema(Schema.schema("Delete Favorite Artist Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Delete Favorite Artist Response"))
                         .build()
                 )
         );

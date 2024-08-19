@@ -78,6 +78,11 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("곡 ID")
                         )
                         .requestSchema(Schema.schema("Create Note Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Create Note Response"))
                         .build())
         );
     }
@@ -124,6 +129,11 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class))
                         )
                         .requestSchema(Schema.schema("Update Note Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Update Note Response"))
                         .build())
         );
     }
@@ -149,6 +159,11 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 ID")
                         )
                         .requestSchema(Schema.schema("Delete Note Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Delete Note Response"))
                         .build())
         );
     }

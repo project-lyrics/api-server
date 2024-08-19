@@ -49,6 +49,11 @@ class CommentControllerTest extends RestDocsTest {
                                         .description("노트 ID")
                         )
                         .requestSchema(Schema.schema("Create Comment Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Create Comment Response"))
                         .build())
         );
     }
@@ -83,6 +88,11 @@ class CommentControllerTest extends RestDocsTest {
                                         .description("새로운 댓글 내용")
                         )
                         .requestSchema(Schema.schema("Update Comment Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Update Comment Response"))
                         .build())
         );
     }
@@ -106,6 +116,11 @@ class CommentControllerTest extends RestDocsTest {
                                 parameterWithName("commentId").description("댓글 ID")
                         )
                         .requestSchema(Schema.schema("Delete Comment Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Delete Comment Response"))
                         .build())
         );
     }
