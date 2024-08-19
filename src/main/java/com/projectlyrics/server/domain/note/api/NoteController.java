@@ -5,8 +5,7 @@ import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
-import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
-import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
+import com.projectlyrics.server.domain.note.dto.response.*;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import jakarta.validation.Valid;
@@ -24,7 +23,7 @@ public class NoteController {
     private final NoteQueryService noteQueryService;
 
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<NoteCreateResponse> create(
             @Authenticated AuthContext authContext,
             @RequestBody @Valid NoteCreateRequest request
     ) {
@@ -32,23 +31,11 @@ public class NoteController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
-    }
-
-    @DeleteMapping("/{noteId}")
-    public ResponseEntity<Void> delete(
-            @Authenticated AuthContext authContext,
-            @PathVariable(name = "noteId") Long noteId
-    ) {
-        noteCommandService.delete(authContext.getId(), noteId);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+                .body(new NoteCreateResponse(true));
     }
 
     @PatchMapping("/{noteId}")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<NoteUpdateResponse> update(
             @Authenticated AuthContext authContext,
             @PathVariable(name = "noteId") Long noteId,
             @RequestBody @Valid NoteUpdateRequest request
@@ -57,7 +44,19 @@ public class NoteController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
+                .body(new NoteUpdateResponse(true));
+    }
+
+    @DeleteMapping("/{noteId}")
+    public ResponseEntity<NoteDeleteResponse> delete(
+            @Authenticated AuthContext authContext,
+            @PathVariable(name = "noteId") Long noteId
+    ) {
+        noteCommandService.delete(authContext.getId(), noteId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new NoteDeleteResponse(true));
     }
 
     @GetMapping("/{noteId}")
