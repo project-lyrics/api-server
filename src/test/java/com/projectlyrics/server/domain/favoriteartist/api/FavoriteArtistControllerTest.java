@@ -6,6 +6,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistCreateResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -33,6 +34,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FavoriteArtistControllerTest extends RestDocsTest {
 
     @Test
+    void 관심_아티스트를_저장하면_데이터와_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(post("/api/v1/favorite-artists")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .queryParam("artistId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(new FavoriteArtistCreateResponse(true))))
+                .andDo(getCreateFavoriteArtistDocument());
+    }
+
+    private RestDocumentationResultHandler getCreateFavoriteArtistDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Favorite Artist API")
+                        .summary("관심 아티스트 추가 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .queryParameters(
+                                parameterWithName("artistId").type(SimpleType.NUMBER)
+                                        .description("아티스트 id")
+                        )
+                        .requestSchema(Schema.schema("Create Favorite Artist Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Create Favorite Artist Response"))
+                        .build())
+
+        );
+    }
+
+    @Test
     void 관심_아티스트들을_저장하면_200응답을_해야_한다() throws Exception {
         //given
         CreateFavoriteArtistListRequest request = new CreateFavoriteArtistListRequest(List.of(1L, 2L));
@@ -43,6 +77,7 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(new FavoriteArtistCreateResponse(true))))
                 .andDo(getCreateFavoriteArtistListDocument());
     }
 

@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.favoriteartist.api;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistCreateAllResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistCreateResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistDeleteResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
@@ -24,16 +24,28 @@ public class FavoriteArtistController {
     private final FavoriteArtistCommandService favoriteArtistCommandService;
     private final FavoriteArtistQueryService favoriteArtistQueryService;
 
-    @PostMapping("/batch")
-    public ResponseEntity<FavoriteArtistCreateAllResponse> createAll(
+    @PostMapping
+    public ResponseEntity<FavoriteArtistCreateResponse> create(
             @Authenticated AuthContext authContext,
-            @RequestBody @Valid CreateFavoriteArtistListRequest request
+            @RequestParam(name = "artistId") Long artistId
     ) {
-        favoriteArtistCommandService.saveAll(authContext.getId(), request);
+        favoriteArtistCommandService.create(authContext.getId(), artistId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new FavoriteArtistCreateAllResponse(true));
+                .body(new FavoriteArtistCreateResponse(true));
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<FavoriteArtistCreateResponse> createAll(
+            @Authenticated AuthContext authContext,
+            @RequestBody @Valid CreateFavoriteArtistListRequest request
+    ) {
+        favoriteArtistCommandService.createAll(authContext.getId(), request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new FavoriteArtistCreateResponse(true));
     }
 
     @DeleteMapping

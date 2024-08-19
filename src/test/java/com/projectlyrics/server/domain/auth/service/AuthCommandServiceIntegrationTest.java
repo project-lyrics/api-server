@@ -198,6 +198,6 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //when then
         assertThatThrownBy(() -> sut.signUp(request))
                 .isInstanceOf(AlreadyExistsUserException.class)
-                .hasMessage(ErrorCode.ALREADY_EXISTS_USER.getErrorMessage());
+                .hasMessage(ErrorCode.USER_ALREADY_EXISTS.getErrorMessage());
     }
 }

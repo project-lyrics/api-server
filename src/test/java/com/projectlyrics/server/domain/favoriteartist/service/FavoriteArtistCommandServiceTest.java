@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class FavoriteArtistCommandServiceTest extends IntegrationTest {
 
@@ -35,6 +36,25 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
     FavoriteArtistQueryRepository favoriteArtistQueryRepository;
 
     @Test
+    void 관심_아티스트를_저장해야_한다() throws Exception {
+        // given
+        Artist artist = artistCommandRepository.save(ArtistFixture.create());
+        User user = userCommandRepository.save(UserFixture.create());
+
+        // when
+        sut.create(user.getId(), artist.getId());
+
+        // then
+        List<FavoriteArtist> result = favoriteArtistQueryRepository.findAllByUserId(user.getId(), null, PageRequest.ofSize(5)).getContent();
+
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result.getFirst().getUser()).isEqualTo(user),
+                () -> assertThat(result.getFirst().getArtist()).isEqualTo(artist)
+        );
+    }
+
+    @Test
     void 관심_아티스트_리스트를_저장해야_한다() throws Exception {
         //given
         Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
@@ -49,7 +69,7 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
         User user = userCommandRepository.save(UserFixture.create());
 
         //when
-        sut.saveAll(user.getId(), request);
+        sut.createAll(user.getId(), request);
 
         //then
         PageRequest pageRequest = PageRequest.ofSize(5);
@@ -71,7 +91,7 @@ class FavoriteArtistCommandServiceTest extends IntegrationTest {
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         User user = userCommandRepository.save(UserFixture.create());
         CreateFavoriteArtistListRequest request = new CreateFavoriteArtistListRequest(List.of(artist.getId()));
-        sut.saveAll(user.getId(), request);
+        sut.createAll(user.getId(), request);
 
         // when
         sut.delete(user.getId(), artist.getId());
