@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.user.entity;
 
+import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -28,6 +29,13 @@ public class SocialInfo {
         return new SocialInfo(
                 authProvider,
                 socialId
+        );
+    }
+
+    public static SocialInfo from(AuthSocialInfo authSocialInfo) {
+        return of(
+                authSocialInfo.authProvider(),
+                authSocialInfo.socialId()
         );
     }
 

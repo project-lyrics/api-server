@@ -11,11 +11,14 @@ import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException
 import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.user.service.UserCommandService;
-import com.projectlyrics.server.domain.user.service.UserQueryService;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
+import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 @Transactional
 @Service
 public class AuthCommandService {
@@ -23,29 +26,16 @@ public class AuthCommandService {
     private final AuthQueryService authQueryService;
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
-    private final UserCommandService userCommandService;
-    private final UserQueryService userQueryService;
-
-    public AuthCommandService(
-            AuthQueryService authQueryService,
-            UserQueryService userQueryService,
-            JwtProvider jwtProvider,
-            JwtExtractor jwtExtractor, 
-            UserCommandService userCommandService
-    ) {
-        this.authQueryService = authQueryService;
-        this.userQueryService = userQueryService;
-        this.jwtProvider = jwtProvider;
-        this.jwtExtractor = jwtExtractor;
-        this.userCommandService = userCommandService;
-    }
+    private final UserCommandRepository userCommandRepository;
+    private final UserQueryRepository userQueryRepository;
 
     public AuthTokenResponse signIn(AuthSignInRequest request) {
         AuthSocialInfo socialInfo = authQueryService.getAuthSocialInfo(
                 request.socialAccessToken(),
                 request.authProvider()
         );
-        User user = userQueryService.getUserBySocialInfo(socialInfo.socialId(), request.authProvider());
+        User user = userQueryRepository.findBySocialIdAndAuthProvider(socialInfo.socialId(), request.authProvider())
+                .orElseThrow(UserNotFoundException::new);
 
         return AuthTokenResponse.of(
                 jwtProvider.issueTokens(user.getId(), user.getNickname().getValue())
@@ -65,10 +55,11 @@ public class AuthCommandService {
                 request.authProvider()
         );
 
-        if (userQueryService.existsBySocialInfo(SocialInfo.of(socialInfo.authProvider(), socialInfo.socialId()))) {
+        if (userQueryRepository.existsBySocialInfo(SocialInfo.from(socialInfo))) {
             throw new AlreadyExistsUserException();
         }
-        User user = userCommandService.create(User.createUser(socialInfo, request));
+
+        User user = userCommandRepository.save(User.createUser(socialInfo, request));
 
         return AuthTokenResponse.of(
                 jwtProvider.issueTokens(user.getId(), user.getNickname().getValue())
