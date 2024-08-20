@@ -83,7 +83,7 @@ jobs:
           key: ${{ secrets.KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker login -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_ACCESSTOKEN }}
+            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             sudo chmod 777 /home/ubuntu/scripts/deploy.sh
             /home/ubuntu/scripts/deploy.sh
             docker image prune -f
