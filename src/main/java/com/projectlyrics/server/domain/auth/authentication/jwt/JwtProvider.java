@@ -35,6 +35,7 @@ public class JwtProvider {
 
     public AuthToken issueTokens(long id, String nickname) {
         JwtClaim jwtClaim = new JwtClaim(id, nickname);
+
         return new AuthToken(
                 issueAccessToken(jwtClaim),
                 issueRefreshToken(jwtClaim)

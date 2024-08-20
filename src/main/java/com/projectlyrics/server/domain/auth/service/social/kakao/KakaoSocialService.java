@@ -1,9 +1,9 @@
 package com.projectlyrics.server.domain.auth.service.social.kakao;
 
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
-import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
-import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfoResponse;
+import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfo;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +21,13 @@ public class KakaoSocialService implements SocialService {
     }
 
     @Override
-    public AuthSocialInfo getSocialData(String socialAccessToken) {
-        KakaoUserInfoResponse kakaoUserInfo = getUserInfo(socialAccessToken);
+    public SocialInfo getSocialData(String socialAccessToken) {
+        KakaoUserInfo kakaoUserInfo = getUserInfo(socialAccessToken);
 
-        return kakaoUserInfo.toKakaoUserInfo();
+        return SocialInfo.from(kakaoUserInfo);
     }
 
-    private KakaoUserInfoResponse getUserInfo(String accessToken) {
+    private KakaoUserInfo getUserInfo(String accessToken) {
         return kakaoApiClient.getUserInfo(TOKEN.formatted(accessToken));
     }
 }

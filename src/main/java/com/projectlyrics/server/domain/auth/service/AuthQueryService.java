@@ -1,9 +1,9 @@
 package com.projectlyrics.server.domain.auth.service;
 
-import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
-import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.auth.domain.AuthGetSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
 import com.projectlyrics.server.domain.auth.service.social.SocialServiceFactory;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +15,9 @@ public class AuthQueryService {
 
     private final SocialServiceFactory socialServiceFactory;
 
-    public AuthSocialInfo getAuthSocialInfo(String socialAccessToken, AuthProvider authProvider) {
-        SocialService socialService = socialServiceFactory.getSocialServiceFrom(authProvider);
+    public SocialInfo getSocialInfo(AuthGetSocialInfo getSocialInfo) {
+        SocialService socialService = socialServiceFactory.getSocialServiceFrom(getSocialInfo.authProvider());
 
-        return socialService.getSocialData(socialAccessToken);
+        return socialService.getSocialData(getSocialInfo.socialAccessToken());
     }
 }
