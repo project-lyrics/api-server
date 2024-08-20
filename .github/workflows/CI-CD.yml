@@ -61,7 +61,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          source: ./docker-compose.yml
+          source: ./scripts/deploy.sh
           target: /home/ubuntu/
 
       - name: send docker compose file to dev server
