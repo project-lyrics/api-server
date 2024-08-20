@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  redis:
+    container_name: redis
+    image: redis:alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: always
+  blue:
+    container_name: blue
+    image: jinkonu/feelin-api:latest
+    pull_policy: always
+    expose:
+      - 8080
+    ports:
+      - "8081:8080"
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - redis
+  green:
+    container_name: green
+    image: jinkonu/feelin-api:latest
+    pull_policy: always
+    expose:
+      - 8080
+    ports:
+      - "8082:8080"
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - redis
+
+volumes:
+  redis-data:
