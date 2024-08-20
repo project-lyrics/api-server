@@ -19,7 +19,7 @@ class UserTest {
         //given
 
         //when then
-        assertThatNoException().isThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
+        assertThatNoException().isThrownBy(() -> User.create(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
@@ -37,7 +37,7 @@ class UserTest {
         String tooLongUsername = "usernameasdfsdfasdf";
 
         //when then
-        assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
+        assertThatThrownBy(() -> User.create(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
@@ -56,7 +56,7 @@ class UserTest {
         List<AuthSignUpRequest.TermsInput> agreement = List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"));
 
         //when then
-        assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
+        assertThatThrownBy(() -> User.create(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,
@@ -75,7 +75,7 @@ class UserTest {
         Year year = Year.now().minusYears(13);
         
         //when then
-        assertThatThrownBy(() -> User.createUser(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
+        assertThatThrownBy(() -> User.create(new AuthSocialInfo(AuthProvider.KAKAO, "socialId"),
                 new AuthSignUpRequest(
                         "socialAccessToken",
                         AuthProvider.KAKAO,

@@ -101,7 +101,7 @@ public class User extends BaseEntity {
         return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
-    public static User createUser(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
+    public static User create(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
         List<TermsAgreements> termsList = request.terms().stream()
                 .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
                 .toList();
