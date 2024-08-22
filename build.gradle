@@ -81,7 +81,7 @@ swaggerSources {
 
 openapi3 {
     servers = [
-            { url = "http://api.feelinapp.com:8080" },
+            { url = "http://api.feelinapp.com" },
             { url = "http://localhost:8080" }
     ]
     title = "API 문서"
