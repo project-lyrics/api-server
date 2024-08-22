@@ -288,12 +288,19 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getNoteListOfUserDocument() {
+        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
+                .type(SimpleType.BOOLEAN)
+                .optional()
+                .description("가사가 있는 노트만 조회");
+
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("사용자가 작성한 노트의 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .queryParameters(getPagingQueryParameters())
+                        .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),

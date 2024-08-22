@@ -3,9 +3,12 @@ package com.projectlyrics.server.domain.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
+import com.projectlyrics.server.domain.auth.repository.AuthRepository;
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfo;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.user.entity.*;
@@ -26,6 +29,8 @@ import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
@@ -53,6 +58,9 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     JwtExtractor jwtExtractor;
 
     @SpyBean
+    AuthRepository authRepository;
+
+    @SpyBean
     KakaoSocialDataApiClient kakaoSocialDataApiClient;
 
     @SpyBean
@@ -60,9 +68,10 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void 카카오_계정으로_로그인_해야_한다() throws Exception {
-        //given
+        // given
         String socialAccessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().kakao().build());
+        doReturn(null).when(authRepository).save(any());
         doReturn(new KakaoUserInfo(savedUser.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
@@ -101,6 +110,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         //given
         String accessToken = "accessToken";
         User savedUser = userCommandRepository.save(UserFixture.builder().apple().build());
+        doReturn(null).when(authRepository).save(any());
         doReturn(SocialInfo.from(new AppleUserInfo(savedUser.getSocialInfo().getSocialId())))
                 .when(appleSocialService).getSocialData(any());
 
@@ -125,6 +135,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
+        doReturn(null).when(authRepository).save(any());
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId(), new KakaoAccount()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
