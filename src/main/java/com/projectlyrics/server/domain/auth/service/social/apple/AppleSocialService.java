@@ -3,9 +3,9 @@ package com.projectlyrics.server.domain.auth.service.social.apple;
 import com.google.gson.*;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.InvalidPublicKeyException;
-import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.auth.service.social.SocialService;
-import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfoResponse;
+import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfo;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
@@ -38,13 +38,13 @@ public class AppleSocialService implements SocialService {
     }
 
     @Override
-    public AuthSocialInfo getSocialData(String socialAccessToken) {
-        AppleUserInfoResponse appleUserInfo = getUserInfo(socialAccessToken);
+    public SocialInfo getSocialData(String socialAccessToken) {
+        AppleUserInfo appleUserInfo = getUserInfo(socialAccessToken);
 
-        return appleUserInfo.toAuthUserInfo();
+        return SocialInfo.from(appleUserInfo);
     }
 
-    private AppleUserInfoResponse getUserInfo(String accessToken) {
+    private AppleUserInfo getUserInfo(String accessToken) {
         // https://appleid.apple.com/auth/keys로 HTTP GET 요청을 보내 Apple이 제공하는 Public Key 리스트를 받음
         JsonArray publicKeyList = getApplePublicKeys();
 
@@ -61,7 +61,7 @@ public class AppleSocialService implements SocialService {
 
         JsonObject userInfoObject = (JsonObject) JsonParser.parseString(new Gson().toJson(userInfo));
 
-        return new AppleUserInfoResponse(userInfoObject.get("sub").getAsString());
+        return new AppleUserInfo(userInfoObject.get("sub").getAsString());
     }
 
     private JsonArray getApplePublicKeys() {

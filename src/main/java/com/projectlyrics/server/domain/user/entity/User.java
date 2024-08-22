@@ -1,7 +1,5 @@
 package com.projectlyrics.server.domain.user.entity;
 
-import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.service.dto.AuthSocialInfo;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
@@ -19,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
@@ -101,18 +98,15 @@ public class User extends BaseEntity {
         return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
-    public static User createUser(AuthSocialInfo socialInfo, AuthSignUpRequest request) {
-        List<TermsAgreements> termsList = request.terms().stream()
-                .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
-                .toList();
+    public static User create(UserCreate userCreate) {
         return new User(
-                SocialInfo.of(socialInfo.authProvider(), socialInfo.socialId()),
-                request.nickname(),
-                request.profileCharacter(),
+                userCreate.socialInfo(),
+                userCreate.nickname(),
+                userCreate.profileCharacter(),
                 Role.USER,
-                request.gender(),
-                Objects.nonNull(request.birthYear()) ? request.birthYear().getValue() : null,
-                termsList
+                userCreate.gender(),
+                userCreate.birthYear(),
+                userCreate.termsAgreements()
         );
     }
 

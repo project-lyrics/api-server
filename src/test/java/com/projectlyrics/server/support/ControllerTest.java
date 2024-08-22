@@ -18,8 +18,7 @@ import com.projectlyrics.server.domain.like.service.LikeCommandService;
 import com.projectlyrics.server.domain.like.service.LikeQueryService;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
-import com.projectlyrics.server.domain.user.service.UserCommandService;
-import com.projectlyrics.server.domain.user.service.UserQueryService;
+import com.projectlyrics.server.domain.song.service.SongQueryService;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +53,6 @@ public abstract class ControllerTest {
     protected ArtistQueryService artistQueryService;
 
     @MockBean
-    protected UserQueryService userQueryService;
-
-    @MockBean
-    protected UserCommandService userCommandService;
-
-    @MockBean
     protected AuthCommandService authCommandService;
 
     @MockBean
@@ -70,6 +63,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected FavoriteArtistQueryService favoriteArtistQueryService;
+
+    @MockBean
+    protected SongQueryService songQueryService;
 
     @MockBean
     protected NoteCommandService noteCommandService;

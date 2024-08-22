@@ -68,6 +68,9 @@ dependencies {
 
     // csv
     implementation 'com.opencsv:opencsv:5.5.2'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 swaggerSources {

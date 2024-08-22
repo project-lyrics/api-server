@@ -54,8 +54,11 @@ public class FavoriteArtist extends BaseEntity {
         this(null, user, artist);
     }
 
-    public static FavoriteArtist of(User user, Artist artist) {
-        return new FavoriteArtist(user, artist);
+    public static FavoriteArtist create(FavoriteArtistCreate favoriteArtistCreate) {
+        return new FavoriteArtist(
+                favoriteArtistCreate.user(),
+                favoriteArtistCreate.artist()
+        );
     }
 
     public static FavoriteArtist withId(Long id, User user, Artist artist) {

@@ -6,7 +6,7 @@ public record AuthTokenResponse(
         String accessToken,
         String refreshToken
 ) {
-    public static AuthTokenResponse of(AuthToken authToken) {
+    public static AuthTokenResponse from(AuthToken authToken) {
         return new AuthTokenResponse(
                 authToken.accessToken(),
                 authToken.refreshToken()

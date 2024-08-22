@@ -1,14 +1,17 @@
 package com.projectlyrics.server.domain.favoriteartist.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
+import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
+import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
+import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtistCreate;
 import com.projectlyrics.server.domain.favoriteartist.exception.FavoriteArtistNotFoundException;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.user.service.UserQueryService;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +26,34 @@ public class FavoriteArtistCommandService {
 
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
     private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
-    private final UserQueryService userQueryService;
-    private final ArtistQueryService artistQueryService;
+    private final UserQueryRepository userQueryRepository;
+    private final ArtistQueryRepository artistQueryRepository;
 
-    public void saveAll(Long userId, CreateFavoriteArtistListRequest request) {
-        User user = userQueryService.getUserById(userId);
+    public FavoriteArtist create(Long userId, Long artistId) {
+        User user = userQueryRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        Artist artist = artistQueryRepository.findById(artistId)
+                .orElseThrow(ArtistNotFoundException::new);
+
+        checkIfFavoriteArtistExists(userId, artistId);
+
+        return favoriteArtistCommandRepository.save(FavoriteArtist.create(FavoriteArtistCreate.of(user, artist)));
+    }
+
+    private void checkIfFavoriteArtistExists(Long userId, Long artistId) {
+        favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
+                .ifPresent(favoriteArtist -> { throw new FavoriteArtistNotFoundException(); });
+    }
+
+    public void createAll(Long userId, CreateFavoriteArtistListRequest request) {
+        User user = userQueryRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
         List<Artist> userFavoriteArtistList = getUserFavoriteArtistList(userId);
 
-        List<Artist> artistList = artistQueryService.getArtistsByIds(request.artistIds());
+        List<Artist> artistList = artistQueryRepository.findAllByIds(request.artistIds());
         List<FavoriteArtist> newFavoriteArtistList = artistList.stream()
-                .map(artist -> FavoriteArtist.of(user, artist))
+                .map(artist -> FavoriteArtist.create(FavoriteArtistCreate.of(user, artist)))
                 .toList();
 
         newFavoriteArtistList.forEach(newFavoriteArtist -> {

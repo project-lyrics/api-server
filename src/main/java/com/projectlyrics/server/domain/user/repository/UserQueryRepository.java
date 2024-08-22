@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserQueryRepository {
 
-    Optional<User> findBySocialIdAndAuthProviderAndNotDeleted(String socialId, AuthProvider authProvider);
+    Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider);
 
     Optional<User> findById(Long id);
 

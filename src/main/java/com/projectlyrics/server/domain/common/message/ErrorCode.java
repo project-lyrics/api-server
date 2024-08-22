@@ -24,7 +24,7 @@ public enum ErrorCode {
     UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "토큰이 유효하지 않습니다."),
     INVALID_KEY(HttpStatus.UNAUTHORIZED, "01005", "The key is not valid."),
-    ALREADY_EXISTS_USER(HttpStatus.BAD_REQUEST, "01006", "이미 존재하는 유저입니다."),
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "01006", "이미 존재하는 유저입니다."),
     NOT_AGREE_TO_TERMS(HttpStatus.BAD_REQUEST, "01007", "약관에 동의하지 않았습니다."),
     NO_TOKEN_PROVIDED(HttpStatus.UNAUTHORIZED, "01008", "인증 토큰이 존재하지 않습니다."),
     INVALID_TOKEN_PREFIX(HttpStatus.BAD_REQUEST, "01009", "Bearer 인증 형식이 아닙니다."),
@@ -65,6 +65,7 @@ public enum ErrorCode {
 
     // Favorite Artist
     FAVORITE_ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "09000", "해당 즐겨찾는 아티스트를 조회할 수 없습니다."),
+    FAVORITE_ARTIST_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "09001", "이미 즐겨찾는 아티스트를 추가한 상태입니다."),
 
     // Bookmark
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "10000", "해당 북마크를 조회할 수 없습니다."),

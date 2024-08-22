@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.favoriteartist.dto.response;
 
-public record FavoriteArtistCreateAllResponse(
+public record FavoriteArtistCreateResponse(
         boolean success
 ) {
 }

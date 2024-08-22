@@ -29,15 +29,15 @@ class SongQueryServiceTest extends IntegrationTest {
     @Autowired
     SongQueryService sut;
 
-    @ValueSource(strings = {"no", "PAIN"})
+    @ValueSource(strings = {"양들", "침묵"})
     @ParameterizedTest
-    void 검색어를_기반으로_제목이_일치하는_곡을_조회해야_한다() throws Exception {
+    void 검색어를_기반으로_제목이_일치하는_곡을_조회해야_한다(String query) throws Exception {
         // given
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         SongCreateRequest request = new SongCreateRequest(
                 1L,
                 "spotifyId",
-                "No Pain",
+                "양들의 침묵",
                 LocalDate.now(),
                 "albumName",
                 "imageUrl",
@@ -46,7 +46,7 @@ class SongQueryServiceTest extends IntegrationTest {
         Song song = songCommandService.create(request);
 
         // when
-        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongs("no", null, 5);
+        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongs(query, null, 5);
 
         // then
         assertAll(

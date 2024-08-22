@@ -66,16 +66,17 @@ public class NoteController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(noteQueryService.getNoteById(authContext.getId(), noteId));
+                .body(noteQueryService.getNoteById(noteId, authContext.getId()));
     }
 
     @GetMapping
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfUser(
             @Authenticated AuthContext authContext,
+            @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByUserId(authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByUserId(hasLyrics, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -85,10 +86,11 @@ public class NoteController {
     @GetMapping("/favorite-artists")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfFavoriteArtists(
             @Authenticated AuthContext authContext,
+            @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesOfFavoriteArtists(authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesOfFavoriteArtists(hasLyrics, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -98,12 +100,27 @@ public class NoteController {
     @GetMapping("/artists")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfArtist(
             @Authenticated AuthContext authContext,
-            @RequestParam(name = "artistId") Long artistId,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
+            @RequestParam(name = "artistId") Long artistId,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(authContext.getId(), artistId, hasLyrics, cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(hasLyrics, artistId, authContext.getId(), cursor, size);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/songs")
+    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfSong(
+            @Authenticated AuthContext authContext,
+            @RequestParam(name = "hasLyrics") boolean hasLyrics,
+            @RequestParam(name = "songId") Long songId,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesBySongId(hasLyrics, songId, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -113,11 +130,12 @@ public class NoteController {
     @GetMapping("/bookmarked")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesBookmarked(
             @Authenticated AuthContext authContext,
+            @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "artistId", required = false) Long artistId,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getBookmarkedNotes(artistId, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getBookmarkedNotes(hasLyrics, artistId, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

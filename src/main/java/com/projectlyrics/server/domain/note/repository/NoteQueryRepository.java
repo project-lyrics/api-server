@@ -8,15 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NoteQueryRepository {
+
     Optional<Note> findById(Long id);
 
-    Slice<Note> findAllByUserId(Long userId, Long cursorId, Pageable pageable);
-
-    Slice<Note> findAllByArtistIds(List<Long> artistsIds, Long cursorId, Pageable pageable);
-
-    Slice<Note> findAllByArtistId(Long artistId, Long cursorId, Pageable pageable);
-
-    Slice<Note> findAllByArtistIdAndHasLyrics(Long artistId, Long cursorId, Pageable pageable);
+    Slice<Note> findAllByUserId(boolean hasLyrics, Long userId, Long cursorId, Pageable pageable);
+    Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long cursorId, Pageable pageable);
+    Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable);
+    Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable);
+    Slice<Note> findAllBySongId(boolean hasLyrics, Long songId, Long cursorId, Pageable pageable);
 
     long countDraftNotesByUserId(Long userId);
 }
