@@ -46,7 +46,7 @@ public class AuthController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.reissueAccessToken(request.refreshToken()));
+                .body(authCommandService.reissueToken(request.refreshToken()));
     }
 
     @GetMapping("/validate-token")

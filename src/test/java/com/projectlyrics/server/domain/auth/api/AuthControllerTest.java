@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
-import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
@@ -265,7 +264,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willReturn(response);
 
         //when true
@@ -282,7 +281,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         ErrorResponse response = ErrorResponse.of(ErrorCode.TOKEN_EXPIRED);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willThrow(new TokenExpiredException());
 
         //when true
@@ -299,7 +298,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willThrow(new InvalidTokenException());
 
         //when true

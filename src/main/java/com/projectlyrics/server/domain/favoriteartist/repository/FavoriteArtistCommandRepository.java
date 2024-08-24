@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FavoriteArtistCommandRepository extends JpaRepository<FavoriteArtist, Long> {
+
+    void deleteAllByUserId(Long userId);
 }

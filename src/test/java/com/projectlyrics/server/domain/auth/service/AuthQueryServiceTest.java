@@ -10,7 +10,6 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
-import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoAccount;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfo;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
@@ -39,7 +38,7 @@ public class AuthQueryServiceTest extends IntegrationTest {
         String socialId = "socialId";
         AuthSignInRequest request = new AuthSignInRequest(accessToken, AuthProvider.KAKAO);
         given(kakaoSocialDataApiClient.getUserInfo(any()))
-                .willReturn(new KakaoUserInfo(socialId, new KakaoAccount()));
+                .willReturn(new KakaoUserInfo(socialId));
 
         //when
         SocialInfo socialInfo = sut.getSocialInfo(AuthGetSocialInfo.from(request));
