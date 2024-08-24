@@ -71,6 +71,9 @@ public enum ErrorCode {
     // Bookmark
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "10000", "해당 북마크를 조회할 수 없습니다."),
     BOOKMARK_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "10001", "이미 북마크를 추가한 상태입니다."),
+
+    // Notification
+    UNKNOWN_NOTIFICATION_TYPE(HttpStatus.BAD_REQUEST, "11000", "알 수 없는 알림 타입입니다."),
     ;
 
     private final HttpStatus responseStatus;
