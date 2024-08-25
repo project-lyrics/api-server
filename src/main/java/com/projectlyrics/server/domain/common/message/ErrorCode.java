@@ -74,6 +74,7 @@ public enum ErrorCode {
 
     // Notification
     UNKNOWN_NOTIFICATION_TYPE(HttpStatus.BAD_REQUEST, "11000", "알 수 없는 알림 타입입니다."),
+    NOTIFICATION_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "11001", "알림 전송에 실패했습니다."),
     ;
 
     private final HttpStatus responseStatus;
