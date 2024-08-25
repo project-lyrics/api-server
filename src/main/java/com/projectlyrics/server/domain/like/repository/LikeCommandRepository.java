@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeCommandRepository extends JpaRepository<Like, Long> {
+
+    void deleteAllByUserId(Long userId);
 }

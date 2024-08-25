@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentCommandRepository extends JpaRepository<Comment, Long> {
+
+    void deleteAllByWriterId(Long writerId);
 }

@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.auth.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
-import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
@@ -32,8 +31,7 @@ import java.util.List;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -265,7 +263,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willReturn(response);
 
         //when true
@@ -282,7 +280,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         ErrorResponse response = ErrorResponse.of(ErrorCode.TOKEN_EXPIRED);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willThrow(new TokenExpiredException());
 
         //when true
@@ -299,7 +297,7 @@ class AuthControllerTest extends RestDocsTest {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TOKEN);
-        given(authCommandService.reissueAccessToken(any()))
+        given(authCommandService.reissueToken(any()))
                 .willThrow(new InvalidTokenException());
 
         //when true
@@ -393,6 +391,52 @@ class AuthControllerTest extends RestDocsTest {
                                         .summary("토큰 검증 API")
                                         .requestHeaders(getAuthorizationHeader())
                                         .responseSchema(Schema.schema(ERROR_RESPONSE_SCHEMA))
+                                        .build())
+                        )
+                );
+    }
+
+    @Test
+    void 로그아웃할_때_200응답을_해야_한다() throws Exception {
+        // given
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/auth/sign-out")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                                resource(ResourceSnippetParameters.builder()
+                                        .tag("Auth API")
+                                        .summary("로그아웃 API")
+                                        .requestHeaders(getAuthorizationHeader())
+                                        .responseFields(
+                                                fieldWithPath("status").type(JsonFieldType.BOOLEAN)
+                                                        .description("로그아웃 처리 상태")
+                                        )
+                                        .responseSchema(Schema.schema("SignOut Response"))
+                                        .build())
+                        )
+                );
+    }
+
+    @Test
+    void 회원탈퇴할_때_200응답을_해야_한다() throws Exception {
+        // given
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/auth/delete")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                                resource(ResourceSnippetParameters.builder()
+                                        .tag("Auth API")
+                                        .summary("회원탈퇴 API")
+                                        .requestHeaders(getAuthorizationHeader())
+                                        .responseFields(
+                                                fieldWithPath("status").type(JsonFieldType.BOOLEAN)
+                                                        .description("회원탈퇴 처리 상태")
+                                        )
+                                        .responseSchema(Schema.schema("Delete Response"))
                                         .build())
                         )
                 );
