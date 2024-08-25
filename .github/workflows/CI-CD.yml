@@ -38,6 +38,11 @@ jobs:
           echo "${{ secrets.YML }}" > src/main/resources/application.yml
         shell: bash
 
+      - name: set up redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: 6
+
       - name: build with gradle
         run: |
           ./gradlew bootjar
