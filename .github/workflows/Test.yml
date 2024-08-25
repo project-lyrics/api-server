@@ -20,6 +20,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: set up redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: 6p
+
       - name: Test with Gradle
         run: |
           ./gradlew test
