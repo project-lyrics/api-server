@@ -1,10 +1,10 @@
 package com.projectlyrics.server.domain.notification.service;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.domain.CommentCreate;
-import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -26,12 +26,14 @@ import com.projectlyrics.server.support.fixture.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.*;
 
 class NotificationCommandServiceTest extends IntegrationTest {
 
@@ -55,6 +57,9 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
     @Autowired
     NotificationQueryRepository notificationQueryRepository;
+
+    @MockBean
+    FirebaseMessaging firebaseMessaging;
 
     @Autowired
     NotificationCommandService sut;
@@ -81,9 +86,10 @@ class NotificationCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 댓글에_대한_알림을_생성한다() {
+    void 댓글에_대한_알림을_저장한다() throws Exception {
         // given
         CommentEvent commentEvent = CommentEvent.from(comment);
+        when(firebaseMessaging.send(any())).thenReturn(null);
 
         // when
         sut.createCommentNotification(commentEvent);
