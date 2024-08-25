@@ -3,7 +3,6 @@ package com.projectlyrics.server.domain.notification.domain;
 import com.google.firebase.messaging.Message;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -35,8 +34,6 @@ public class Notification extends BaseEntity {
     private Note note;
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Like like;
 
     private Notification(
             Long id,
@@ -44,8 +41,7 @@ public class Notification extends BaseEntity {
             User sender,
             User receiver,
             Note note,
-            Comment comment,
-            Like like
+            Comment comment
     ) {
         this.id = id;
         this.type = type;
@@ -53,7 +49,6 @@ public class Notification extends BaseEntity {
         this.receiver = receiver;
         this.note = note;
         this.comment = comment;
-        this.like = like;
     }
 
     private Notification(
@@ -61,10 +56,9 @@ public class Notification extends BaseEntity {
             User sender,
             User receiver,
             Note note,
-            Comment comment,
-            Like like
+            Comment comment
     ) {
-        this(null, type, sender, receiver, note, comment, like);
+        this(null, type, sender, receiver, note, comment);
     }
 
     public static Notification create(CommentEvent event) {
@@ -73,8 +67,7 @@ public class Notification extends BaseEntity {
                 event.sender(),
                 event.receiver(),
                 event.note(),
-                event.comment(),
-                null
+                event.comment()
         );
     }
 
