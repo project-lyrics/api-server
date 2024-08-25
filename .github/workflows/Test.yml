@@ -23,7 +23,7 @@ jobs:
       - name: set up redis
         uses: supercharge/redis-github-action@1.7.0
         with:
-          redis-version: 6p
+          redis-version: 6
 
       - name: Test with Gradle
         run: |
