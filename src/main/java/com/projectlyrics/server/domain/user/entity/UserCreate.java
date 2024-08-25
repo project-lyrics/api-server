@@ -11,7 +11,8 @@ public record UserCreate(
         ProfileCharacter profileCharacter,
         Gender gender,
         Integer birthYear,
-        List<TermsAgreements> termsAgreements
+        List<TermsAgreements> termsAgreements,
+        String fcmToken
 ) {
 
     public static UserCreate of(SocialInfo socialInfo, AuthSignUpRequest request) {
@@ -25,7 +26,8 @@ public record UserCreate(
                 request.profileCharacter(),
                 request.gender(),
                 Objects.nonNull(request.birthYear()) ? request.birthYear().getValue() : null,
-                termsList
+                termsList,
+                null
         );
     }
 }

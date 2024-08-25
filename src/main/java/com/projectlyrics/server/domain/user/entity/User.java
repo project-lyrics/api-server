@@ -84,9 +84,10 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements
+            List<TermsAgreements> termsAgreements,
+            String fcmToken
     ) {
-        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, null);
+        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
     }
 
     public static User withId(
@@ -97,9 +98,10 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements
+            List<TermsAgreements> termsAgreements,
+            String fcmToken
     ) {
-        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, null);
+        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
     }
 
     public static User create(UserCreate userCreate) {
@@ -110,19 +112,8 @@ public class User extends BaseEntity {
                 Role.USER,
                 userCreate.gender(),
                 userCreate.birthYear(),
-                userCreate.termsAgreements()
+                userCreate.termsAgreements(),
+                userCreate.fcmToken()
         );
-    }
-
-    public static User of(
-            SocialInfo socialInfo,
-            String nickname,
-            ProfileCharacter profileCharacter,
-            Role role,
-            Gender gender,
-            Integer birthYear,
-            List<TermsAgreements> termsAgreements
-    ) {
-        return new User(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 }
