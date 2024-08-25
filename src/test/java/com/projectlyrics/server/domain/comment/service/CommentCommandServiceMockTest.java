@@ -1,10 +1,9 @@
-package com.projectlyrics.server.domain.notification.service;
+package com.projectlyrics.server.domain.comment.service;
 
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
-import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
@@ -24,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class NotificationCommandServiceTest {
+class CommentCommandServiceMockTest {
 
     @Mock
     private CommentCommandRepository commentCommandRepository;
