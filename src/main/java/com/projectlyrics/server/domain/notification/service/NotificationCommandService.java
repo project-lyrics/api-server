@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationCommandService {
 
     private final NotificationCommandRepository notificationCommandRepository;
+    private final FirebaseMessaging firebaseMessaging;
 
     @Async
     @EventListener
@@ -30,7 +31,7 @@ public class NotificationCommandService {
 
     private void send(Notification notification) {
         try {
-            FirebaseMessaging.getInstance().send(notification.getMessage());
+            firebaseMessaging.send(notification.getMessage());
         } catch (FirebaseMessagingException e) {
             log.info(e.getMessage());
             throw new FailedToSendNotificationException();
