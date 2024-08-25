@@ -79,8 +79,20 @@ public class Notification extends BaseEntity {
     }
 
     public Message getMessage() {
-        return Message.builder()
-                .setToken(receiver.getFcmToken())
-                .build();
+        Message.Builder builder = Message.builder()
+                .setToken(receiver.getFcmToken());
+
+        switch (type) {
+            case COMMENT_ON_NOTE:
+                return builder
+                        .putData("type", type.name())
+                        .putData("senderId", sender.getId().toString())
+                        .putData("senderNickname", sender.getNickname().getValue())
+                        .putData("noteId", note.getId().toString())
+                        .putData("noteTitle", note.getContent())
+                        .build();
+            default:
+                throw new IllegalArgumentException("Invalid notification type");
+        }
     }
 }
