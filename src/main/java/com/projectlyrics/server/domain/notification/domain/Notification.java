@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
+import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,6 +25,7 @@ public class Notification extends BaseEntity {
     private Long id;
 
     private NotificationType type;
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
@@ -38,6 +40,7 @@ public class Notification extends BaseEntity {
     private Notification(
             Long id,
             NotificationType type,
+            String content,
             User sender,
             User receiver,
             Note note,
@@ -46,28 +49,33 @@ public class Notification extends BaseEntity {
         this.id = id;
         this.type = type;
         this.sender = sender;
+        this.content = content;
         this.receiver = receiver;
         this.note = note;
         this.comment = comment;
     }
 
-    private Notification(
-            NotificationType type,
-            User sender,
-            User receiver,
-            Note note,
-            Comment comment
-    ) {
-        this(null, type, sender, receiver, note, comment);
-    }
-
     public static Notification create(CommentEvent event) {
         return new Notification(
+                null,
                 NotificationType.COMMENT_ON_NOTE,
+                null,
                 event.sender(),
                 event.receiver(),
                 event.note(),
                 event.comment()
+        );
+    }
+
+    public static Notification create(PublicEvent event) {
+        return new Notification(
+                null,
+                NotificationType.PUBLIC,
+                event.content(),
+                event.sender(),
+                event.receiver(),
+                null,
+                null
         );
     }
 

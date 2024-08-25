@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,10 +67,15 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
     private Comment comment;
     private User user;
+    private List<User> users = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        user = userCommandRepository.save(UserFixture.create());
+        for (int i = 0; i < 100; i++) {
+            users.add(userCommandRepository.save(UserFixture.create()));
+        }
+        user = users.getFirst();
+
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         Song song = songCommandRepository.save(SongFixture.create(artist));
 
@@ -105,6 +111,27 @@ class NotificationCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.get(0).getReceiver()).isEqualTo(comment.getNote().getPublisher()),
                 () -> assertThat(result.get(0).getNote()).isEqualTo(comment.getNote()),
                 () -> assertThat(result.get(0).getComment()).isEqualTo(comment)
+        );
+    }
+
+    @Test
+    void 공개_알림을_저장한다() throws Exception {
+        // given
+        when(firebaseMessaging.sendEachForMulticast(any())).thenReturn(null);
+        String content = "content";
+
+        // when
+        sut.createPublicNotification(user.getId(), content);
+
+        // then
+        List<Notification> result = notificationQueryRepository.findAllBySenderId(user.getId(), null, PageRequest.ofSize(10))
+                .getContent();
+
+        assertAll(
+                () -> assertThat(result.size()).isEqualTo(10),
+                () -> assertThat(result.stream().allMatch(notification -> notification.getType().equals(NotificationType.PUBLIC))).isTrue(),
+                () -> assertThat(result.stream().allMatch(notification -> notification.getSender().getId().equals(user.getId()))).isTrue(),
+                () -> assertThat(result.stream().allMatch(notification -> notification.getContent().equalsIgnoreCase(content))).isTrue()
         );
     }
 }

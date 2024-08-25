@@ -39,4 +39,24 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
     }
+
+    @Override
+    public Slice<Notification> findAllBySenderId(Long senderId, Long cursorId, Pageable pageable) {
+        List<Notification> content = jpaQueryFactory
+                .selectFrom(notification)
+                .leftJoin(notification.sender).fetchJoin()
+                .leftJoin(notification.receiver).fetchJoin()
+                .leftJoin(notification.note).fetchJoin()
+                .leftJoin(notification.comment).fetchJoin()
+                .where(
+                        notification.sender.id.eq(senderId),
+                        QueryDslUtils.gtCursorId(cursorId, notification.id),
+                        notification.deletedAt.isNull()
+                )
+                .orderBy(notification.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
 }
