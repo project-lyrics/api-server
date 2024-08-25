@@ -19,13 +19,15 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-            FileInputStream key = new FileInputStream("src/main/resources/firebase-key.json");
+            if (FirebaseApp.getApps().isEmpty()) {
+                FileInputStream key = new FileInputStream("src/main/resources/firebase-key.json");
 
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(key))
-                    .build();
+                FirebaseOptions options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(key))
+                        .build();
 
-            FirebaseApp.initializeApp(options);
+                FirebaseApp.initializeApp(options);
+            }
         } catch (IOException e) {
             log.error("failed to initialize firebase", e);
         }
