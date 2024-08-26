@@ -71,6 +71,9 @@ dependencies {
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // firebase cloud messaging
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 swaggerSources {

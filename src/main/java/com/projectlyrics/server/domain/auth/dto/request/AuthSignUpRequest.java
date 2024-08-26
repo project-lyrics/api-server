@@ -33,6 +33,8 @@ public record AuthSignUpRequest(
 
         @Valid
         List<TermsInput> terms
+
+        // TODO: fcmToken 추가
 ) {
 
     public record TermsInput(

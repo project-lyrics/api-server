@@ -25,12 +25,17 @@ jobs:
         with:
           redis-version: 6
 
-      - name: overwrite firebase-key.json
-        if: |
-          contains(github.ref, 'dev')
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "firebase-key.json"
+          json: ${{ secrets.FIREBASE_KEY }}
+
+      - name: Move firebase-key.json to src/main/resources
         run: |
           mkdir -p ./src/main/resources
-          echo "${{ secrets.FIREBASE_KEY }}" > src/main/resources/firebase-key.json
+          mv firebase-key.json ./src/main/resources/firebase-key.json
         shell: bash
 
       - name: Test with Gradle

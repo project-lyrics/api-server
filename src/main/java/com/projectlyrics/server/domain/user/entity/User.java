@@ -50,6 +50,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TermsAgreements> termsAgreements;
 
+    private String fcmToken;
+
     private User(
             Long id,
             SocialInfo socialInfo,
@@ -58,7 +60,8 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements
+            List<TermsAgreements> termsAgreements,
+            String fcmToken
     ) {
         checkNull(socialInfo);
         checkNull(termsAgreements);
@@ -71,6 +74,7 @@ public class User extends BaseEntity {
         this.info = new UserMetaInfo(gender, birthYear);
         this.termsAgreements = termsAgreements;
         termsAgreements.forEach(terms -> terms.setUser(this));
+        this.fcmToken = fcmToken;
     }
 
     private User(
@@ -80,9 +84,10 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements
+            List<TermsAgreements> termsAgreements,
+            String fcmToken
     ) {
-        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
     }
 
     public static User withId(
@@ -93,9 +98,10 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements
+            List<TermsAgreements> termsAgreements,
+            String fcmToken
     ) {
-        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
+        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
     }
 
     public static User create(UserCreate userCreate) {
@@ -106,19 +112,8 @@ public class User extends BaseEntity {
                 Role.USER,
                 userCreate.gender(),
                 userCreate.birthYear(),
-                userCreate.termsAgreements()
+                userCreate.termsAgreements(),
+                userCreate.fcmToken()
         );
-    }
-
-    public static User of(
-            SocialInfo socialInfo,
-            String nickname,
-            ProfileCharacter profileCharacter,
-            Role role,
-            Gender gender,
-            Integer birthYear,
-            List<TermsAgreements> termsAgreements
-    ) {
-        return new User(socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 }
