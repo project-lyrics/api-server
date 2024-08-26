@@ -26,8 +26,6 @@ jobs:
           redis-version: 6
 
       - name: overwrite firebase-key.json
-        if: |
-          contains(github.ref, 'dev')
         run: |
           mkdir -p ./src/main/resources
           echo "${{ secrets.FIREBASE_KEY }}" > src/main/resources/firebase-key.json
