@@ -29,7 +29,6 @@ jobs:
         run: |
           mkdir -p ./src/main/resources
           echo "${{ secrets.FIREBASE_KEY }}" > src/main/resources/firebase-key.json
-        shell: bash
 
       - name: Test with Gradle
         run: |
