@@ -28,7 +28,7 @@ jobs:
       - name: overwrite firebase-key.json
         run: |
           mkdir -p ./src/main/resources
-          echo "${{ secrets.FIREBASE_KEY }}" > src/main/resources/firebase-key.json
+          echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > src/main/resources/firebase-key.json
 
       - name: Test with Gradle
         run: |
