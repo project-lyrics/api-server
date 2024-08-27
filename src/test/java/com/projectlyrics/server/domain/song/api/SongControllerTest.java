@@ -4,8 +4,7 @@ import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
-import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.support.RestDocsTest;
 import com.projectlyrics.server.support.fixture.SongFixture;
@@ -29,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class SongControllerTest extends RestDocsTest {
+class
+SongControllerTest extends RestDocsTest {
 
     @Test
     void 곡을_검색하면_데이터와_200응답을_해야_한다() throws Exception {
@@ -40,8 +40,8 @@ class SongControllerTest extends RestDocsTest {
             data.add(SongSearchResponse.from(SongFixture.create()));
         }
 
-        CursorBasePaginatedResponse<SongSearchResponse> response = new CursorBasePaginatedResponse<>(
-                data.get(data.size() - 1).id(),
+        OffsetBasePaginatedResponse<SongSearchResponse> response = new OffsetBasePaginatedResponse<>(
+                0,
                 true,
                 data
         );
@@ -63,7 +63,7 @@ class SongControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getSongSearchDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getOffsetBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
 
         queryParams[pagingQueryParameters.length] = parameterWithName("query")
@@ -82,9 +82,9 @@ class SongControllerTest extends RestDocsTest {
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(
-                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
                                         .optional()
-                                        .description("다음 cursor에 쓰일 값"),
+                                        .description("API 응답의 현재 페이지 번호"),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
                                         .description("다음 데이터 존재 여부"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY)

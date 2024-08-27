@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.song.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -105,7 +106,7 @@ class SongQueryServiceTest extends IntegrationTest {
         Song song = songCommandService.create(request);
 
         // when
-        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, query, null, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, query, 0, 5);
 
         // then
         assertAll(
@@ -126,7 +127,7 @@ class SongQueryServiceTest extends IntegrationTest {
         songCommandService.create(requestOfArtist2);
 
         // when
-        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), null, null, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), null, 0, 5);
 
         // then
         assertAll(
@@ -158,7 +159,7 @@ class SongQueryServiceTest extends IntegrationTest {
         songCommandService.create(requestOfArtist1);
 
         // when
-        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), "양들", null, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), "양들", 0, 5);
 
         // then
         assertAll(
@@ -176,21 +177,21 @@ class SongQueryServiceTest extends IntegrationTest {
         Song song3 = songCommandService.create(request2OfArtist2);
 
         NoteCreateRequest requestOfSong1 = new NoteCreateRequest(
-                "content",
+                "data",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song1.getId()
         );
         NoteCreateRequest requestOfSong2 = new NoteCreateRequest(
-                "content",
+                "data",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song2.getId()
         );
         NoteCreateRequest requestOfSong3 = new NoteCreateRequest(
-                "content",
+                "data",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
@@ -207,7 +208,7 @@ class SongQueryServiceTest extends IntegrationTest {
         noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong2, user, song2)));
 
         // when
-        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, null, null, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, null, 0, 5);
 
         // then
         assertAll(

@@ -28,7 +28,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<SongSearchResponse> findAllByQueryAndArtistId(Long artistId, String query, Long cursorId, Pageable pageable) {
+    public Slice<SongSearchResponse> findAllByQueryAndArtistId(Long artistId, String query, Pageable pageable) {
         List<SongSearchResponse> content = jpaQueryFactory
                 .select(Projections.constructor(
                         SongSearchResponse.class,
@@ -46,11 +46,12 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .leftJoin(song.notes, note)
                 .where(
                         songNameContains(query),
-                        artistIdEq(artistId),
-                        QueryDslUtils.gtCursorId(cursorId, note.song.id)
+                        artistIdEq(artistId)
                 )
                 .groupBy(song.id)
                 .orderBy(note.id.count().desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));

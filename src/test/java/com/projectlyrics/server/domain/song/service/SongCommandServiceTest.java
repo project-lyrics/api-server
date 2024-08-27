@@ -48,7 +48,7 @@ class SongCommandServiceTest extends IntegrationTest {
         Song song = sut.create(request);
 
         // then
-        Slice<SongSearchResponse> result = songQueryRepository.findAllByQueryAndArtistId(artist.getId(), null, null, PageRequest.ofSize(5));
+        Slice<SongSearchResponse> result = songQueryRepository.findAllByQueryAndArtistId(artist.getId(), null, PageRequest.ofSize(5));
         assertAll(
                 () -> assertThat(result.getContent().size()).isEqualTo(1),
                 () -> assertThat(result.getContent().getFirst().getId()).isEqualTo(song.getId()),
