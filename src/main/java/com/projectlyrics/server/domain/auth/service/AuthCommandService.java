@@ -48,7 +48,7 @@ public class AuthCommandService {
         User user = userCommandRepository.save(User.create(UserCreate.of(socialInfo, request)));
 
         AuthToken authToken = issueAndSaveToken(user);
-        return AuthTokenResponse.from(authToken);
+        return AuthTokenResponse.of(authToken, user.getId());
     }
 
     private void checkIfAlreadyExists(SocialInfo socialInfo) {
@@ -63,7 +63,7 @@ public class AuthCommandService {
                 .orElseThrow(UserNotFoundException::new);
 
         AuthToken authToken = issueAndSaveToken(user);
-        return AuthTokenResponse.from(authToken);
+        return AuthTokenResponse.of(authToken, user.getId());
     }
 
     public AuthTokenResponse reissueToken(String refreshToken) {
@@ -73,7 +73,7 @@ public class AuthCommandService {
                 .orElseThrow(UserNotFoundException::new);
 
         AuthToken authToken = issueAndSaveToken(user);
-        return AuthTokenResponse.from(authToken);
+        return AuthTokenResponse.of(authToken, user.getId());
     }
 
     private AuthToken issueAndSaveToken(User user) {

@@ -4,12 +4,15 @@ import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 
 public record AuthTokenResponse(
         String accessToken,
-        String refreshToken
+        String refreshToken,
+        Long userId
 ) {
-    public static AuthTokenResponse from(AuthToken authToken) {
+
+    public static AuthTokenResponse of(AuthToken authToken, Long userId) {
         return new AuthTokenResponse(
                 authToken.accessToken(),
-                authToken.refreshToken()
+                authToken.refreshToken(),
+                userId
         );
     }
 }
