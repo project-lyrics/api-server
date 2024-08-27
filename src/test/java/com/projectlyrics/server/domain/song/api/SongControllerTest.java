@@ -4,9 +4,9 @@ import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.support.RestDocsTest;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,19 +34,19 @@ class SongControllerTest extends RestDocsTest {
     @Test
     void 곡을_검색하면_데이터와_200응답을_해야_한다() throws Exception {
         // given
-        ArrayList<SongGetResponse> data = new ArrayList<>();
+        ArrayList<SongSearchResponse> data = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
-            data.add(SongGetResponse.from(SongFixture.create()));
+            data.add(SongSearchResponse.from(SongFixture.create()));
         }
 
-        CursorBasePaginatedResponse<SongGetResponse> response = new CursorBasePaginatedResponse<>(
+        CursorBasePaginatedResponse<SongSearchResponse> response = new CursorBasePaginatedResponse<>(
                 data.get(data.size() - 1).id(),
                 true,
                 data
         );
 
-        given(songQueryService.searchSongs(any(), any(), anyInt()))
+        given(songQueryService.searchSongs(any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -55,6 +54,7 @@ class SongControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("query", "song")
+                        .param("artistId", "1")
                         .param("cursor", "1")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -64,12 +64,16 @@ class SongControllerTest extends RestDocsTest {
 
     private RestDocumentationResultHandler getSongSearchDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
-        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
 
         queryParams[pagingQueryParameters.length] = parameterWithName("query")
                 .type(SimpleType.STRING)
                 .optional()
-                .description("검색어 (null이거나 빈 값이면 빈 리스트 반환)");
+                .description("검색어가 없지만 아티스트 id는 있을 경우 아티스트 id 기준 노트 개수 역순으로 정렬된 곡 리스트를 반환합니다.");
+        queryParams[pagingQueryParameters.length + 1] = parameterWithName("artistId")
+                .type(SimpleType.NUMBER)
+                .optional()
+                .description("아티스트 id는 없지만 검색어만 있을 경우 검색어를 곡 제목에 포함하는 곡 리스트를 노트 개수 역순으로 정렬하여 반환합니다.");
 
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
@@ -91,6 +95,8 @@ class SongControllerTest extends RestDocsTest {
                                         .description("곡 이름"),
                                 fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
                                         .description("곡 앨범 이미지 url"),
+                                fieldWithPath("data[].noteCount").type(JsonFieldType.NUMBER)
+                                        .description("곡과 관련된 등록된 노트의 개수"),
                                 fieldWithPath("data[].artist.id").type(JsonFieldType.NUMBER)
                                         .description("곡 아티스트의 id"),
                                 fieldWithPath("data[].artist.name").type(JsonFieldType.STRING)

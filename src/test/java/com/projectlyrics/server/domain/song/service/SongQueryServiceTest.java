@@ -1,14 +1,25 @@
 package com.projectlyrics.server.domain.song.service;
 
-
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.note.entity.NoteBackground;
+import com.projectlyrics.server.domain.note.entity.NoteCreate;
+import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
+import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.UserFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,32 +32,80 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class SongQueryServiceTest extends IntegrationTest {
 
     @Autowired
+    UserCommandRepository userCommandRepository;
+
+    @Autowired
     ArtistCommandRepository artistCommandRepository;
 
     @Autowired
     SongCommandService songCommandService;
 
     @Autowired
+    NoteCommandRepository noteCommandRepository;
+
+    @Autowired
     SongQueryService sut;
 
-    @ValueSource(strings = {"양들", "침묵"})
-    @ParameterizedTest
-    void 검색어를_기반으로_제목이_일치하는_곡을_조회해야_한다(String query) throws Exception {
-        // given
-        Artist artist = artistCommandRepository.save(ArtistFixture.create());
-        SongCreateRequest request = new SongCreateRequest(
+    private User user;
+    private Artist artist1;
+    private Artist artist2;
+    private SongCreateRequest requestOfArtist1;
+    private SongCreateRequest requestOfArtist2;
+    private SongCreateRequest request2OfArtist2;
+
+    @BeforeEach
+    void setUp() {
+        user = userCommandRepository.save(UserFixture.create());
+
+        artist1 = artistCommandRepository.save(ArtistFixture.create());
+        artist2 = artistCommandRepository.save(ArtistFixture.create());
+
+        requestOfArtist1 = new SongCreateRequest(
                 1L,
                 "spotifyId",
-                "양들의 침묵",
+                "Kiss And Tell",
                 LocalDate.now(),
                 "albumName",
                 "imageUrl",
-                artist.getId()
+                artist1.getId()
+        );
+        requestOfArtist2 = new SongCreateRequest(
+                2L,
+                "spotifyId",
+                "Kiss And Tell",
+                LocalDate.now(),
+                "albumName",
+                "imageUrl",
+                artist2.getId()
+        );
+        request2OfArtist2 = new SongCreateRequest(
+                3L,
+                "spotifyId",
+                "Kiss And Tell",
+                LocalDate.now(),
+                "albumName",
+                "imageUrl",
+                artist2.getId()
+        );
+    }
+
+    @ValueSource(strings = {"Kiss", "Tell"})
+    @ParameterizedTest
+    void 검색어를_기반으로_제목이_일치하는_곡을_조회해야_한다(String query) {
+        // given
+        SongCreateRequest request = new SongCreateRequest(
+                1L,
+                "spotifyId",
+                "Kiss And Tell",
+                LocalDate.now(),
+                "albumName",
+                "imageUrl",
+                artist1.getId()
         );
         Song song = songCommandService.create(request);
 
         // when
-        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongs(query, null, 5);
+        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, query, null, 5);
 
         // then
         assertAll(
@@ -54,9 +113,108 @@ class SongQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().getFirst().id()).isEqualTo(song.getId()),
                 () -> assertThat(result.data().getFirst().name()).isEqualTo(song.getName()),
                 () -> assertThat(result.data().getFirst().imageUrl()).isEqualTo(song.getImageUrl()),
-                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist.getId()),
-                () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist.getName()),
-                () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist.getImageUrl())
+                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId()),
+                () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist1.getName()),
+                () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist1.getImageUrl())
+        );
+    }
+
+    @Test
+    void 아티스트_id를_기반으로_일치하는_곡을_조회해야_한다() {
+        // given
+        Song song = songCommandService.create(requestOfArtist1);
+        songCommandService.create(requestOfArtist2);
+
+        // when
+        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), null, null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(song.getId()),
+                () -> assertThat(result.data().getFirst().name()).isEqualTo(song.getName()),
+                () -> assertThat(result.data().getFirst().imageUrl()).isEqualTo(song.getImageUrl()),
+                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId()),
+                () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist1.getName()),
+                () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist1.getImageUrl())
+        );
+    }
+
+    @Test
+    void 검색어와_일치하는_제목과_아티스트_id를_기반으로_곡을_조회해야_한다() {
+        // given
+        String songName = "양들의 침묵";
+        SongCreateRequest request = new SongCreateRequest(
+                3L,
+                "spotifyId",
+                songName,
+                LocalDate.now(),
+                "albumName",
+                "imageUrl",
+                artist1.getId()
+        );
+
+        songCommandService.create(request);
+        songCommandService.create(requestOfArtist1);
+
+        // when
+        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), "양들", null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(1),
+                () -> assertThat(result.data().getFirst().name()).isEqualTo(songName),
+                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId())
+        );
+    }
+
+    @Test
+    void 곡_리스트를_노트_개수_순서대로_조회해야_한다() {
+        // given
+        Song song1 = songCommandService.create(requestOfArtist1);
+        Song song2 = songCommandService.create(requestOfArtist2);
+        Song song3 = songCommandService.create(request2OfArtist2);
+
+        NoteCreateRequest requestOfSong1 = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                song1.getId()
+        );
+        NoteCreateRequest requestOfSong2 = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                song2.getId()
+        );
+        NoteCreateRequest requestOfSong3 = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                song3.getId()
+        );
+
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong3, user, song3)));
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong3, user, song3)));
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong3, user, song3)));
+
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong1, user, song1)));
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong1, user, song1)));
+
+        noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong2, user, song2)));
+
+        // when
+        CursorBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, null, null, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(3),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(song3.getId()),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(song1.getId()),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(song2.getId())
         );
     }
 }

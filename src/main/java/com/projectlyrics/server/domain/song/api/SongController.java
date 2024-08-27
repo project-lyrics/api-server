@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.song.api;
 
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.service.SongQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ public class SongController {
     private final SongQueryService songQueryService;
 
     @GetMapping("/search")
-    public ResponseEntity<CursorBasePaginatedResponse<SongGetResponse>> searchSongs(
+    public ResponseEntity<CursorBasePaginatedResponse<SongSearchResponse>> searchSongs(
+            @RequestParam(name = "artistId") Long artistId,
             @RequestParam(name = "query") String query,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", defaultValue = "10") int size
@@ -35,6 +37,6 @@ public class SongController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(songQueryService.searchSongs(query, cursorId, size));
+                .body(songQueryService.searchSongs(artistId, query, cursorId, size));
     }
 }
