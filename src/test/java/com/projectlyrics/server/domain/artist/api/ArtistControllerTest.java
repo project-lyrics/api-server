@@ -219,7 +219,7 @@ class ArtistControllerTest extends RestDocsTest {
                         .tag("Artist API")
                         .summary("아티스트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .queryParameters(getPagingQueryParameters())
+                        .queryParameters(getCursorBasePagingQueryParameters())
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),
@@ -293,7 +293,7 @@ class ArtistControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getArtistSearchDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
 
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("query")

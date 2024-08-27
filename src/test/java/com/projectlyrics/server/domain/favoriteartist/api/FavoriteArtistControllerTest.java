@@ -169,7 +169,7 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                         .tag("Favorite Artist API")
                         .summary("관심 아티스트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .queryParameters(getPagingQueryParameters())
+                        .queryParameters(getCursorBasePagingQueryParameters())
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),
