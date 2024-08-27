@@ -46,7 +46,7 @@ SongControllerTest extends RestDocsTest {
                 data
         );
 
-        given(songQueryService.searchSongs(any(), any(), any(), anyInt()))
+        given(songQueryService.searchSongs(any(), any(), anyInt(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -55,8 +55,8 @@ SongControllerTest extends RestDocsTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("query", "song")
                         .param("artistId", "1")
-                        .param("cursor", "1")
-                        .param("size", "10"))
+                        .param("pageNumber", "0")
+                        .param("pageSize", "10"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
                 .andDo(getSongSearchDocument());
