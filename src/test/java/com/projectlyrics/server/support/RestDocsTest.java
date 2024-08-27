@@ -54,7 +54,7 @@ public abstract class RestDocsTest extends ControllerTest {
         };
     }
 
-    protected static ParameterDescriptorWithType[] getPagingQueryParameters() {
+    protected static ParameterDescriptorWithType[] getCursorBasePagingQueryParameters() {
         return new ParameterDescriptorWithType[]{
                 parameterWithName("cursor").type(SimpleType.NUMBER)
                         .optional()
@@ -62,6 +62,17 @@ public abstract class RestDocsTest extends ControllerTest {
                 parameterWithName("size").type(SimpleType.NUMBER)
                         .optional()
                         .description("데이터 수 (default = 10)")
+        };
+    }
+
+    protected static ParameterDescriptorWithType[] getOffsetBasePagingQueryParameters() {
+        return new ParameterDescriptorWithType[]{
+                parameterWithName("pageNumber").type(SimpleType.NUMBER)
+                        .optional()
+                        .description("페이지 번호 (default = 0)"),
+                parameterWithName("pageSize").type(SimpleType.NUMBER)
+                        .optional()
+                        .description("페이지 크기 (default = 10)")
         };
     }
 
