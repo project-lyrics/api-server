@@ -34,7 +34,7 @@ class BookmarkControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getBookmarkCreateDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("noteId")
                 .type(SimpleType.NUMBER)
@@ -67,7 +67,7 @@ class BookmarkControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getBookmarkDeleteDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("noteId")
                 .type(SimpleType.NUMBER)

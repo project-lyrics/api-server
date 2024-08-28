@@ -288,7 +288,7 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getNoteListOfUserDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
@@ -387,7 +387,7 @@ class NoteControllerTest extends RestDocsTest {
     }
   
     private RestDocumentationResultHandler getNoteListOfFavoriteArtistOfUserDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
@@ -487,7 +487,7 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getNoteListByArtistDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
                 .type(SimpleType.NUMBER)
@@ -590,7 +590,7 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getNoteListBySongDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("songId")
                 .type(SimpleType.NUMBER)
@@ -693,7 +693,7 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getBookmarkedNoteListDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
                 .type(SimpleType.NUMBER)

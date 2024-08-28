@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.song.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
@@ -47,16 +48,13 @@ class SongCommandServiceTest extends IntegrationTest {
         Song song = sut.create(request);
 
         // then
-        Slice<Song> result = songQueryRepository.findAllByArtistId(artist.getId(), null, PageRequest.ofSize(5));
+        Slice<SongSearchResponse> result = songQueryRepository.findAllByQueryOrderByNoteCountDesc(null, PageRequest.ofSize(5));
         assertAll(
                 () -> assertThat(result.getContent().size()).isEqualTo(1),
                 () -> assertThat(result.getContent().getFirst().getId()).isEqualTo(song.getId()),
-                () -> assertThat(result.getContent().getFirst().getSpotifyId()).isEqualTo(song.getSpotifyId()),
-                () -> assertThat(result.getContent().getFirst().getName()).isEqualTo(song.getName()),
-                () -> assertThat(result.getContent().getFirst().getReleaseDate()).isEqualTo(song.getReleaseDate()),
-                () -> assertThat(result.getContent().getFirst().getAlbumName()).isEqualTo(song.getAlbumName()),
-                () -> assertThat(result.getContent().getFirst().getImageUrl()).isEqualTo(song.getImageUrl()),
-                () -> assertThat(result.getContent().getFirst().getArtist().getId()).isEqualTo(song.getArtist().getId())
+                () -> assertThat(result.getContent().getFirst().name()).isEqualTo(song.getName()),
+                () -> assertThat(result.getContent().getFirst().imageUrl()).isEqualTo(song.getImageUrl()),
+                () -> assertThat(result.getContent().getFirst().artist().getId()).isEqualTo(song.getArtist().getId())
         );
     }
 }

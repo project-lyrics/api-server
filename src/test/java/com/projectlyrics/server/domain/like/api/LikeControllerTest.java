@@ -40,7 +40,7 @@ class LikeControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getCreateLikeDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("noteId")
                 .type(SimpleType.NUMBER)
@@ -75,7 +75,7 @@ class LikeControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getDeleteLikeDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getPagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("noteId")
                 .type(SimpleType.NUMBER)

@@ -43,7 +43,7 @@ class AuthControllerTest extends RestDocsTest {
     void 로그인할_때_소셜_로그인_인증된_유저는_인증_토큰과_200응답을_해야_한다() throws Exception {
         //given
         AuthSignInRequest request = new AuthSignInRequest("socialAccessToken", AuthProvider.KAKAO);
-        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
+        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
         given(authCommandService.signIn(any()))
                 .willReturn(response);
 
@@ -123,7 +123,7 @@ class AuthControllerTest extends RestDocsTest {
                 Year.of(1999),
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
         );
-        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
+        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
         given(authCommandService.signUp(any()))
                 .willReturn(response);
 
@@ -262,7 +262,7 @@ class AuthControllerTest extends RestDocsTest {
     void 토큰을_재발급에_성공하면_토큰과_200응답을_해야_한다() throws Exception {
         //given
         TokenReissueRequest request = new TokenReissueRequest(refreshToken);
-        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken);
+        AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
         given(authCommandService.reissueToken(any()))
                 .willReturn(response);
 
@@ -331,7 +331,9 @@ class AuthControllerTest extends RestDocsTest {
                 fieldWithPath("accessToken").type(JsonFieldType.STRING)
                         .description("Access Token"),
                 fieldWithPath("refreshToken").type(JsonFieldType.STRING)
-                        .description("Refresh Token")
+                        .description("Refresh Token"),
+                fieldWithPath("userId").type(JsonFieldType.NUMBER)
+                        .description("User Id")
         };
     }
 

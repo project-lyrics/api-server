@@ -148,12 +148,4 @@ public class Note extends BaseEntity {
         return bookmarks.stream()
                 .anyMatch(bookmark -> bookmark.isUser(userId));
     }
-
-    public boolean isAssociatedWithArtist(Long artistId) {
-        if (Objects.isNull(artistId)) {
-            return true;
-        }
-
-        return song.getArtist().getId().equals(artistId);
-    }
 }

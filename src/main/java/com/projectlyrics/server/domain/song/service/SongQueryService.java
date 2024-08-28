@@ -1,11 +1,12 @@
 package com.projectlyrics.server.domain.song.service;
 
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,16 @@ public class SongQueryService {
 
     private final SongQueryRepository songQueryRepository;
 
-    public CursorBasePaginatedResponse<SongGetResponse> searchSongs(String query, Long cursorId, int size) {
-        Slice<SongGetResponse> searchedSongs = songQueryRepository.findAllByQuery(query, cursorId, PageRequest.ofSize(size))
-                .map(SongGetResponse::from);
+    public OffsetBasePaginatedResponse<SongSearchResponse> searchSongs(String query, int pageNumber, int pageSize) {
+        return OffsetBasePaginatedResponse.of(
+                songQueryRepository.findAllByQueryOrderByNoteCountDesc(query, PageRequest.of(pageNumber, pageSize))
+        );
+    }
 
-        return CursorBasePaginatedResponse.of(searchedSongs);
+    public CursorBasePaginatedResponse<SongGetResponse> searchSongsByArtist(Long artistId, String query, Long cursor, int size) {
+        return CursorBasePaginatedResponse.of(
+                songQueryRepository.findAllByQueryAndArtistId(artistId, query, cursor, PageRequest.of(0, size))
+                        .map(SongGetResponse::from)
+        );
     }
 }

@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.song.entity;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.note.entity.Note;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -28,6 +31,9 @@ public class Song {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Artist artist;
+
+    @OneToMany(mappedBy = "song")
+    private List<Note> notes = new ArrayList<>();
 
     private Song(
             Long id,
