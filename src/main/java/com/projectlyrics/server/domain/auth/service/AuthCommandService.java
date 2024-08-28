@@ -77,7 +77,7 @@ public class AuthCommandService {
     }
 
     private AuthToken issueAndSaveToken(User user) {
-        AuthToken authToken = jwtProvider.issueTokens(user.getId(), user.getNickname().getValue());
+        AuthToken authToken = jwtProvider.issueTokens(user.getId(), user.getNickname().getValue(), user.getRole());
         authRepository.save(Auth.create(user.getSocialInfo(), authToken.refreshToken()));
 
         return authToken;
