@@ -98,7 +98,8 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                false
         );
     }
 
@@ -140,7 +141,8 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement")),
+                false
         );
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());

@@ -28,7 +28,8 @@ class UserTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                false
         );
     }
 
@@ -62,7 +63,8 @@ class UserTest {
                         ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         Year.of(1999),
-                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                        false
                 ))))
                 .isInstanceOf(InvalidUsernameException.class);
     }
@@ -81,7 +83,8 @@ class UserTest {
                         ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         Year.of(1999),
-                        agreement
+                        agreement,
+                        false
                 ))))
                 .isInstanceOf(NotAgreeToTermsException.class);
     }
@@ -100,7 +103,8 @@ class UserTest {
                         ProfileCharacter.POOP_HAIR,
                         Gender.MALE,
                         year,
-                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                        List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                        false
                 ))))
                 .isInstanceOf(InvalidAgeException.class);
     }
