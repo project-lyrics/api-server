@@ -38,3 +38,6 @@ auth:
 
 server:
   port: 8080
+
+firebase:
+  key-file: src/main/resources/firebase-key.json
