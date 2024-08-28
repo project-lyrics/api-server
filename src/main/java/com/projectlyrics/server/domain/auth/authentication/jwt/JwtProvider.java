@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.auth.authentication.jwt;
 
+import com.projectlyrics.server.domain.user.entity.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -33,8 +34,8 @@ public class JwtProvider {
         this.clock = clock;
     }
 
-    public AuthToken issueTokens(long id, String nickname) {
-        JwtClaim jwtClaim = new JwtClaim(id, nickname);
+    public AuthToken issueTokens(long id, String nickname, Role role) {
+        JwtClaim jwtClaim = new JwtClaim(id, nickname, role);
 
         return new AuthToken(
                 issueAccessToken(jwtClaim),
@@ -65,6 +66,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .claim(JwtClaim.USER_ID, claim.id())
                 .claim(JwtClaim.NICKNAME, claim.nickname())
+                .claim(JwtClaim.ROLE, claim.role().name())
                 .claim(TOKEN_TYPE, tokenType)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiredAt))
