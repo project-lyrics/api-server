@@ -29,7 +29,6 @@ public class FirebaseConfig {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 FileInputStream key = new FileInputStream(keyFile);
-                log.info("firebase key file loaded");
 
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(key))
@@ -39,6 +38,7 @@ public class FirebaseConfig {
                 log.info("firebase messaging initialized");
             }
         } catch (IOException e) {
+            e.printStackTrace();
             log.error("failed to initialize firebase", e);
         }
     }
