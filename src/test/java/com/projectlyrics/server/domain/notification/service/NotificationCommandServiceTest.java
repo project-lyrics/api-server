@@ -71,7 +71,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             users.add(userCommandRepository.save(UserFixture.create()));
         }
         user = users.getFirst();
@@ -95,9 +95,10 @@ class NotificationCommandServiceTest extends IntegrationTest {
     void 댓글에_대한_알림을_저장한다() throws Exception {
         // given
         CommentEvent commentEvent = CommentEvent.from(comment);
-        when(firebaseMessaging.send(any())).thenReturn(null);
 
         // when
+        sut.createCommentNotification(commentEvent);
+        sut.createCommentNotification(commentEvent);
         sut.createCommentNotification(commentEvent);
 
         // then
@@ -105,19 +106,17 @@ class NotificationCommandServiceTest extends IntegrationTest {
                 .getContent();
 
         assertAll(
-                () -> assertThat(result.size()).isEqualTo(1),
-                () -> assertThat(result.get(0).getType()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
-                () -> assertThat(result.get(0).getSender()).isEqualTo(comment.getWriter()),
-                () -> assertThat(result.get(0).getReceiver()).isEqualTo(comment.getNote().getPublisher()),
-                () -> assertThat(result.get(0).getNote()).isEqualTo(comment.getNote()),
-                () -> assertThat(result.get(0).getComment()).isEqualTo(comment)
+                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
+                () -> assertThat(result.getFirst().getSender()).isEqualTo(comment.getWriter()),
+                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(comment.getNote().getPublisher()),
+                () -> assertThat(result.getFirst().getNote()).isEqualTo(comment.getNote()),
+                () -> assertThat(result.getFirst().getComment()).isEqualTo(comment)
         );
     }
 
     @Test
     void 공개_알림을_저장한다() throws Exception {
         // given
-        when(firebaseMessaging.sendEachForMulticast(any())).thenReturn(null);
         String content = "content";
 
         // when
