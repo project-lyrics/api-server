@@ -4,7 +4,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +15,13 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
 
-    @PostConstruct
-    public void init() {
+    @Bean
+    public FirebaseMessaging firebaseMessaging() {
+        initializeFirebaseApp();
+        return FirebaseMessaging.getInstance();
+    }
+
+    private void initializeFirebaseApp() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 FileInputStream key = new FileInputStream("src/main/resources/firebase-key.json");
@@ -27,15 +31,10 @@ public class FirebaseConfig {
                         .build();
 
                 FirebaseApp.initializeApp(options);
+                log.info("firebase messaging initialized");
             }
         } catch (IOException e) {
             log.error("failed to initialize firebase", e);
         }
-    }
-
-    @Bean
-    public FirebaseMessaging firebaseMessaging() {
-        log.info("firebase messaging initialized");
-        return FirebaseMessaging.getInstance();
     }
 }
