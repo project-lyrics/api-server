@@ -32,11 +32,10 @@ public record AuthSignUpRequest(
         Year birthYear,
 
         @Valid
-        List<TermsInput> terms
+        List<TermsInput> terms,
 
-        // TODO: fcmToken 추가
+        boolean isAdmin
 ) {
-
     public record TermsInput(
             @NotNull(message = "약관 동의가 입력되지 않았습니다.")
             boolean agree,

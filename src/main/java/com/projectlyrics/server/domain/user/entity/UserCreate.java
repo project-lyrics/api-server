@@ -12,13 +12,16 @@ public record UserCreate(
         Gender gender,
         Integer birthYear,
         List<TermsAgreements> termsAgreements,
-        String fcmToken
+        String fcmToken,
+        Role role
 ) {
 
     public static UserCreate of(SocialInfo socialInfo, AuthSignUpRequest request) {
         List<TermsAgreements> termsList = request.terms().stream()
                 .map(termsInput -> new TermsAgreements(termsInput.agree(), termsInput.title(), termsInput.agreement()))
                 .toList();
+
+        Role role = request.isAdmin() ? Role.ADMIN : Role.USER;
 
         return new UserCreate(
                 socialInfo,
@@ -27,7 +30,8 @@ public record UserCreate(
                 request.gender(),
                 Objects.nonNull(request.birthYear()) ? request.birthYear().getValue() : null,
                 termsList,
-                null
+                null,
+                role
         );
     }
 }
