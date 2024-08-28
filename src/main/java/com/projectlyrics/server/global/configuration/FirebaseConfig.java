@@ -5,8 +5,10 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +16,9 @@ import java.io.IOException;
 @Slf4j
 @Configuration
 public class FirebaseConfig {
+
+    @Value("${firebase.key-file}")
+    private String keyFile;
 
     @Bean
     public FirebaseMessaging firebaseMessaging() {
@@ -24,7 +29,7 @@ public class FirebaseConfig {
     private void initializeFirebaseApp() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                FileInputStream key = new FileInputStream("src/main/resources/firebase-key.json");
+                FileInputStream key = new FileInputStream(keyFile);
 
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(key))
