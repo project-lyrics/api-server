@@ -106,7 +106,7 @@ class SongQueryServiceTest extends IntegrationTest {
         Song song = songCommandService.create(request);
 
         // when
-        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, query, 0, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(query, 0, 5);
 
         // then
         assertAll(
@@ -117,55 +117,6 @@ class SongQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId()),
                 () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist1.getName()),
                 () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist1.getImageUrl())
-        );
-    }
-
-    @Test
-    void 아티스트_id를_기반으로_일치하는_곡을_조회해야_한다() {
-        // given
-        Song song = songCommandService.create(requestOfArtist1);
-        songCommandService.create(requestOfArtist2);
-
-        // when
-        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), null, 0, 5);
-
-        // then
-        assertAll(
-                () -> assertThat(result.data().size()).isEqualTo(1),
-                () -> assertThat(result.data().getFirst().id()).isEqualTo(song.getId()),
-                () -> assertThat(result.data().getFirst().name()).isEqualTo(song.getName()),
-                () -> assertThat(result.data().getFirst().imageUrl()).isEqualTo(song.getImageUrl()),
-                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId()),
-                () -> assertThat(result.data().getFirst().artist().name()).isEqualTo(artist1.getName()),
-                () -> assertThat(result.data().getFirst().artist().imageUrl()).isEqualTo(artist1.getImageUrl())
-        );
-    }
-
-    @Test
-    void 검색어와_일치하는_제목과_아티스트_id를_기반으로_곡을_조회해야_한다() {
-        // given
-        String songName = "양들의 침묵";
-        SongCreateRequest request = new SongCreateRequest(
-                3L,
-                "spotifyId",
-                songName,
-                LocalDate.now(),
-                "albumName",
-                "imageUrl",
-                artist1.getId()
-        );
-
-        songCommandService.create(request);
-        songCommandService.create(requestOfArtist1);
-
-        // when
-        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(artist1.getId(), "양들", 0, 5);
-
-        // then
-        assertAll(
-                () -> assertThat(result.data().size()).isEqualTo(1),
-                () -> assertThat(result.data().getFirst().name()).isEqualTo(songName),
-                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId())
         );
     }
 
@@ -208,7 +159,7 @@ class SongQueryServiceTest extends IntegrationTest {
         noteCommandRepository.save(Note.create(NoteCreate.from(requestOfSong2, user, song2)));
 
         // when
-        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, null, 0, 5);
+        OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(null, 0, 5);
 
         // then
         assertAll(
@@ -216,6 +167,54 @@ class SongQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().get(0).id()).isEqualTo(song3.getId()),
                 () -> assertThat(result.data().get(1).id()).isEqualTo(song1.getId()),
                 () -> assertThat(result.data().get(2).id()).isEqualTo(song2.getId())
+        );
+    }
+
+    @ValueSource(strings = {"Kiss", "Tell"})
+    @ParameterizedTest
+    void 아티스트_id를_기반으로_제목이_일치하는_곡을_조회해야_한다(String query) {
+        // given
+        songCommandService.create(requestOfArtist1);
+        songCommandService.create(requestOfArtist2);
+
+        // when
+        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), query, 0L, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(1),
+                () -> assertThat(result.data().getFirst().name()).isEqualTo("Kiss And Tell"),
+                () -> assertThat(result.data().getFirst().artist().id()).isEqualTo(artist1.getId())
+        );
+    }
+
+    @Test
+    void 아티스트_id를_기반으로_곡_리스트를_id_역순으로_조회해야_한다() {
+        // given
+        for (int i = 0; i < 5; i++) {
+            SongCreateRequest request = new SongCreateRequest(
+                    (long) (i + 1),
+                    "spotifyId",
+                    "Kiss And Tell",
+                    LocalDate.now(),
+                    "albumName",
+                    "imageUrl",
+                    artist1.getId()
+            );
+            songCommandService.create(request);
+        }
+
+        // when
+        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), null, 0L, 5);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().size()).isEqualTo(5),
+                () -> assertThat(result.data().get(0).id()).isEqualTo(5),
+                () -> assertThat(result.data().get(1).id()).isEqualTo(4),
+                () -> assertThat(result.data().get(2).id()).isEqualTo(3),
+                () -> assertThat(result.data().get(3).id()).isEqualTo(2),
+                () -> assertThat(result.data().get(4).id()).isEqualTo(1)
         );
     }
 }

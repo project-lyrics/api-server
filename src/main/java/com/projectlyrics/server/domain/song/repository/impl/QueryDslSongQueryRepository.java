@@ -28,7 +28,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<SongSearchResponse> findAllByQueryAndArtistId(Long artistId, String query, Pageable pageable) {
+    public Slice<SongSearchResponse> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
         List<SongSearchResponse> content = jpaQueryFactory
                 .select(Projections.constructor(
                         SongSearchResponse.class,
@@ -40,17 +40,32 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                                 ArtistGetResponse.class,
                                 song.artist.id,
                                 song.artist.name,
-                                song.artist.imageUrl))
-                )
+                                song.artist.imageUrl
+                        )
+                ))
                 .from(song)
                 .leftJoin(song.notes, note)
-                .where(
-                        songNameContains(query),
-                        artistIdEq(artistId)
-                )
+                .where(songNameContains(query))
                 .groupBy(song.id)
                 .orderBy(note.id.count().desc())
                 .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
+    public Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable) {
+        List<Song> content = jpaQueryFactory
+                .selectFrom(song)
+                .leftJoin(song.notes, note)
+                .where(
+                        songNameContains(query),
+                        artistIdEq(artistId),
+                        QueryDslUtils.gtCursorId(cursor, song.id)
+                )
+                .orderBy(song.id.desc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 

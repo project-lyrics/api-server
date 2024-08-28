@@ -1,6 +1,8 @@
 package com.projectlyrics.server.domain.song.api;
 
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.service.SongQueryService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +22,24 @@ public class SongController {
 
     @GetMapping("/search")
     public ResponseEntity<OffsetBasePaginatedResponse<SongSearchResponse>> searchSongs(
-            @RequestParam(name = "artistId") Long artistId,
-            @RequestParam(name = "query") String query,
+            @RequestParam(name = "query", required = false) String query,
             @RequestParam(required = false, defaultValue = "0") int pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(songQueryService.searchSongs(artistId, query, pageNumber, pageSize));
+                .body(songQueryService.searchSongs(query, pageNumber, pageSize));
+    }
+
+    @GetMapping("/search/artists")
+    public ResponseEntity<CursorBasePaginatedResponse<SongGetResponse>> searchSongsByArtist(
+            @RequestParam(name = "artistId") Long artistId,
+            @RequestParam(name = "query", required = false) String query,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(songQueryService.searchSongsByArtist(artistId, query, cursor, size));
     }
 }
