@@ -53,7 +53,7 @@ jobs:
       - name: Move firebase-key.json to src/main/resources
         run: |
           mkdir -p ./src/main/resources
-          mv firebase-key.json ./src/main/resources/firebase-key.json
+          cp firebase-key.json ./src/main/resources/firebase-key.json
         shell: bash
 
       - name: build with gradle
@@ -97,7 +97,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          source: ./src/main/resources/firebase-key.json
+          source: firebase-key.json
           target: /home/ubuntu/
 
       - name: deploy to dev server
