@@ -2,6 +2,7 @@ package com.projectlyrics.server.global.configuration;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.AuthInterceptor;
+import com.projectlyrics.server.domain.user.acthentication.AdminInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
     private final AuthArgumentResolver authArgumentResolver;
+    private final AdminInterceptor adminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -31,6 +33,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/notes/artists")
                 .excludePathPatterns("/api/v1/notes/songs")
                 .excludePathPatterns("/api/v1/songs/search");
+
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/api/v1/artists/**", "/api/v1/notifications/**");
     }
 
     @Override
