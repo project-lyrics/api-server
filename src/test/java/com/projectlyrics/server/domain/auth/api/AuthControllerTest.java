@@ -253,7 +253,10 @@ class AuthControllerTest extends RestDocsTest {
                                 fieldWithPath("terms[].title").type(JsonFieldType.STRING)
                                         .description("약관 제목"),
                                 fieldWithPath("terms[].agreement").type(JsonFieldType.STRING)
-                                        .description("약관 내용 (노션 링크)")
+                                        .description("약관 내용 (노션 링크)"),
+                                fieldWithPath("isAdmin").type(JsonFieldType.BOOLEAN)
+                                        .optional()
+                                        .description("관리자 여부")
                         )
                         .responseFields(responseFields)
                         .requestSchema(Schema.schema("SignUp Request"))
