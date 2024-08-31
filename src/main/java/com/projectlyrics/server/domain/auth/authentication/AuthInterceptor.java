@@ -38,6 +38,5 @@ public class AuthInterceptor implements HandlerInterceptor {
         JwtClaim claim = jwtExtractor.parseJwtClaim(tokenExtractor.extractToken(authorization));
         authContext.setNickname(claim.nickname());
         authContext.setId(claim.id());
-        authContext.setRole(claim.role());
     }
 }
