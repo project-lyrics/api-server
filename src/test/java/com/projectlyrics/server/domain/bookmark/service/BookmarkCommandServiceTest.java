@@ -101,7 +101,7 @@ class BookmarkCommandServiceTest extends IntegrationTest {
                 .isInstanceOf(BookmarkAlreadyExistsException.class);
     }
     @Test
-    void 북마크가_동시다발적으로_저장될_떄도_중복_좋아요가_생기지_않아야_한다() {
+    void 북마크가_동시다발적으로_저장될_떄도_중복_북마크가_생기지_않아야_한다() {
         //given
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
