@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.user.acthentication;
+package com.projectlyrics.server.domain.user.authentication;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.TokenExtractor;
@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -22,8 +23,11 @@ public class AdminInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        setAuthContext(request);
+        if (isExcluded((request))) {
+            return true;
+        }
 
+        setAuthContext(request);
         if (Role.ADMIN.equals(authContext.getRole())) {
             return true;
         }
@@ -31,12 +35,16 @@ public class AdminInterceptor implements HandlerInterceptor {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         return false;
     }
+    private boolean isExcluded(HttpServletRequest request) {
+        return request.getRequestURI().matches("/api/v1/artists") &&
+                request.getMethod().equalsIgnoreCase(HttpMethod.GET.name()) ||
+                request.getRequestURI().matches("/api/v1/artists/\\d+") &&
+                request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
+    }
 
     private void setAuthContext(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         JwtClaim claim = jwtExtractor.parseJwtClaim(tokenExtractor.extractToken(authorization));
-        authContext.setNickname(claim.nickname());
-        authContext.setId(claim.id());
         authContext.setRole(claim.role());
     }
 }
