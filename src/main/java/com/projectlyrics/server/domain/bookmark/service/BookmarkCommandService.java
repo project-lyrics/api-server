@@ -28,7 +28,7 @@ public class BookmarkCommandService {
     private final UserQueryRepository userQueryRepository;
     private final NoteQueryRepository noteQueryRepository;
 
-    public Bookmark create(Long noteId, Long userId) {
+    public synchronized Bookmark create(Long noteId, Long userId) {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Note note = noteQueryRepository.findById(noteId)

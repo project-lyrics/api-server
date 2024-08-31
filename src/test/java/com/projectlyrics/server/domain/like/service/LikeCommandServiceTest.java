@@ -21,9 +21,14 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import com.querydsl.core.NonUniqueResultException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -91,6 +96,44 @@ class LikeCommandServiceTest extends IntegrationTest {
         // when, then
         assertThatThrownBy(() -> sut.create(note.getId(), user.getId()))
                 .isInstanceOf(LikeAlreadyExistsException.class);
+    }
+
+    @Test
+    void 좋아요가_동시다발적으로_저장될_떄도_중복_좋아요가_생기지_않아야_한다() {
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        AtomicInteger duplicateErrorCount = new AtomicInteger(0);
+
+        //when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.execute(() -> {
+                try {
+                    sut.create(note.getId(), user.getId());
+                } catch (LikeAlreadyExistsException e) {
+                    duplicateErrorCount.getAndIncrement();
+                } catch (NonUniqueResultException e) {
+                    duplicateErrorCount.getAndIncrement();
+                }
+                finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        //then
+        long likeCount = likeQueryRepository.countByNoteId(note.getId());
+        assertAll(
+                () -> assertThat(likeCount).isEqualTo(1),
+                () -> assertThat(duplicateErrorCount.get()).isEqualTo(threadCount-1)
+        );
     }
 
     @Test
