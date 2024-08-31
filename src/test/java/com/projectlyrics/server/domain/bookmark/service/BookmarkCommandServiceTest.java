@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
 import com.projectlyrics.server.domain.bookmark.exception.BookmarkAlreadyExistsException;
 import com.projectlyrics.server.domain.bookmark.exception.BookmarkNotFoundException;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkQueryRepository;
+import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -22,6 +23,11 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import com.querydsl.core.NonUniqueResultException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +99,41 @@ class BookmarkCommandServiceTest extends IntegrationTest {
         // when, then
         assertThatThrownBy(() -> sut.create(note.getId(), user.getId()))
                 .isInstanceOf(BookmarkAlreadyExistsException.class);
+    }
+    @Test
+    void 북마크가_동시다발적으로_저장될_떄도_중복_좋아요가_생기지_않아야_한다() {
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        AtomicInteger duplicateErrorCount = new AtomicInteger(0);
+
+        //when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.execute(() -> {
+                try {
+                    sut.create(note.getId(), user.getId());
+                } catch (BookmarkAlreadyExistsException e) {
+                    duplicateErrorCount.getAndIncrement();
+                } catch (NonUniqueResultException e) {
+                    duplicateErrorCount.getAndIncrement();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        //then
+        assertAll(
+                () -> assertThat(bookmarkQueryRepository.findByNoteIdAndUserId(note.getId(), user.getId())).isPresent(),
+                () -> assertThat(duplicateErrorCount.get()).isEqualTo(threadCount - 1)
+        );
     }
 
     @Test
