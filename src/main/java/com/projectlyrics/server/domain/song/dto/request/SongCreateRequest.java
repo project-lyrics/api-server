@@ -13,7 +13,6 @@ public record SongCreateRequest(
         String spotifyId,
         @NotBlank(message = "곡 제목이 입력되지 않았습니다.")
         String name,
-        @NotBlank(message = "곡 발매일이 입력되지 않았습니다.")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         LocalDate releaseDate,
         @NotBlank(message = "앨범 이름이 입력되지 않았습니다.")
