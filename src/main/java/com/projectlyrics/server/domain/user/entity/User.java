@@ -109,7 +109,7 @@ public class User extends BaseEntity {
                 userCreate.socialInfo(),
                 userCreate.nickname(),
                 userCreate.profileCharacter(),
-                Role.USER,
+                userCreate.role(),
                 userCreate.gender(),
                 userCreate.birthYear(),
                 userCreate.termsAgreements(),

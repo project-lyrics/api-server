@@ -72,6 +72,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
+        notificationCommandRepository.deleteAll();
         for (int i = 0; i < 10; i++) {
             users.add(userCommandRepository.save(UserFixture.create()));
         }
@@ -129,6 +130,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
                 .getContent();
 
         assertAll(
+                () -> assertThat(result).isNotEmpty(),
                 () -> assertThat(result.size()).isEqualTo(10),
                 () -> assertThat(result.stream().allMatch(notification -> notification.getType().equals(NotificationType.PUBLIC))).isTrue(),
                 () -> assertThat(result.stream().allMatch(notification -> notification.getSender().getId().equals(user.getId()))).isTrue(),

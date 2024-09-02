@@ -28,7 +28,7 @@ public class LikeCommandService {
     private final UserQueryRepository userQueryRepository;
     private final NoteQueryRepository noteQueryRepository;
 
-    public Like create(Long noteId, Long userId) {
+    public synchronized Like create(Long noteId, Long userId) {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Note note = noteQueryRepository.findById(noteId)
@@ -38,6 +38,7 @@ public class LikeCommandService {
 
         return likeCommandRepository.save(Like.create(LikeCreate.of(user, note)));
     }
+
 
     private void checkIfLikeExists(Long noteId, Long userId) {
         likeQueryRepository.findByNoteIdAndUserId(noteId, userId)

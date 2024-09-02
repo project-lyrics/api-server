@@ -50,3 +50,4 @@ src/main/generated
 application*.yml
 
 gradle.properties
+src/main/resources/firebase-key.json

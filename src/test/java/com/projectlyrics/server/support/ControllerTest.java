@@ -20,6 +20,7 @@ import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import com.projectlyrics.server.domain.notification.service.NotificationCommandService;
 import com.projectlyrics.server.domain.song.service.SongQueryService;
+import com.projectlyrics.server.domain.user.entity.Role;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public abstract class ControllerTest {
 
     @BeforeEach
     public void setUp() {
-        AuthToken authToken = jwtProvider.issueTokens(1L, "nickname");
+        AuthToken authToken = jwtProvider.issueTokens(1L, "nickname", Role.ADMIN);
         accessToken = authToken.accessToken();
         refreshToken = authToken.refreshToken();
     }

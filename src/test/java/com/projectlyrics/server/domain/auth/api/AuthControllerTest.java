@@ -121,7 +121,8 @@ class AuthControllerTest extends RestDocsTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                false
         );
         AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
         given(authCommandService.signUp(any()))
@@ -146,7 +147,8 @@ class AuthControllerTest extends RestDocsTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(false, "title", "agreement")),
+                false
         );
         NotAgreeToTermsException e = new NotAgreeToTermsException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
@@ -172,7 +174,8 @@ class AuthControllerTest extends RestDocsTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                false
         );
         AlreadyExistsUserException e = new AlreadyExistsUserException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
@@ -198,7 +201,8 @@ class AuthControllerTest extends RestDocsTest {
                 ProfileCharacter.POOP_HAIR,
                 Gender.MALE,
                 Year.of(1999),
-                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement"))
+                List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
+                false
         );
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_SOCIAL_TOKEN);
         given(authCommandService.signUp(any()))
@@ -249,7 +253,10 @@ class AuthControllerTest extends RestDocsTest {
                                 fieldWithPath("terms[].title").type(JsonFieldType.STRING)
                                         .description("약관 제목"),
                                 fieldWithPath("terms[].agreement").type(JsonFieldType.STRING)
-                                        .description("약관 내용 (노션 링크)")
+                                        .description("약관 내용 (노션 링크)"),
+                                fieldWithPath("isAdmin").type(JsonFieldType.BOOLEAN)
+                                        .optional()
+                                        .description("관리자 여부")
                         )
                         .responseFields(responseFields)
                         .requestSchema(Schema.schema("SignUp Request"))

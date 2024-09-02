@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.auth.authentication.jwt;
 
 import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
 import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
+import com.projectlyrics.server.domain.user.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -35,7 +36,7 @@ public class JwtExtractor {
 
             Claims claims = parser.parseClaimsJws(token)
                     .getBody();
-            return new JwtClaim(Long.parseLong(String.valueOf(claims.get(JwtClaim.USER_ID))), String.valueOf(claims.get(JwtClaim.NICKNAME)));
+            return new JwtClaim(Long.parseLong(String.valueOf(claims.get(JwtClaim.USER_ID))), String.valueOf(claims.get(JwtClaim.NICKNAME)), Role.valueOf(String.valueOf(claims.get(JwtClaim.ROLE))));
         } catch (ExpiredJwtException e) {
             throw new TokenExpiredException();
         } catch (JwtException e) {
