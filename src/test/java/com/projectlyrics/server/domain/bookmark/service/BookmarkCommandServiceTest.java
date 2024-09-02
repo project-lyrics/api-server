@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -105,27 +106,34 @@ class BookmarkCommandServiceTest extends IntegrationTest {
         //given
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
         AtomicInteger duplicateErrorCount = new AtomicInteger(0);
 
         //when
         for (int i = 0; i < threadCount; i++) {
             executorService.execute(() -> {
+                readyLatch.countDown(); // 스레드가 준비 상태임을 알림
                 try {
+                    startLatch.await(); // 모든 스레드가 준비될 때까지 대기
                     sut.create(note.getId(), user.getId());
-                } catch (BookmarkAlreadyExistsException e) {
+                } catch (BookmarkAlreadyExistsException | NonUniqueResultException e) {
                     duplicateErrorCount.getAndIncrement();
-                } catch (NonUniqueResultException e) {
-                    duplicateErrorCount.getAndIncrement();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 } finally {
-                    latch.countDown();
+                    doneLatch.countDown();
                 }
             });
         }
 
         try {
-            latch.await();
+            readyLatch.await(); // 모든 스레드가 준비될 때까지 대기
+            startLatch.countDown(); // 모든 스레드가 동시에 실행 시작
+            doneLatch.await(); // 모든 스레드의 실행이 끝날 때까지 대기
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
 

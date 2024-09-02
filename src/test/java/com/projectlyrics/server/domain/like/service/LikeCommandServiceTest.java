@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.like.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.bookmark.exception.BookmarkAlreadyExistsException;
 import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.like.exception.LikeNotFoundException;
@@ -25,6 +26,7 @@ import com.querydsl.core.NonUniqueResultException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.ExecutorService;
@@ -103,36 +105,41 @@ class LikeCommandServiceTest extends IntegrationTest {
         //given
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
         AtomicInteger duplicateErrorCount = new AtomicInteger(0);
 
         //when
         for (int i = 0; i < threadCount; i++) {
             executorService.execute(() -> {
+                readyLatch.countDown(); // 스레드가 준비 상태임을 알림
                 try {
+                    startLatch.await(); // 모든 스레드가 준비될 때까지 대기
                     sut.create(note.getId(), user.getId());
-                } catch (LikeAlreadyExistsException e) {
+                } catch (LikeAlreadyExistsException | NonUniqueResultException e) {
                     duplicateErrorCount.getAndIncrement();
-                } catch (NonUniqueResultException e) {
-                    duplicateErrorCount.getAndIncrement();
-                }
-                finally {
-                    latch.countDown();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    doneLatch.countDown();
                 }
             });
         }
 
         try {
-            latch.await();
+            readyLatch.await(); // 모든 스레드가 준비될 때까지 대기
+            startLatch.countDown(); // 모든 스레드가 동시에 실행 시작
+            doneLatch.await(); // 모든 스레드의 실행이 끝날 때까지 대기
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
 
         //then
-        long likeCount = likeQueryRepository.countByNoteId(note.getId());
         assertAll(
-                () -> assertThat(likeCount).isEqualTo(1),
-                () -> assertThat(duplicateErrorCount.get()).isEqualTo(threadCount-1)
+                () -> assertThat(likeQueryRepository.findByNoteIdAndUserId(note.getId(), user.getId())).isPresent(),
+                () -> assertThat(duplicateErrorCount.get()).isEqualTo(threadCount - 1)
         );
     }
 
