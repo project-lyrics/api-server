@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class NotificationCommandServiceTest extends IntegrationTest {
@@ -94,6 +95,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
     @Test
     void 댓글에_대한_알림을_저장한다() throws Exception {
         // given
+        given(firebaseMessaging.send(any())).willReturn(null);
         CommentEvent commentEvent = CommentEvent.from(comment);
 
         // when
