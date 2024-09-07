@@ -17,6 +17,7 @@ public enum ErrorCode {
     EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00005", "Some field is empty."),
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
+    INVALID_EMAIL(HttpStatus.BAD_REQUEST, "00008", "이메일 형식이 유효하지 않습니다."),
 
     // Auth
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "토큰이 만료되었습니다."),
@@ -75,6 +76,11 @@ public enum ErrorCode {
     // Notification
     UNKNOWN_NOTIFICATION_TYPE(HttpStatus.BAD_REQUEST, "11000", "알 수 없는 알림 타입입니다."),
     NOTIFICATION_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "11001", "알림 전송에 실패했습니다."),
+
+    // Report
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "12000", "해당 신고를 조회할 수 없습니다."),
+    REPORT_TARGET_CONFLICT(HttpStatus.BAD_REQUEST, "12001", "신고 대상은 Note와 Comment 중 하나여야 합니다."),
+    REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12001", "신고 대상(Note 또는 Comment)가 필요합니다."),
     ;
 
     private final HttpStatus responseStatus;
