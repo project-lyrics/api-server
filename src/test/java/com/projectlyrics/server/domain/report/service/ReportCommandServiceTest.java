@@ -2,6 +2,10 @@ package com.projectlyrics.server.domain.report.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
@@ -15,6 +19,7 @@ import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.domain.Report;
+import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.report.dto.request.ReportCreateRequest;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
@@ -24,6 +29,8 @@ import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import com.projectlyrics.server.global.slack.SlackClient;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.CommentFixture;
@@ -34,9 +41,16 @@ import com.projectlyrics.server.support.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class ReportCommandServiceTest extends IntegrationTest {
+
+    @MockBean
+    private SlackClient slackClient;
 
     @Autowired
     UserCommandRepository userCommandRepository;
@@ -83,6 +97,8 @@ public class ReportCommandServiceTest extends IntegrationTest {
         );
         note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
         comment = commentCommandRepository.save(CommentFixture.create(note,user));
+        doNothing().when(slackClient).sendNoteReportMessage(any());
+        doNothing().when(slackClient).sendCommentReportMessage(any());
     }
 
     @Test
@@ -99,6 +115,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
         Report report = sut.create(request, user.getId());
 
         // then
+        verify(slackClient).sendNoteReportMessage(report);
         Optional<Report> result = reportQueryRepository.findById(report.getId());
         assertAll(
                 () -> assertThat(result.isPresent()),
@@ -128,6 +145,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
         Report report = sut.create(request, user.getId());
 
         // then
+        verify(slackClient).sendCommentReportMessage(report);
         Optional<Report> result = reportQueryRepository.findById(report.getId());
         assertAll(
                 () -> assertThat(result.isPresent()),
@@ -156,6 +174,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
         Report report = sut.create(request, user.getId());
 
         // then
+        verify(slackClient).sendNoteReportMessage(report);
         Optional<Report> result = reportQueryRepository.findById(report.getId());
         assertAll(
                 () -> assertThat(result.isPresent()),
