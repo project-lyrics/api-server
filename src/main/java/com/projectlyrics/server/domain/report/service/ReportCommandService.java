@@ -17,6 +17,7 @@ import com.projectlyrics.server.domain.report.repository.ReportQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import com.projectlyrics.server.global.slack.SlackClient;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ReportCommandService {
     private final UserQueryRepository userQueryRepository;
     private final NoteQueryRepository noteQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
+    private final SlackClient slackClient;
 
     public Report create(ReportCreateRequest request, Long reporterId) {
 
@@ -58,7 +60,15 @@ public class ReportCommandService {
                     return Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email()));
                 });
 
-        return reportCommandRepository.save(report);
+        Report savedReport =  reportCommandRepository.save(report);
+
+        if (savedReport.getNote() != null) {
+            slackClient.sendNoteReportMessage(savedReport);
+        } else if (savedReport.getComment() != null) {
+            slackClient.sendCommentReportMessage(savedReport);
+        }
+
+        return savedReport;
     }
 
     public Long resolve(ReportResolveRequest reportResolveRequest, Long reportId) {
