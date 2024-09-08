@@ -8,6 +8,7 @@ import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.report.domain.Report;
 import com.projectlyrics.server.domain.report.domain.ReportCreate;
+import com.projectlyrics.server.domain.report.domain.ReportResolve;
 import com.projectlyrics.server.domain.report.dto.request.ReportCreateRequest;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
 import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
@@ -64,7 +65,7 @@ public class ReportCommandService {
 
         Report report = reportQueryRepository.findById(reportId)
                 .orElseThrow(ReportNotFoundException::new);
-        report.resolve(reportResolveRequest.approvalStatus(), reportResolveRequest.isFalseReport());
+        report.resolve(ReportResolve.of(reportResolveRequest.approvalStatus(), reportResolveRequest.isFalseReport()));
 
         return report.getId();
     }
