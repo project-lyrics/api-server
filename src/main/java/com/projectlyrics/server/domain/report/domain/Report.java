@@ -29,6 +29,7 @@ import org.aspectj.weaver.ast.Not;
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Report extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -109,8 +110,8 @@ public class Report extends BaseEntity {
         this.isFalseReport = false;
     }
 
-    public void resolve(ApprovalStatus approvalStatus, Boolean isFalseReport) {
-        this.approvalStatus = approvalStatus;
-        this.isFalseReport = isFalseReport;
+    public void resolve(ReportResolve reportResolve) {
+        this.approvalStatus = reportResolve.approvalStatus();
+        this.isFalseReport = reportResolve.isFalseReport();
     }
 }

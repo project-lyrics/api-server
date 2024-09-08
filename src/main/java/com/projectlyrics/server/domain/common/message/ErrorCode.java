@@ -80,7 +80,7 @@ public enum ErrorCode {
     // Report
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "12000", "해당 신고를 조회할 수 없습니다."),
     REPORT_TARGET_CONFLICT(HttpStatus.BAD_REQUEST, "12001", "신고 대상은 Note와 Comment 중 하나여야 합니다."),
-    REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12001", "신고 대상(Note 또는 Comment)가 필요합니다."),
+    REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12002", "신고 대상(Note 또는 Comment)가 필요합니다."),
     ;
 
     private final HttpStatus responseStatus;
