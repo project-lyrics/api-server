@@ -130,7 +130,7 @@ public class ReportTest {
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
         Report report = ReportFixture.create(note, reporter);
-        report.resolve(ReportResolve.of(ApprovalStatus.DISMISS, Boolean.TRUE));
+        report.resolve(ReportResolve.of(ApprovalStatus.DISMISSED, Boolean.TRUE));
         ReportReason reportReason = ReportReason.COMMERCIAL_ADS;
 
         // when
@@ -151,7 +151,7 @@ public class ReportTest {
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
         Report report = ReportFixture.create(note, reporter);
-        ApprovalStatus approvalStatus = ApprovalStatus.DISMISS;
+        ApprovalStatus approvalStatus = ApprovalStatus.DISMISSED;
         Boolean isFalseReport = Boolean.FALSE;
 
         // when

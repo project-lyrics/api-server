@@ -85,6 +85,8 @@ public enum ErrorCode {
     // Slack
     SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "13000", "슬랙 메세지 전송에 실패했습니다."),
     SLACK_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "13001", "슬랙 메세지 전송 중 에러가 발생했습니다."),
+    SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "13002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다"),
+    SLACK_FEEDBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"13003", "슬랙에 피드백 메세지 제공에 실패했습니다."),
     ;
 
     private final HttpStatus responseStatus;
