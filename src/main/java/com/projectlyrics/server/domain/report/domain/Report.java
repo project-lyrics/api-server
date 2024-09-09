@@ -38,17 +38,14 @@ public class Report extends BaseEntity {
     private User reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Nullable
     private Note note;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Nullable
     private Comment comment;
 
     @Enumerated(value = EnumType.STRING)
     private ReportReason reportReason;
 
-    @Nullable
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -56,8 +53,7 @@ public class Report extends BaseEntity {
 
     private Boolean isFalseReport;
 
-    private Report(Long id, User reporter, @Nullable Note note, @Nullable Comment comment, ReportReason reportReason,
-                  @Nullable String email) {
+    private Report(Long id, User reporter, Note note, Comment comment, ReportReason reportReason, String email) {
         checkNoteOrComment(note,comment);
         this.id = id;
         this.reporter = reporter;
@@ -69,13 +65,10 @@ public class Report extends BaseEntity {
         this.isFalseReport = false;
     }
 
-    private Report(User reporter, @Nullable Note note, @Nullable Comment comment, ReportReason reportReason,
-                   @Nullable String email) {
-        this(null, reporter, note,comment,reportReason, email);
-    }
 
     public static Report create(ReportCreate reportCreate) {
         return new Report(
+                null,
                 reportCreate.reporter(),
                 reportCreate.note(),
                 reportCreate.comment(),

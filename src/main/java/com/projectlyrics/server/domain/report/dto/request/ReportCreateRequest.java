@@ -10,16 +10,13 @@ import jakarta.validation.constraints.NotNull;
 
 public record ReportCreateRequest (
 
-        @Nullable
         Long noteId,
 
-        @Nullable
         Long commentId,
 
         @NotNull
         ReportReason reportReason,
-
-        @Nullable
+        
         @Email
         String email
 ){

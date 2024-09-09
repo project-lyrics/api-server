@@ -8,15 +8,12 @@ import jakarta.annotation.Nullable;
 public record ReportCreate (
         User reporter,
 
-        @Nullable
         Note note,
 
-        @Nullable
         Comment comment,
 
         ReportReason reportReason,
 
-        @Nullable
         String email
 ) {
     public static ReportCreate of(User reporter, Note note, Comment comment, ReportReason reportReason, String email) {
