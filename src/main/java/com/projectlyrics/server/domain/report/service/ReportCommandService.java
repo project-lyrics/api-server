@@ -75,7 +75,7 @@ public class ReportCommandService {
 
         Report report = reportQueryRepository.findById(reportId)
                 .orElseThrow(ReportNotFoundException::new);
-        report.resolve(ReportResolve.of(reportResolveRequest.approvalStatus(), reportResolveRequest.isFalseReport()));
+        report.resolve(ReportResolve.from(reportResolveRequest));
 
         return report.getId();
     }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
 import com.projectlyrics.server.domain.report.exception.ReportTargetConfilctedException;
 import com.projectlyrics.server.domain.report.exception.ReportTargetMissingException;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -130,7 +131,7 @@ public class ReportTest {
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
         Report report = ReportFixture.create(note, reporter);
-        report.resolve(ReportResolve.of(ApprovalStatus.DISMISSED, Boolean.TRUE));
+        report.resolve(ReportResolve.from(ReportResolveRequest.of(ApprovalStatus.DISMISSED, Boolean.TRUE)));
         ReportReason reportReason = ReportReason.COMMERCIAL_ADS;
 
         // when
@@ -155,7 +156,7 @@ public class ReportTest {
         Boolean isFalseReport = Boolean.FALSE;
 
         // when
-        report.resolve(ReportResolve.of(approvalStatus, isFalseReport));
+        report.resolve(ReportResolve.from(ReportResolveRequest.of(approvalStatus, isFalseReport)));
 
         // then
         assertAll(
