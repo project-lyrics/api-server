@@ -1,9 +1,9 @@
 package com.projectlyrics.server.global.configuration;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
-import com.projectlyrics.server.domain.auth.authentication.AuthInterceptor;
-import com.projectlyrics.server.domain.auth.authentication.SlackInterceptor;
-import com.projectlyrics.server.domain.user.authentication.AdminInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

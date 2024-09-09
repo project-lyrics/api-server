@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.user.authentication;
+package com.projectlyrics.server.domain.auth.authentication.interceptor;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.TokenExtractor;
