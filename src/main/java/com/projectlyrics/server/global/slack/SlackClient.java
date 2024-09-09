@@ -12,6 +12,7 @@ import com.slack.api.model.block.composition.MarkdownTextObject;
 import com.slack.api.model.block.composition.PlainTextObject;
 import com.slack.api.model.block.element.ButtonElement;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class SlackClient {
     private String channelId;
 
     private static final Logger logger = LoggerFactory.getLogger(SlackClient.class);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public void sendMessage(List<LayoutBlock> blocks, String message) {
         try {
@@ -51,79 +53,77 @@ public class SlackClient {
     }
 
     public void sendNoteReportMessage(Report report) {
-        // Build the blocks with buttons
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
-                        MarkdownTextObject.builder().text(":rotating_light: " + report.getId() + ") *새로운 신고가 접수되었습니다.*").build())),
+                        MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
                 Blocks.section(section -> section.fields(List.of(
                         MarkdownTextObject.builder().text("*신고자 ID:* " + report.getReporter().getId()).build(),
                         MarkdownTextObject.builder().text("*피신고자 ID:* " + report.getNote().getPublisher().getId()).build(),
                         MarkdownTextObject.builder().text("*노트 ID:* " + report.getNote().getId()).build(),
                         MarkdownTextObject.builder().text("*신고 이유:* " + report.getReportReason().getDescription()).build(),
                         MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
-                        MarkdownTextObject.builder().text("*신고 일시:* " + report.getCreatedAt()).build()
+                        MarkdownTextObject.builder().text("*신고 일시:* " + formatter.format(report.getCreatedAt())).build()
                 ))),
-                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*노트 내용:*\n" + report.getNote().getContent()).build())),
+                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*노트 내용:*\n" +  (report.getNote().getContent() != null ? report.getNote().getContent() : "-")).build())),
                 Blocks.actions(actions -> actions.elements(List.of(
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Accept").build())
-                                .actionId("resolve_report")
+                                .actionId("report_accept")
                                 .style("primary")
-                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":" + false + "}")
+                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
-                                .actionId("resolve_report")
+                                .actionId("report_dismiss")
                                 .style("danger")
-                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":" + false + "}")
+                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
-                                .actionId("resolve_report")
-                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":" + true + "}")
+                                .actionId("report_fake")
+                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
                                 .build()
                 )))
         );
 
-        sendMessage(blocks, "Report Notification");
+        sendMessage(blocks, "Note Report Notification");
     }
 
     public void sendCommentReportMessage(Report report) {
-        // Build the blocks with buttons
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
-                        MarkdownTextObject.builder().text(":rotating_light: " + report.getId() + ") *새로운 신고가 접수되었습니다.*").build())),
+                        MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
                 Blocks.section(section -> section.fields(List.of(
                         MarkdownTextObject.builder().text("*신고자 ID:* " + report.getReporter().getId()).build(),
                         MarkdownTextObject.builder().text("*피신고자 ID:* " + report.getComment().getWriter().getId()).build(),
                         MarkdownTextObject.builder().text("*댓글 ID:* " + report.getComment().getId()).build(),
                         MarkdownTextObject.builder().text("*신고 이유:* " + report.getReportReason().getDescription()).build(),
                         MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
-                        MarkdownTextObject.builder().text("*신고 일시:*" + report.getCreatedAt()).build()
+                        MarkdownTextObject.builder().text("*신고 일시:* " + formatter.format(report.getCreatedAt())).build()
                 ))),
-                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*댓글 내용:*\n" + report.getComment().getContent()).build())),
+                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*댓글 내용:*\n" + (report.getComment().getContent() != null ? report.getComment().getContent() : "-")).build())),
                 Blocks.actions(actions -> actions.elements(List.of(
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Accept").build())
-                                .actionId("accept_report")
+                                .actionId("report_accept")
                                 .style("primary")
-                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":" + false + "}")
+                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
-                                .actionId("dismiss_report")
+                                .actionId("report_dismiss")
                                 .style("danger")
-                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":" + false + "}")
+                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
-                                .actionId("fake_report")
-                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":" + true + "}")
+                                .actionId("report_fake")
+                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
                                 .build()
                 )))
         );
 
-        sendMessage(blocks, "Report Notification");
+        sendMessage(blocks, "Comment Report Notification");
     }
 
 }
