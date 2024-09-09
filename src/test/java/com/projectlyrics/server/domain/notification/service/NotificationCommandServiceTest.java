@@ -96,7 +96,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
     @Test
     void 댓글에_대한_알림을_저장한다() throws Exception {
         // given
-        given(firebaseMessaging.send(any())).willReturn(null);
+        when(firebaseMessaging.send(any())).thenReturn(null);
         CommentEvent commentEvent = CommentEvent.from(comment);
 
         // when
