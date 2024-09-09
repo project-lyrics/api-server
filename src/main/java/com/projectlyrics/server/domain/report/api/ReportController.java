@@ -36,17 +36,4 @@ public class ReportController {
                 .status(HttpStatus.OK)
                 .body(new ReportCreateResponse(true));
     }
-
-    @PatchMapping("/{reportId}")
-    public ResponseEntity<ReportResolveResponse> resolve(
-            @Authenticated AuthContext authContext,
-            @PathVariable(name = "reportId") Long reportId,
-            @RequestBody @Valid ReportResolveRequest request
-    ) {
-        reportCommandService.resolve(request, reportId);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ReportResolveResponse(true));
-    }
 }
