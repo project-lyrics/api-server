@@ -2,6 +2,7 @@ package com.projectlyrics.server.global.configuration;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.AuthInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.SlackInterceptor;
 import com.projectlyrics.server.domain.user.authentication.AdminInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final AuthArgumentResolver authArgumentResolver;
     private final AdminInterceptor adminInterceptor;
+    private final SlackInterceptor slackInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -32,12 +34,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/artists/search")
                 .excludePathPatterns("/api/v1/notes/artists")
                 .excludePathPatterns("/api/v1/notes/songs")
-                .excludePathPatterns("/api/v1/songs/search");
+                .excludePathPatterns("/api/v1/songs/search")
+                .excludePathPatterns("/api/v1/slack/interactive");
 
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/api/v1/artists/**")
                 .addPathPatterns("/api/v1/notifications/public")
                 .excludePathPatterns("/api/v1/artists/search");
+
+        registry.addInterceptor(slackInterceptor)
+                .addPathPatterns("/api/v1/slack/interactive");
     }
 
     @Override

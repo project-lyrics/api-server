@@ -50,7 +50,7 @@ public class SlackController {
                 message = ":white_check_mark: " + type + "pressed )\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
             }
 
-            sendFeedbackToSlack(json.getString("response_url"), "Report resolved successfully.");
+            sendFeedbackToSlack(json.getString("response_url"), message);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
