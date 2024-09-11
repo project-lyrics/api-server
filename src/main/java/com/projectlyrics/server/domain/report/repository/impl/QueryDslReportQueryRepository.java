@@ -19,6 +19,9 @@ public class QueryDslReportQueryRepository implements ReportQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(report)
+                        .leftJoin(report.reporter).fetchJoin()
+                        .leftJoin(report.note).fetchJoin()
+                        .leftJoin(report.comment).fetchJoin()
                         .where(
                                 report.id.eq(reportId),
                                 report.deletedAt.isNull()
@@ -31,6 +34,9 @@ public class QueryDslReportQueryRepository implements ReportQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(report)
+                        .leftJoin(report.reporter).fetchJoin()
+                        .leftJoin(report.note).fetchJoin()
+                        .leftJoin(report.comment).fetchJoin()
                         .where(
                                 report.reporter.id.eq(reporterId),
                                 commentId != null ? report.comment.id.eq(commentId) : report.comment.id.isNull(),
