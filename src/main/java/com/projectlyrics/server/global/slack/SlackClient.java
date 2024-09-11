@@ -52,19 +52,19 @@ public class SlackClient {
         }
     }
 
-    public void sendNoteReportMessage(Report report) {
+    private void sendReportMessage(Report report, String contentType, Long contentId, String content) {
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
                         MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
                 Blocks.section(section -> section.fields(List.of(
                         MarkdownTextObject.builder().text("*신고자 ID:* " + report.getReporter().getId()).build(),
-                        MarkdownTextObject.builder().text("*피신고자 ID:* " + report.getNote().getPublisher().getId()).build(),
-                        MarkdownTextObject.builder().text("*노트 ID:* " + report.getNote().getId()).build(),
+                        MarkdownTextObject.builder().text("*피신고자 ID:* " + contentId).build(),
+                        MarkdownTextObject.builder().text("*" + contentType + " ID:* " + contentId).build(),
                         MarkdownTextObject.builder().text("*신고 이유:* " + report.getReportReason().getDescription()).build(),
                         MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
                         MarkdownTextObject.builder().text("*신고 일시:* " + formatter.format(report.getCreatedAt())).build()
                 ))),
-                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*노트 내용:*\n" +  (report.getNote().getContent() != null ? report.getNote().getContent() : "-")).build())),
+                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*" + contentType + " 내용:*\n" + (content != null ? content : "-")).build())),
                 Blocks.actions(actions -> actions.elements(List.of(
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Accept").build())
@@ -86,45 +86,25 @@ public class SlackClient {
                 )))
         );
 
-        sendMessage(blocks, "Note Report Notification");
+        sendMessage(blocks, contentType + " Report Notification");
+    }
+
+    public void sendNoteReportMessage(Report report) {
+        sendReportMessage(
+                report,
+                "노트",
+                report.getNote().getPublisher().getId(),
+                report.getNote().getContent()
+        );
     }
 
     public void sendCommentReportMessage(Report report) {
-        List<LayoutBlock> blocks = List.of(
-                Blocks.section(section -> section.text(
-                        MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
-                Blocks.section(section -> section.fields(List.of(
-                        MarkdownTextObject.builder().text("*신고자 ID:* " + report.getReporter().getId()).build(),
-                        MarkdownTextObject.builder().text("*피신고자 ID:* " + report.getComment().getWriter().getId()).build(),
-                        MarkdownTextObject.builder().text("*댓글 ID:* " + report.getComment().getId()).build(),
-                        MarkdownTextObject.builder().text("*신고 이유:* " + report.getReportReason().getDescription()).build(),
-                        MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
-                        MarkdownTextObject.builder().text("*신고 일시:* " + formatter.format(report.getCreatedAt())).build()
-                ))),
-                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*댓글 내용:*\n" + (report.getComment().getContent() != null ? report.getComment().getContent() : "-")).build())),
-                Blocks.actions(actions -> actions.elements(List.of(
-                        ButtonElement.builder()
-                                .text(PlainTextObject.builder().text("Accept").build())
-                                .actionId("report_accept")
-                                .style("primary")
-                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
-                                .build(),
-                        ButtonElement.builder()
-                                .text(PlainTextObject.builder().text("Dismiss").build())
-                                .actionId("report_dismiss")
-                                .style("danger")
-                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
-                                .build(),
-                        ButtonElement.builder()
-                                .text(PlainTextObject.builder().text("Fake Report").build())
-                                .actionId("report_fake")
-                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
-                                .build()
-                )))
+        sendReportMessage(
+                report,
+                "댓글",
+                report.getComment().getWriter().getId(),
+                report.getComment().getContent()
         );
-
-        sendMessage(blocks, "Comment Report Notification");
     }
-
 }
 
