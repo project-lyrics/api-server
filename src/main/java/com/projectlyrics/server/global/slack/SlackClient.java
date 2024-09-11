@@ -52,6 +52,24 @@ public class SlackClient {
         }
     }
 
+    public void sendNoteReportMessage(Report report) {
+        sendReportMessage(
+                report,
+                "노트",
+                report.getNote().getPublisher().getId(),
+                report.getNote().getContent()
+        );
+    }
+
+    public void sendCommentReportMessage(Report report) {
+        sendReportMessage(
+                report,
+                "댓글",
+                report.getComment().getWriter().getId(),
+                report.getComment().getContent()
+        );
+    }
+
     private void sendReportMessage(Report report, String contentType, Long contentId, String content) {
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
@@ -87,24 +105,6 @@ public class SlackClient {
         );
 
         sendMessage(blocks, contentType + " Report Notification");
-    }
-
-    public void sendNoteReportMessage(Report report) {
-        sendReportMessage(
-                report,
-                "노트",
-                report.getNote().getPublisher().getId(),
-                report.getNote().getContent()
-        );
-    }
-
-    public void sendCommentReportMessage(Report report) {
-        sendReportMessage(
-                report,
-                "댓글",
-                report.getComment().getWriter().getId(),
-                report.getComment().getContent()
-        );
     }
 }
 
