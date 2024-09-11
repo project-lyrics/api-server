@@ -41,3 +41,10 @@ server:
 
 firebase:
   key-file: src/main/resources/firebase-key.json
+
+slack:
+  token: secret
+  signing:
+    secret: secret
+  channel:
+    id: secret

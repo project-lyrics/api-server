@@ -52,6 +52,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final Exception e) {
+        if (e instanceof MethodArgumentNotValidException) {
+            MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
+            FieldError fieldError = ex.getBindingResult().getFieldError();
+            if (fieldError != null && "email".equals(fieldError.getField())) {
+                // Custom message for email field errors
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(ErrorResponse.of(ErrorCode.INVALID_EMAIL));
+            }
+        }
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));

@@ -1,5 +1,7 @@
-package com.projectlyrics.server.domain.auth.authentication;
+package com.projectlyrics.server.domain.auth.authentication.interceptor;
 
+import com.projectlyrics.server.domain.auth.authentication.AuthContext;
+import com.projectlyrics.server.domain.auth.authentication.TokenExtractor;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtClaim;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
 import jakarta.servlet.http.HttpServletRequest;
