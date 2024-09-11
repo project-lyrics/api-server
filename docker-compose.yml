@@ -19,7 +19,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./firebase-key.json:/home/ubuntu/firebase-key.json
+      - ./firebase-key.json:src/main/resources/firebase-key.json
     depends_on:
       - redis
   green:
@@ -33,7 +33,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./firebase-key.json:/home/ubuntu/firebase-key.json
+      - ./firebase-key.json:src/main/resources/firebase-key.json
     depends_on:
       - redis
 
