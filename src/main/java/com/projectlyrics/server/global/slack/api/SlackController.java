@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,11 +26,11 @@ public class SlackController {
     private final RestTemplate restTemplate = new RestTemplate(); // HTTP 요청을 보내기 위한 RestTemplate
 
     @PostMapping
-    public ResponseEntity<Void> handleInteractiveMessage(@RequestBody String payload) {
+    public ResponseEntity<Void> handleInteractiveMessage(@RequestParam String payload) {
         try {
             // Slack에서 보낸 payload 디코딩 및 JSON 변환
             String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8.name());
-            JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
+            JSONObject json = new JSONObject(decodedPayload);
 
             // 액션 정보 추출
             JSONObject action = json.getJSONArray("actions").getJSONObject(0);
