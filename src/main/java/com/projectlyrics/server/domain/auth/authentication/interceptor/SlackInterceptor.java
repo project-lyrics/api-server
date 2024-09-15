@@ -54,7 +54,7 @@ public class SlackInterceptor implements HandlerInterceptor {
             for (byte b : rawHmac) {
                 sb.append(String.format("%02x", b));
             }
-            String calculatedSignature = "v0=" + sb.toString();
+            String calculatedSignature = "v0=" + sb.toString();  // 'v0='을 포함한 서명 생성
 
             // 디버깅용 출력
             System.out.println("==============================");
@@ -62,12 +62,9 @@ public class SlackInterceptor implements HandlerInterceptor {
             System.out.println("Slack Signature: " + signature);
             System.out.println("==============================");
 
-            // 'v0=' 이후의 부분만 비교
-            String slackSignature = signature.replaceFirst("v0=", "");
-
-            // 서명을 비교 (constant-time 비교 사용)
-            return MessageDigest.isEqual(calculatedSignature.substring(3).getBytes(StandardCharsets.UTF_8),
-                    slackSignature.getBytes(StandardCharsets.UTF_8));
+            // 서명 전체를 비교 (constant-time 비교 사용)
+            return MessageDigest.isEqual(calculatedSignature.getBytes(StandardCharsets.UTF_8),
+                    signature.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
             return false;
