@@ -57,6 +57,8 @@ public class SlackInterceptor implements HandlerInterceptor {
             String calculatedSignature = "v0=" + sb.toString();  // 'v0='을 포함한 서명 생성
 
             // 디버깅용 출력
+            System.out.println("-------------------------------");
+            System.out.println(baseString);
             System.out.println("==============================");
             System.out.println("Calculated Signature: " + calculatedSignature);
             System.out.println("Slack Signature: " + signature);
