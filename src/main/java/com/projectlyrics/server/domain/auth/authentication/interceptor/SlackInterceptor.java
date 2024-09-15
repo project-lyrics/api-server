@@ -31,7 +31,7 @@ public class SlackInterceptor implements HandlerInterceptor {
         String payload = new String(requestWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 
         if (!method.equalsIgnoreCase("POST") || !isValidSlackRequest(payload, signature, timestamp)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 잘못된 요청
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return false;
         }
 
