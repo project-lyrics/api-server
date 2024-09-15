@@ -56,6 +56,10 @@ public class SlackInterceptor implements HandlerInterceptor {
             }
             String calculatedSignature = "v0=" + sb.toString();
 
+            System.out.println("==============================");
+            System.out.println(calculatedSignature);
+            System.out.println("==============================");
+
             // 서명을 비교
             return MessageDigest.isEqual(calculatedSignature.getBytes(), signature.getBytes());
         } catch (Exception e) {
