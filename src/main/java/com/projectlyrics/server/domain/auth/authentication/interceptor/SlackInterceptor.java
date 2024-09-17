@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.auth.authentication.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import javax.crypto.Mac;
@@ -29,8 +28,8 @@ public class SlackInterceptor implements HandlerInterceptor {
         String signature = request.getHeader("X-Slack-Signature");
         String timestamp = request.getHeader("X-Slack-Request-Timestamp");
 
-        // 요청 본문을 직접 가져오는 방식
-        String payload = getRequestBody(requestWrapper);
+        // 캐싱된 요청 본문을 가져옴
+        String payload = new String(requestWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 
         if (!method.equalsIgnoreCase("POST") || !isValidSlackRequest(payload, signature, timestamp)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized로 변경
@@ -39,19 +38,6 @@ public class SlackInterceptor implements HandlerInterceptor {
 
         return true;
     }
-
-    // 요청 본문을 읽는 메서드
-    private String getRequestBody(ContentCachingRequestWrapper requestWrapper) throws Exception {
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        try (BufferedReader reader = requestWrapper.getReader()) {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        }
-        return stringBuilder.toString();
-    }
-
 
     // Slack 요청이 유효한지 확인하는 메서드
     private boolean isValidSlackRequest(String payload, String signature, String timestamp) {
