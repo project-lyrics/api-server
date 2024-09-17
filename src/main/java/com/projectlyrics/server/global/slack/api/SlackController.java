@@ -53,7 +53,7 @@ public class SlackController {
 
             // 응답 메세지
             String message = "";
-            String threadTs = json.optString("message_ts");  // Extract thread_ts if present
+            String threadTs = json.getJSONObject("container").optString("message_ts"); ;  // Extract thread_ts if present
 
             // actionId에 따라 처리
             if (actionId.startsWith("report_")) {
