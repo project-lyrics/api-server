@@ -32,6 +32,11 @@ public class SlackController {
             String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8.name());
             JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
 
+            System.out.println("------------------------------------");
+            System.out.println("json = " + json);
+            System.out.println("decodedPayload = " + decodedPayload);
+            System.out.println("------------------------------------");
+
             // 액션 정보 추출
             JSONObject action = json.getJSONArray("actions").getJSONObject(0);
             String actionId = action.getString("action_id");
