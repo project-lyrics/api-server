@@ -42,13 +42,17 @@ public class SlackController {
 
             // actionId에 따라 처리
             if (actionId.startsWith("report_")) {
-                System.out.println("------------------------");
-                System.out.println(valueJson);
-                System.out.println("-------------------------");
                 String type = valueJson.getString("type");
                 Long reportId = valueJson.getLong("reportId");
                 ApprovalStatus approvalStatus = ApprovalStatus.valueOf( valueJson.getString("approvalStatus"));
                 Boolean isFalseReport = valueJson.getBoolean("isFalseReport");
+
+                System.out.println("------------------------------------");
+                System.out.println("isFalseReport = " + isFalseReport);
+                System.out.println("approvalStatus = " + approvalStatus);
+                System.out.println("reportId = " + reportId);
+                System.out.println("type = " + type);
+                System.out.println("------------------------------------");
 
                 reportCommandService.resolve(ReportResolveRequest.of(approvalStatus, isFalseReport), reportId);
                 message = ":white_check_mark: " + type + "pressed )\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
