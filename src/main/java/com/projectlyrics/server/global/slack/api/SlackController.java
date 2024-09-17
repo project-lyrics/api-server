@@ -86,10 +86,6 @@ public class SlackController {
                 responseJson.put("thread_ts", threadTs);  // 스레드의 타임스탬프 포함
             }
 
-            System.out.println("|||||||||||||||||||||||||||||||||||");
-            System.out.println("threadTs = " + threadTs);
-            System.out.println("|||||||||||||||||||||||||||||||||||");
-
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8 인코딩
             headers.set("Authorization", "Bearer "+ token);  // Slack 봇 토큰 설정
