@@ -78,30 +78,26 @@ public class SlackController {
     private void sendFeedbackToSlack(String message, String threadTs) {
         try {
             JSONObject responseJson = new JSONObject();
-            responseJson.put("channel", channelId);  // 채널 ID
+            responseJson.put("channel", channelId);  // 여기에 채널 ID를 넣으세요
             responseJson.put("text", message);
 
             // 스레드에 답장할 경우
             if (threadTs != null && !threadTs.isEmpty()) {
-                responseJson.put("thread_ts", threadTs);  // 스레드의 타임스탬프
+                responseJson.put("thread_ts", threadTs);  // 스레드의 타임스탬프 포함
             }
+
+            System.out.println("|||||||||||||||||||||||||||||||||||");
+            System.out.println("threadTs = " + threadTs);
+            System.out.println("|||||||||||||||||||||||||||||||||||");
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8 인코딩
-            headers.set("Authorization", "Bearer " + token);  // Slack 봇 토큰 설정
+            headers.set("Authorization", "Bearer "+ token);  // Slack 봇 토큰 설정
 
             HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
             String slackApiUrl = "https://slack.com/api/chat.postMessage";  // Slack API URL
 
-            ResponseEntity<String> response = restTemplate.postForEntity(slackApiUrl, entity, String.class);
-            String responseBody = response.getBody();
-            System.out.println("Slack API Response: " + responseBody);
-
-            // 응답에서 오류 확인
-            JSONObject jsonResponse = new JSONObject(responseBody);
-            if (!jsonResponse.getBoolean("ok")) {
-                throw new SlackFeedbackFailureException();
-            }
+            restTemplate.postForEntity(slackApiUrl, entity, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SlackFeedbackFailureException();
