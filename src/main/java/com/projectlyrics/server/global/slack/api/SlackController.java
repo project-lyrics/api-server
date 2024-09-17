@@ -42,6 +42,9 @@ public class SlackController {
 
             // actionId에 따라 처리
             if (actionId.startsWith("report_")) {
+                System.out.println("------------------------");
+                System.out.println(valueJson);
+                System.out.println("-------------------------");
                 String type = valueJson.getString("type");
                 Long reportId = valueJson.getLong("reportId");
                 ApprovalStatus approvalStatus = ApprovalStatus.valueOf( valueJson.getString("approvalStatus"));
