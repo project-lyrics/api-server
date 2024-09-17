@@ -10,6 +10,9 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,11 +39,6 @@ public class SlackController {
             String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8.name());
             JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
 
-            System.out.println("------------------------------------");
-            System.out.println("json = " + json);
-            System.out.println("decodedPayload = " + decodedPayload);
-            System.out.println("------------------------------------");
-
             // 액션 정보 추출
             JSONObject action = json.getJSONArray("actions").getJSONObject(0);
             String actionId = action.getString("action_id");
@@ -56,15 +54,8 @@ public class SlackController {
                 ApprovalStatus approvalStatus = ApprovalStatus.valueOf( valueJson.getString("approvalStatus"));
                 Boolean isFalseReport = valueJson.getBoolean("isFalseReport");
 
-                System.out.println("------------------------------------");
-                System.out.println("isFalseReport = " + isFalseReport);
-                System.out.println("approvalStatus = " + approvalStatus);
-                System.out.println("reportId = " + reportId);
-                System.out.println("type = " + type);
-                System.out.println("------------------------------------");
-
                 reportCommandService.resolve(ReportResolveRequest.of(approvalStatus, isFalseReport), reportId);
-                message = ":white_check_mark: " + type + "pressed )\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
+                message = ":white_check_mark: *" + type + " pressed)*\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
             }
 
             sendFeedbackToSlack(json.getString("response_url"), message);
@@ -79,9 +70,14 @@ public class SlackController {
     private void sendFeedbackToSlack(String responseUrl, String message) {
         try {
             JSONObject responseJson = new JSONObject();
+            responseJson.put("response_type", "in_channel");  // 댓글 형식으로 추가
             responseJson.put("text", message);
 
-            restTemplate.postForEntity(responseUrl, responseJson.toString(), String.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8로 인코딩
+            HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
+
+            restTemplate.postForEntity(responseUrl, entity, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SlackFeedbackFailureException();
