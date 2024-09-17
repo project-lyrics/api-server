@@ -70,10 +70,10 @@ public class SlackInterceptor implements HandlerInterceptor {
             // 디버깅용 출력
 //            System.out.println("-------------------------------");
 //            System.out.println(baseString);
-//            System.out.println("==============================");
-//            System.out.println("Calculated Signature: " + calculatedSignature);
-//            System.out.println("Slack Signature: " + signature);
-//            System.out.println("==============================");
+            System.out.println("==============================");
+            System.out.println("Calculated Signature: " + calculatedSignature);
+            System.out.println("Slack Signature: " + signature);
+            System.out.println("==============================");
 
             // 서명 전체를 비교 (constant-time 비교 사용)
             return MessageDigest.isEqual(calculatedSignature.getBytes(StandardCharsets.UTF_8),
