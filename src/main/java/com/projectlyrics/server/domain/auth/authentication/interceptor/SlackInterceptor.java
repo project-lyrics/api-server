@@ -42,14 +42,11 @@ public class SlackInterceptor implements HandlerInterceptor {
 
     // 요청 본문을 읽는 메서드
     private String getRequestBody(ContentCachingRequestWrapper requestWrapper) throws Exception {
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        try (BufferedReader reader = requestWrapper.getReader()) {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
+        byte[] buf = requestWrapper.getContentAsByteArray(); // 캐시된 본문을 사용
+        if (buf.length > 0) {
+            return new String(buf, 0, buf.length, requestWrapper.getCharacterEncoding());
         }
-        return stringBuilder.toString();
+        return null;
     }
 
 
