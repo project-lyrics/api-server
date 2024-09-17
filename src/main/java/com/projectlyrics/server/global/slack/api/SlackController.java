@@ -44,21 +44,22 @@ public class SlackController {
             String actionId = action.getString("action_id");
             JSONObject valueJson = new JSONObject(action.getString("value"));
 
-            //응답 메세지
+            // 응답 메세지
             String message = "";
+            String threadTs = json.optString("message_ts");  // Extract thread_ts if present
 
             // actionId에 따라 처리
             if (actionId.startsWith("report_")) {
                 String type = valueJson.getString("type");
                 Long reportId = valueJson.getLong("reportId");
-                ApprovalStatus approvalStatus = ApprovalStatus.valueOf( valueJson.getString("approvalStatus"));
+                ApprovalStatus approvalStatus = ApprovalStatus.valueOf(valueJson.getString("approvalStatus"));
                 Boolean isFalseReport = valueJson.getBoolean("isFalseReport");
 
                 reportCommandService.resolve(ReportResolveRequest.of(approvalStatus, isFalseReport), reportId);
                 message = ":white_check_mark: *" + type + " pressed)*\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
             }
 
-            sendFeedbackToSlack(json.getString("response_url"), message);
+            sendFeedbackToSlack(json.getString("response_url"), message, threadTs);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -67,11 +68,15 @@ public class SlackController {
         }
     }
 
-    private void sendFeedbackToSlack(String responseUrl, String message) {
+    private void sendFeedbackToSlack(String responseUrl, String message, String threadTs) {
         try {
             JSONObject responseJson = new JSONObject();
             responseJson.put("response_type", "in_channel");  // 댓글 형식으로 추가
             responseJson.put("text", message);
+
+            if (threadTs != null && !threadTs.isEmpty()) {
+                responseJson.put("thread_ts", threadTs);  // Include thread_ts for replies
+            }
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8로 인코딩
