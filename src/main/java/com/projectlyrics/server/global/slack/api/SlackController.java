@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,6 +27,12 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 @RequestMapping("/api/v1/slack/interactive")
 @RequiredArgsConstructor
 public class SlackController {
+
+    @Value("${slack.token}")
+    private String token;
+
+    @Value("${slack.channel.id}")
+    private String channelId;
 
     private final ReportCommandService reportCommandService;
     private final RestTemplate restTemplate = new RestTemplate(); // HTTP 요청을 보내기 위한 RestTemplate
@@ -59,7 +66,7 @@ public class SlackController {
                 message = ":white_check_mark: *" + type + " pressed)*\n승인여부 : " + approvalStatus + "   허위신고여부: " + isFalseReport;
             }
 
-            sendFeedbackToSlack(json.getString("response_url"), message, threadTs);
+            sendFeedbackToSlack(message, threadTs);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -68,26 +75,30 @@ public class SlackController {
         }
     }
 
-    private void sendFeedbackToSlack(String responseUrl, String message, String threadTs) {
+    private void sendFeedbackToSlack(String message, String threadTs) {
         try {
             JSONObject responseJson = new JSONObject();
-            responseJson.put("response_type", "ephemeral");  // 사용자 전용 메시지
+            responseJson.put("channel", channelId);  // 여기에 채널 ID를 넣으세요
+            responseJson.put("text", message);
 
             // 스레드에 답장할 경우
             if (threadTs != null && !threadTs.isEmpty()) {
                 responseJson.put("thread_ts", threadTs);  // 스레드의 타임스탬프 포함
-            } else {
-                responseJson.put("text", message);  // 스레드가 아닐 경우 일반 메시지
             }
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8 인코딩
-            HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
+            headers.set("Authorization", "Bearer "+ token);  // Slack 봇 토큰 설정
 
-            restTemplate.postForEntity(responseUrl, entity, String.class);
+            HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
+            String slackApiUrl = "https://slack.com/api/chat.postMessage";  // Slack API URL
+
+            restTemplate.postForEntity(slackApiUrl, entity, String.class);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SlackFeedbackFailureException();
+
+
         }
     }
 }
