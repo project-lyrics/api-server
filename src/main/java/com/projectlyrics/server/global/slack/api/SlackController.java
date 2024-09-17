@@ -71,15 +71,17 @@ public class SlackController {
     private void sendFeedbackToSlack(String responseUrl, String message, String threadTs) {
         try {
             JSONObject responseJson = new JSONObject();
-            responseJson.put("response_type", "in_channel");  // 댓글 형식으로 추가
-            responseJson.put("text", message);
+            responseJson.put("response_type", "ephemeral");  // 사용자 전용 메시지
 
+            // 스레드에 답장할 경우
             if (threadTs != null && !threadTs.isEmpty()) {
-                responseJson.put("thread_ts", threadTs);  // Include thread_ts for replies
+                responseJson.put("thread_ts", threadTs);  // 스레드의 타임스탬프 포함
+            } else {
+                responseJson.put("text", message);  // 스레드가 아닐 경우 일반 메시지
             }
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8로 인코딩
+            headers.setContentType(MediaType.APPLICATION_JSON);  // UTF-8 인코딩
             HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
 
             restTemplate.postForEntity(responseUrl, entity, String.class);
