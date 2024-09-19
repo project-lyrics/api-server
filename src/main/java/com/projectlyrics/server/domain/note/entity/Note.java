@@ -8,6 +8,7 @@ import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
+import java.util.stream.Collectors;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -147,5 +148,17 @@ public class Note extends BaseEntity {
     public boolean isBookmarked(Long userId) {
         return bookmarks.stream()
                 .anyMatch(bookmark -> bookmark.isUser(userId));
+    }
+
+    public List<Comment> getComments() {
+        return comments.stream().filter(comment -> comment.isInUse()).collect(Collectors.toList());
+    }
+
+    public List<Like> getLikes() {
+        return likes.stream().filter(like -> like.isInUse()).collect(Collectors.toList());
+    }
+
+    public List<Bookmark> getBookmarks() {
+        return bookmarks.stream().filter(bookmark -> bookmark.isInUse()).collect(Collectors.toList());
     }
 }
