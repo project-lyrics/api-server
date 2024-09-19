@@ -51,7 +51,7 @@ public class CommentController {
             @Authenticated AuthContext authContext,
             @PathVariable(name = "commentId") Long commentId
     ) {
-        commentCommandService.delete(authContext.getId(), commentId);
+        commentCommandService.delete(commentId, authContext.getId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
