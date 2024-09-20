@@ -54,12 +54,12 @@ public class ReportCommandService {
                 .orElse(null);
 
         reportQueryRepository.findByReporterIdAndNoteIdAndCommentId(
-                reporterId, request.noteId(), request.commentId())
-                .ifPresent(
-                        report -> new DuplicateReportException()
-                );
+                        reporterId, request.noteId(), request.commentId())
+                .ifPresent(report -> {
+                    throw new DuplicateReportException();
+                });
 
-        Report savedReport =  Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email()));;
+        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email())));
 
         if (savedReport.getNote() != null) {
             slackClient.sendNoteReportMessage(savedReport);

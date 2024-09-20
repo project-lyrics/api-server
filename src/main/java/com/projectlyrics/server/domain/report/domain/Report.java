@@ -97,12 +97,6 @@ public class Report extends BaseEntity {
         }
     }
 
-    public void setReportReason(ReportReason reportReason) {
-        this.reportReason = reportReason;
-        this.approvalStatus = ApprovalStatus.PENDING;
-        this.isFalseReport = false;
-    }
-
     public void resolve(ReportResolve reportResolve) {
         this.approvalStatus = reportResolve.approvalStatus();
         this.isFalseReport = reportResolve.isFalseReport();
