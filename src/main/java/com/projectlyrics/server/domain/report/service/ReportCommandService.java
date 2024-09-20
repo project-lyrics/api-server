@@ -78,18 +78,10 @@ public class ReportCommandService {
 
         if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
             if (report.getNote() != null) {
-                noteQueryRepository.findById(report.getNote().getId())
-                        .ifPresentOrElse(
-                                note -> note.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
-                                () -> { throw new InvalidNoteDeletionException(); }
-                        );
+                report.getNote().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
             }
             else {
-                commentQueryRepository.findById(report.getComment().getId())
-                        .ifPresentOrElse(
-                                comment -> comment.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
-                                () -> {throw new InvalidCommentDeletionException(); }
-                        );
+                report.getComment().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
             }
         }
 
