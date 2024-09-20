@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.report.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -11,6 +12,7 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
+import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -19,31 +21,26 @@ import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.domain.Report;
-import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.report.dto.request.ReportCreateRequest;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
+import com.projectlyrics.server.domain.report.exception.DuplicateReportException;
 import com.projectlyrics.server.domain.report.repository.ReportCommandRepository;
 import com.projectlyrics.server.domain.report.repository.ReportQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
-import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.global.slack.SlackClient;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.CommentFixture;
-import com.projectlyrics.server.support.fixture.NoteFixture;
 import com.projectlyrics.server.support.fixture.ReportFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -161,7 +158,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 같은_신고자와_같은_대상으로_한_신고가_이미_존재한다면_신고_이유_및_승인_상태_허위_신고_여부를_업데이트한다() throws Exception {
+    void 같은_신고자와_같은_대상으로_한_신고가_이미_존재한다면_오류를_발생한다() throws Exception {
         // given
         ReportCreateRequest request = new ReportCreateRequest(
                 note.getId(),
@@ -169,25 +166,11 @@ public class ReportCommandServiceTest extends IntegrationTest {
                 ReportReason.OTHER,
                 "example@example.com"
         );
+        sut.create(request, user.getId());
 
-        // when
-        Report report = sut.create(request, user.getId());
-
-        // then
-        verify(slackClient).sendNoteReportMessage(report);
-        Optional<Report> result = reportQueryRepository.findById(report.getId());
-        assertAll(
-                () -> assertThat(result.isPresent()),
-                () -> assertThat(result.get().getId().equals(report.getId())),
-                () -> assertThat(result.get().getReporter().getId().equals(report.getReporter().getId())),
-                () -> assertThat(result.get().getNote().getId().equals(report.getNote().getId())),
-                () -> assertThat(result.get().getComment()).isNull(),
-                () -> assertThat(result.get().getReportReason().equals(report.getReportReason())),
-                () -> assertThat(result.get().getEmail().equals(report.getEmail())),
-                () -> assertThat(result.get().getApprovalStatus().equals(ApprovalStatus.PENDING)),
-                () -> assertThat(result.get().getIsFalseReport().equals(Boolean.FALSE))
-
-        );
+        // when, then
+        assertThatThrownBy(() -> sut.create(request, user.getId()))
+                .isInstanceOf(DuplicateReportException.class);
     }
 
     @Test
@@ -216,6 +199,41 @@ public class ReportCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.get().getIsFalseReport().equals(request.isFalseReport()))
 
         );
+    }
 
+    @Test
+    void 신고를_승인하면_해당_신고의_대상인_노트가_삭제된다() throws Exception {
+        // given
+        Report report = reportCommandRepository.save(ReportFixture.create(note,user));
+        ReportResolveRequest request = new ReportResolveRequest(
+                ApprovalStatus.ACCEPTED,
+                Boolean.TRUE
+        );
+
+        // when
+        sut.resolve(request, report.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(noteCommandRepository.findById(note.getId()).isEmpty())
+        );
+    }
+
+    @Test
+    void 신고를_승인하면_해당_신고의_대상인_댓글이_삭제된다() throws Exception {
+        // given
+        Report report = reportCommandRepository.save(ReportFixture.create(comment,user));
+        ReportResolveRequest request = new ReportResolveRequest(
+                ApprovalStatus.ACCEPTED,
+                Boolean.TRUE
+        );
+
+        // when
+        sut.resolve(request, report.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(commentCommandRepository.findById(comment.getId()).isEmpty())
+        );
     }
 }
