@@ -2,15 +2,19 @@ package com.projectlyrics.server.domain.report.service;
 
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.exception.CommentNotFoundException;
+import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
 import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
+import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.domain.Report;
 import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportResolve;
 import com.projectlyrics.server.domain.report.dto.request.ReportCreateRequest;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
+import com.projectlyrics.server.domain.report.exception.DuplicateReportException;
 import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
 import com.projectlyrics.server.domain.report.repository.ReportCommandRepository;
 import com.projectlyrics.server.domain.report.repository.ReportQueryRepository;
@@ -18,6 +22,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.global.slack.SlackClient;
+import java.time.Clock;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,19 +53,13 @@ public class ReportCommandService {
                         .orElseThrow(CommentNotFoundException::new))
                 .orElse(null);
 
-        Optional<Report> existingReport = reportQueryRepository.findByReporterIdAndNoteIdAndCommentId(
-                reporterId, request.noteId(), request.commentId());
-
-        Report report = existingReport
-                .map(r -> {
-                    r.setReportReason(request.reportReason());
-                    return r;
-                })
-                .orElseGet(() -> {
-                    return Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email()));
+        reportQueryRepository.findByReporterIdAndNoteIdAndCommentId(
+                        reporterId, request.noteId(), request.commentId())
+                .ifPresent(report -> {
+                    throw new DuplicateReportException();
                 });
 
-        Report savedReport =  reportCommandRepository.save(report);
+        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email())));
 
         if (savedReport.getNote() != null) {
             slackClient.sendNoteReportMessage(savedReport);
@@ -76,6 +75,23 @@ public class ReportCommandService {
         Report report = reportQueryRepository.findById(reportId)
                 .orElseThrow(ReportNotFoundException::new);
         report.resolve(ReportResolve.from(reportResolveRequest));
+
+        if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
+            if (report.getNote() != null) {
+                noteQueryRepository.findById(report.getNote().getId())
+                        .ifPresentOrElse(
+                                note -> note.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
+                                () -> { throw new InvalidNoteDeletionException(); }
+                        );
+            }
+            else {
+                commentQueryRepository.findById(report.getComment().getId())
+                        .ifPresentOrElse(
+                                comment -> comment.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
+                                () -> {throw new InvalidCommentDeletionException(); }
+                        );
+            }
+        }
 
         return report.getId();
     }

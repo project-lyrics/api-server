@@ -126,27 +126,6 @@ public class ReportTest {
     }
 
     @Test
-    void ReportReason_초기화시_approvalStatus와_isFalseReport값도_초기화된다() {
-        // given
-        User reporter = UserFixture.create();
-        Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
-        Report report = ReportFixture.create(note, reporter);
-        report.resolve(ReportResolve.from(ReportResolveRequest.of(ApprovalStatus.DISMISSED, Boolean.TRUE)));
-        ReportReason reportReason = ReportReason.COMMERCIAL_ADS;
-
-        // when
-        report.setReportReason(reportReason);
-
-        // then
-        assertAll(
-                () -> assertThat(report.getReporter().getId()).isEqualTo(reporter.getId()),
-                () -> assertThat(report.getReportReason()).isEqualTo(reportReason),
-                () -> assertThat(report.getApprovalStatus()).isEqualTo(ApprovalStatus.PENDING),
-                () -> assertThat(report.getIsFalseReport()).isEqualTo(Boolean.FALSE)
-        );
-    }
-
-    @Test
     void Report의_ApprovalStatus와_isFalseReport를_수정한다() {
         // given
         User reporter = UserFixture.create();
