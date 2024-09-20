@@ -81,6 +81,7 @@ public enum ErrorCode {
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "12000", "해당 신고를 조회할 수 없습니다."),
     REPORT_TARGET_CONFLICT(HttpStatus.BAD_REQUEST, "12001", "신고 대상은 Note와 Comment 중 하나여야 합니다."),
     REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12002", "신고 대상(Note 또는 Comment)가 필요합니다."),
+    DUPLICATE_REPORT(HttpStatus.CONFLICT, "12003", "이미 신고가 완료된 대상입니다"),
 
     // Slack
     SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "13000", "슬랙 메세지 전송에 실패했습니다."),

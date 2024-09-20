@@ -14,6 +14,7 @@ import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportResolve;
 import com.projectlyrics.server.domain.report.dto.request.ReportCreateRequest;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
+import com.projectlyrics.server.domain.report.exception.DuplicateReportException;
 import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
 import com.projectlyrics.server.domain.report.repository.ReportCommandRepository;
 import com.projectlyrics.server.domain.report.repository.ReportQueryRepository;
@@ -52,19 +53,13 @@ public class ReportCommandService {
                         .orElseThrow(CommentNotFoundException::new))
                 .orElse(null);
 
-        Optional<Report> existingReport = reportQueryRepository.findByReporterIdAndNoteIdAndCommentId(
-                reporterId, request.noteId(), request.commentId());
+        reportQueryRepository.findByReporterIdAndNoteIdAndCommentId(
+                reporterId, request.noteId(), request.commentId())
+                .ifPresent(
+                        report -> new DuplicateReportException()
+                );
 
-        Report report = existingReport
-                .map(r -> {
-                    r.setReportReason(request.reportReason());
-                    return r;
-                })
-                .orElseGet(() -> {
-                    return Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email()));
-                });
-
-        Report savedReport =  reportCommandRepository.save(report);
+        Report savedReport =  Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email()));;
 
         if (savedReport.getNote() != null) {
             slackClient.sendNoteReportMessage(savedReport);
