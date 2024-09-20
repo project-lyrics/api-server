@@ -57,6 +57,7 @@ public class SlackClient {
                 report,
                 "노트",
                 report.getNote().getPublisher().getId(),
+                report.getNote().getId(),
                 report.getNote().getContent()
         );
     }
@@ -66,17 +67,18 @@ public class SlackClient {
                 report,
                 "댓글",
                 report.getComment().getWriter().getId(),
+                report.getComment().getId(),
                 report.getComment().getContent()
         );
     }
 
-    private void sendReportMessage(Report report, String contentType, Long contentId, String content) {
+    private void sendReportMessage(Report report, String contentType, Long reportedUserId, Long contentId, String content) {
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
                         MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
                 Blocks.section(section -> section.fields(List.of(
                         MarkdownTextObject.builder().text("*신고자 ID:* " + report.getReporter().getId()).build(),
-                        MarkdownTextObject.builder().text("*피신고자 ID:* " + contentId).build(),
+                        MarkdownTextObject.builder().text("*피신고자 ID:* " + reportedUserId).build(),
                         MarkdownTextObject.builder().text("*" + contentType + " ID:* " + contentId).build(),
                         MarkdownTextObject.builder().text("*신고 이유:* " + report.getReportReason().getDescription()).build(),
                         MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
