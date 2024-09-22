@@ -603,7 +603,7 @@ class NoteControllerTest extends RestDocsTest {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
-                        .summary("특정 아티스트와 관련된 노트 리스트 조회 API")
+                        .summary("특정 곡과 관련된 노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(
