@@ -40,7 +40,7 @@ public class ReportCommandService {
     private final CommentQueryRepository commentQueryRepository;
     private final SlackClient slackClient;
 
-    public Report create(ReportCreateRequest request, Long reporterId) {
+    public synchronized Report create(ReportCreateRequest request, Long reporterId) {
 
         User reporter = userQueryRepository.findById(reporterId)
                 .orElseThrow(UserNotFoundException::new);
