@@ -104,7 +104,8 @@ public class ReportCommandServiceTest extends IntegrationTest {
         ReportCreateRequest request = new ReportCreateRequest(
                 note.getId(),
                 null,
-                ReportReason.POLITICAL_RELIGIOUS,
+                ReportReason.OTHER,
+                "도배를 너무 많이 해요",
                 "example@example.com"
         );
 
@@ -121,6 +122,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.get().getNote().getId().equals(report.getNote().getId())),
                 () -> assertThat(result.get().getComment()).isNull(),
                 () -> assertThat(result.get().getReportReason().equals(report.getReportReason())),
+                () -> assertThat(result.get().getDetailedReportReason()).isEqualTo(report.getDetailedReportReason()),
                 () -> assertThat(result.get().getEmail().equals(report.getEmail())),
                 () -> assertThat(result.get().getApprovalStatus().equals(report.getApprovalStatus())),
                 () -> assertThat(result.get().getIsFalseReport().equals(report.getIsFalseReport()))
@@ -134,7 +136,8 @@ public class ReportCommandServiceTest extends IntegrationTest {
         ReportCreateRequest request = new ReportCreateRequest(
                 null,
                 comment.getId(),
-                ReportReason.POLITICAL_RELIGIOUS,
+                ReportReason.OTHER,
+                "도배를 너무 많이 해요",
                 "example@example.com"
         );
 
@@ -151,6 +154,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.get().getNote()).isNull(),
                 () -> assertThat(result.get().getComment().getId().equals(report.getComment().getId())),
                 () -> assertThat(result.get().getReportReason().equals(report.getReportReason())),
+                () -> assertThat(result.get().getDetailedReportReason()).isEqualTo(report.getDetailedReportReason()),
                 () -> assertThat(result.get().getEmail().equals(report.getEmail())),
                 () -> assertThat(result.get().getApprovalStatus().equals(report.getApprovalStatus())),
                 () -> assertThat(result.get().getIsFalseReport().equals(report.getIsFalseReport()))
@@ -164,6 +168,7 @@ public class ReportCommandServiceTest extends IntegrationTest {
                 note.getId(),
                 null,
                 ReportReason.OTHER,
+                "또 신고하고 싶어요",
                 "example@example.com"
         );
         sut.create(request, user.getId());

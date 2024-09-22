@@ -54,7 +54,7 @@ public class ReportControllerTest extends RestDocsTest {
                                         .optional(),
                                 fieldWithPath("reportReason").type(JsonFieldType.STRING)
                                         .description("신고 이유 " + getEnumValuesAsString(ReportReason.class)),
-                                fieldWithPath("reportReason").type(JsonFieldType.STRING)
+                                fieldWithPath("detailedReportReason").type(JsonFieldType.STRING)
                                         .description("상세 신고 이유 (신고 이유가 기타일 때만 적용)" )
                                         .optional(),
                                 fieldWithPath("email").type(JsonFieldType.STRING)
