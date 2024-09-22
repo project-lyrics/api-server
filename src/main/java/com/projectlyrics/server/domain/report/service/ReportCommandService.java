@@ -59,7 +59,7 @@ public class ReportCommandService {
                     throw new DuplicateReportException();
                 });
 
-        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email())));
+        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.detailedReportReason(), request.email())));
 
         if (savedReport.getNote() != null) {
             slackClient.sendNoteReportMessage(savedReport);

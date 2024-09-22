@@ -46,6 +46,8 @@ public class Report extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private ReportReason reportReason;
 
+    private String detailedReportReason;
+
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -53,13 +55,14 @@ public class Report extends BaseEntity {
 
     private Boolean isFalseReport;
 
-    private Report(Long id, User reporter, Note note, Comment comment, ReportReason reportReason, String email) {
+    private Report(Long id, User reporter, Note note, Comment comment, ReportReason reportReason, String detailedReportReason, String email) {
         checkNoteOrComment(note,comment);
         this.id = id;
         this.reporter = reporter;
         this.note = note;
         this.comment = comment;
         this.reportReason = reportReason;
+        this.detailedReportReason = detailedReportReason;
         this.email = email;
         this.approvalStatus = ApprovalStatus.PENDING;
         this.isFalseReport = false;
@@ -73,6 +76,7 @@ public class Report extends BaseEntity {
                 reportCreate.note(),
                 reportCreate.comment(),
                 reportCreate.reportReason(),
+                reportCreate.detailedReportReason(),
                 reportCreate.email()
         );
     }
@@ -84,6 +88,7 @@ public class Report extends BaseEntity {
                 reportCreate.note(),
                 reportCreate.comment(),
                 reportCreate.reportReason(),
+                reportCreate.detailedReportReason(),
                 reportCreate.email()
         );
     }

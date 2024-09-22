@@ -26,6 +26,7 @@ public class ReportControllerTest extends RestDocsTest {
                 1L,
                 null,
                 ReportReason.POLITICAL_RELIGIOUS,
+                null,
                 "example@example.com"
         );
 
@@ -52,7 +53,10 @@ public class ReportControllerTest extends RestDocsTest {
                                         .description("신고할 commentId (noteId와 commentId 중 택 1)")
                                         .optional(),
                                 fieldWithPath("reportReason").type(JsonFieldType.STRING)
-                                        .description("신고 이유 (커뮤니티 성격에 맞지 않음, 타 유저 혹은 아티스트 비방, 불쾌감을 조성하는 음란성/선정적인 내용, 상업적 광고, 부적절한 정보 유출, 정치적인 내용/종교 포교 시도, 기타)" + getEnumValuesAsString(ReportReason.class)),
+                                        .description("신고 이유 " + getEnumValuesAsString(ReportReason.class)),
+                                fieldWithPath("reportReason").type(JsonFieldType.STRING)
+                                        .description("상세 신고 이유 (신고 이유가 기타일 때만 적용)" )
+                                        .optional(),
                                 fieldWithPath("email").type(JsonFieldType.STRING)
                                         .description("신고자 이메일")
                                         .optional()

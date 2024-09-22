@@ -16,6 +16,8 @@ public record ReportCreateRequest (
 
         @NotNull
         ReportReason reportReason,
+
+        String detailedReportReason,
         
         @Email
         String email

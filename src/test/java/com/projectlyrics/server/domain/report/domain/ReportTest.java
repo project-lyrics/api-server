@@ -25,7 +25,8 @@ public class ReportTest {
         // given
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
-        ReportReason reportReason = ReportReason.DEFAMATION;
+        ReportReason reportReason = ReportReason.OTHER;
+        String detailedReportReason = "도배 너무 많이 해요";
         String email = "example@example.com";
 
         ReportCreate reportCreate = new ReportCreate(
@@ -33,6 +34,7 @@ public class ReportTest {
                 note,
                 null,
                 reportReason,
+                detailedReportReason,
                 email
         );
 
@@ -45,6 +47,7 @@ public class ReportTest {
                 () -> assertThat(report.getNote().getId()).isEqualTo(note.getId()),
                 () -> assertThat(report.getComment()).isNull(),
                 () -> assertThat(report.getReportReason()).isEqualTo(reportReason),
+                () -> assertThat(report.getDetailedReportReason()).isEqualTo(detailedReportReason),
                 () -> assertThat(report.getEmail()).isEqualTo(email),
                 () -> assertThat(report.getApprovalStatus()).isEqualTo(ApprovalStatus.PENDING),
                 () -> assertThat(report.getIsFalseReport()).isEqualTo(Boolean.FALSE)
@@ -57,7 +60,8 @@ public class ReportTest {
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
         Comment comment = CommentFixture.create(note, UserFixture.create());
-        ReportReason reportReason = ReportReason.DEFAMATION;
+        ReportReason reportReason = ReportReason.OTHER;
+        String detailedReportReason = "도배 너무 많이 해요";
         String email = "example@example.com";
 
         ReportCreate reportCreate = new ReportCreate(
@@ -65,6 +69,7 @@ public class ReportTest {
                 null,
                 comment,
                 reportReason,
+                detailedReportReason,
                 email
         );
 
@@ -77,6 +82,7 @@ public class ReportTest {
                 () -> assertThat(report.getNote()).isNull(),
                 () -> assertThat(report.getComment().getId()).isEqualTo(comment.getId()),
                 () -> assertThat(report.getReportReason()).isEqualTo(reportReason),
+                () -> assertThat(report.getDetailedReportReason()).isEqualTo(detailedReportReason),
                 () -> assertThat(report.getEmail()).isEqualTo(email),
                 () -> assertThat(report.getApprovalStatus()).isEqualTo(ApprovalStatus.PENDING),
                 () -> assertThat(report.getIsFalseReport()).isEqualTo(Boolean.FALSE)
@@ -89,7 +95,8 @@ public class ReportTest {
         User reporter = UserFixture.create();
         Note note = NoteFixture.create(reporter, SongFixture.create(ArtistFixture.create()));
         Comment comment = CommentFixture.create(note, UserFixture.create());
-        ReportReason reportReason = ReportReason.DEFAMATION;
+        ReportReason reportReason = ReportReason.OTHER;
+        String detailedReportReason = "도배 너무 많이 해요";
         String email = "example@example.com";
 
         ReportCreate reportCreate = new ReportCreate(
@@ -97,6 +104,7 @@ public class ReportTest {
                 note,
                 comment,
                 reportReason,
+                detailedReportReason,
                 email
         );
 
@@ -109,7 +117,8 @@ public class ReportTest {
     void Report_객체에_Note와_Comment_중_하나는_입력되어야_한다() {
         // given
         User reporter = UserFixture.create();
-        ReportReason reportReason = ReportReason.DEFAMATION;
+        ReportReason reportReason = ReportReason.OTHER;
+        String detailedReportReason = "도배 너무 많이 해요";
         String email = "example@example.com";
 
         ReportCreate reportCreate = new ReportCreate(
@@ -117,6 +126,7 @@ public class ReportTest {
                 null,
                 null,
                 reportReason,
+                detailedReportReason,
                 email
         );
 
