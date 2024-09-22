@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.discipline.domain;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "disciplines")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Discipline {
+public class Discipline extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

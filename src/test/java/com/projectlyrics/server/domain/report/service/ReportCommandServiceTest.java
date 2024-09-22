@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
@@ -12,7 +11,6 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
-import com.projectlyrics.server.domain.like.exception.LikeAlreadyExistsException;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -77,7 +75,6 @@ public class ReportCommandServiceTest extends IntegrationTest {
     private Artist artist;
     private Song song;
     private Note note;
-
     private Comment comment;
 
     @BeforeEach
