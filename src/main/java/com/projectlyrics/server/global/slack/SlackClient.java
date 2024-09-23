@@ -58,6 +58,7 @@ public class SlackClient {
                 "노트",
                 report.getNote().getPublisher().getId(),
                 report.getNote().getId(),
+                report.getNote().getSong().getArtist().getId(),
                 report.getNote().getContent()
         );
     }
@@ -68,11 +69,12 @@ public class SlackClient {
                 "댓글",
                 report.getComment().getWriter().getId(),
                 report.getComment().getId(),
+                report.getComment().getNote().getSong().getArtist().getId(),
                 report.getComment().getContent()
         );
     }
 
-    private void sendReportMessage(Report report, String contentType, Long reportedUserId, Long contentId, String content) {
+    private void sendReportMessage(Report report, String contentType, Long reportedUserId, Long contentId, Long artistId, String content) {
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
                         MarkdownTextObject.builder().text(":rotating_light: *" + report.getId() + ") 새로운 신고가 접수되었습니다.*").build())),
@@ -90,18 +92,18 @@ public class SlackClient {
                                 .text(PlainTextObject.builder().text("Accept").build())
                                 .actionId("report_accept")
                                 .style("primary")
-                                .value("{\"type\":\"accepted\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
+                                .value("{\"user\":\""+reportedUserId+", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
                                 .actionId("report_dismiss")
                                 .style("danger")
-                                .value("{\"type\":\"dismissed\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
+                                .value("{\"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
                                 .actionId("report_fake")
-                                .value("{\"type\":\"fake report\", \"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
+                                .value("{\"user\":\""+report.getReporter().getId()+ ", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
                                 .build()
                 )))
         );
