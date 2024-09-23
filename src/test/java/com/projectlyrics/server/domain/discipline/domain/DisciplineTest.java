@@ -36,6 +36,9 @@ public class DisciplineTest {
                 () -> assertThat(discipline.getArtist().getId()).isEqualTo(artist.getId()),
                 () -> assertThat(discipline.getReason()).isEqualTo(reportReason),
                 () -> assertThat(discipline.getType()).isEqualTo(disciplineType),
+                () -> assertThat(discipline.getStartTime().getMinute()).isEqualTo(0),
+                () -> assertThat(discipline.getStartTime().getSecond()).isEqualTo(0),
+                () -> assertThat(discipline.getStartTime().getNano()).isEqualTo(0),
                 () -> assertThat(discipline.getStartTime().plus(disciplineType.getPeriod())).isEqualTo(discipline.getEndTime())
         );
     }
