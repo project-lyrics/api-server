@@ -58,7 +58,7 @@ public class SlackClient {
                 "노트",
                 report.getNote().getPublisher().getId(),
                 report.getNote().getId(),
-                report.getNote().getContent()
+                report.getNote().getContent() + "(가사: " + report.getNote().getLyrics() + ")"
         );
     }
 
