@@ -133,6 +133,7 @@ class NotificationControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Notification API")
                         .summary("사용자가 수신한 알림 리스트 최신순 조회")
+                        .requestHeaders(getAuthorizationHeader())
                         .queryParameters(getCursorBasePagingQueryParameters())
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
