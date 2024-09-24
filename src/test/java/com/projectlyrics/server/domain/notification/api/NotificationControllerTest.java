@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.notification.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.notification.api.dto.request.PublicNotificationCreateRequest;
 import com.projectlyrics.server.support.RestDocsTest;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,6 +53,35 @@ class NotificationControllerTest extends RestDocsTest {
                         )
                         .responseSchema(Schema.schema("Create Public Notification Response"))
                         .build())
+        );
+    }
+
+    @Test
+    void 알림을_읽으면_상태값과_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(patch("/api/v1/notifications/{notificationId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andDo(getNotificationCheckDocument())
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getNotificationCheckDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Notification API")
+                        .summary("알림 확인 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("notificationId").type(SimpleType.NUMBER)
+                                        .description("알림 ID")
+                        )
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Check Notification Response"))
+                        .build()
+                )
         );
     }
 }

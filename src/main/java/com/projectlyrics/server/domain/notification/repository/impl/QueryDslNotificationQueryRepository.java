@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.notification.repository.impl;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.notification.domain.Notification;
+import com.projectlyrics.server.domain.notification.exception.NotificationNotFoundException;
 import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.projectlyrics.server.domain.notification.domain.QNotification.notification;
 
@@ -19,6 +21,20 @@ import static com.projectlyrics.server.domain.notification.domain.QNotification.
 public class QueryDslNotificationQueryRepository implements NotificationQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Notification findById(Long id) {
+        Notification result = jpaQueryFactory
+                .selectFrom(notification)
+                .join(notification.receiver).fetchJoin()
+                .where(notification.id.eq(id))
+                .fetchOne();
+
+        if (Objects.nonNull(result))
+            return result;
+
+        throw new NotificationNotFoundException();
+    }
 
     @Override
     public Slice<Notification> findAllByReceiverId(Long receiverId, Long cursorId, Pageable pageable) {

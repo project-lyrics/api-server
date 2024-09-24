@@ -3,15 +3,13 @@ package com.projectlyrics.server.domain.notification.api;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.notification.api.dto.request.PublicNotificationCreateRequest;
+import com.projectlyrics.server.domain.notification.api.dto.response.NotificationCheckResponse;
 import com.projectlyrics.server.domain.notification.api.dto.response.PublicNotificationCreateResponse;
 import com.projectlyrics.server.domain.notification.service.NotificationCommandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -28,5 +26,15 @@ public class NotificationController {
         notificationCommandService.createPublicNotification(authContext.getId(), request.content());
 
         return ResponseEntity.ok(new PublicNotificationCreateResponse(true));
+    }
+
+    @PatchMapping("/{notificationId}")
+    public ResponseEntity<NotificationCheckResponse> check(
+            @Authenticated AuthContext authContext,
+            @PathVariable Long notificationId
+    ) {
+        notificationCommandService.check(notificationId, authContext.getId());
+
+        return ResponseEntity.ok(new NotificationCheckResponse(true));
     }
 }

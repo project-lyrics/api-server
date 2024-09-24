@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
+import com.projectlyrics.server.domain.notification.exception.NotificationReceiverUnmatchException;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -26,6 +27,7 @@ public class Notification extends BaseEntity {
 
     private NotificationType type;
     private String content;
+    private boolean checked;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
@@ -53,6 +55,7 @@ public class Notification extends BaseEntity {
         this.receiver = receiver;
         this.note = note;
         this.comment = comment;
+        this.checked = false;
     }
 
     public static Notification create(CommentEvent event) {
@@ -77,6 +80,13 @@ public class Notification extends BaseEntity {
                 null,
                 null
         );
+    }
+
+    public void check(Long userId) {
+        if (receiver.getId().equals(userId))
+            checked = true;
+
+        throw new NotificationReceiverUnmatchException();
     }
 
     public Message getMessage() {

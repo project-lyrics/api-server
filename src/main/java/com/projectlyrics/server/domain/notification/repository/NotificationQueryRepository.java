@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 
 public interface NotificationQueryRepository {
 
+    Notification findById(Long id);
     Slice<Notification> findAllByReceiverId(Long receiverId, Long cursorId, Pageable pageable);
     Slice<Notification> findAllBySenderId(Long senderId, Long cursorId, Pageable pageable);
 }

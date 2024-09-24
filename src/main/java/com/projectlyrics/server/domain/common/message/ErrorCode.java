@@ -76,6 +76,8 @@ public enum ErrorCode {
     // Notification
     UNKNOWN_NOTIFICATION_TYPE(HttpStatus.BAD_REQUEST, "11000", "알 수 없는 알림 타입입니다."),
     NOTIFICATION_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "11001", "알림 전송에 실패했습니다."),
+    NOTIFICATION_RECEIVER_UNMATCH(HttpStatus.BAD_REQUEST, "11002", "해당 알림의 수신자가 아닙니다."),
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "11003", "해당 알림을 조회할 수 없습니다."),
 
     // Report
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "12000", "해당 신고를 조회할 수 없습니다."),

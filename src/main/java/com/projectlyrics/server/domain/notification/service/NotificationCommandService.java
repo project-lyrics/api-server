@@ -8,6 +8,7 @@ import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.notification.exception.FailedToSendNotificationException;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
+import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
@@ -27,6 +28,7 @@ import java.util.List;
 public class NotificationCommandService {
 
     private final NotificationCommandRepository notificationCommandRepository;
+    private final NotificationQueryRepository notificationQueryRepository;
     private final UserQueryRepository userQueryRepository;
     private final FirebaseMessaging firebaseMessaging;
 
@@ -82,5 +84,10 @@ public class NotificationCommandService {
                 throw new FailedToSendNotificationException();
             }
         }
+    }
+
+    public void check(Long id, Long userId) {
+        Notification notification = notificationQueryRepository.findById(id);
+        notification.check(userId);
     }
 }
