@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.artist.repository;
 
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface ArtistQueryRepository {
 
     Slice<Artist> findAllByQuery(String query, Long cursor, Pageable pageable);
 
-    Slice<Artist> findAll(Long cursor, Pageable pageable);
+    Slice<ArtistGetResponse> findAll(Long cursor, int size);
 
     List<Artist> findAllByIds(List<Long> artistIds);
 }

@@ -85,7 +85,7 @@ public class ArtistController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(artistQueryService.getArtistList(cursor, PageRequest.ofSize(size)));
+                .body(artistQueryService.getArtistList(cursor, size));
     }
 
     @GetMapping("/search")

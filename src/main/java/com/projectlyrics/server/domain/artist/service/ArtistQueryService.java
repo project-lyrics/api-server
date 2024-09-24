@@ -25,11 +25,10 @@ public class ArtistQueryService {
                 .orElseThrow(ArtistNotFoundException::new);
     }
 
-    public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(cursor, pageable)
-                .map(ArtistGetResponse::of);
-
-        return CursorBasePaginatedResponse.of(artistSlice);
+    public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, int size) {
+        return CursorBasePaginatedResponse.of(
+                artistQueryRepository.findAll(cursor, size)
+        );
     }
 
     public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {

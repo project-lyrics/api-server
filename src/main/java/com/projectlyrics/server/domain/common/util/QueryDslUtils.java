@@ -25,6 +25,15 @@ public class QueryDslUtils {
         return false;
     }
 
+    public static <T> boolean checkIfHasNext(int size, List<T> content) {
+        if (content.size() > size) {
+            content.remove(size);
+            return true;
+        }
+
+        return false;
+    }
+
     public static BooleanExpression hasLyrics(boolean hasLyrics) {
         return hasLyrics ? note.lyrics.isNotNull() : null;
     }

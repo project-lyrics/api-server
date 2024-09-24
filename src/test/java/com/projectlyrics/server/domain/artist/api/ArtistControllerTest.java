@@ -21,8 +21,7 @@ import java.util.Arrays;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -199,7 +198,7 @@ class ArtistControllerTest extends RestDocsTest {
                 data
         );
 
-        given(artistQueryService.getArtistList(any(), any()))
+        given(artistQueryService.getArtistList(any(), anyInt()))
                 .willReturn(response);
 
         // when, then

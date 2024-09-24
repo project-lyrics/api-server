@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.artist.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.support.RepositoryTest;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
@@ -12,7 +13,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
@@ -54,41 +54,41 @@ public class ArtistQueryRepositoryTest {
     @Test
     void 커서_기반_페이징으로_아티스트_리스트를_조회한다() throws Exception {
         // given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
-        Artist artist2 = artistCommandRepository.save(ArtistFixture.create());
-        Artist artist3 = artistCommandRepository.save(ArtistFixture.create());
-        List<Artist> artistList = List.of(artist1, artist2, artist3);
+        List<ArtistGetResponse> response = List.of(
+                ArtistGetResponse.of(artistCommandRepository.save(ArtistFixture.create())),
+                ArtistGetResponse.of(artistCommandRepository.save(ArtistFixture.create())),
+                ArtistGetResponse.of(artistCommandRepository.save(ArtistFixture.create()))
+        );
 
         long cursor = 0L;
-        Pageable pageable = PageRequest.of(0, 3);
+        int size = 3;
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
+        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(cursor, size);
 
         // then
         assertAll(
                 () -> assertThat(artistSlice.getNumber()).isEqualTo(cursor),
-                () -> assertThat(artistSlice.getSize()).isEqualTo(artistList.size()),
-                () -> assertThat(artistSlice.getNumberOfElements()).isEqualTo(pageable.getPageSize()),
-                () -> assertThat(artistSlice.getContent()).isEqualTo(artistList)
+                () -> assertThat(artistSlice.getSize()).isEqualTo(response.size()),
+                () -> assertThat(artistSlice.getNumberOfElements()).isEqualTo(size),
+                () -> assertThat(artistSlice.getContent()).isEqualTo(response)
         );
     }
 
     @Test
     void 아티스트_리스트를_조회하는_커서가_최대_id값보다_클_경우_Slice의_content가_비어있다() throws Exception {
         // given
-        Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
-        List<Artist> artistList = List.of(artist1);
+        artistCommandRepository.save(ArtistFixture.create());
 
         long cursor = 1000L;
-        Pageable pageable = PageRequest.of(0, 3);
+        int size = 3;
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
+        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(cursor, size);
 
         // then
         assertAll(
-                () -> assertThat(artistSlice.getSize()).isEqualTo(pageable.getPageSize()),
+                () -> assertThat(artistSlice.getSize()).isEqualTo(size),
                 () -> assertThat(artistSlice.getNumberOfElements()).isEqualTo(0),
                 () -> assertThat(artistSlice.getContent()).isEmpty()
         );

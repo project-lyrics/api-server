@@ -11,15 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 class ArtistQueryServiceIntegrationTest extends IntegrationTest {
 
@@ -53,10 +50,10 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
         List<Artist> artistList = List.of(artist1, artist2, artist3);
 
         long cursor = 0L;
-        Pageable pageable = PageRequest.of(0, 3);
+        int size = 3;
 
         //when
-        CursorBasePaginatedResponse<ArtistGetResponse> response = sut.getArtistList(cursor, pageable);
+        CursorBasePaginatedResponse<ArtistGetResponse> response = sut.getArtistList(cursor, size);
 
         //then
         assertSoftly(s -> {
