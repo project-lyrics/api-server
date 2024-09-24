@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.user.entity.usecase.UserCreate;
+import com.projectlyrics.server.domain.user.controller.dto.request.UserUpdateRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
@@ -119,5 +121,16 @@ public class User extends BaseEntity {
                 userCreate.termsAgreements(),
                 userCreate.fcmToken()
         );
+    }
+
+    public void update(UserUpdateRequest update) {
+        switch (update.type()) {
+            case NICKNAME -> nickname = new Username(update.nickname());
+            case PROFILE_CHARACTER -> profileCharacter = update.profileCharacter();
+            case META_INFO -> info = new UserMetaInfo(
+                    Objects.isNull(update.gender()) ? getInfo().getGender() : update.gender(),
+                    Objects.isNull(update.birthYear()) ? getInfo().getBirthYear() : update.birthYear()
+            );
+        }
     }
 }
