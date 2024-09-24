@@ -199,16 +199,12 @@ public class ReportCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 신고를_승인하면_해당_신고의_대상인_노트가_삭제된다() throws Exception {
+    void 해당_신고의_대상인_노트를_삭제해야_힌다() throws Exception {
         // given
         Report report = reportCommandRepository.save(ReportFixture.create(note,user));
-        ReportResolveRequest request = new ReportResolveRequest(
-                ApprovalStatus.ACCEPTED,
-                Boolean.TRUE
-        );
 
         // when
-        sut.resolve(request, report.getId());
+        sut.deleteReportedTarget(report.getId());
 
         // then
         assertAll(
@@ -217,16 +213,12 @@ public class ReportCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 신고를_승인하면_해당_신고의_대상인_댓글이_삭제된다() throws Exception {
+    void 해당_신고의_대상인_댓글을_삭제해야_힌다() throws Exception {
         // given
         Report report = reportCommandRepository.save(ReportFixture.create(comment,user));
-        ReportResolveRequest request = new ReportResolveRequest(
-                ApprovalStatus.ACCEPTED,
-                Boolean.TRUE
-        );
 
         // when
-        sut.resolve(request, report.getId());
+        sut.deleteReportedTarget(report.getId());
 
         // then
         assertAll(
