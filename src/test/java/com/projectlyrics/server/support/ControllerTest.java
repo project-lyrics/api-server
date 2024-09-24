@@ -19,6 +19,7 @@ import com.projectlyrics.server.domain.like.service.LikeQueryService;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import com.projectlyrics.server.domain.notification.service.NotificationCommandService;
+import com.projectlyrics.server.domain.notification.service.NotificationQueryService;
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
 import com.projectlyrics.server.domain.song.service.SongQueryService;
 import com.projectlyrics.server.domain.user.entity.Role;
@@ -91,6 +92,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected NotificationCommandService notificationCommandService;
+
+    @MockBean
+    protected NotificationQueryService notificationQueryService;
 
     @MockBean
     protected ReportCommandService reportCommandService;
