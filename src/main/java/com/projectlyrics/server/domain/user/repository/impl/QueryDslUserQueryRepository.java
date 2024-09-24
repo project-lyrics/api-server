@@ -1,13 +1,17 @@
 package com.projectlyrics.server.domain.user.repository.impl;
 
+import com.projectlyrics.server.domain.user.controller.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
-import com.projectlyrics.server.domain.user.entity.QUser;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,16 @@ import static com.projectlyrics.server.domain.user.entity.QUser.user;
 public class QueryDslUserQueryRepository implements UserQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    private static final ConstructorExpression<UserProfileResponse> userProfileResponse = Projections.constructor(
+            UserProfileResponse.class,
+            user.id,
+            user.nickname.value,
+            user.profileCharacter,
+            user.socialInfo.authProvider,
+            user.feedbackId,
+            user.info
+    );
 
     @Override
     public Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider) {
@@ -56,6 +70,23 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
                         user.deletedAt.isNull()
                 )
                 .fetch();
+    }
+
+    @Override
+    public UserProfileResponse findProfile(Long id) {
+        UserProfileResponse profile = jpaQueryFactory
+                .select(userProfileResponse)
+                .from(user)
+                .where(
+                        user.id.eq(id),
+                        user.deletedAt.isNull()
+                )
+                .fetchOne();
+
+        if (Objects.isNull(profile))
+            throw new UserNotFoundException();
+
+        return profile;
     }
 
     @Override

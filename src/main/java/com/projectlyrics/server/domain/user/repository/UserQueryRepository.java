@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.user.repository;
 
+import com.projectlyrics.server.domain.user.controller.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -9,11 +10,9 @@ import java.util.Optional;
 
 public interface UserQueryRepository {
 
-    Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider);
-
     Optional<User> findById(Long id);
-
+    Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider);
     List<User> findAll();
-
+    UserProfileResponse findProfile(Long id);
     boolean existsBySocialInfo(SocialInfo socialInfo);
 }

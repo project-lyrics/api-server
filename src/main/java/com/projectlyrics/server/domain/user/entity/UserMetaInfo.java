@@ -23,7 +23,7 @@ public class UserMetaInfo {
 
     private Integer birthYear;
 
-    UserMetaInfo(Gender gender, Integer birthYear) {
+    public UserMetaInfo(Gender gender, Integer birthYear) {
         validateAge(birthYear);
         this.gender = gender;
         this.birthYear = birthYear;
