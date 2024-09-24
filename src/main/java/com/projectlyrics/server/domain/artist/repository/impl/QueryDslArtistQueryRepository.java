@@ -8,7 +8,9 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
@@ -48,6 +50,12 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
 
     @Override
     public Slice<ArtistGetResponse> findAll(Long cursor, int size) {
+        OrderSpecifier<Integer> koreanEnglishSpecialOrder = new CaseBuilder()
+                .when(artist.name.between("가", "힣")).then(1)
+                .when(artist.name.lower().between("a", "z")).then(2)
+                .otherwise(3)
+                .asc();
+
         List<ArtistGetResponse> content = jpaQueryFactory
                 .select(artistGetResponse)
                 .from(artist)
@@ -55,6 +63,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
                         QueryDslUtils.gtCursorId(cursor, artist.id),
                         artist.deletedAt.isNull()
                 )
+                .orderBy(koreanEnglishSpecialOrder, artist.name.asc())
                 .limit(size + 1)
                 .fetch();
 

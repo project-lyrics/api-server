@@ -17,8 +17,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ArtistQueryServiceIntegrationTest extends IntegrationTest {
+class ArtistQueryServiceTest extends IntegrationTest {
 
     @Autowired
     ArtistQueryService sut;
@@ -64,6 +65,31 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
                         s.assertThat(response.data().get(i).name()).isEqualTo(artistList.get(i).getName());
                     }
                 }
+        );
+    }
+
+    @Test
+    void 한글_영어_특수문자_순서대로_정렬하여_모든_아티스트르_조회한다() {
+        // given
+        artistCommandRepository.save(ArtistFixture.create("++"));
+        artistCommandRepository.save(ArtistFixture.create("Stone Temple Pilots"));
+        artistCommandRepository.save(ArtistFixture.create("실리카겔"));
+        artistCommandRepository.save(ArtistFixture.create("Beatles"));
+        artistCommandRepository.save(ArtistFixture.create("검정치마"));
+        artistCommandRepository.save(ArtistFixture.create("!!"));
+
+        // when
+        List<ArtistGetResponse> result = sut.getArtistList(null, 10).data();
+        result.forEach(r -> System.out.println("r.name() = " + r.name()));
+
+        // then
+        assertAll(
+                () -> assertThat(result.get(0).name()).isEqualTo("검정치마"),
+                () -> assertThat(result.get(1).name()).isEqualTo("실리카겔"),
+                () -> assertThat(result.get(2).name()).isEqualTo("Beatles"),
+                () -> assertThat(result.get(3).name()).isEqualTo("Stone Temple Pilots"),
+                () -> assertThat(result.get(4).name()).isEqualTo("!!"),
+                () -> assertThat(result.get(5).name()).isEqualTo("++")
         );
     }
 
