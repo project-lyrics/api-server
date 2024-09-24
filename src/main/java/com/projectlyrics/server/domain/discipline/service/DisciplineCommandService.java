@@ -33,7 +33,7 @@ public class DisciplineCommandService {
                         .orElseThrow(ArtistNotFoundException::new))
                 .orElse(null);
 
-        Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.reportReason(), request.disciplineType())));
+        Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType())));
 
         return discipline;
     }

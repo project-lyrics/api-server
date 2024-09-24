@@ -1,8 +1,11 @@
 package com.projectlyrics.server.global.slack.api;
 
+import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
+import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreate;
+import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
 import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
-import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
 import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureException;
@@ -39,6 +42,7 @@ public class SlackController {
     private String channelId;
 
     private final ReportCommandService reportCommandService;
+    private final DisciplineCommandService disciplineCommandService;
     private final RestTemplate restTemplate = new RestTemplate(); // HTTP 요청을 보내기 위한 RestTemplate
     private static final Logger logger = LoggerFactory.getLogger(SlackController.class);
 
@@ -63,7 +67,8 @@ public class SlackController {
             // 메시지 블록 생성
             JSONArray blocks = new JSONArray();
             // actionId에 따라 처리
-            if (actionId.startsWith("report_")) {
+            if (actionId.startsWith("report")) {
+                blocks = new JSONArray();
                 Long reportId = valueJson.getLong("reportId");
                 ApprovalStatus approvalStatus = ApprovalStatus.valueOf(valueJson.getString("approvalStatus"));
                 Boolean isFalseReport = valueJson.getBoolean("isFalseReport");
@@ -78,10 +83,53 @@ public class SlackController {
                         )
                 );
 
-                if (actionId.contains("accept") || actionId.contains("fake")) {
-                    Long userId = valueJson.getLong("user");
-                    addBlockOfDiscipline(userId, blocks);
+                if (actionId.contains("accept")) {
+                    Long userId = valueJson.getLong("userId");
+                    Long artistId = valueJson.getLong("artistId");
+                    addDisciplineForAcceptance(userId, reportId, artistId, blocks);
                 }
+                else if (actionId.contains("fake")) {
+                    Long userId = valueJson.getLong("userId");
+                    Long artistId = valueJson.getLong("artistId");
+                    addDisciplineForFalseReport(userId, reportId, artistId, blocks);
+                }
+            }
+            else if (actionId.startsWith("discipline")) {
+                JSONArray actions = json.getJSONArray("actions");
+                DisciplineType disciplineType = null;
+                DisciplineReason disciplineReason = null;
+                Long userId = null;
+                Long artistId = null;
+                Long reportId = null;
+
+                for (int i = 0; i < actions.length(); i++) {
+                    actionId = actions.getJSONObject(i).getString("action_id");
+
+                    if (actionId.contains("type")) {
+                        disciplineType = DisciplineType.valueOf(action.getJSONArray("selected_options")
+                                .getJSONObject(0)
+                                .getString("value"));
+                    } else if (actionId.contains("reason")) {
+                        disciplineReason = DisciplineReason.valueOf(action.getJSONArray("selected_options")
+                                .getJSONObject(0)
+                                .getString("value"));
+                    } else if (actionId.equals("discipline")) {
+                        JSONObject value = new JSONObject(action.getString("value"));
+                        userId = value.getLong("userId");
+                        artistId = value.getLong("artistId");
+                        reportId = value.getLong("reportId");
+                    }
+                }
+
+                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null) {
+                    throw new InvalidDisciplineCreate();
+                }
+
+                //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
+                if (disciplineReason != DisciplineReason.FAKE_REPORT) {
+                    reportCommandService.deleteReportedTarget(reportId);
+                }
+                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType));
             }
 
             sendFeedbackToSlack(blocks, threadTs);
@@ -119,7 +167,81 @@ public class SlackController {
         }
     }
 
-    private void addBlockOfDiscipline(Long userId, JSONArray blocks) {
+    private void addDisciplineForAcceptance(Long userId, Long reportId, Long artistId, JSONArray blocks) {
+        JSONArray disciplineReason = new JSONArray()
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.INAPPROPRIATE_CONTENT.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.INAPPROPRIATE_CONTENT.name())
+                )
+                .put(new JSONObject()
+                    .put("text", new JSONObject()
+                            .put("type", "plain_text")
+                            .put("text", DisciplineReason.DEFAMATION.getDescription())
+                            .put("emoji", true)
+                    )
+                    .put("value", DisciplineReason.DEFAMATION.name())
+                )
+                .put(new JSONObject()
+                    .put("text", new JSONObject()
+                            .put("type", "plain_text")
+                            .put("text", DisciplineReason.EXPLICIT_CONTENT.getDescription())
+                            .put("emoji", true)
+                    )
+                    .put("value", DisciplineReason.EXPLICIT_CONTENT.name())
+                )
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.COMMERCIAL_ADS.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.COMMERCIAL_ADS.name())
+                )
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.INFO_DISCLOSURE.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.INFO_DISCLOSURE.name())
+                )
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.POLITICAL_RELIGIOUS.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.POLITICAL_RELIGIOUS.name())
+                )
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.OTHER.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.OTHER.name())
+                );
+        addDiscipline(userId, reportId, artistId, blocks, disciplineReason);
+    }
+
+    private void addDisciplineForFalseReport(Long userId, Long reportId, Long artistId, JSONArray blocks) {
+        JSONArray disciplineReason = new JSONArray()
+                .put(new JSONObject()
+                        .put("text", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", DisciplineReason.FAKE_REPORT.getDescription())
+                                .put("emoji", true)
+                        )
+                        .put("value", DisciplineReason.FAKE_REPORT.name())
+                );
+        addDiscipline(userId, reportId, artistId, blocks, disciplineReason);
+    }
+
+    private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
         // 조치 선택 폼을 blocks에 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
@@ -212,7 +334,7 @@ public class SlackController {
                                         .put("value", DisciplineType.FORCED_WITHDRAWAL.name())
                                 )
                         )
-                        .put("action_id", "multi_static_select_action")
+                        .put("action_id", "discipline_type")
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
@@ -232,66 +354,8 @@ public class SlackController {
                                 .put("text", "이유를 선택하세요")
                                 .put("emoji", true)
                         )
-                        .put("options", new JSONArray()
-                                // ReportReason enum을 기반으로 옵션 생성
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.INAPPROPRIATE_CONTENT.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.INAPPROPRIATE_CONTENT.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.DEFAMATION.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.DEFAMATION.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.EXPLICIT_CONTENT.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.EXPLICIT_CONTENT.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.COMMERCIAL_ADS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.COMMERCIAL_ADS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.INFO_DISCLOSURE.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.INFO_DISCLOSURE.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.POLITICAL_RELIGIOUS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.POLITICAL_RELIGIOUS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", ReportReason.OTHER.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", ReportReason.OTHER.name())
-                                )
-                        )
-                        .put("action_id", "multi_static_select_reason_action")
+                        .put("options", disciplineReason)
+                        .put("action_id", "discipline_reason")
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
@@ -314,10 +378,16 @@ public class SlackController {
                                 .put("text", "제출")
                                 .put("emoji", true)
                         )
-                        .put("value", "submit_action")
-                        .put("action_id", "button_action")
+                        .put("value", new JSONObject() // userId와 artistId를 value에 담음
+                                .put("userId", userId)
+                                .put("reportId", reportId)
+                                .put("artistId", artistId)
+                                .toString() // JSON 객체를 문자열로 변환
+                        )
+                        .put("action_id", "discipline_submit")
                 )
         );
     }
+
 
 }

@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.discipline.domain.Discipline;
+import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
-import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
@@ -48,7 +48,7 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
         DisciplineCreateRequest request = new DisciplineCreateRequest(
                 user.getId(),
                 artist.getId(),
-                ReportReason.COMMERCIAL_ADS,
+                DisciplineReason.COMMERCIAL_ADS,
                 DisciplineType.ALL_3MONTHS
         );
 
@@ -75,7 +75,7 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
         DisciplineCreateRequest request = new DisciplineCreateRequest(
                 user.getId(),
                 null,
-                ReportReason.COMMERCIAL_ADS,
+                DisciplineReason.COMMERCIAL_ADS,
                 DisciplineType.ALL_3MONTHS
         );
 

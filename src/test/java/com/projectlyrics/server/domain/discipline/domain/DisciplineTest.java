@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
-import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
@@ -17,13 +16,13 @@ public class DisciplineTest {
         // given
         User user = UserFixture.create();
         Artist artist = ArtistFixture.create();
-        ReportReason reportReason = ReportReason.COMMERCIAL_ADS;
+        DisciplineReason disciplineReason = DisciplineReason.COMMERCIAL_ADS;
         DisciplineType disciplineType = DisciplineType.ALL_3MONTHS;
 
         DisciplineCreate disciplineCreate = new DisciplineCreate(
                 user,
                 artist,
-                reportReason,
+                disciplineReason,
                 disciplineType
         );
 
@@ -34,7 +33,7 @@ public class DisciplineTest {
         assertAll(
                 () -> assertThat(discipline.getUser().getId()).isEqualTo(user.getId()),
                 () -> assertThat(discipline.getArtist().getId()).isEqualTo(artist.getId()),
-                () -> assertThat(discipline.getReason()).isEqualTo(reportReason),
+                () -> assertThat(discipline.getReason()).isEqualTo(disciplineReason),
                 () -> assertThat(discipline.getType()).isEqualTo(disciplineType),
                 () -> assertThat(discipline.getStartTime().getMinute()).isEqualTo(0),
                 () -> assertThat(discipline.getStartTime().getSecond()).isEqualTo(0),

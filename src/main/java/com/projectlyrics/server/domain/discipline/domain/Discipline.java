@@ -2,7 +2,6 @@ package com.projectlyrics.server.domain.discipline.domain;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
-import com.projectlyrics.server.domain.report.domain.ReportReason;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,12 +43,12 @@ public class Discipline extends BaseEntity {
     private LocalDateTime endTime;
 
     @Enumerated(value = EnumType.STRING)
-    private ReportReason reason;
+    private DisciplineReason reason;
 
     @Enumerated(value = EnumType.STRING)
     private DisciplineType type;
 
-    private Discipline(Long id, User user, Artist artist, ReportReason reason, DisciplineType type) {
+    private Discipline(Long id, User user, Artist artist, DisciplineReason reason, DisciplineType type) {
         this.id = id;
         this.user = user;
         this.artist = artist;

@@ -83,11 +83,15 @@ public enum ErrorCode {
     REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12002", "신고 대상(Note 또는 Comment)가 필요합니다."),
     DUPLICATE_REPORT(HttpStatus.CONFLICT, "12003", "이미 신고가 완료된 대상입니다"),
 
+    // Discipline
+    DISCIPLINE_NOT_FOUND(HttpStatus.NOT_FOUND, "14000", "해당 조치를 조회할 수 없습니다"),
+    INVALID_DISCIPLINE_CREATE(HttpStatus.BAD_REQUEST, "14001", "조치 생성에 실패했습니다"),
+
     // Slack
-    SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "13000", "슬랙 메세지 전송에 실패했습니다."),
-    SLACK_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "13001", "슬랙 메세지 전송 중 에러가 발생했습니다."),
-    SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "13002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다"),
-    SLACK_FEEDBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"13003", "슬랙에 피드백 메세지 제공에 실패했습니다."),
+    SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14000", "슬랙 메세지 전송에 실패했습니다."),
+    SLACK_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "14001", "슬랙 메세지 전송 중 에러가 발생했습니다."),
+    SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다"),
+    SLACK_FEEDBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"14003", "슬랙에 피드백 메세지 제공에 실패했습니다."),
     ;
 
     private final HttpStatus responseStatus;

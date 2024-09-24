@@ -92,7 +92,7 @@ public class SlackClient {
                                 .text(PlainTextObject.builder().text("Accept").build())
                                 .actionId("report_accept")
                                 .style("primary")
-                                .value("{\"user\":\""+reportedUserId+", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
+                                .value("{\"userId\":\""+reportedUserId+", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
@@ -103,7 +103,7 @@ public class SlackClient {
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
                                 .actionId("report_fake")
-                                .value("{\"user\":\""+report.getReporter().getId()+ ", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
+                                .value("{\"userId\":\""+report.getReporter().getId()+ ", \"reportId\":\"" + report.getId() + ", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
                                 .build()
                 )))
         );

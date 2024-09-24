@@ -8,7 +8,6 @@ import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
-import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.domain.Report;
 import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportResolve;
@@ -76,23 +75,31 @@ public class ReportCommandService {
                 .orElseThrow(ReportNotFoundException::new);
         report.resolve(ReportResolve.from(reportResolveRequest));
 
-        if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
-            if (report.getNote() != null) {
+        return report.getId();
+    }
+
+    public Long deleteReportedTarget(Long reportId) {
+
+        Report report = reportQueryRepository.findById(reportId)
+                .orElseThrow(ReportNotFoundException::new);
+
+        if (report.getNote() != null) {
                 noteQueryRepository.findById(report.getNote().getId())
                         .ifPresentOrElse(
                                 note -> note.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
-                                () -> { throw new InvalidNoteDeletionException(); }
+                                () -> {
+                                    throw new InvalidNoteDeletionException();
+                                }
                         );
-            }
-            else {
-                commentQueryRepository.findById(report.getComment().getId())
-                        .ifPresentOrElse(
-                                comment -> comment.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
-                                () -> {throw new InvalidCommentDeletionException(); }
-                        );
-            }
+        } else {
+            commentQueryRepository.findById(report.getComment().getId())
+                    .ifPresentOrElse(
+                            comment -> comment.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
+                            () -> {
+                                throw new InvalidCommentDeletionException();
+                            }
+                    );
         }
-
         return report.getId();
     }
 }
