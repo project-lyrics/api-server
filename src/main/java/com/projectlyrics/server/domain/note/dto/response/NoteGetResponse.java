@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projectlyrics.server.domain.common.dto.util.CursorResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
-import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
+import com.projectlyrics.server.domain.user.controller.dto.response.UserGetResponse;
 
 import java.time.LocalDateTime;
 

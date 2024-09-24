@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.user.dto.response;
+package com.projectlyrics.server.domain.user.controller.dto.response;
 
 import com.projectlyrics.server.domain.user.entity.User;
 
