@@ -120,6 +120,21 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void 회원가입시_사용자에게_UUID가_부여된다() {
+        // given
+        doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+        sut.signUp(request);
+
+        // when
+        String feedbackId = userQueryRepository.findBySocialIdAndAuthProvider(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get()
+                .getFeedbackId();
+
+        // then
+        assertThat(feedbackId).isNotEmpty();
+    }
+
+    @Test
     void 이미_있는_유저인_경우_회원가입에_실패_해야_한다() throws Exception {
         // given
         userCommandRepository.save(user);

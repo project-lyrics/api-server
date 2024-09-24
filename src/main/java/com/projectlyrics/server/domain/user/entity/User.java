@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
@@ -51,6 +52,7 @@ public class User extends BaseEntity {
     private List<TermsAgreements> termsAgreements;
 
     private String fcmToken;
+    private String feedbackId;
 
     private User(
             Long id,
@@ -75,6 +77,7 @@ public class User extends BaseEntity {
         this.termsAgreements = termsAgreements;
         termsAgreements.forEach(terms -> terms.setUser(this));
         this.fcmToken = fcmToken;
+        this.feedbackId = UUID.randomUUID().toString();
     }
 
     private User(
