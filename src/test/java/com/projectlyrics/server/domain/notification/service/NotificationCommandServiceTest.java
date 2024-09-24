@@ -24,6 +24,7 @@ import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,6 +47,9 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
     @Autowired
     UserCommandRepository userCommandRepository;
+
+    @Autowired
+    UserQueryRepository userQueryRepository;
 
     @Autowired
     ArtistCommandRepository artistCommandRepository;
@@ -149,11 +154,13 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
         // when
         Notification result = notificationQueryRepository.findById(1L);
+        assertThat(result.isChecked()).isFalse();
+
+        User receiver = userQueryRepository.findById(result.getReceiver().getId()).get();
+        result.check(receiver.getId());
 
         // then
-        assertAll(
-                () -> assertThat(result).isNotNull()
-        );
+        assertThat(result.isChecked()).isTrue();
     }
 
     @Test

@@ -83,10 +83,11 @@ public class Notification extends BaseEntity {
     }
 
     public void check(Long userId) {
-        if (receiver.getId().equals(userId))
-            checked = true;
+        if (!receiver.getId().equals(userId)) {
+            throw new NotificationReceiverUnmatchException();
+        }
 
-        throw new NotificationReceiverUnmatchException();
+        checked = true;
     }
 
     public Message getMessage() {
