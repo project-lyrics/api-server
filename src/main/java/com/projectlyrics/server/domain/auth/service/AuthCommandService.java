@@ -17,7 +17,7 @@ import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
-import com.projectlyrics.server.domain.user.entity.UserCreate;
+import com.projectlyrics.server.domain.user.entity.usecase.UserCreate;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;

@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.user.entity.usecase.UserCreate;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

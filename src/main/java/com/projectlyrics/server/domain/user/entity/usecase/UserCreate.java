@@ -1,6 +1,7 @@
-package com.projectlyrics.server.domain.user.entity;
+package com.projectlyrics.server.domain.user.entity.usecase;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
+import com.projectlyrics.server.domain.user.entity.*;
 
 import java.util.List;
 import java.util.Objects;

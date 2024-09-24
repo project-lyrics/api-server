@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
+import com.projectlyrics.server.domain.user.entity.usecase.UserCreate;
 import com.projectlyrics.server.domain.user.exception.InvalidAgeException;
 import com.projectlyrics.server.domain.user.exception.InvalidUsernameException;
 import org.junit.jupiter.api.BeforeEach;
