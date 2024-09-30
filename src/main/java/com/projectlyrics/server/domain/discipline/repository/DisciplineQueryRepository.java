@@ -5,4 +5,6 @@ import java.util.Optional;
 
 public interface DisciplineQueryRepository {
     Optional<Discipline> findById(Long disciplineId);
+    Boolean existsDisciplineOfAll(Long userId);
+    Boolean existsDisciplineOfArtist(Long artistId, Long userId);
 }

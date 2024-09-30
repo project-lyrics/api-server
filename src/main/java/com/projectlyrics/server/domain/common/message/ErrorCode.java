@@ -86,6 +86,7 @@ public enum ErrorCode {
     // Discipline
     DISCIPLINE_NOT_FOUND(HttpStatus.NOT_FOUND, "14000", "해당 조치를 조회할 수 없습니다"),
     INVALID_DISCIPLINE_CREATE(HttpStatus.BAD_REQUEST, "14001", "조치 생성에 실패했습니다"),
+    INVAILD_DISCIPLINE_ACTION(HttpStatus.FORBIDDEN, "14002", "징계로 인해 해당 작업을 수행할 수 없습니다"),
 
     // Slack
     SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14000", "슬랙 메세지 전송에 실패했습니다."),

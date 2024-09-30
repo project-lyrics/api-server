@@ -125,12 +125,11 @@ public class SlackController {
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null) {
                     throw new InvalidDisciplineCreate();
                 }
-
+                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType));
                 //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
                 if (disciplineReason != DisciplineReason.FAKE_REPORT) {
                     reportCommandService.deleteReportedTarget(reportId);
                 }
-                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType));
                 blocks.put(new JSONObject()
                         .put("type", "section")
                         .put("text", new JSONObject()
