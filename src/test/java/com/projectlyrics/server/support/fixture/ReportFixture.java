@@ -9,7 +9,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 
 public class ReportFixture extends BaseFixture{
 
-    public static Report create(Note note,User reporter) {
+    public static Report create(Note note, User reporter) {
         return Report.createWithId(
                 getUniqueId(),
                 ReportCreate.of(
@@ -23,7 +23,7 @@ public class ReportFixture extends BaseFixture{
         );
     }
 
-    public static Report create(Comment comment,User reporter) {
+    public static Report create(Comment comment, User reporter) {
         return Report.createWithId(
                 getUniqueId(),
                 ReportCreate.of(
