@@ -191,4 +191,45 @@ class FavoriteArtistControllerTest extends RestDocsTest {
         );
     }
 
+    @Test
+    void 노트를_작성한_관심_아티스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        List<FavoriteArtistResponse> response = new ArrayList<>();
+        User user = UserFixture.create();
+        for (int i = 0; i < 10; i++) {
+            Artist artist = ArtistFixture.create();
+            response.add(FavoriteArtistResponse.of(FavoriteArtistFixture.create(user, artist)));
+        }
+        given(favoriteArtistQueryService.findAllHavingNotesOfUser(any()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/favorite-artists/having-notes")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(response)))
+                .andDo(getFavoriteArtistHavingNotesOfUserDocument());
+    }
+
+    private RestDocumentationResultHandler getFavoriteArtistHavingNotesOfUserDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Favorite Artist API")
+                        .summary("사용자가 노트를 작성한 관심 아티스트 리스트 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER)
+                                        .description("관심 아티스트 id"),
+                                fieldWithPath("[].artist.id").type(JsonFieldType.NUMBER)
+                                        .description("아티스트 id"),
+                                fieldWithPath("[].artist.name").type(JsonFieldType.STRING)
+                                        .description("아티스트 이름"),
+                                fieldWithPath("[].artist.imageUrl").type(JsonFieldType.STRING)
+                                        .description("아티스트 이미지")
+                        )
+                        .responseSchema(Schema.schema("Favorite Artist Having Notes Of User Response"))
+                        .build())
+        );
+    }
 }

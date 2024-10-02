@@ -27,8 +27,8 @@ public class NoteQueryService {
                 .orElseThrow();
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long userId, Long cursor, int size) {
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByUserId(hasLyrics, userId, cursor, PageRequest.ofSize(size))
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByUserId(hasLyrics, artistId, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);

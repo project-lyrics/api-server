@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.note.entity.QNote.*;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
@@ -42,16 +43,17 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByUserId(boolean hasLyrics, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
-                .join(song.artist).fetchJoin()
+                .join(song.artist, artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
+                        artistId == null ? null : artist.id.eq(artistId),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.gtCursorId(cursorId, note.id)
