@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,5 +25,12 @@ public class FavoriteArtistQueryService {
                 pageRequest
         ).map(FavoriteArtistResponse::of);
         return CursorBasePaginatedResponse.of(favoriteArtistSlice);
+    }
+
+    public List<FavoriteArtistResponse> findAllHavingNotesOfUser(Long userId) {
+        return favoriteArtistQueryRepository.findAllHavingNotesOfUser(userId)
+                .stream()
+                .map(FavoriteArtistResponse::of)
+                .toList();
     }
 }

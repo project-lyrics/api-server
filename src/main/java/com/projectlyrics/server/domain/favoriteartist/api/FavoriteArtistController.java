@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/favorite-artists")
 @RequiredArgsConstructor
@@ -75,5 +77,14 @@ public class FavoriteArtistController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @GetMapping("/having-notes")
+    public ResponseEntity<List<FavoriteArtistResponse>> findAllHavingNotesOfUser(
+            @Authenticated AuthContext authContext
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(favoriteArtistQueryService.findAllHavingNotesOfUser(authContext.getId()));
     }
 }
