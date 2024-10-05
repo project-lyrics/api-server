@@ -1,19 +1,17 @@
 package com.projectlyrics.server.domain.user.repository.impl;
 
+import static com.projectlyrics.server.domain.user.entity.QUser.user;
+
+import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
-import com.projectlyrics.server.domain.user.entity.QUser;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import java.util.List;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -63,7 +61,23 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(user)
-                        .where(user.socialInfo.eq(socialInfo))
+                        .where(
+                                user.socialInfo.eq(socialInfo),
+                                user.status.in(EntityStatusEnum.YET, EntityStatusEnum.IN_USE)
+                        )
+                        .fetchOne()
+        ).isPresent();
+    }
+
+    @Override
+    public boolean existsBySocialInfoAndForceDelete(SocialInfo socialInfo) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(user)
+                        .where(
+                                user.socialInfo.eq(socialInfo),
+                                user.status.eq(EntityStatusEnum.FORCED_WITHDRAWAL)
+                        )
                         .fetchOne()
         ).isPresent();
     }

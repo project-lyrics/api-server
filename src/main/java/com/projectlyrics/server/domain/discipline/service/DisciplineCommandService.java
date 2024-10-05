@@ -57,7 +57,7 @@ public class DisciplineCommandService {
             favoriteArtistCommandRepository.deleteAllByUserId(user.getId());
             likeCommandRepository.deleteAllByUserId(user.getId());
             noteCommandRepository.deleteAllByPublisherId(user.getId());
-            user.forceDelete(Clock.systemDefaultZone());
+            user.forcedWithdrawal(Clock.systemDefaultZone());
         }
 
         return discipline;

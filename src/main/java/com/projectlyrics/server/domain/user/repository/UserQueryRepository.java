@@ -16,4 +16,6 @@ public interface UserQueryRepository {
     List<User> findAll();
 
     boolean existsBySocialInfo(SocialInfo socialInfo);
+
+    boolean existsBySocialInfoAndForceDelete(SocialInfo socialInfo);
 }

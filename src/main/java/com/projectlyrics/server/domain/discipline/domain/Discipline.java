@@ -57,8 +57,8 @@ public class Discipline extends BaseEntity {
         this.startTime = startTime
                 .withMinute(0)
                 .withSecond(0)
-                .withNano(0); ;
-        this.endTime = startTime.plus(type.getPeriod());
+                .withNano(0);
+        this.endTime = this.startTime.plus(type.getPeriod());
     }
 
     public static Discipline create(DisciplineCreate disciplineCreate) {
@@ -68,7 +68,7 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
                 disciplineCreate.type(),
-                LocalDateTime.now()
+                disciplineCreate.startTime()
         );
     }
 
@@ -79,7 +79,7 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
                 disciplineCreate.type(),
-                LocalDateTime.now()
+                disciplineCreate.startTime()
         );
     }
 }

@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.discipline.domain.DisciplineCreate;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 
 public class DisciplineFixture extends BaseFixture {
 
@@ -16,7 +17,8 @@ public class DisciplineFixture extends BaseFixture {
                         user,
                         artist,
                         DisciplineReason.COMMERCIAL_ADS,
-                        DisciplineType.ALL_3DAYS
+                        DisciplineType.ALL_3DAYS,
+                        LocalDateTime.now()
                 )
         );
     }
@@ -28,7 +30,8 @@ public class DisciplineFixture extends BaseFixture {
                         user,
                         artist,
                         DisciplineReason.COMMERCIAL_ADS,
-                        DisciplineType.ARTIST_3DAYS
+                        DisciplineType.ARTIST_3DAYS,
+                        LocalDateTime.now()
                 )
         );
     }

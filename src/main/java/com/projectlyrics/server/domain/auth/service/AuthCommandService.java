@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
 import com.projectlyrics.server.domain.auth.exception.AuthNotFoundException;
+import com.projectlyrics.server.domain.auth.exception.ForcedWithdrawalUserException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
@@ -54,6 +55,9 @@ public class AuthCommandService {
     private void checkIfAlreadyExists(SocialInfo socialInfo) {
         if (userQueryRepository.existsBySocialInfo(socialInfo)) {
             throw new AlreadyExistsUserException();
+        }
+        else if (userQueryRepository.existsBySocialInfoAndForceDelete(socialInfo)) {
+            throw new ForcedWithdrawalUserException();
         }
     }
 
