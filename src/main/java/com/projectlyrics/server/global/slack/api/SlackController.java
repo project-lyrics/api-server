@@ -1,6 +1,7 @@
 package com.projectlyrics.server.global.slack.api;
 
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
+import com.projectlyrics.server.domain.discipline.domain.Discipline;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
@@ -133,7 +134,7 @@ public class SlackController {
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null) {
                     throw new InvalidDisciplineCreate();
                 }
-                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime));
+                Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime));
                 //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
                 if (disciplineReason != DisciplineReason.FAKE_REPORT) {
                     reportCommandService.deleteReportedTarget(reportId);
@@ -142,7 +143,7 @@ public class SlackController {
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자*: " + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription())
+                                .put("text", ":mega: *사용자*: " + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription()+"\n*조치 기간: *"+discipline.getStartTime()+" ~ "+discipline.getEndTime())
                         )
                 );
             }

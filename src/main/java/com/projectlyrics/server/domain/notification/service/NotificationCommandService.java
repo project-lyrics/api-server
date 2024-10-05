@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import com.projectlyrics.server.domain.notification.domain.Notification;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
+import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.notification.exception.FailedToSendNotificationException;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
@@ -33,6 +34,13 @@ public class NotificationCommandService {
     @Async
     @EventListener
     public void createCommentNotification(CommentEvent event) {
+        Notification notification = notificationCommandRepository.save(Notification.create(event));
+        send(notification);
+    }
+
+    @Async
+    @EventListener
+    public void createDisciplineNotification(DisciplineEvent event) {
         Notification notification = notificationCommandRepository.save(Notification.create(event));
         send(notification);
     }

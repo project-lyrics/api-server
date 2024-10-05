@@ -14,12 +14,14 @@ import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRe
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
+import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import java.time.Clock;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class DisciplineCommandService {
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
     private final LikeCommandRepository likeCommandRepository;
     private final NoteCommandRepository noteCommandRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Discipline create(DisciplineCreateRequest request) {
 
@@ -48,6 +51,7 @@ public class DisciplineCommandService {
                 .orElse(null);
 
         Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime())));
+        eventPublisher.publishEvent(DisciplineEvent.from(discipline));
 
         if (discipline.getType() == DisciplineType.FORCED_WITHDRAWAL) {
             authRepository.findById(user.getSocialInfo().getSocialId())

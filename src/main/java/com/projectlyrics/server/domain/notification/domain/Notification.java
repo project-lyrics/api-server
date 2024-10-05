@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
+import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -64,6 +65,18 @@ public class Notification extends BaseEntity {
                 event.receiver(),
                 event.note(),
                 event.comment()
+        );
+    }
+
+    public static Notification create(DisciplineEvent event) {
+        return new Notification(
+                null,
+                NotificationType.DISCIPLINE,
+                "작성하신 게시글/댓글이 " +event.discipline().getReason()+ " 이유로 삭제 조치 되었습니다.",
+                event.sender(),
+                event.receiver(),
+                null,
+                null
         );
     }
 
