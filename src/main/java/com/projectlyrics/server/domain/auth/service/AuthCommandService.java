@@ -1,12 +1,12 @@
 package com.projectlyrics.server.domain.auth.service;
 
+import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.domain.Auth;
 import com.projectlyrics.server.domain.auth.domain.AuthGetSocialInfo;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
 import com.projectlyrics.server.domain.auth.exception.AuthNotFoundException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;

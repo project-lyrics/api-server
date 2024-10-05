@@ -66,4 +66,10 @@ public abstract class BaseEntity {
         this.deletedAt = null;
         this.deletedBy = null;
     }
+
+    public void forceDelete(Clock clock) {
+        this.status = EntityStatusEnum.FORCE_DELETED;
+        this.deletedAt = LocalDateTime.now(clock);
+        this.deletedBy = 0L;
+    }
 }

@@ -1,5 +1,6 @@
 package com.projectlyrics.server.global.slack.api;
 
+import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
@@ -45,6 +46,7 @@ public class SlackController {
 
     private final ReportCommandService reportCommandService;
     private final DisciplineCommandService disciplineCommandService;
+    private final AuthCommandService authCommandService;
     private final RestTemplate restTemplate = new RestTemplate(); // HTTP 요청을 보내기 위한 RestTemplate
     private static final Logger logger = LoggerFactory.getLogger(SlackController.class);
 
