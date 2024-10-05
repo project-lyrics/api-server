@@ -13,6 +13,8 @@ import com.projectlyrics.server.global.slack.exception.SlackInteractionFailureEx
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,6 +104,7 @@ public class SlackController {
                 Long userId = null;
                 Long artistId = null;
                 Long reportId = null;
+                LocalDateTime startTime = null;
 
                 for (int i = 0; i < actions.length(); i++) {
                     actionId = actions.getJSONObject(i).getString("action_id");
@@ -114,18 +117,21 @@ public class SlackController {
                         disciplineReason = DisciplineReason.valueOf(action.getJSONArray("selected_options")
                                 .getJSONObject(0)
                                 .getString("value"));
-                    } else if (actionId.equals("discipline")) {
+                    } else if (actionId.contains("submit")) {
                         JSONObject value = new JSONObject(action.getString("value"));
                         userId = value.getLong("userId");
                         artistId = value.getLong("artistId");
                         reportId = value.getLong("reportId");
+                    } else if (actionId.equals("start")) {
+                        String selectedDate = actions.getJSONObject(i).getString("selected_date");
+                        startTime = LocalDate.parse(selectedDate).atStartOfDay();
                     }
                 }
 
-                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null) {
+                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null) {
                     throw new InvalidDisciplineCreate();
                 }
-                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType));
+                disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime));
                 //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
                 if (disciplineReason != DisciplineReason.FAKE_REPORT) {
                     reportCommandService.deleteReportedTarget(reportId);
@@ -249,7 +255,7 @@ public class SlackController {
     }
 
     private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
-        // 조치 선택 폼을 blocks에 추가
+        // 조치 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
                 .put("element", new JSONObject()
@@ -366,7 +372,27 @@ public class SlackController {
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":pencil2: 사용자 " + userId + "에 대한 조치 이유")
+                        .put("text", ":closed_book: 사용자 " + userId + "에 대한 조치 이유")
+                        .put("emoji", true)
+                )
+        );
+
+        //시작 날짜 선택 폼 추가
+        blocks.put(new JSONObject()
+                .put("type", "input")
+                .put("element", new JSONObject()
+                        .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
+                        .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
+                        .put("placeholder", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", "시작 날짜를 선택하세요")
+                                .put("emoji", true)
+                        )
+                        .put("action_id", "discipline_start")  // 이 action_id로 선택된 날짜를 처리
+                )
+                .put("label", new JSONObject()
+                        .put("type", "plain_text")
+                        .put("text", ":calendar: 조치 시작 날짜")
                         .put("emoji", true)
                 )
         );

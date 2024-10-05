@@ -48,13 +48,13 @@ public class Discipline extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private DisciplineType type;
 
-    private Discipline(Long id, User user, Artist artist, DisciplineReason reason, DisciplineType type) {
+    private Discipline(Long id, User user, Artist artist, DisciplineReason reason, DisciplineType type, LocalDateTime startTime) {
         this.id = id;
         this.user = user;
         this.artist = artist;
         this.reason = reason;
         this.type = type;
-        this.startTime = LocalDateTime.now()
+        this.startTime = startTime
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0); ;
@@ -67,7 +67,8 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.user(),
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
-                disciplineCreate.type()
+                disciplineCreate.type(),
+                LocalDateTime.now()
         );
     }
 
@@ -77,7 +78,8 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.user(),
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
-                disciplineCreate.type()
+                disciplineCreate.type(),
+                LocalDateTime.now()
         );
     }
 }

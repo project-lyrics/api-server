@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 public class DisciplineTest {
@@ -23,7 +24,8 @@ public class DisciplineTest {
                 user,
                 artist,
                 disciplineReason,
-                disciplineType
+                disciplineType,
+                LocalDateTime.now()
         );
 
         // when

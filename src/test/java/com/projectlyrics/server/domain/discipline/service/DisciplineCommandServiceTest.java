@@ -15,6 +15,7 @@ import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,8 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
                 user.getId(),
                 artist.getId(),
                 DisciplineReason.COMMERCIAL_ADS,
-                DisciplineType.ALL_3MONTHS
+                DisciplineType.ALL_3MONTHS,
+                LocalDateTime.now()
         );
 
         // when
@@ -76,7 +78,8 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
                 user.getId(),
                 null,
                 DisciplineReason.COMMERCIAL_ADS,
-                DisciplineType.ALL_3MONTHS
+                DisciplineType.ALL_3MONTHS,
+                LocalDateTime.now()
         );
 
         // when
