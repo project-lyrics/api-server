@@ -9,9 +9,9 @@ public record DisciplineEvent (
         Discipline discipline
 ) {
 
-    public static DisciplineEvent from(Discipline discipline) {
+    public static DisciplineEvent from(User sender, Discipline discipline) {
         return new DisciplineEvent(
-                discipline.getUser(),
+                sender,
                 discipline.getUser(),
                 discipline
         );

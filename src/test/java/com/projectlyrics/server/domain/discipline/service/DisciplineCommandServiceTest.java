@@ -12,6 +12,7 @@ import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRe
 import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
@@ -24,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DisciplineCommandServiceTest extends IntegrationTest {
     @Autowired
     UserCommandRepository userCommandRepository;
+
+    @Autowired
+    UserQueryRepository userQueryRepository;
 
     @Autowired
     ArtistCommandRepository artistCommandRepository;
@@ -96,6 +100,27 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
                 () -> assertThat(result.get().getType()).isEqualTo(discipline.getType()),
                 () -> assertThat(result.get().getStartTime()).isEqualTo(discipline.getStartTime()),
                 () -> assertThat(result.get().getEndTime()).isEqualTo(discipline.getEndTime())
+        );
+    }
+
+    @Test
+    void 조치의_종류가_강제탈퇴일_경우_해당_사용자를_강제_탈퇴시켜야_한다() {
+        // given
+        Long userId = user.getId();
+        DisciplineCreateRequest request = new DisciplineCreateRequest(
+                user.getId(),
+                null,
+                DisciplineReason.COMMERCIAL_ADS,
+                DisciplineType.FORCED_WITHDRAWAL,
+                LocalDateTime.now()
+        );
+
+        // when
+        sut.create(request);
+
+        //then
+        assertAll(
+                () -> assertThat(userQueryRepository.findById(userId).isEmpty())
         );
     }
 }

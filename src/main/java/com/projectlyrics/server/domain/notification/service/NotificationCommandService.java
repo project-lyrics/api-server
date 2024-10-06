@@ -12,14 +12,14 @@ import com.projectlyrics.server.domain.notification.repository.NotificationComma
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -33,16 +33,18 @@ public class NotificationCommandService {
 
     @Async
     @EventListener
-    public void createCommentNotification(CommentEvent event) {
+    public CompletableFuture<Void> createCommentNotification(CommentEvent event) {
         Notification notification = notificationCommandRepository.save(Notification.create(event));
         send(notification);
+        return CompletableFuture.completedFuture(null);
     }
 
     @Async
     @EventListener
-    public void createDisciplineNotification(DisciplineEvent event) {
+    public CompletableFuture<Void> createDisciplineNotification(DisciplineEvent event) {
         Notification notification = notificationCommandRepository.save(Notification.create(event));
         send(notification);
+        return CompletableFuture.completedFuture(null);
     }
 
     private void send(Notification notification) {

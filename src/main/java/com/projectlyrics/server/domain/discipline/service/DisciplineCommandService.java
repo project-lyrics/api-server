@@ -51,7 +51,9 @@ public class DisciplineCommandService {
                 .orElse(null);
 
         Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime())));
-        eventPublisher.publishEvent(DisciplineEvent.from(discipline));
+
+        User admin = userQueryRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        eventPublisher.publishEvent(DisciplineEvent.from(admin, discipline));
 
         if (discipline.getType() == DisciplineType.FORCED_WITHDRAWAL) {
             authRepository.findById(user.getSocialInfo().getSocialId())

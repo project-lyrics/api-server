@@ -1,14 +1,13 @@
 package com.projectlyrics.server.domain.like.repository.impl;
 
+import static com.projectlyrics.server.domain.like.domain.QLike.like;
+
 import com.projectlyrics.server.domain.like.domain.Like;
 import com.projectlyrics.server.domain.like.repository.LikeQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-
-import static com.projectlyrics.server.domain.like.domain.QLike.like;
 
 @Repository
 @RequiredArgsConstructor

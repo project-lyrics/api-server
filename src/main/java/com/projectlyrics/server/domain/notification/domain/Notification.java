@@ -105,6 +105,11 @@ public class Notification extends BaseEntity {
                         .putData("noteId", note.getId().toString())
                         .putData("noteTitle", note.getContent())
                         .build();
+            case DISCIPLINE:
+                return builder
+                        .putData("type", type.name())
+                        .putData("content", content)
+                        .build();
             default:
                 throw new IllegalArgumentException("Invalid notification type");
         }

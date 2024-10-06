@@ -1,11 +1,21 @@
 package com.projectlyrics.server.domain.notification.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.domain.CommentCreate;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
+import com.projectlyrics.server.domain.discipline.domain.Discipline;
+import com.projectlyrics.server.domain.discipline.domain.DisciplineCreate;
+import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
+import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
+import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -15,6 +25,7 @@ import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.notification.domain.Notification;
 import com.projectlyrics.server.domain.notification.domain.NotificationType;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
+import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
 import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
@@ -22,20 +33,17 @@ import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
-import com.projectlyrics.server.support.fixture.*;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.SongFixture;
+import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 class NotificationCommandServiceTest extends IntegrationTest {
 
@@ -55,6 +63,9 @@ class NotificationCommandServiceTest extends IntegrationTest {
     CommentCommandRepository commentCommandRepository;
 
     @Autowired
+    DisciplineCommandRepository disciplineCommandRepository;
+
+    @Autowired
     NotificationCommandRepository notificationCommandRepository;
 
     @Autowired
@@ -69,6 +80,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
     private Comment comment;
     private User user;
     private List<User> users = new ArrayList<>();
+    private Discipline discipline;
 
     @BeforeEach
     void setUp() {
@@ -91,31 +103,53 @@ class NotificationCommandServiceTest extends IntegrationTest {
         Note note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
 
         comment = commentCommandRepository.save(Comment.create(CommentCreate.of("content", user, note)));
+
+        discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, DisciplineReason.COMMERCIAL_ADS, DisciplineType.ALL_3MONTHS, LocalDateTime.now())));
+
     }
 
-//    @Test
-//    void 댓글에_대한_알림을_저장한다() throws Exception {
-//        // given
-//        given(firebaseMessaging.send(any())).willReturn(null);
-//        CommentEvent commentEvent = CommentEvent.from(comment);
-//
-//        // when
-//        sut.createCommentNotification(commentEvent);
-//        sut.createCommentNotification(commentEvent);
-//        sut.createCommentNotification(commentEvent);
-//
-//        // then
-//        List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
-//                .getContent();
-//
-//        assertAll(
-//                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
-//                () -> assertThat(result.getFirst().getSender()).isEqualTo(comment.getWriter()),
-//                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(comment.getNote().getPublisher()),
-//                () -> assertThat(result.getFirst().getNote()).isEqualTo(comment.getNote()),
-//                () -> assertThat(result.getFirst().getComment()).isEqualTo(comment)
-//        );
-//    }
+    @Test
+    void 댓글에_대한_알림을_저장한다() throws Exception {
+        // given
+        given(firebaseMessaging.send(any())).willReturn(null);
+        CommentEvent commentEvent = CommentEvent.from(comment);
+
+        // when
+        sut.createCommentNotification(commentEvent).get();
+
+        // then
+        List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
+                .getContent();
+
+        assertAll(
+                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
+                () -> assertThat(result.getFirst().getSender()).isEqualTo(comment.getWriter()),
+                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(comment.getNote().getPublisher()),
+                () -> assertThat(result.getFirst().getNote()).isEqualTo(comment.getNote()),
+                () -> assertThat(result.getFirst().getComment()).isEqualTo(comment)
+        );
+    }
+
+    @Test
+    void 조치에_대한_알림을_저장한다() throws Exception {
+        // given
+        given(firebaseMessaging.send(any())).willReturn(null);
+        DisciplineEvent disciplineEvent = DisciplineEvent.from(user, discipline);
+
+        // when
+        sut.createDisciplineNotification(disciplineEvent).get();
+
+        // then
+        List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
+                .getContent();
+        System.out.println("------------------"+discipline.getUser().getId()+ "   " + user.getId()+"------------------");
+        assertAll(
+                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.DISCIPLINE),
+                () -> assertThat(result.getFirst().getSender()).isEqualTo(user),
+                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(discipline.getUser())
+                //TODO : 나중에 content 정해지면 content도 함께 검사할 것
+        );
+    }
 
     @Test
     void 공개_알림을_저장한다() throws Exception {
