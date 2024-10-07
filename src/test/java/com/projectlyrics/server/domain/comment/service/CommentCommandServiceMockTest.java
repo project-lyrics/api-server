@@ -64,8 +64,8 @@ class CommentCommandServiceMockTest {
         when(noteMock.getSong()).thenReturn(songMock);
         when(noteQueryRepository.findById(anyLong())).thenReturn(Optional.of(noteMock));
         when(commentCommandRepository.save(any(Comment.class))).thenReturn(mock(Comment.class));
-        when(disciplineQueryRepository.existsDisciplineOfAll(anyLong())).thenReturn(false);
-        when(disciplineQueryRepository.existsDisciplineOfArtist(anyLong(), anyLong())).thenReturn(false);
+        when(disciplineQueryRepository.existsByAll(anyLong())).thenReturn(false);
+        when(disciplineQueryRepository.existsByArtist(anyLong(), anyLong())).thenReturn(false);
 
         // when
         commentCommandService.create(request, 1L);

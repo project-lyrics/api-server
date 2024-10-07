@@ -68,7 +68,7 @@ public class CommentCommandService {
     }
 
     private void checkDiscipline(Long artistId, Long userId) {
-        if (disciplineQueryRepository.existsDisciplineOfAll(userId) || disciplineQueryRepository.existsDisciplineOfArtist(artistId, userId)) {
+        if (disciplineQueryRepository.existsByAll(userId) || disciplineQueryRepository.existsByArtist(artistId, userId)) {
             throw new InvaildDisciplineActionException();
         }
     }

@@ -31,7 +31,7 @@ public class QueryDslDisciplineQueryRepository implements DisciplineQueryReposit
     }
 
     @Override
-    public Boolean existsDisciplineOfAll(Long userId) {
+    public Boolean existsByAll(Long userId) {
         return jpaQueryFactory
                 .selectOne()
                 .from(discipline)
@@ -46,7 +46,7 @@ public class QueryDslDisciplineQueryRepository implements DisciplineQueryReposit
     }
 
     @Override
-    public Boolean existsDisciplineOfArtist(Long artistId, Long userId) {
+    public Boolean existsByArtist(Long artistId, Long userId) {
         return jpaQueryFactory
                 .selectOne()
                 .from(discipline)
