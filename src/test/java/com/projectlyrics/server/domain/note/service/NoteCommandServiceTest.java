@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
-import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineActionException;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineActionException;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
@@ -276,7 +276,7 @@ class NoteCommandServiceTest extends IntegrationTest {
 
         // when, then
         assertThatThrownBy(() -> sut.create(request, user.getId()))
-                .isInstanceOf(InvaildDisciplineActionException.class);
+                .isInstanceOf(InvalidDisciplineActionException.class);
     }
 
     @Test
@@ -296,6 +296,6 @@ class NoteCommandServiceTest extends IntegrationTest {
 
         // when, then
         assertThatThrownBy(() -> sut.create(request, user.getId()))
-                .isInstanceOf(InvaildDisciplineActionException.class);
+                .isInstanceOf(InvalidDisciplineActionException.class);
     }
 }

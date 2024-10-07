@@ -9,7 +9,7 @@ import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionE
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
-import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineActionException;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineActionException;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
@@ -69,7 +69,7 @@ public class CommentCommandService {
 
     private void checkDiscipline(Long artistId, Long userId) {
         if (disciplineQueryRepository.existsByAll(userId) || disciplineQueryRepository.existsByArtist(artistId, userId)) {
-            throw new InvaildDisciplineActionException();
+            throw new InvalidDisciplineActionException();
         }
     }
 }
