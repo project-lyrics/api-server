@@ -11,8 +11,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -33,17 +31,9 @@ public class ArtistQueryService {
     }
 
     public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(
-                        query,
-                        cursor,
-                        pageable
-                )
+        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, cursor, pageable)
                 .map(ArtistGetResponse::of);
 
         return CursorBasePaginatedResponse.of(searchedArtists);
-    }
-
-    public List<Artist> getArtistsByIds(List<Long> artistIds) {
-        return artistQueryRepository.findAllByIds(artistIds);
     }
 }
