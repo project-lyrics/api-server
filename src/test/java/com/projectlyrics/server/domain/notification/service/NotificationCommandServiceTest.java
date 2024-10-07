@@ -142,7 +142,6 @@ class NotificationCommandServiceTest extends IntegrationTest {
         // then
         List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
                 .getContent();
-        System.out.println("------------------"+discipline.getUser().getId()+ "   " + user.getId()+"------------------");
         assertAll(
                 () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.DISCIPLINE),
                 () -> assertThat(result.getFirst().getSender()).isEqualTo(user),
