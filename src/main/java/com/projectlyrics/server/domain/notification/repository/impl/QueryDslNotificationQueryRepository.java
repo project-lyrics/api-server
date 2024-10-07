@@ -33,6 +33,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
             notification.id,
             notification.type,
             notification.content,
+            notification.createdAt,
             notification.checked,
             note.id,
             note.content,
