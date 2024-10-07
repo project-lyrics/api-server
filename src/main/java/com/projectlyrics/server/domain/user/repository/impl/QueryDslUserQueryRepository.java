@@ -58,27 +58,23 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
 
     @Override
     public boolean existsBySocialInfo(SocialInfo socialInfo) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(user)
-                        .where(
-                                user.socialInfo.eq(socialInfo),
-                                user.status.in(EntityStatusEnum.YET, EntityStatusEnum.IN_USE)
-                        )
-                        .fetchOne()
-        ).isPresent();
+        return jpaQueryFactory
+                .selectFrom(user)
+                .where(
+                        user.socialInfo.eq(socialInfo),
+                        user.status.in(EntityStatusEnum.YET, EntityStatusEnum.IN_USE)
+                )
+                .fetchFirst() != null;
     }
 
     @Override
     public boolean existsBySocialInfoAndForceDelete(SocialInfo socialInfo) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(user)
-                        .where(
-                                user.socialInfo.eq(socialInfo),
-                                user.status.eq(EntityStatusEnum.FORCED_WITHDRAWAL)
-                        )
-                        .fetchOne()
-        ).isPresent();
+        return jpaQueryFactory
+                .selectFrom(user)
+                .where(
+                        user.socialInfo.eq(socialInfo),
+                        user.status.eq(EntityStatusEnum.FORCED_WITHDRAWAL)
+                )
+                .fetchFirst() != null;
     }
 }
