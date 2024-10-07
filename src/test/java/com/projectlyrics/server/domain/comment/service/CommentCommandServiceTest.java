@@ -12,7 +12,7 @@ import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
-import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineAction;
+import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineActionException;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -182,7 +182,7 @@ class CommentCommandServiceTest extends IntegrationTest {
 
         // when, then
         assertThatThrownBy(() -> sut.create(commentCreateRequest, user.getId()))
-                .isInstanceOf(InvaildDisciplineAction.class);
+                .isInstanceOf(InvaildDisciplineActionException.class);
     }
 
     @Test
@@ -196,6 +196,6 @@ class CommentCommandServiceTest extends IntegrationTest {
 
         // when, then
         assertThatThrownBy(() -> sut.create(commentCreateRequest, user.getId()))
-                .isInstanceOf(InvaildDisciplineAction.class);
+                .isInstanceOf(InvaildDisciplineActionException.class);
     }
 }

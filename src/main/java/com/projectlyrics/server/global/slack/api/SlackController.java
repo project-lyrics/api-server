@@ -5,7 +5,7 @@ import com.projectlyrics.server.domain.discipline.domain.Discipline;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
-import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreate;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreateException;
 import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
 import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
@@ -132,7 +132,7 @@ public class SlackController {
                 }
 
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null) {
-                    throw new InvalidDisciplineCreate();
+                    throw new InvalidDisciplineCreateException();
                 }
                 Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime));
                 //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제

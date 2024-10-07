@@ -9,7 +9,6 @@ public record DisciplineCreate (
         Artist artist,
         DisciplineReason reason,
         DisciplineType type,
-
         LocalDateTime startTime
 
 ){

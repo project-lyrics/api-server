@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.note.service;
 
-import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineAction;
+import com.projectlyrics.server.domain.discipline.exception.InvaildDisciplineActionException;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
@@ -51,7 +51,7 @@ public class NoteCommandService {
 
     private void checkDiscipline(Long artistId, Long userId) {
        if (disciplineQueryRepository.existsDisciplineOfAll(userId) || disciplineQueryRepository.existsDisciplineOfArtist(artistId, userId)) {
-           throw new InvaildDisciplineAction();
+           throw new InvaildDisciplineActionException();
        }
     }
 
