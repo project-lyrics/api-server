@@ -19,7 +19,6 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import java.time.Clock;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -45,10 +44,8 @@ public class DisciplineCommandService {
 
         User user = userQueryRepository.findById(request.userId())
                 .orElseThrow(UserNotFoundException::new);
-        Artist artist = Optional.ofNullable(request.artistId())
-                .map(artistId -> artistQueryRepository.findById(artistId)
-                        .orElseThrow(ArtistNotFoundException::new))
-                .orElse(null);
+        Artist artist = artistQueryRepository.findById(request.artistId())
+                .orElseThrow(ArtistNotFoundException::new);
 
         Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime())));
 
