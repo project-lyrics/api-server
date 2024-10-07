@@ -18,7 +18,7 @@ public class Username {
 
     private final static Pattern pattern = Pattern.compile("^[a-zA-Z0-9가-힣]{1,10}$");
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String value;
 
     Username(String value) {

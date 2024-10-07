@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Clock;
 import java.util.List;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
@@ -115,5 +116,13 @@ public class User extends BaseEntity {
                 userCreate.termsAgreements(),
                 userCreate.fcmToken()
         );
+    }
+
+    public void withdraw() {
+        nickname = null;
+        profileCharacter = null;
+        info = null;
+        termsAgreements.forEach(TermsAgreements::delete);
+        delete(id, Clock.systemDefaultZone());
     }
 }
