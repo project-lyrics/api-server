@@ -70,6 +70,6 @@ public abstract class BaseEntity {
     public void forcedWithdrawal(Clock clock) {
         this.status = EntityStatusEnum.FORCED_WITHDRAWAL;
         this.deletedAt = LocalDateTime.now(clock);
-        this.deletedBy = 0L;
+        this.deletedBy = 1L; //admin
     }
 }
