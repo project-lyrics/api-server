@@ -22,6 +22,7 @@ import com.projectlyrics.server.domain.user.entity.UserCreate;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,5 +111,16 @@ public class AuthCommandService {
         likeCommandRepository.deleteAllByUserId(userId);
         noteCommandRepository.deleteAllByPublisherId(userId);
         userCommandRepository.deleteById(userId);
+    }
+
+    public void forcedWithdrawal(User user) {
+        authRepository.findById(user.getSocialInfo().getSocialId())
+                .ifPresent(authRepository::delete);
+        bookmarkCommandRepository.deleteAllByUserId(user.getId());
+        commentCommandRepository.deleteAllByWriterId(user.getId());
+        favoriteArtistCommandRepository.deleteAllByUserId(user.getId());
+        likeCommandRepository.deleteAllByUserId(user.getId());
+        noteCommandRepository.deleteAllByPublisherId(user.getId());
+        user.forcedWithdrawal(Clock.systemDefaultZone());
     }
 }
