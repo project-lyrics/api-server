@@ -48,3 +48,5 @@ slack:
     secret: secret
   channel:
     id: secret
+
+admin: 1

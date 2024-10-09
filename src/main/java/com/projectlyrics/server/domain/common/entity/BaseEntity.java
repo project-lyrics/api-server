@@ -5,12 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-
+import jakarta.persistence.MappedSuperclass;
 import java.time.Clock;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -47,9 +46,11 @@ public abstract class BaseEntity {
     @Column(nullable = true)
     private Long deletedBy;
 
-    protected BaseEntity() {
-        this.status = EntityStatusEnum.IN_USE;
-    }
+    @Value("${admin}")
+    private Long adminUserId;
+
+    protected BaseEntity() {this.status = EntityStatusEnum.IN_USE;}
+
 
     public boolean isInUse() {
         return EntityStatusEnum.IN_USE.equals(this.status);
@@ -70,6 +71,6 @@ public abstract class BaseEntity {
     public void forcedWithdrawal(Clock clock) {
         this.status = EntityStatusEnum.FORCED_WITHDRAWAL;
         this.deletedAt = LocalDateTime.now(clock);
-        this.deletedBy = 1L; //admin
+        this.deletedBy = adminUserId; //admin
     }
 }

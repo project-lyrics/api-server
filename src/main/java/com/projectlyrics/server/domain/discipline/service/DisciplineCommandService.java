@@ -14,6 +14,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class DisciplineCommandService {
+
+    @Value("${admin}")
+    private Long adminUserId;
 
     private final DisciplineCommandRepository disciplineCommandRepository;
     private final UserQueryRepository userQueryRepository;
@@ -38,7 +42,7 @@ public class DisciplineCommandService {
 
         Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime(), request.notificationContent())));
 
-        User admin = userQueryRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        User admin = userQueryRepository.findById(adminUserId).orElseThrow(UserNotFoundException::new);
         eventPublisher.publishEvent(DisciplineEvent.from(admin, discipline));
 
         if (discipline.getType() == DisciplineType.FORCED_WITHDRAWAL) {
