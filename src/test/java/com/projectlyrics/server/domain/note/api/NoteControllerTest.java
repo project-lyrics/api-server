@@ -702,6 +702,7 @@ class NoteControllerTest extends RestDocsTest {
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
                 .type(SimpleType.NUMBER)
+                .optional()
                 .description("아티스트 Id");
         queryParams[pagingQueryParameters.length + 1] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
