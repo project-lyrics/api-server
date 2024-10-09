@@ -108,6 +108,7 @@ public class SlackController {
                 Long artistId = null;
                 Long reportId = null;
                 LocalDateTime startTime = null;
+                String notificationContent = null;
 
                 for (int i = 0; i < actions.length(); i++) {
                     actionId = actions.getJSONObject(i).getString("action_id");
@@ -125,16 +126,18 @@ public class SlackController {
                         userId = value.getLong("userId");
                         artistId = value.getLong("artistId");
                         reportId = value.getLong("reportId");
-                    } else if (actionId.equals("start")) {
+                    } else if (actionId.contains("start")) {
                         String selectedDate = actions.getJSONObject(i).getString("selected_date");
                         startTime = LocalDate.parse(selectedDate).atStartOfDay();
+                    } else if (actionId.contains("content")) {
+                        notificationContent = actions.getJSONObject(i).getString("value");
                     }
                 }
 
-                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null) {
+                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
                     throw new InvalidDisciplineCreateException();
                 }
-                Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime));
+                Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent));
                 //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
                 if (disciplineReason != DisciplineReason.FAKE_REPORT) {
                     reportCommandService.deleteReportedTarget(reportId);
@@ -258,6 +261,26 @@ public class SlackController {
     }
 
     private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
+        //시작 날짜 선택 폼 추가
+        blocks.put(new JSONObject()
+                .put("type", "input")
+                .put("element", new JSONObject()
+                        .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
+                        .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
+                        .put("placeholder", new JSONObject()
+                                .put("type", "plain_text")
+                                .put("text", "시작 날짜를 선택하세요")
+                                .put("emoji", true)
+                        )
+                        .put("action_id", "discipline_start")  // 이 action_id로 선택된 날짜를 처리
+                )
+                .put("label", new JSONObject()
+                        .put("type", "plain_text")
+                        .put("text", ":calendar: 조치 시작 날짜")
+                        .put("emoji", true)
+                )
+        );
+
         // 조치 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
@@ -359,7 +382,6 @@ public class SlackController {
                 )
         );
 
-
         // 징계 이유 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
@@ -380,22 +402,21 @@ public class SlackController {
                 )
         );
 
-        //시작 날짜 선택 폼 추가
+        // 사용자 알림 메세지 입력 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
                 .put("element", new JSONObject()
-                        .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
-                        .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
+                        .put("type", "plain_text_input")
+                        .put("action_id", "discipline_content")
                         .put("placeholder", new JSONObject()
                                 .put("type", "plain_text")
-                                .put("text", "시작 날짜를 선택하세요")
+                                .put("text", "{시작시간}, {종료시간}을 포함해서 알림 메세지를 작성해보세요 (단 영구 탈퇴와 경고의 경우는 제외)")
                                 .put("emoji", true)
                         )
-                        .put("action_id", "discipline_start")  // 이 action_id로 선택된 날짜를 처리
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":calendar: 조치 시작 날짜")
+                        .put("text", ":memo:사용자에 전달될 조치 알림 메세지")
                         .put("emoji", true)
                 )
         );

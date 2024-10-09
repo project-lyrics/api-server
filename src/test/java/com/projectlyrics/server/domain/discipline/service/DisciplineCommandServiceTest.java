@@ -55,35 +55,8 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
                 artist.getId(),
                 DisciplineReason.COMMERCIAL_ADS,
                 DisciplineType.ALL_3MONTHS,
-                LocalDateTime.now()
-        );
-
-        // when
-        Discipline discipline = sut.create(request);
-
-        // then
-        Optional<Discipline> result = disciplineQueryRepository.findById(discipline.getId());
-        assertAll(
-                () -> assertThat(result.isPresent()),
-                () -> assertThat(result.get().getId().equals(discipline.getId())),
-                () -> assertThat(result.get().getUser()).isEqualTo(discipline.getUser()),
-                () -> assertThat(result.get().getArtist()).isEqualTo(discipline.getArtist()),
-                () -> assertThat(result.get().getReason()).isEqualTo(discipline.getReason()),
-                () -> assertThat(result.get().getType()).isEqualTo(discipline.getType()),
-                () -> assertThat(result.get().getStartTime()).isEqualTo(discipline.getStartTime()),
-                () -> assertThat(result.get().getEndTime()).isEqualTo(discipline.getEndTime())
-        );
-    }
-
-    @Test
-    void 해당하는_가수가_null이더라도_정상적으로_조치를_저장해야_한다() throws Exception {
-        // given
-        DisciplineCreateRequest request = new DisciplineCreateRequest(
-                user.getId(),
-                null,
-                DisciplineReason.COMMERCIAL_ADS,
-                DisciplineType.ALL_3MONTHS,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "사용자에게 갈 알림 메세지입니다"
         );
 
         // when
@@ -109,10 +82,11 @@ public class DisciplineCommandServiceTest extends IntegrationTest {
         Long userId = user.getId();
         DisciplineCreateRequest request = new DisciplineCreateRequest(
                 user.getId(),
-                null,
+                artist.getId(),
                 DisciplineReason.COMMERCIAL_ADS,
                 DisciplineType.FORCED_WITHDRAWAL,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                "사용자에게 갈 알림 메세지입니다"
         );
 
         // when

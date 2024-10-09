@@ -48,17 +48,23 @@ public class Discipline extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private DisciplineType type;
 
-    private Discipline(Long id, User user, Artist artist, DisciplineReason reason, DisciplineType type, LocalDateTime startTime) {
+    private String notificationContent;
+
+    private Discipline(Long id, User user, Artist artist, DisciplineReason reason, DisciplineType type, LocalDateTime startTime, String notificationContent) {
         this.id = id;
         this.user = user;
         this.artist = artist;
         this.reason = reason;
         this.type = type;
         this.startTime = startTime
+                .withHour(0)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
         this.endTime = this.startTime.plus(type.getPeriod());
+        this.notificationContent = notificationContent
+                .replace("{시작시간}", startTime.getYear() + "년 " + startTime.getMonthValue() + "월 " + startTime.getDayOfMonth() + "일 " + startTime.getHour()+ "시")
+                .replace("{종료시간}", endTime.getYear() + "년 " + endTime.getMonthValue() + "월 " + endTime.getDayOfMonth() + "일 " + endTime.getHour()+ "시");
     }
 
     public static Discipline create(DisciplineCreate disciplineCreate) {
@@ -68,7 +74,8 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
                 disciplineCreate.type(),
-                disciplineCreate.startTime()
+                disciplineCreate.startTime(),
+                disciplineCreate.notificationContent()
         );
     }
 
@@ -79,7 +86,8 @@ public class Discipline extends BaseEntity {
                 disciplineCreate.artist(),
                 disciplineCreate.reason(),
                 disciplineCreate.type(),
-                disciplineCreate.startTime()
+                disciplineCreate.startTime(),
+                disciplineCreate.notificationContent()
         );
     }
 }

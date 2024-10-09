@@ -9,10 +9,11 @@ public record DisciplineCreate (
         Artist artist,
         DisciplineReason reason,
         DisciplineType type,
-        LocalDateTime startTime
+        LocalDateTime startTime,
+        String notificationContent
 
 ){
-    public static DisciplineCreate of(User user, Artist artist, DisciplineReason reason, DisciplineType type, LocalDateTime startTime) {
-        return new DisciplineCreate(user, artist, reason, type, startTime);
+    public static DisciplineCreate of(User user, Artist artist, DisciplineReason reason, DisciplineType type, LocalDateTime startTime, String notificationContent) {
+        return new DisciplineCreate(user, artist, reason, type, startTime, notificationContent);
     }
 }

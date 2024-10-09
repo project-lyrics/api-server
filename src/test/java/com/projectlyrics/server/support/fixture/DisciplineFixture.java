@@ -18,7 +18,8 @@ public class DisciplineFixture extends BaseFixture {
                         artist,
                         DisciplineReason.COMMERCIAL_ADS,
                         DisciplineType.ALL_3DAYS,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        "사용자에게 갈 알림 메세지입니다"
                 )
         );
     }
@@ -31,7 +32,8 @@ public class DisciplineFixture extends BaseFixture {
                         artist,
                         DisciplineReason.COMMERCIAL_ADS,
                         DisciplineType.ARTIST_3DAYS,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        "사용자에게 갈 알림 메세지입니다"
                 )
         );
     }

@@ -47,7 +47,7 @@ public class DisciplineCommandService {
         Artist artist = artistQueryRepository.findById(request.artistId())
                 .orElseThrow(ArtistNotFoundException::new);
 
-        Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime())));
+        Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime(), request.notificationContent())));
 
         User admin = userQueryRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         eventPublisher.publishEvent(DisciplineEvent.from(admin, discipline));

@@ -19,13 +19,15 @@ public class DisciplineTest {
         Artist artist = ArtistFixture.create();
         DisciplineReason disciplineReason = DisciplineReason.COMMERCIAL_ADS;
         DisciplineType disciplineType = DisciplineType.ALL_3MONTHS;
+        String notificationContent = "{시작시간}부터 {종료시간}까지";
 
         DisciplineCreate disciplineCreate = new DisciplineCreate(
                 user,
                 artist,
                 disciplineReason,
                 disciplineType,
-                LocalDateTime.now()
+                LocalDateTime.of(2024, 10, 7, 0, 0),
+                notificationContent
         );
 
         // when
@@ -40,7 +42,8 @@ public class DisciplineTest {
                 () -> assertThat(discipline.getStartTime().getMinute()).isEqualTo(0),
                 () -> assertThat(discipline.getStartTime().getSecond()).isEqualTo(0),
                 () -> assertThat(discipline.getStartTime().getNano()).isEqualTo(0),
-                () -> assertThat(discipline.getStartTime().plus(disciplineType.getPeriod())).isEqualTo(discipline.getEndTime())
+                () -> assertThat(discipline.getStartTime().plus(disciplineType.getPeriod())).isEqualTo(discipline.getEndTime()),
+                () -> assertThat(discipline.getNotificationContent()).isEqualTo("2024년 10월 7일 0시부터 2025년 1월 7일 0시까지")
         );
     }
 

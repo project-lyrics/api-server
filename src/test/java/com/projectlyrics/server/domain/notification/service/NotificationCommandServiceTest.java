@@ -104,7 +104,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
 
         comment = commentCommandRepository.save(Comment.create(CommentCreate.of("content", user, note)));
 
-        discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, DisciplineReason.COMMERCIAL_ADS, DisciplineType.ALL_3MONTHS, LocalDateTime.now())));
+        discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, DisciplineReason.COMMERCIAL_ADS, DisciplineType.ALL_3MONTHS, LocalDateTime.now(), "사용자에게 갈 알림 메세지입니다")));
 
     }
 

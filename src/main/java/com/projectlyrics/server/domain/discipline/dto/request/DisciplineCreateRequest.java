@@ -15,9 +15,10 @@ public record DisciplineCreateRequest (
         DisciplineType disciplineType,
 
         @NotNull
-        LocalDateTime startTime
+        LocalDateTime startTime,
+        String notificationContent
 ){
-        public static DisciplineCreateRequest of(Long userId, Long artistId, DisciplineReason disciplineReason, DisciplineType disciplineType, LocalDateTime startTime) {
-                return new DisciplineCreateRequest(userId, artistId, disciplineReason, disciplineType, startTime);
+        public static DisciplineCreateRequest of(Long userId, Long artistId, DisciplineReason disciplineReason, DisciplineType disciplineType, LocalDateTime startTime, String notificationContent) {
+                return new DisciplineCreateRequest(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent);
         }
 }
