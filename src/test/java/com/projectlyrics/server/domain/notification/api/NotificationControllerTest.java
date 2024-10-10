@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +103,7 @@ class NotificationControllerTest extends RestDocsTest {
                     id,
                     NotificationType.PUBLIC,
                     "notification content",
+                    LocalDateTime.now(),
                     false,
                     1L,
                     "note content",
@@ -147,6 +149,8 @@ class NotificationControllerTest extends RestDocsTest {
                                         .description("알림 타입 " + getEnumValuesAsString(NotificationType.class)),
                                 fieldWithPath("data[].content").type(JsonFieldType.STRING)
                                         .description("알림 내용 (전체 알림의 경우)"),
+                                fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+                                        .description("알림 생성 시간 (ISO-8601 표준)"),
                                 fieldWithPath("data[].checked").type(JsonFieldType.BOOLEAN)
                                         .description("알림 확인 여부"),
                                 fieldWithPath("data[].noteId").type(JsonFieldType.NUMBER)
