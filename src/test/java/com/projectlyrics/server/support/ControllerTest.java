@@ -23,6 +23,7 @@ import com.projectlyrics.server.domain.notification.service.NotificationQuerySer
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
 import com.projectlyrics.server.domain.song.service.SongQueryService;
 import com.projectlyrics.server.domain.user.entity.Role;
+import com.projectlyrics.server.domain.user.service.UserQueryService;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import com.projectlyrics.server.global.slack.SlackClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,6 +99,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ReportCommandService reportCommandService;
+
+    @MockBean
+    protected UserQueryService userQueryService;
 
     @MockBean
     protected SlackClient slackClient;
