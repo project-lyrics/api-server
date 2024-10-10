@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/artists")
 @RestController
@@ -91,6 +93,12 @@ public class ArtistController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "query", required = false) String query
     ) {
+        if (Objects.isNull(query) || query.isEmpty()) {
+            ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));

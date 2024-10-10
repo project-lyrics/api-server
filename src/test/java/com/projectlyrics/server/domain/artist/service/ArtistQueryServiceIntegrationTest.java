@@ -57,14 +57,12 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
         CursorBasePaginatedResponse<ArtistGetResponse> response = sut.getArtistList(cursor, pageable);
 
         //then
-        assertSoftly(s -> {
-                    s.assertThat(response.hasNext()).isFalse();
-                    s.assertThat(response.data().size()).isEqualTo(artistList.size());
-                    for (int i = 0; i < artistList.size(); i++) {
-                        s.assertThat(response.data().get(i).id()).isEqualTo(artistList.get(i).getId());
-                        s.assertThat(response.data().get(i).name()).isEqualTo(artistList.get(i).getName());
-                    }
-                }
+        assertAll(
+                () -> assertThat(response.hasNext()).isFalse(),
+                () -> assertThat(response.data()).hasSize(3),
+                () -> assertThat(response.data().get(0).name()).isEqualTo("너드커넥션"),
+                () -> assertThat(response.data().get(1).name()).isEqualTo("실리카겔"),
+                () -> assertThat(response.data().get(2).name()).isEqualTo("잔나비")
         );
     }
 
