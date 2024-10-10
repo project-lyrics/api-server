@@ -35,17 +35,7 @@ public class NotificationCommandService {
     @Async
     @EventListener
     public void createCommentNotification(CommentEvent event) {
-        Notification notification = notificationCommandRepository.save(Notification.create(event));
-        send(notification);
-    }
-
-    private void send(Notification notification) {
-        try {
-            firebaseMessaging.send(notification.getMessage());
-        } catch (FirebaseMessagingException e) {
-            log.info(e.getMessage());
-            throw new FailedToSendNotificationException();
-        }
+        notificationCommandRepository.save(Notification.create(event));
     }
 
     public void createPublicNotification(Long adminId, String content) {
@@ -58,32 +48,6 @@ public class NotificationCommandService {
                 .map(receiver -> Notification.create(PublicEvent.of(content, admin, receiver)))
                 .toList();
         notificationCommandRepository.saveAll(notifications);
-
-        sendAll(notifications, content);
-    }
-
-    private void sendAll(List<Notification> notifications, String content) {
-        int batchSize = notifications.size() / 500 + 1;
-
-        for (int i = 0; i < batchSize; i++) {
-            List<String> fcmTokens = notifications.subList(i * 500, Math.min((i + 1) * 500, notifications.size()))
-                    .stream()
-                    .map(Notification::getReceiver)
-                    .map(User::getFcmToken)
-                    .toList();
-
-            MulticastMessage message = MulticastMessage.builder()
-                    .addAllTokens(fcmTokens)
-                    .putData("content", content)
-                    .build();
-
-            try {
-                firebaseMessaging.sendEachForMulticast(message);
-            } catch (FirebaseMessagingException e) {
-                log.info(e.getMessage());
-                throw new FailedToSendNotificationException();
-            }
-        }
     }
 
     public void check(Long id, Long userId) {
