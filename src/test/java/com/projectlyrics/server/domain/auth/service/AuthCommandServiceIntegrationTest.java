@@ -289,6 +289,25 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         assertThat(noteQueryRepository.findById(note.getId())).isEmpty();
     }
 
+    @Test
+    void 회원_탈퇴시_회원과_관련한_일부_정보가_남아야_한다() {
+        // given
+        doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+        AuthTokenResponse signUpResponse = sut.signUp(request);
+
+        // when
+        sut.delete(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
+
+        // then
+        User result = userQueryRepository.findDeletedBySocialIdAndAuthProvider(user.getSocialInfo().getSocialId(), user.getSocialInfo().getAuthProvider()).get();
+
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getSocialInfo().getSocialId()).isEqualTo(user.getSocialInfo().getSocialId());
+        assertThat(result.getSocialInfo().getAuthProvider()).isEqualTo(user.getSocialInfo().getAuthProvider());
+        assertThat(result.getRole()).isEqualTo(user.getRole());
+    }
+
     private Note writeNote(Long userId) {
         Artist artist = artistCommandRepository.save(ArtistFixture.create());
         Song song = songCommandRepository.save(SongFixture.create(artist));
