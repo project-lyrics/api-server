@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
@@ -121,5 +123,13 @@ public class User extends BaseEntity {
         info = null;
         termsAgreements.forEach(TermsAgreements::delete);
         delete(id, Clock.systemDefaultZone());
+    }
+
+    public void update(UserUpdateRequest request) {
+        if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty())
+            nickname = new Username(request.nickname());
+
+        if (Objects.nonNull(request.profileCharacter()))
+            profileCharacter = request.profileCharacter();
     }
 }

@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import com.projectlyrics.server.domain.user.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
@@ -18,6 +19,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,6 +61,45 @@ class UserControllerTest extends RestDocsTest {
                                         .description("인증 플랫폼" + getEnumValuesAsString(AuthProvider.class))
                         )
                         .responseSchema(Schema.schema("User Profile Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 사용자의_프로필을_수정하면_200_응답을_해야_한다() throws Exception {
+        // given
+        UserUpdateRequest request = new UserUpdateRequest(
+                "검정치마",
+                ProfileCharacter.BRAIDED_HAIR
+        );
+
+        // when, then
+        mockMvc.perform(patch("/api/v1/notes/{noteId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(getUserUpdateDocument())
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getUserUpdateDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("User API")
+                        .summary("사용자 프로필 수정 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .requestFields(
+                                fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                        .description("사용자 닉네임"),
+                                fieldWithPath("profileCharacter").type(JsonFieldType.STRING)
+                                        .description("사용자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class))
+                        )
+                        .requestSchema(Schema.schema("Update User Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Update User Response"))
                         .build())
         );
     }

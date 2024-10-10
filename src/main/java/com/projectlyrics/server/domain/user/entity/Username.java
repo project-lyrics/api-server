@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
@@ -31,5 +32,18 @@ public class Username {
         if (!pattern.matcher(value).matches()) {
             throw new InvalidUsernameException();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Username username = (Username) o;
+        return Objects.equals(value, username.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
     }
 }
