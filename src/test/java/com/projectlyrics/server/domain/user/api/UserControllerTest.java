@@ -74,7 +74,7 @@ class UserControllerTest extends RestDocsTest {
         );
 
         // when, then
-        mockMvc.perform(patch("/api/v1/notes/{noteId}", 1)
+        mockMvc.perform(patch("/api/v1/users")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
