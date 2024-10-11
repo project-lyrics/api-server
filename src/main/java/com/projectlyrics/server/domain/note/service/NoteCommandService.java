@@ -1,5 +1,7 @@
 package com.projectlyrics.server.domain.note.service;
 
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineActionException;
+import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -31,6 +33,7 @@ public class NoteCommandService {
     private final NoteQueryRepository noteQueryRepository;
     private final UserQueryRepository userQueryRepository;
     private final SongQueryRepository songQueryRepository;
+    private final DisciplineQueryRepository disciplineQueryRepository;
 
     public Note create(NoteCreateRequest request, Long publisherId) {
         User publisher = userQueryRepository.findById(publisherId)
@@ -38,10 +41,18 @@ public class NoteCommandService {
         Song song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
 
+        checkDiscipline(song.getArtist().getId(), publisherId);
+
         if (request.status().equals(NoteStatus.DRAFT)) {
             checkDrafts(publisher.getId());
         }
         return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, song)));
+    }
+
+    private void checkDiscipline(Long artistId, Long userId) {
+       if (disciplineQueryRepository.existsByAll(userId) || disciplineQueryRepository.existsByArtist(artistId, userId)) {
+           throw new InvalidDisciplineActionException();
+       }
     }
 
     private void checkDrafts(long publisherId) {

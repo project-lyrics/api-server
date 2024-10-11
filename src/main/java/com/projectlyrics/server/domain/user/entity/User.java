@@ -1,5 +1,8 @@
 package com.projectlyrics.server.domain.user.entity;
 
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
+
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import jakarta.persistence.CascadeType;
@@ -12,10 +15,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 import java.time.Clock;
 import java.util.List;

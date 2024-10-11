@@ -8,7 +8,6 @@ import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
-import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.domain.Report;
 import com.projectlyrics.server.domain.report.domain.ReportCreate;
 import com.projectlyrics.server.domain.report.domain.ReportResolve;
@@ -25,6 +24,7 @@ import com.projectlyrics.server.global.slack.SlackClient;
 import java.time.Clock;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +39,9 @@ public class ReportCommandService {
     private final NoteQueryRepository noteQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final SlackClient slackClient;
+
+    @Value("${admin}")
+    private Long adminUserId;
 
     public synchronized Report create(ReportCreateRequest request, Long reporterId) {
 
@@ -76,15 +79,32 @@ public class ReportCommandService {
                 .orElseThrow(ReportNotFoundException::new);
         report.resolve(ReportResolve.from(reportResolveRequest));
 
-        if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
-            if (report.getNote() != null) {
-                report.getNote().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
-            }
-            else {
-                report.getComment().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
-            }
-        }
 
+        return report.getId();
+    }
+
+    public Long deleteReportedTarget(Long reportId) {
+
+        Report report = reportQueryRepository.findById(reportId)
+                .orElseThrow(ReportNotFoundException::new);
+
+        if (report.getNote() != null) {
+                noteQueryRepository.findById(report.getNote().getId())
+                        .ifPresentOrElse(
+                                note -> note.delete(adminUserId, Clock.systemDefaultZone()),
+                                () -> {
+                                    throw new InvalidNoteDeletionException();
+                                }
+                        );
+        } else {
+            commentQueryRepository.findById(report.getComment().getId())
+                    .ifPresentOrElse(
+                            comment -> comment.delete(adminUserId, Clock.systemDefaultZone()),
+                            () -> {
+                                throw new InvalidCommentDeletionException();
+                            }
+                    );
+        }
         return report.getId();
     }
 }

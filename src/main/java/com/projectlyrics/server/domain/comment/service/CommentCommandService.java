@@ -9,6 +9,8 @@ import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionE
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineActionException;
+import com.projectlyrics.server.domain.discipline.repository.DisciplineQueryRepository;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
@@ -33,12 +35,15 @@ public class CommentCommandService {
     private final UserQueryRepository userQueryRepository;
     private final NoteQueryRepository noteQueryRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final DisciplineQueryRepository disciplineQueryRepository;
 
     public Comment create(CommentCreateRequest request, Long writerId) {
         User writer = userQueryRepository.findById(writerId)
                 .orElseThrow(UserNotFoundException::new);
         Note note = noteQueryRepository.findById(request.noteId())
                 .orElseThrow(NoteNotFoundException::new);
+
+        checkDiscipline(note.getSong().getArtist().getId(), writerId);
 
         Comment comment = Comment.create(CommentCreate.of(request.content(), writer, note));
         eventPublisher.publishEvent(CommentEvent.from(comment));
@@ -60,5 +65,11 @@ public class CommentCommandService {
                         comment -> comment.delete(writerId, Clock.systemDefaultZone()),
                         () -> { throw new InvalidCommentDeletionException(); }
                 );
+    }
+
+    private void checkDiscipline(Long artistId, Long userId) {
+        if (disciplineQueryRepository.existsByAll(userId) || disciplineQueryRepository.existsByArtist(artistId, userId)) {
+            throw new InvalidDisciplineActionException();
+        }
     }
 }

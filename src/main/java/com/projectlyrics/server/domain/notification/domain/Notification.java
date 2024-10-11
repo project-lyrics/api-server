@@ -1,14 +1,20 @@
 package com.projectlyrics.server.domain.notification.domain;
 
-import com.google.firebase.messaging.Message;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
+import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.notification.exception.NotificationReceiverUnmatchException;
 import com.projectlyrics.server.domain.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -70,6 +76,18 @@ public class Notification extends BaseEntity {
         );
     }
 
+    public static Notification create(DisciplineEvent event) {
+        return new Notification(
+                null,
+                NotificationType.DISCIPLINE,
+                "작성하신 게시글/댓글이 " +event.discipline().getReason()+ " 이유로 삭제 조치 되었습니다.",
+                event.sender(),
+                event.receiver(),
+                null,
+                null
+        );
+    }
+
     public static Notification create(PublicEvent event) {
         return new Notification(
                 null,
@@ -81,10 +99,11 @@ public class Notification extends BaseEntity {
                 null
         );
     }
-
+  
     public void check(Long userId) {
         if (!receiver.getId().equals(userId)) {
             throw new NotificationReceiverUnmatchException();
+
         }
 
         checked = true;

@@ -1,5 +1,9 @@
 package com.projectlyrics.server.domain.comment.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.comment.domain.Comment;
@@ -8,6 +12,8 @@ import com.projectlyrics.server.domain.comment.dto.request.CommentUpdateRequest;
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentUpdateException;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
+import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineActionException;
+import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
@@ -21,15 +27,12 @@ import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.DisciplineFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommentCommandServiceTest extends IntegrationTest {
 
@@ -52,7 +55,11 @@ class CommentCommandServiceTest extends IntegrationTest {
     CommentQueryRepository commentQueryRepository;
 
     @Autowired
+    DisciplineCommandRepository disciplineCommandRepository;
+
+    @Autowired
     CommentCommandService sut;
+
 
     private User user;
     private Artist artist;
@@ -162,5 +169,33 @@ class CommentCommandServiceTest extends IntegrationTest {
         // when, then
         assertThatThrownBy(() -> sut.delete(comment.getId(), anonymousUser.getId()))
                 .isInstanceOf(InvalidCommentDeletionException.class);
+    }
+
+    @Test
+    void 작성자가_전체_글쓰기_제한_징계에_걸려_있다면_댓글을_생성할_수_없다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        disciplineCommandRepository.save(DisciplineFixture.createForAll(artist, user));
+
+        // when, then
+        assertThatThrownBy(() -> sut.create(commentCreateRequest, user.getId()))
+                .isInstanceOf(InvalidDisciplineActionException.class);
+    }
+
+    @Test
+    void 작성자가_해당_아티스트에_대한_글쓰기_제한_징계에_걸려_있다면_댓글을_생성할_수_없다() {
+        // given
+        CommentCreateRequest commentCreateRequest = new CommentCreateRequest(
+                "content",
+                note.getId()
+        );
+        disciplineCommandRepository.save(DisciplineFixture.createForArtist(artist, user));
+
+        // when, then
+        assertThatThrownBy(() -> sut.create(commentCreateRequest, user.getId()))
+                .isInstanceOf(InvalidDisciplineActionException.class);
     }
 }

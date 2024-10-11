@@ -1,14 +1,15 @@
 package com.projectlyrics.server.domain.auth.service;
 
+import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.domain.Auth;
 import com.projectlyrics.server.domain.auth.domain.AuthGetSocialInfo;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
 import com.projectlyrics.server.domain.auth.exception.AuthNotFoundException;
+import com.projectlyrics.server.domain.auth.exception.ForcedWithdrawalUserException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
@@ -21,6 +22,7 @@ import com.projectlyrics.server.domain.user.entity.UserCreate;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,9 @@ public class AuthCommandService {
     private void checkIfAlreadyExists(SocialInfo socialInfo) {
         if (userQueryRepository.existsBySocialInfo(socialInfo)) {
             throw new AlreadyExistsUserException();
+        }
+        else if (userQueryRepository.existsBySocialInfoAndForceDelete(socialInfo)) {
+            throw new ForcedWithdrawalUserException();
         }
     }
 
@@ -107,5 +112,16 @@ public class AuthCommandService {
         noteCommandRepository.deleteAllByPublisherId(userId);
 
         user.withdraw();
+    }
+
+    public void forcedWithdrawal(User user) {
+        authRepository.findById(user.getSocialInfo().getSocialId())
+                .ifPresent(authRepository::delete);
+        bookmarkCommandRepository.deleteAllByUserId(user.getId());
+        commentCommandRepository.deleteAllByWriterId(user.getId());
+        favoriteArtistCommandRepository.deleteAllByUserId(user.getId());
+        likeCommandRepository.deleteAllByUserId(user.getId());
+        noteCommandRepository.deleteAllByPublisherId(user.getId());
+        user.forcedWithdrawal(Clock.systemDefaultZone());
     }
 }

@@ -7,10 +7,20 @@ import static org.mockito.Mockito.doReturn;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
+import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.domain.Auth;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
+import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
+import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
+import com.projectlyrics.server.domain.auth.exception.ForcedWithdrawalUserException;
+import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
+import com.projectlyrics.server.domain.auth.service.social.apple.AppleSocialService;
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfo;
+import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
+import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfo;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
@@ -18,31 +28,26 @@ import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
-import com.projectlyrics.server.domain.user.entity.*;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.Gender;
+import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
+import com.projectlyrics.server.domain.user.entity.SocialInfo;
+import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
+import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
-import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
-import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
-import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
-import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
-import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
-import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
-import com.projectlyrics.server.domain.auth.service.social.apple.AppleSocialService;
-import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
-import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfo;
-import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
-import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
-import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import feign.FeignException;
+import java.time.Clock;
+import java.time.Year;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import java.time.Year;
-import java.util.List;
 
 public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
@@ -130,6 +135,20 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         assertThatThrownBy(() -> sut.signUp(request))
                 .isInstanceOf(AlreadyExistsUserException.class);
     }
+
+    @Test
+    void 강제_탈퇴_이력이_있는_유저인_경우_회원가입에_실패_해야_한다() throws Exception {
+        // given
+        user.forcedWithdrawal(Clock.systemDefaultZone());
+        userCommandRepository.save(user);
+        doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
+                .when(kakaoSocialDataApiClient).getUserInfo(any());
+
+        // when, then
+        assertThatThrownBy(() -> sut.signUp(request))
+                .isInstanceOf(ForcedWithdrawalUserException.class);
+    }
+
 
     @Test
     void 회원가입할_때_약관에_동의하지_않은_경우_예외가_발생해야_한다() throws Exception {
