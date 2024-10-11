@@ -1,13 +1,16 @@
 package com.projectlyrics.server.global.slack.api;
 
+import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.discipline.domain.Discipline;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRequest;
 import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreateException;
 import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
+import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
+import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
 import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureException;
 import com.projectlyrics.server.global.slack.exception.SlackInteractionFailureException;
@@ -159,7 +162,8 @@ public class SlackController {
             sendFeedbackToSlack(blocks, threadTs);
 
             return ResponseEntity.ok().build();
-        } catch (InvalidDisciplineCreateException e) {
+        } catch (ReportNotFoundException |
+                 InvalidNoteDeletionException | InvalidCommentDeletionException | InvalidDisciplineCreateException e) {
             throw e;
         } catch (Exception e) {
             logger.error("Failed to send message to Slack", e);

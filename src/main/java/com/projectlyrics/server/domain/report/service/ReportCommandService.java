@@ -79,7 +79,6 @@ public class ReportCommandService {
                 .orElseThrow(ReportNotFoundException::new);
         report.resolve(ReportResolve.from(reportResolveRequest));
 
-
         return report.getId();
     }
 
