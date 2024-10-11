@@ -167,6 +167,7 @@ public class SlackController {
             throw e;
         } catch (Exception e) {
             logger.error("Failed to send message to Slack", e);
+            System.out.println(e);
             throw new SlackInteractionFailureException();
         }
     }
