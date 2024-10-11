@@ -91,7 +91,7 @@ public class SlackController {
                 if (actionId.contains("accept")) {
                     Long userId = valueJson.getLong("userId");
                     Long artistId = valueJson.getLong("artistId");
-                    addDisciplineForAcceptance(userId, reportId, artistId, blocks);
+                    //addDisciplineForAcceptance(userId, reportId, artistId, blocks);
                 }
                 else if (actionId.contains("fake")) {
                     Long userId = valueJson.getLong("userId");
@@ -457,6 +457,4 @@ public class SlackController {
                 )
         );
     }
-
-
 }
