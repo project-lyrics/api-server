@@ -1,13 +1,10 @@
 package com.projectlyrics.server.domain.notification.service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.MulticastMessage;
 import com.projectlyrics.server.domain.notification.domain.Notification;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
 import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
-import com.projectlyrics.server.domain.notification.exception.FailedToSendNotificationException;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
 import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -36,26 +33,15 @@ public class NotificationCommandService {
     @Async
     @EventListener
     public CompletableFuture<Void> createCommentNotification(CommentEvent event) {
-        Notification notification = notificationCommandRepository.save(Notification.create(event));
-        send(notification);
+        notificationCommandRepository.save(Notification.create(event));
         return CompletableFuture.completedFuture(null);
     }
 
     @Async
     @EventListener
     public CompletableFuture<Void> createDisciplineNotification(DisciplineEvent event) {
-        Notification notification = notificationCommandRepository.save(Notification.create(event));
-        send(notification);
+        notificationCommandRepository.save(Notification.create(event));
         return CompletableFuture.completedFuture(null);
-    }
-
-    private void send(Notification notification) {
-        try {
-            firebaseMessaging.send(notification.getMessage());
-        } catch (FirebaseMessagingException e) {
-            log.info(e.getMessage());
-            throw new FailedToSendNotificationException();
-        }
     }
 
     public void createPublicNotification(Long adminId, String content) {

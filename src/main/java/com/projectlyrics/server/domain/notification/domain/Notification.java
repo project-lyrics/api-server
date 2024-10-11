@@ -1,6 +1,5 @@
 package com.projectlyrics.server.domain.notification.domain;
 
-import com.google.firebase.messaging.Message;
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -9,7 +8,13 @@ import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.notification.exception.NotificationReceiverUnmatchException;
 import com.projectlyrics.server.domain.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -93,30 +98,6 @@ public class Notification extends BaseEntity {
                 null,
                 null
         );
-    }
-
-
-    public Message getMessage() {
-        Message.Builder builder = Message.builder()
-                .setToken(receiver.getFcmToken());
-
-        switch (type) {
-            case COMMENT_ON_NOTE:
-                return builder
-                        .putData("type", type.name())
-                        .putData("senderId", sender.getId().toString())
-                        .putData("senderNickname", sender.getNickname().getValue())
-                        .putData("noteId", note.getId().toString())
-                        .putData("noteTitle", note.getContent())
-                        .build();
-            case DISCIPLINE:
-                return builder
-                        .putData("type", type.name())
-                        .putData("content", content)
-                        .build();
-            default:
-                throw new IllegalArgumentException("Invalid notification type");
-        }
     }
   
     public void check(Long userId) {

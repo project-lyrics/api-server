@@ -24,6 +24,7 @@ import com.projectlyrics.server.global.slack.SlackClient;
 import java.time.Clock;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,9 @@ public class ReportCommandService {
     private final NoteQueryRepository noteQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final SlackClient slackClient;
+
+    @Value("${admin}")
+    private Long adminUserId;
 
     public synchronized Report create(ReportCreateRequest request, Long reporterId) {
 
@@ -87,7 +91,7 @@ public class ReportCommandService {
         if (report.getNote() != null) {
                 noteQueryRepository.findById(report.getNote().getId())
                         .ifPresentOrElse(
-                                note -> note.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
+                                note -> note.delete(adminUserId, Clock.systemDefaultZone()),
                                 () -> {
                                     throw new InvalidNoteDeletionException();
                                 }
@@ -95,18 +99,11 @@ public class ReportCommandService {
         } else {
             commentQueryRepository.findById(report.getComment().getId())
                     .ifPresentOrElse(
-                            comment -> comment.delete(0, Clock.systemDefaultZone()), //관리자가 삭제
+                            comment -> comment.delete(adminUserId, Clock.systemDefaultZone()),
                             () -> {
                                 throw new InvalidCommentDeletionException();
                             }
                     );
-        if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
-            if (report.getNote() != null) {
-                report.getNote().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
-            }
-            else {
-                report.getComment().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
-            }
         }
         return report.getId();
     }

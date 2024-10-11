@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.notification.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -11,18 +12,19 @@ import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.domain.CommentCreate;
 import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.discipline.domain.Discipline;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineCreate;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineType;
 import com.projectlyrics.server.domain.discipline.repository.DisciplineCommandRepository;
-import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteCreate;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
+import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
 import com.projectlyrics.server.domain.notification.domain.Notification;
 import com.projectlyrics.server.domain.notification.domain.NotificationType;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
@@ -48,16 +50,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 class NotificationCommandServiceTest extends IntegrationTest {
 
@@ -135,16 +127,14 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createCommentNotification(commentEvent).get();
 
         // then
-        List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
-                .getContent();
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10)).getContent();
 
         assertAll(
-                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
-                () -> assertThat(result.getFirst().getSender()).isEqualTo(comment.getWriter()),
-                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(comment.getNote().getPublisher()),
-                () -> assertThat(result.getFirst().getNote()).isEqualTo(comment.getNote()),
-                () -> assertThat(result.getFirst().getComment()).isEqualTo(comment)
-        );
+                () -> assertThat(result.getFirst().type()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
+                () -> assertThat(result.getFirst().noteId()).isEqualTo(comment.getNote().getId()),
+                () -> assertThat(result.getFirst().noteContent()).isEqualTo(comment.getNote().getContent()),
+                () -> assertThat(result.getFirst().content()).isNull()
+                );
     }
 
     @Test
@@ -157,12 +147,14 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createDisciplineNotification(disciplineEvent).get();
 
         // then
-        List<Notification> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
                 .getContent();
+
         assertAll(
-                () -> assertThat(result.getFirst().getType()).isEqualTo(NotificationType.DISCIPLINE),
-                () -> assertThat(result.getFirst().getSender()).isEqualTo(user),
-                () -> assertThat(result.getFirst().getReceiver()).isEqualTo(discipline.getUser())
+                () -> assertThat(result.getFirst().type()).isEqualTo(NotificationType.DISCIPLINE),
+                () -> assertThat(result.getFirst().noteId()).isNull(),
+                () -> assertThat(result.getFirst().noteContent()).isNull()
+                //() -> assertThat(result.getFirst().content()).isNull()
                 //TODO : 나중에 content 정해지면 content도 함께 검사할 것
         );
     }
