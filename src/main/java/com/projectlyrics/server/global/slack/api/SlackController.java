@@ -131,6 +131,14 @@ public class SlackController {
                     }
                 }
 
+                System.out.println("------------------------------------");
+                System.out.println("userId = " + userId);
+                System.out.println("artistId = " + artistId);
+                System.out.println("disciplineReason = " + disciplineReason);
+                System.out.println("disciplineType = " + disciplineType);
+                System.out.println("startTime = " + startTime);
+                System.out.println("notificationContent = " + notificationContent);
+                System.out.println("-------------------------------------");
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
                     throw new InvalidDisciplineCreateException();
                 }
@@ -151,6 +159,8 @@ public class SlackController {
             sendFeedbackToSlack(blocks, threadTs);
 
             return ResponseEntity.ok().build();
+        } catch (InvalidDisciplineCreateException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Failed to send message to Slack", e);
             throw new SlackInteractionFailureException();
