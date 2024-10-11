@@ -5,6 +5,6 @@ import com.projectlyrics.server.global.exception.FeelinException;
 
 public class SlackFeedbackFailureException extends FeelinException {
     public SlackFeedbackFailureException() {
-        super(ErrorCode.SLACK_INTERACTION_FAILED);
+        super(ErrorCode.SLACK_FEEDBACK_FAILED);
     }
 }
