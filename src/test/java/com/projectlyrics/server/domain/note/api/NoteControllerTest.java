@@ -273,12 +273,13 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByUserId(anyBoolean(), any(), any(), anyInt()))
+        given(noteQueryService.getNotesByUserId(anyBoolean(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/notes")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("artistId", "1")
                         .param("hasLyrics", "false")
                         .param("cursor", "1")
                         .param("size", "10")
@@ -289,11 +290,15 @@ class NoteControllerTest extends RestDocsTest {
 
     private RestDocumentationResultHandler getNoteListOfUserDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
-        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
                 .optional()
                 .description("가사가 있는 노트만 조회");
+        queryParams[pagingQueryParameters.length + 1] = parameterWithName("artistId")
+                .type(SimpleType.NUMBER)
+                .optional()
+                .description("아티스트 별로 조회");
 
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
@@ -603,7 +608,7 @@ class NoteControllerTest extends RestDocsTest {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
-                        .summary("특정 아티스트와 관련된 노트 리스트 조회 API")
+                        .summary("특정 곡과 관련된 노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(
@@ -697,6 +702,7 @@ class NoteControllerTest extends RestDocsTest {
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("artistId")
                 .type(SimpleType.NUMBER)
+                .optional()
                 .description("아티스트 Id");
         queryParams[pagingQueryParameters.length + 1] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)

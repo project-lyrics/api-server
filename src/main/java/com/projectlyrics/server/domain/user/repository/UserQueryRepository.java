@@ -13,6 +13,8 @@ public interface UserQueryRepository {
 
     Optional<User> findById(Long id);
 
+    Optional<User> findDeletedBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider);
+
     List<User> findAll();
 
     boolean existsBySocialInfo(SocialInfo socialInfo);

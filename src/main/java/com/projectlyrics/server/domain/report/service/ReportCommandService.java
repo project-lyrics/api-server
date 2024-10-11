@@ -39,7 +39,7 @@ public class ReportCommandService {
     private final CommentQueryRepository commentQueryRepository;
     private final SlackClient slackClient;
 
-    public Report create(ReportCreateRequest request, Long reporterId) {
+    public synchronized Report create(ReportCreateRequest request, Long reporterId) {
 
         User reporter = userQueryRepository.findById(reporterId)
                 .orElseThrow(UserNotFoundException::new);
@@ -58,7 +58,7 @@ public class ReportCommandService {
                     throw new DuplicateReportException();
                 });
 
-        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.email())));
+        Report savedReport = reportCommandRepository.save(Report.create(ReportCreate.of(reporter, note, comment, request.reportReason(), request.detailedReportReason(), request.email())));
 
         if (savedReport.getNote() != null) {
             slackClient.sendNoteReportMessage(savedReport);
@@ -74,6 +74,7 @@ public class ReportCommandService {
         Report report = reportQueryRepository.findById(reportId)
                 .orElseThrow(ReportNotFoundException::new);
         report.resolve(ReportResolve.from(reportResolveRequest));
+
 
         return report.getId();
     }
@@ -99,6 +100,13 @@ public class ReportCommandService {
                                 throw new InvalidCommentDeletionException();
                             }
                     );
+        if (reportResolveRequest.approvalStatus() == ApprovalStatus.ACCEPTED) {
+            if (report.getNote() != null) {
+                report.getNote().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
+            }
+            else {
+                report.getComment().delete(0, Clock.systemDefaultZone()); //관리자가 삭제
+            }
         }
         return report.getId();
     }

@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.notification.domain.event.CommentEvent;
 import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent;
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
+import com.projectlyrics.server.domain.notification.exception.NotificationReceiverUnmatchException;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,6 +28,7 @@ public class Notification extends BaseEntity {
 
     private NotificationType type;
     private String content;
+    private boolean checked;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
@@ -54,6 +56,7 @@ public class Notification extends BaseEntity {
         this.receiver = receiver;
         this.note = note;
         this.comment = comment;
+        this.checked = false;
     }
 
     public static Notification create(CommentEvent event) {
@@ -92,6 +95,7 @@ public class Notification extends BaseEntity {
         );
     }
 
+
     public Message getMessage() {
         Message.Builder builder = Message.builder()
                 .setToken(receiver.getFcmToken());
@@ -113,5 +117,14 @@ public class Notification extends BaseEntity {
             default:
                 throw new IllegalArgumentException("Invalid notification type");
         }
+    }
+  
+    public void check(Long userId) {
+        if (!receiver.getId().equals(userId)) {
+            throw new NotificationReceiverUnmatchException();
+
+        }
+
+        checked = true;
     }
 }

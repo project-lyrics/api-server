@@ -110,7 +110,8 @@ public class AuthCommandService {
         favoriteArtistCommandRepository.deleteAllByUserId(userId);
         likeCommandRepository.deleteAllByUserId(userId);
         noteCommandRepository.deleteAllByPublisherId(userId);
-        userCommandRepository.deleteById(userId);
+
+        user.withdraw();
     }
 
     public void forcedWithdrawal(User user) {

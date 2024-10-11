@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.user.repository.impl;
 
 import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
+
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
@@ -41,6 +42,21 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
                         .where(
                                 user.id.eq(id),
                                 user.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<User> findDeletedBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(user)
+                        .where(
+                                user.socialInfo.socialId.eq(socialId),
+                                user.socialInfo.authProvider.eq(authProvider),
+                                user.status.eq(EntityStatusEnum.DELETED),
+                                user.deletedAt.isNotNull()
                         )
                         .fetchOne()
         );

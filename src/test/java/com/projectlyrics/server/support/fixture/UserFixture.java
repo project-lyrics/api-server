@@ -21,7 +21,6 @@ public class UserFixture extends BaseFixture {
     private int birthYear = 1999;
     private Role role = Role.USER;
     private List<TermsAgreements> termsAgreements = List.of(new TermsAgreements(true, "title", "agreement"));
-    private String fcmToken = "fcmToken";
 
     private UserFixture() {
     }
@@ -35,8 +34,7 @@ public class UserFixture extends BaseFixture {
                 Role.USER,
                 Gender.MALE,
                 1999,
-                List.of(new TermsAgreements(true, "title", "agreement")),
-                "fcmToken"
+                List.of(new TermsAgreements(true, "title", "agreement"))
         );
     }
 
@@ -45,7 +43,7 @@ public class UserFixture extends BaseFixture {
     }
 
     public User build() {
-        return User.withId(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
+        return User.withId(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
     public UserFixture role(Role role) {

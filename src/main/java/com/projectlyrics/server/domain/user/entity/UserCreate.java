@@ -12,7 +12,6 @@ public record UserCreate(
         Gender gender,
         Integer birthYear,
         List<TermsAgreements> termsAgreements,
-        String fcmToken,
         Role role
 ) {
 
@@ -30,7 +29,6 @@ public record UserCreate(
                 request.gender(),
                 Objects.nonNull(request.birthYear()) ? request.birthYear().getValue() : null,
                 termsList,
-                null,
                 role
         );
     }

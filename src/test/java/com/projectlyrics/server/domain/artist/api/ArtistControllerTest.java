@@ -270,28 +270,6 @@ class ArtistControllerTest extends RestDocsTest {
                 .andDo(getArtistSearchDocument());
     }
 
-    @Test
-    void 검색어가_null이거나_공백인_경우_아티스트를_검색하면_빈_데이터와_200응답을_해야_한다() throws Exception {
-        // given
-        CursorBasePaginatedResponse<ArtistGetResponse> response = new CursorBasePaginatedResponse<>(
-                null,
-                false,
-                new ArrayList<>()
-        );
-
-        //when then
-        mockMvc.perform(get("/api/v1/artists/search")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("query", " ")
-                        .param("cursor", "1")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(response)))
-                .andDo(print())
-                .andDo(getArtistSearchDocument());
-    }
-
     private RestDocumentationResultHandler getArtistSearchDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
 

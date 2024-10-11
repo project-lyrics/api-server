@@ -4,6 +4,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -19,6 +20,15 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+
+import java.time.Clock;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
+import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -49,7 +59,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TermsAgreements> termsAgreements;
 
-    private String fcmToken;
+    private String feedbackId;
 
     private User(
             Long id,
@@ -59,8 +69,7 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements,
-            String fcmToken
+            List<TermsAgreements> termsAgreements
     ) {
         checkNull(socialInfo);
         checkNull(termsAgreements);
@@ -73,7 +82,7 @@ public class User extends BaseEntity {
         this.info = new UserMetaInfo(gender, birthYear);
         this.termsAgreements = termsAgreements;
         termsAgreements.forEach(terms -> terms.setUser(this));
-        this.fcmToken = fcmToken;
+        this.feedbackId = UUID.randomUUID().toString();
     }
 
     private User(
@@ -83,10 +92,9 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements,
-            String fcmToken
+            List<TermsAgreements> termsAgreements
     ) {
-        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
+        this(null, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
     public static User withId(
@@ -97,10 +105,9 @@ public class User extends BaseEntity {
             Role role,
             Gender gender,
             Integer birthYear,
-            List<TermsAgreements> termsAgreements,
-            String fcmToken
+            List<TermsAgreements> termsAgreements
     ) {
-        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements, fcmToken);
+        return new User(id, socialInfo, nickname, profileCharacter, role, gender, birthYear, termsAgreements);
     }
 
     public static User create(UserCreate userCreate) {
@@ -111,8 +118,23 @@ public class User extends BaseEntity {
                 userCreate.role(),
                 userCreate.gender(),
                 userCreate.birthYear(),
-                userCreate.termsAgreements(),
-                userCreate.fcmToken()
+                userCreate.termsAgreements()
         );
+    }
+
+    public void withdraw() {
+        nickname = null;
+        profileCharacter = null;
+        info = null;
+        termsAgreements.forEach(TermsAgreements::delete);
+        delete(id, Clock.systemDefaultZone());
+    }
+
+    public void update(UserUpdateRequest request) {
+        if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty())
+            nickname = new Username(request.nickname());
+
+        if (Objects.nonNull(request.profileCharacter()))
+            profileCharacter = request.profileCharacter();
     }
 }

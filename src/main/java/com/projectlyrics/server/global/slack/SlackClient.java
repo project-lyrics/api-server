@@ -53,13 +53,14 @@ public class SlackClient {
     }
 
     public void sendNoteReportMessage(Report report) {
+        String lyrics = report.getNote().getLyrics().getContent() != null ? "\n(가사: " + report.getNote().getLyrics().getContent() + ")" : null;
         sendReportMessage(
                 report,
                 "노트",
                 report.getNote().getPublisher().getId(),
                 report.getNote().getId(),
                 report.getNote().getSong().getArtist().getId(),
-                report.getNote().getContent()
+                report.getNote().getContent() + lyrics
         );
     }
 
@@ -74,6 +75,7 @@ public class SlackClient {
         );
     }
 
+
     private void sendReportMessage(Report report, String contentType, Long reportedUserId, Long contentId, Long artistId, String content) {
         List<LayoutBlock> blocks = List.of(
                 Blocks.section(section -> section.text(
@@ -86,6 +88,7 @@ public class SlackClient {
                         MarkdownTextObject.builder().text("*신고자 이메일:* " + (report.getEmail() != null ? report.getEmail() : "-")).build(),
                         MarkdownTextObject.builder().text("*신고 일시:* " + formatter.format(report.getCreatedAt())).build()
                 ))),
+                Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*상세 신고 이유:* \n"+ (report.getDetailedReportReason() != null ? report.getDetailedReportReason() : "-")).build())),
                 Blocks.section(section -> section.text(MarkdownTextObject.builder().text("*" + contentType + " 내용:*\n" + (content != null ? content : "-")).build())),
                 Blocks.actions(actions -> actions.elements(List.of(
                         ButtonElement.builder()

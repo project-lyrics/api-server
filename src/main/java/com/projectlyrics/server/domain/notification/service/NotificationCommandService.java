@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.notification.domain.event.DisciplineEvent
 import com.projectlyrics.server.domain.notification.domain.event.PublicEvent;
 import com.projectlyrics.server.domain.notification.exception.FailedToSendNotificationException;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
+import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationCommandService {
 
     private final NotificationCommandRepository notificationCommandRepository;
+    private final NotificationQueryRepository notificationQueryRepository;
     private final UserQueryRepository userQueryRepository;
     private final FirebaseMessaging firebaseMessaging;
 
@@ -66,31 +68,10 @@ public class NotificationCommandService {
                 .map(receiver -> Notification.create(PublicEvent.of(content, admin, receiver)))
                 .toList();
         notificationCommandRepository.saveAll(notifications);
-
-        sendAll(notifications, content);
     }
 
-    private void sendAll(List<Notification> notifications, String content) {
-        int batchSize = notifications.size() / 500 + 1;
-
-        for (int i = 0; i < batchSize; i++) {
-            List<String> fcmTokens = notifications.subList(i * 500, Math.min((i + 1) * 500, notifications.size()))
-                    .stream()
-                    .map(Notification::getReceiver)
-                    .map(User::getFcmToken)
-                    .toList();
-
-            MulticastMessage message = MulticastMessage.builder()
-                    .addAllTokens(fcmTokens)
-                    .putData("content", content)
-                    .build();
-
-            try {
-                firebaseMessaging.sendEachForMulticast(message);
-            } catch (FirebaseMessagingException e) {
-                log.info(e.getMessage());
-                throw new FailedToSendNotificationException();
-            }
-        }
+    public void check(Long id, Long userId) {
+        Notification notification = notificationQueryRepository.findById(id);
+        notification.check(userId);
     }
 }

@@ -16,7 +16,8 @@ public class ReportFixture extends BaseFixture{
                         reporter,
                         note,
                         null,
-                        ReportReason.POLITICAL_RELIGIOUS,
+                        ReportReason.OTHER,
+                        "도배를 너무 많이 해요",
                         "example@example.com"
 
                 )
@@ -30,7 +31,8 @@ public class ReportFixture extends BaseFixture{
                         reporter,
                         null,
                         comment,
-                        ReportReason.POLITICAL_RELIGIOUS,
+                        ReportReason.OTHER,
+                        "도배를 너무 많이 해요",
                         "example@example.com"
 
                 )

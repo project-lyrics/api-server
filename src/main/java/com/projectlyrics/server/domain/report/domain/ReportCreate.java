@@ -10,9 +10,11 @@ public record ReportCreate (
         Note note,
         Comment comment,
         ReportReason reportReason,
+
+        String detailedReportReason,
         String email
 ) {
-    public static ReportCreate of(User reporter, Note note, Comment comment, ReportReason reportReason, String email) {
-        return new ReportCreate(reporter, note, comment, reportReason, email);
+    public static ReportCreate of(User reporter, Note note, Comment comment, ReportReason reportReason, String detailedReportReason, String email) {
+        return new ReportCreate(reporter, note, comment, reportReason, detailedReportReason, email);
     }
 }

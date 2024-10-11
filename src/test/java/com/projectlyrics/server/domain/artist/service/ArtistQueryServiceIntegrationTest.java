@@ -11,15 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ArtistQueryServiceIntegrationTest extends IntegrationTest {
 
@@ -59,14 +57,12 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
         CursorBasePaginatedResponse<ArtistGetResponse> response = sut.getArtistList(cursor, pageable);
 
         //then
-        assertSoftly(s -> {
-                    s.assertThat(response.hasNext()).isFalse();
-                    s.assertThat(response.data().size()).isEqualTo(artistList.size());
-                    for (int i = 0; i < artistList.size(); i++) {
-                        s.assertThat(response.data().get(i).id()).isEqualTo(artistList.get(i).getId());
-                        s.assertThat(response.data().get(i).name()).isEqualTo(artistList.get(i).getName());
-                    }
-                }
+        assertAll(
+                () -> assertThat(response.hasNext()).isFalse(),
+                () -> assertThat(response.data()).hasSize(3),
+                () -> assertThat(response.data().get(0).name()).isEqualTo("너드커넥션"),
+                () -> assertThat(response.data().get(1).name()).isEqualTo("실리카겔"),
+                () -> assertThat(response.data().get(2).name()).isEqualTo("잔나비")
         );
     }
 
@@ -89,6 +85,30 @@ class ArtistQueryServiceIntegrationTest extends IntegrationTest {
                     s.assertThat(response.data().size()).isEqualTo(1);
                     s.assertThat(response.data().get(0).name()).isEqualTo(artist1.getName());
                 }
+        );
+    }
+
+    @Test
+    void 한국어_영어_특수문자_순으로_아티스트를_정렬한다() {
+        // given
+        artistCommandRepository.save(ArtistFixture.create("실리카겔"));
+        artistCommandRepository.save(ArtistFixture.create("-"));
+        artistCommandRepository.save(ArtistFixture.create("검정치마"));
+        artistCommandRepository.save(ArtistFixture.create("!"));
+        artistCommandRepository.save(ArtistFixture.create("Pia"));
+        artistCommandRepository.save(ArtistFixture.create("Stone Temple Pilots"));
+
+        // when
+        CursorBasePaginatedResponse<ArtistGetResponse> result = sut.getArtistList(null, PageRequest.ofSize(10));
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().get(0).name()).isEqualTo("검정치마"),
+                () -> assertThat(result.data().get(1).name()).isEqualTo("실리카겔"),
+                () -> assertThat(result.data().get(2).name()).isEqualTo("Pia"),
+                () -> assertThat(result.data().get(3).name()).isEqualTo("Stone Temple Pilots"),
+                () -> assertThat(result.data().get(4).name()).isEqualTo("!"),
+                () -> assertThat(result.data().get(5).name()).isEqualTo("-")
         );
     }
 

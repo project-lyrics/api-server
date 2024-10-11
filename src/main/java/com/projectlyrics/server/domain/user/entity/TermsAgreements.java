@@ -1,8 +1,8 @@
 package com.projectlyrics.server.domain.user.entity;
 
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,12 +12,14 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.Clock;
+
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkString;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TermsAgreements {
+public class TermsAgreements extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,14 +41,19 @@ public class TermsAgreements {
         if (!agree) {
             throw new NotAgreeToTermsException();
         }
+
         checkString(title);
-        this.agree = agree;
+        this.agree = true;
         this.title = title;
         this.agreement = agreement;
     }
 
-    void setUser(User user) {
+    public void setUser(User user) {
         checkNull(user);
         this.user = user;
+    }
+
+    public void delete() {
+        delete(user.getId(), Clock.systemDefaultZone());
     }
 }

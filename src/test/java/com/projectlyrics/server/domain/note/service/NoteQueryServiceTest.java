@@ -132,7 +132,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 });
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(true, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(true, null, user.getId(), null, 10);
 
         // then
         assertAll(
@@ -155,7 +155,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 });
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(false, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(false, null, user.getId(), null, 10);
 
         // then
         assertAll(
