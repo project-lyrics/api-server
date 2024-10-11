@@ -188,7 +188,7 @@ public class SlackController {
 
             restTemplate.postForEntity(slackApiUrl, entity, String.class);
         } catch (Exception e) {
-            logger.error("Failed to send message to Slack", e);
+            System.out.println(e);
             throw new SlackFeedbackFailureException();
         }
     }
