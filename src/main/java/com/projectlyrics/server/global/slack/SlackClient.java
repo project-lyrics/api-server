@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,18 +96,34 @@ public class SlackClient {
                                 .text(PlainTextObject.builder().text("Accept").build())
                                 .actionId("report_accept")
                                 .style("primary")
-                                .value("{\"userId\":\"" + reportedUserId + "\", \"reportId\":\"" + report.getId() + "\", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"ACCEPTED\", \"isFalseReport\":false}")
+                                .value(new JSONObject()
+                                        .put("userId", reportedUserId)
+                                        .put("reportId", report.getId())
+                                        .put("artistId", artistId)
+                                        .put("approvalStatus", "ACCEPTED")
+                                        .put("isFalseReport", false)
+                                        .toString())  // JSON 객체를 문자열로 변환
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
                                 .actionId("report_dismiss")
                                 .style("danger")
-                                .value("{\"reportId\":\"" + report.getId() + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":false}")
+                                .value(new JSONObject()
+                                        .put("reportId", report.getId())
+                                        .put("approvalStatus", "DISMISSED")
+                                        .put("isFalseReport", false)
+                                        .toString())  // JSON 객체를 문자열로 변환
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
                                 .actionId("report_fake")
-                                .value("{\"userId\":\"" + report.getReporter().getId() + "\", \"reportId\":\"" + report.getId() + "\", \"artistId\":\"" + artistId + "\", \"approvalStatus\":\"DISMISSED\", \"isFalseReport\":true}")
+                                .value(new JSONObject()
+                                        .put("userId", report.getReporter().getId())
+                                        .put("reportId", report.getId())
+                                        .put("artistId", artistId)
+                                        .put("approvalStatus", "DISMISSED")
+                                        .put("isFalseReport", true)
+                                        .toString())  // JSON 객체를 문자열로 변환
                                 .build()
                 )))
         );
