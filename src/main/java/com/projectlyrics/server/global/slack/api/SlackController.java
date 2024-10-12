@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class SlackController {
                 if (actionId.contains("accept")) {
                     Long userId = valueJson.getLong("userId");
                     Long artistId = valueJson.getLong("artistId");
-                    //addDisciplineForAcceptance(userId, reportId, artistId, blocks);
+                    addDisciplineForAcceptance(userId, reportId, artistId, blocks);
                 }
                 else if (actionId.contains("fake")) {
                     Long userId = valueJson.getLong("userId");
@@ -165,7 +166,11 @@ public class SlackController {
         } catch (ReportNotFoundException |
                  InvalidNoteDeletionException | InvalidCommentDeletionException | InvalidDisciplineCreateException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (JSONException e) {
+            System.out.println("JSON Parsing Error: " + e.getMessage());
+            throw new SlackInteractionFailureException();
+        }
+        catch (Exception e) {
             logger.error("Failed to send message to Slack", e);
             System.out.println(e);
             throw new SlackInteractionFailureException();

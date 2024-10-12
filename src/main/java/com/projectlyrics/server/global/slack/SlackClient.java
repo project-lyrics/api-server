@@ -102,7 +102,7 @@ public class SlackClient {
                                         .put("artistId", artistId)
                                         .put("approvalStatus", "ACCEPTED")
                                         .put("isFalseReport", false)
-                                        .toString())  // JSON 객체를 문자열로 변환
+                                        .toString())
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Dismiss").build())
@@ -112,7 +112,7 @@ public class SlackClient {
                                         .put("reportId", report.getId())
                                         .put("approvalStatus", "DISMISSED")
                                         .put("isFalseReport", false)
-                                        .toString())  // JSON 객체를 문자열로 변환
+                                        .toString())
                                 .build(),
                         ButtonElement.builder()
                                 .text(PlainTextObject.builder().text("Fake Report").build())
@@ -123,7 +123,7 @@ public class SlackClient {
                                         .put("artistId", artistId)
                                         .put("approvalStatus", "DISMISSED")
                                         .put("isFalseReport", true)
-                                        .toString())  // JSON 객체를 문자열로 변환
+                                        .toString())
                                 .build()
                 )))
         );
