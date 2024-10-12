@@ -5,6 +5,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import com.projectlyrics.server.domain.user.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
+import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
@@ -55,6 +56,10 @@ class UserControllerTest extends RestDocsTest {
                                         .description("사용자 닉네임"),
                                 fieldWithPath("profileCharacterType").type(JsonFieldType.STRING)
                                         .description("사용자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
+                                fieldWithPath("gender").type(JsonFieldType.STRING)
+                                        .description("사용자 성별" + getEnumValuesAsString(Gender.class)),
+                                fieldWithPath("birthYear").type(JsonFieldType.NUMBER)
+                                        .description("사용자 출생연도"),
                                 fieldWithPath("feedbackId").type(JsonFieldType.STRING)
                                         .description("사용자 피드백 UUID"),
                                 fieldWithPath("authProvider").type(JsonFieldType.STRING)
