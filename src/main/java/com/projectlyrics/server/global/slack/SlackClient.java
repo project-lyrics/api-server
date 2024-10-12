@@ -127,7 +127,27 @@ public class SlackClient {
                                 .build()
                 )))
         );
-
+        System.out.println("---------------------------------");
+        System.out.println(new JSONObject()
+                .put("userId", reportedUserId)
+                .put("reportId", report.getId())
+                .put("artistId", artistId)
+                .put("approvalStatus", "ACCEPTED")
+                .put("isFalseReport", false)
+                .toString());
+        System.out.println(new JSONObject()
+                .put("reportId", report.getId())
+                .put("approvalStatus", "DISMISSED")
+                .put("isFalseReport", false)
+                .toString());
+        System.out.println(new JSONObject()
+                .put("userId", report.getReporter().getId())
+                .put("reportId", report.getId())
+                .put("artistId", artistId)
+                .put("approvalStatus", "DISMISSED")
+                .put("isFalseReport", true)
+                .toString());
+        System.out.println("---------------------------------");
         sendMessage(blocks, contentType + " Report Notification");
     }
 }
