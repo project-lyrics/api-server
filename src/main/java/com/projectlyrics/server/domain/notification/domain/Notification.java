@@ -80,7 +80,7 @@ public class Notification extends BaseEntity {
         return new Notification(
                 null,
                 NotificationType.DISCIPLINE,
-                "작성하신 게시글/댓글이 " +event.discipline().getReason()+ " 이유로 삭제 조치 되었습니다.",
+                event.discipline().getNotificationContent(),
                 event.sender(),
                 event.receiver(),
                 null,
