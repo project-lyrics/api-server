@@ -19,6 +19,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,41 +104,31 @@ public class SlackController {
             else if (actionId.startsWith("discipline")) {
                 blocks = new JSONArray();
                 JSONArray actions = json.getJSONArray("actions");
-                DisciplineType disciplineType = null;
-                DisciplineReason disciplineReason = null;
-                Long userId = null;
-                Long artistId = null;
-                Long reportId = null;
-                LocalDateTime startTime = null;
-                String notificationContent = null;
 
-                System.out.println("---------------------------");
-                System.out.println("valueJson = " + valueJson);
-                System.out.println("---------------------------");
+                // 시작 날짜 가져오기
+                String startDateString = action.getJSONObject("state").getJSONObject("values")
+                        .getJSONObject("discipline_start").getString("selected_date");
 
-                for (int i = 0; i < actions.length(); i++) {
-                    actionId = actions.getJSONObject(i).getString("action_id");
+                // 문자열을 LocalDate로 변환
+                LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-                    if (actionId.contains("discipline_type")) {
-                        disciplineType = DisciplineType.valueOf(action.getJSONArray("selected_options")
-                                .getJSONObject(0)
-                                .getString("value"));
-                    } else if (actionId.equals("discipline_reason")) {
-                        disciplineReason = DisciplineReason.valueOf(action.getJSONArray("selected_options")
-                                .getJSONObject(0)
-                                .getString("value"));
-                    } else if (actionId.equals("submit")) {
-                        JSONObject value = new JSONObject(action.getString("value"));
-                        userId = value.getLong("userId");
-                        artistId = value.getLong("artistId");
-                        reportId = value.getLong("reportId");
-                    } else if (actionId.equals("discipline_start")) {
-                        String selectedDate = actions.getJSONObject(i).getString("selected_date");
-                        startTime = LocalDate.parse(selectedDate).atStartOfDay();
-                    } else if (actionId.equals("discipline_content")) {
-                        notificationContent = actions.getJSONObject(i).getString("value");
-                    }
-                }
+                // 나머지 입력값 추출
+                JSONArray selectedDisciplineType = action.getJSONObject("state").getJSONObject("values")
+                        .getJSONObject("discipline_type").getJSONArray("selected_options");
+                JSONArray selectedDisciplineReason = action.getJSONObject("state").getJSONObject("values")
+                        .getJSONObject("discipline_reason").getJSONArray("selected_options");
+                String content = action.getJSONObject("state").getJSONObject("values")
+                        .getJSONObject("discipline_content").getString("value");
+
+                // 필요한 값으로 변수 초기화
+                DisciplineType disciplineType = DisciplineType.valueOf(selectedDisciplineType.getJSONObject(0).getString("value"));
+                DisciplineReason disciplineReason = DisciplineReason.valueOf(selectedDisciplineReason.getJSONObject(0).getString("value"));
+
+                Long userId = valueJson.getLong("userId");
+                Long artistId = valueJson.getLong("artistId");
+                Long reportId = valueJson.getLong("reportId");
+                LocalDateTime startTime = startDate.atStartOfDay();
+                String notificationContent = content;
 
                 System.out.println("------------------------------------");
                 System.out.println("userId = " + userId);
@@ -148,19 +139,24 @@ public class SlackController {
                 System.out.println("startTime = " + startTime);
                 System.out.println("notificationContent = " + notificationContent);
                 System.out.println("-------------------------------------");
+
+                // 데이터 검증
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
                     throw new InvalidDisciplineCreateException();
                 }
+
                 Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent));
-                //조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
+
+                // 조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
                 if (disciplineReason != DisciplineReason.FAKE_REPORT) {
                     reportCommandService.deleteReportedTarget(reportId);
                 }
+
                 blocks.put(new JSONObject()
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자*: " + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription()+"\n*조치 기간: *"+discipline.getStartTime()+" ~ "+discipline.getEndTime())
+                                .put("text", ":mega: *사용자*: " + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간: *" + discipline.getStartTime() + " ~ " + discipline.getEndTime())
                         )
                 );
             }
@@ -283,8 +279,9 @@ public class SlackController {
     }
 
     private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
+        // 구분선 추가
         blocks.put(new JSONObject()
-                .put("type", "divider")  // 구분선 추가
+                .put("type", "divider")
         );
 
         // 제목 추가
