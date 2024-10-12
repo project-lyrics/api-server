@@ -110,18 +110,18 @@ public class SlackController {
                 JSONArray actions = json.getJSONArray("actions");
 
                 // 시작 날짜 가져오기
-                String startDateString = action.getJSONObject("state").getJSONObject("values")
+                String startDateString = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("discipline_start").getString("selected_date");
 
                 // 문자열을 LocalDate로 변환
                 LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
                 // 나머지 입력값 추출
-                JSONArray selectedDisciplineType = action.getJSONObject("state").getJSONObject("values")
+                JSONArray selectedDisciplineType = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("discipline_type").getJSONArray("selected_options");
-                JSONArray selectedDisciplineReason = action.getJSONObject("state").getJSONObject("values")
+                JSONArray selectedDisciplineReason = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("discipline_reason").getJSONArray("selected_options");
-                String content = action.getJSONObject("state").getJSONObject("values")
+                String content = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("discipline_content").getString("value");
 
                 // 필요한 값으로 변수 초기화
