@@ -16,20 +16,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-
 import java.time.Clock;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
-import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -124,9 +118,9 @@ public class User extends BaseEntity {
     }
 
     public void withdraw() {
-        nickname = null;
-        profileCharacter = null;
-        info = null;
+//        nickname = null;
+//        profileCharacter = null;
+//        info = null;
         termsAgreements.forEach(TermsAgreements::delete);
         delete(id, Clock.systemDefaultZone());
     }
