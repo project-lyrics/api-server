@@ -300,7 +300,7 @@ public class SlackController {
         //시작 날짜 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
-                .put("block_Id", "start")
+                .put("block_id", "start")
                 .put("element", new JSONObject()
                         .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
                         .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
@@ -321,7 +321,7 @@ public class SlackController {
         // 조치 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
-                .put("block_Id", "type")
+                .put("block_id", "type")
                 .put("element", new JSONObject()
                         .put("type", "multi_static_select")
                         .put("placeholder", new JSONObject()
@@ -423,7 +423,7 @@ public class SlackController {
         // 징계 이유 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
-                .put("block_Id", "reason")
+                .put("block_id", "reason")
                 .put("element", new JSONObject()
                         .put("type", "multi_static_select")
                         .put("placeholder", new JSONObject()
@@ -444,7 +444,7 @@ public class SlackController {
         // 사용자 알림 메세지 입력 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
-                .put("block_Id", "content")
+                .put("block_id", "content")
                 .put("element", new JSONObject()
                         .put("type", "plain_text_input")
                         .put("action_id", "discipline_content")
