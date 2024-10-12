@@ -5,6 +5,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
+import com.projectlyrics.server.domain.user.exception.FailedToUpdateProfileException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -131,6 +132,10 @@ public class User extends BaseEntity {
     }
 
     public void update(UserUpdateRequest request) {
+        if (Objects.isNull(request.nickname()) && Objects.nonNull(request.profileCharacter())) {
+            throw new FailedToUpdateProfileException();
+        }
+
         if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty())
             nickname = new Username(request.nickname());
 
