@@ -141,7 +141,7 @@ public class SlackController {
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자" + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간: *" + discipline.getStartTime() + " ~ " + discipline.getEndTime())
+                                .put("text", ":mega: *사용자" + userId + "에 대한 조치가 완료되었습니다.* \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간:* " + discipline.getStartTime() + " ~ " + discipline.getEndTime())
                         )
                 );
             }
