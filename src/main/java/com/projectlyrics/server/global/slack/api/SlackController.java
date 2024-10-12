@@ -85,7 +85,7 @@ public class SlackController {
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":white_check_mark: *승인 여부*: " + approvalStatus + "\n*허위 신고 여부*: " + isFalseReport)
+                                .put("text", ":white_check_mark: *승인 여부*: " + approvalStatus + "  *허위 신고 여부*: " + isFalseReport)
                         )
                 );
 
@@ -111,26 +111,30 @@ public class SlackController {
                 LocalDateTime startTime = null;
                 String notificationContent = null;
 
+                System.out.println("---------------------------");
+                System.out.println("valueJson = " + valueJson);
+                System.out.println("---------------------------");
+
                 for (int i = 0; i < actions.length(); i++) {
                     actionId = actions.getJSONObject(i).getString("action_id");
 
-                    if (actionId.contains("type")) {
+                    if (actionId.contains("discipline_type")) {
                         disciplineType = DisciplineType.valueOf(action.getJSONArray("selected_options")
                                 .getJSONObject(0)
                                 .getString("value"));
-                    } else if (actionId.contains("reason")) {
+                    } else if (actionId.equals("discipline_reason")) {
                         disciplineReason = DisciplineReason.valueOf(action.getJSONArray("selected_options")
                                 .getJSONObject(0)
                                 .getString("value"));
-                    } else if (actionId.contains("submit")) {
+                    } else if (actionId.equals("submit")) {
                         JSONObject value = new JSONObject(action.getString("value"));
                         userId = value.getLong("userId");
                         artistId = value.getLong("artistId");
                         reportId = value.getLong("reportId");
-                    } else if (actionId.contains("start")) {
+                    } else if (actionId.equals("discipline_start")) {
                         String selectedDate = actions.getJSONObject(i).getString("selected_date");
                         startTime = LocalDate.parse(selectedDate).atStartOfDay();
-                    } else if (actionId.contains("content")) {
+                    } else if (actionId.equals("discipline_content")) {
                         notificationContent = actions.getJSONObject(i).getString("value");
                     }
                 }
@@ -138,6 +142,7 @@ public class SlackController {
                 System.out.println("------------------------------------");
                 System.out.println("userId = " + userId);
                 System.out.println("artistId = " + artistId);
+                System.out.println("reportId = " + reportId);
                 System.out.println("disciplineReason = " + disciplineReason);
                 System.out.println("disciplineType = " + disciplineType);
                 System.out.println("startTime = " + startTime);
@@ -278,6 +283,19 @@ public class SlackController {
     }
 
     private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
+        blocks.put(new JSONObject()
+                .put("type", "divider")  // 구분선 추가
+        );
+
+        // 제목 추가
+        blocks.put(new JSONObject()
+                .put("type", "section")
+                .put("text", new JSONObject()
+                        .put("type", "mrkdwn")
+                        .put("text", "*조치 관련 설정*")  // 제목에 대한 마크다운 형식
+                )
+        );
+
         //시작 날짜 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
