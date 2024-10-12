@@ -111,18 +111,18 @@ public class SlackController {
 
                 // 시작 날짜 가져오기
                 String startDateString = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("discipline_start").getString("selected_date");
+                        .getJSONObject("start").getJSONObject("discipline_start").getString("selected_date");
 
                 // 문자열을 LocalDate로 변환
                 LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
                 // 나머지 입력값 추출
                 JSONArray selectedDisciplineType = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("discipline_type").getJSONArray("selected_options");
+                        .getJSONObject("type").getJSONObject("discipline_type").getJSONArray("selected_options");
                 JSONArray selectedDisciplineReason = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("discipline_reason").getJSONArray("selected_options");
+                        .getJSONObject("reason").getJSONObject("discipline_reason").getJSONArray("selected_options");
                 String content = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("discipline_content").getString("value");
+                        .getJSONObject("content").getJSONObject("discipline_content").getString("value");
 
                 // 필요한 값으로 변수 초기화
                 DisciplineType disciplineType = DisciplineType.valueOf(selectedDisciplineType.getJSONObject(0).getString("value"));
@@ -300,6 +300,7 @@ public class SlackController {
         //시작 날짜 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
+                .put("block_Id", "start")
                 .put("element", new JSONObject()
                         .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
                         .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
@@ -320,6 +321,7 @@ public class SlackController {
         // 조치 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
+                .put("block_Id", "type")
                 .put("element", new JSONObject()
                         .put("type", "multi_static_select")
                         .put("placeholder", new JSONObject()
@@ -421,6 +423,7 @@ public class SlackController {
         // 징계 이유 선택 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
+                .put("block_Id", "reason")
                 .put("element", new JSONObject()
                         .put("type", "multi_static_select")
                         .put("placeholder", new JSONObject()
@@ -441,6 +444,7 @@ public class SlackController {
         // 사용자 알림 메세지 입력 폼 추가
         blocks.put(new JSONObject()
                 .put("type", "input")
+                .put("block_Id", "content")
                 .put("element", new JSONObject()
                         .put("type", "plain_text_input")
                         .put("action_id", "discipline_content")
