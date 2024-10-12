@@ -102,6 +102,10 @@ public class SlackController {
                 }
             }
             else if (actionId.startsWith("discipline")) {
+
+                System.out.println("-------------------------------------");
+                System.out.println("json = " + json);
+                System.out.println("--------------------------------------");
                 blocks = new JSONArray();
                 JSONArray actions = json.getJSONArray("actions");
 
