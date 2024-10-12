@@ -102,21 +102,11 @@ public class SlackController {
                 }
             }
             else if (actionId.startsWith("discipline")) {
-
-                System.out.println("-------------------------------------");
-                System.out.println("json = " + json);
-                System.out.println("--------------------------------------");
                 blocks = new JSONArray();
                 JSONArray actions = json.getJSONArray("actions");
 
-                // 시작 날짜 가져오기
                 String startDateString = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("start").getJSONObject("discipline_start").getString("selected_date");
-
-                // 문자열을 LocalDate로 변환
-                LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-                // 나머지 입력값 추출
                 JSONArray selectedDisciplineType = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("type").getJSONObject("discipline_type").getJSONArray("selected_options");
                 JSONArray selectedDisciplineReason = json.getJSONObject("state").getJSONObject("values")
@@ -125,6 +115,7 @@ public class SlackController {
                         .getJSONObject("content").getJSONObject("discipline_content").getString("value");
 
                 // 필요한 값으로 변수 초기화
+                LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 DisciplineType disciplineType = DisciplineType.valueOf(selectedDisciplineType.getJSONObject(0).getString("value"));
                 DisciplineReason disciplineReason = DisciplineReason.valueOf(selectedDisciplineReason.getJSONObject(0).getString("value"));
 
@@ -133,16 +124,6 @@ public class SlackController {
                 Long reportId = valueJson.getLong("reportId");
                 LocalDateTime startTime = startDate.atStartOfDay();
                 String notificationContent = content;
-
-                System.out.println("------------------------------------");
-                System.out.println("userId = " + userId);
-                System.out.println("artistId = " + artistId);
-                System.out.println("reportId = " + reportId);
-                System.out.println("disciplineReason = " + disciplineReason);
-                System.out.println("disciplineType = " + disciplineType);
-                System.out.println("startTime = " + startTime);
-                System.out.println("notificationContent = " + notificationContent);
-                System.out.println("-------------------------------------");
 
                 // 데이터 검증
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
@@ -160,7 +141,7 @@ public class SlackController {
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자*: " + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간: *" + discipline.getStartTime() + " ~ " + discipline.getEndTime())
+                                .put("text", ":mega: *사용자" + userId + "에 대한 조치가 완료되었습니다.*: \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간: *" + discipline.getStartTime() + " ~ " + discipline.getEndTime())
                         )
                 );
             }
@@ -293,7 +274,7 @@ public class SlackController {
                 .put("type", "section")
                 .put("text", new JSONObject()
                         .put("type", "mrkdwn")
-                        .put("text", "*조치 관련 설정*")  // 제목에 대한 마크다운 형식
+                        .put("text", ":pencil2: *조치 관련 설정*")  // 제목에 대한 마크다운 형식
                 )
         );
 
@@ -313,7 +294,7 @@ public class SlackController {
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":calendar: 조치 시작 날짜")
+                        .put("text", "조치 시작 날짜")
                         .put("emoji", true)
                 )
         );
@@ -415,7 +396,7 @@ public class SlackController {
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":pencil2: 사용자 " + userId + "에 대한 조치")
+                        .put("text", " 사용자 " + userId + "에 대한 조치")
                         .put("emoji", true)
                 )
         );
@@ -436,7 +417,7 @@ public class SlackController {
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":closed_book: 사용자 " + userId + "에 대한 조치 이유")
+                        .put("text", " 사용자 " + userId + "에 대한 조치 이유")
                         .put("emoji", true)
                 )
         );
@@ -456,7 +437,7 @@ public class SlackController {
                 )
                 .put("label", new JSONObject()
                         .put("type", "plain_text")
-                        .put("text", ":memo:사용자에 전달될 조치 알림 메세지")
+                        .put("text", "사용자에 전달될 조치 알림 메세지")
                         .put("emoji", true)
                 )
         );
@@ -484,7 +465,5 @@ public class SlackController {
                         .put("action_id", "discipline_submit")
                 )
         );
-
-        System.out.println(blocks.toString(2));
     }
 }
