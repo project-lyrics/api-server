@@ -484,5 +484,7 @@ public class SlackController {
                         .put("action_id", "discipline_submit")
                 )
         );
+
+        System.out.println(blocks.toString(2));
     }
 }
