@@ -73,7 +73,7 @@ public class NoteController {
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfUser(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
-            @RequestParam(name = "artistId") Long artistId,
+            @RequestParam(name = "artistId", required = false) Long artistId,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
