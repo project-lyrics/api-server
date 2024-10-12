@@ -132,7 +132,7 @@ public class User extends BaseEntity {
     }
 
     public void update(UserUpdateRequest request) {
-        if (Objects.isNull(request.nickname()) && Objects.nonNull(request.profileCharacter())) {
+        if (Objects.isNull(request.nickname()) && Objects.isNull(request.profileCharacter())) {
             throw new FailedToUpdateProfileException();
         }
 
