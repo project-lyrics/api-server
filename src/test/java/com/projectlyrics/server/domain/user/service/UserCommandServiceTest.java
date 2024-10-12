@@ -1,8 +1,10 @@
 package com.projectlyrics.server.domain.user.service;
 
+import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.user.exception.FailedToUpdateProfileException;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserCommandServiceTest extends IntegrationTest {
@@ -55,19 +58,14 @@ class UserCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 요청이_null이면_수정하지_않는다() {
+    void 요청의_두_항목이_모두_null이면_수정시에_예외가_발생한다() {
         // given
         UserUpdateRequest request = new UserUpdateRequest(null, null);
         User user = userCommandRepository.save(UserFixture.create());
 
         // when
-        userCommandService.update(request, user.getId());
-        User result = userQueryRepository.findById(user.getId()).get();
-
-        // then
-        assertAll(
-                () -> assertThat(result.getNickname()).isEqualTo(user.getNickname()),
-                () -> assertThat(result.getProfileCharacter()).isEqualTo(user.getProfileCharacter())
-        );
+        assertThatThrownBy(() -> userCommandService.update(request, user.getId()))
+                .isInstanceOf(FailedToUpdateProfileException.class)
+                .hasMessage(ErrorCode.FAILED_TO_UPDATE_PROFILE.getErrorMessage());
     }
 }
