@@ -12,9 +12,9 @@ public interface ArtistQueryRepository {
 
     Optional<Artist> findById(Long artistId);
 
-    Slice<Artist> findAllByQuery(String query, Long cursor, Pageable pageable);
+    Slice<Artist> findAllByQuery(String query, Pageable pageable);
 
-    Slice<Artist> findAll(Long cursor, Pageable pageable);
+    Slice<Artist> findAll(Pageable pageable);
 
     List<Artist> findAllByIds(List<Long> artistIds);
 }

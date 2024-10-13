@@ -8,6 +8,7 @@ import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.support.RestDocsTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import org.junit.jupiter.api.Test;
@@ -193,21 +194,21 @@ class ArtistControllerTest extends RestDocsTest {
             data.add(ArtistGetResponse.of(ArtistFixture.create()));
         }
 
-        CursorBasePaginatedResponse<ArtistGetResponse> response = new CursorBasePaginatedResponse<>(
-                data.get(data.size() - 1).id(),
+        OffsetBasePaginatedResponse<ArtistGetResponse> response = new OffsetBasePaginatedResponse<>(
+                0,
                 true,
                 data
         );
 
-        given(artistQueryService.getArtistList(any(), any()))
+        given(artistQueryService.getArtistList(any()))
                 .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/artists")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("cursor", "1")
-                        .param("size", "10"))
+                        .param("pageNumber", "0")
+                        .param("pageSize", "12"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
                 .andDo(getArtistListDocument());
@@ -219,10 +220,11 @@ class ArtistControllerTest extends RestDocsTest {
                         .tag("Artist API")
                         .summary("아티스트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .queryParameters(getCursorBasePagingQueryParameters())
+                        .queryParameters(getOffsetBasePagingQueryParameters())
                         .responseFields(
-                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
-                                        .description("다음 cursor에 쓰일 값"),
+                                fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
+                                        .optional()
+                                        .description("현재 페이지 번호"),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
                                         .description("다음 데이터 존재 여부"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY)
@@ -248,13 +250,13 @@ class ArtistControllerTest extends RestDocsTest {
             data.add(ArtistGetResponse.of(ArtistFixture.create()));
         }
 
-        CursorBasePaginatedResponse<ArtistGetResponse> response = new CursorBasePaginatedResponse<>(
-                data.get(data.size() - 1).id(),
+        OffsetBasePaginatedResponse<ArtistGetResponse> response = new OffsetBasePaginatedResponse<>(
+                0,
                 true,
                 data
         );
 
-        given(artistQueryService.searchArtists(any(), any(), any()))
+        given(artistQueryService.searchArtists(any(), any()))
                 .willReturn(response);
 
         // when, then
@@ -262,8 +264,8 @@ class ArtistControllerTest extends RestDocsTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("query", "artist")
-                        .param("cursor", "1")
-                        .param("size", "10"))
+                        .param("pageNumber", "0")
+                        .param("pageSize", "12"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
                 .andDo(print())
@@ -271,7 +273,7 @@ class ArtistControllerTest extends RestDocsTest {
     }
 
     private RestDocumentationResultHandler getArtistSearchDocument() {
-        ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
+        ParameterDescriptorWithType[] pagingQueryParameters = getOffsetBasePagingQueryParameters();
 
         ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
         queryParams[pagingQueryParameters.length] = parameterWithName("query")
@@ -286,9 +288,9 @@ class ArtistControllerTest extends RestDocsTest {
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(
-                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
                                         .optional()
-                                        .description("다음 cursor에 쓰일 값"),
+                                        .description("현재 페이지 번호"),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
                                         .description("다음 데이터 존재 여부"),
                                 fieldWithPath("data").type(JsonFieldType.ARRAY)
