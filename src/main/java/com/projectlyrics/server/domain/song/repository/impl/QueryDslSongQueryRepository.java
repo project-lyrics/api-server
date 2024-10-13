@@ -45,7 +45,10 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 ))
                 .from(song)
                 .leftJoin(song.notes, note)
-                .where(songNameContains(query))
+                .where(
+                        songNameContains(query),
+                        note.deletedAt.isNull()
+                )
                 .groupBy(song.id)
                 .orderBy(note.id.count().desc())
                 .offset(pageable.getOffset())
