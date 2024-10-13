@@ -48,13 +48,11 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
-    public Slice<Artist> findAll(Long cursor, Pageable pageable) {
+    public Slice<Artist> findAll(Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(artist)
-                .where(
-                        QueryDslUtils.gtCursorId(cursor, artist.id),
-                        artist.deletedAt.isNull()
-                )
+                .where(artist.deletedAt.isNull())
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .orderBy(artistNameOrder)
                 .fetch();
@@ -73,11 +71,10 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
-    public Slice<Artist> findAllByQuery(String query, Long cursor, Pageable pageable) {
+    public Slice<Artist> findAllByQuery(String query, Pageable pageable) {
         List<Artist> content = jpaQueryFactory
                 .selectFrom(artist)
                 .where(
-                        QueryDslUtils.gtCursorId(cursor, artist.id),
                         artist.deletedAt.isNull(),
                         anyOf(
                                 artist.name.containsIgnoreCase(query),
@@ -85,6 +82,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
                                 artist.thirdName.containsIgnoreCase(query)
                         )
                 )
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .orderBy(artistNameOrder)
                 .fetch();

@@ -73,9 +73,11 @@ class UserControllerTest extends RestDocsTest {
     @Test
     void 사용자의_프로필을_수정하면_200_응답을_해야_한다() throws Exception {
         // given
-        UserUpdateRequest request = new UserUpdateRequest(
+        UserUpdateRequest request =  new UserUpdateRequest(
                 "검정치마",
-                ProfileCharacter.BRAIDED_HAIR
+                ProfileCharacter.BRAIDED_HAIR,
+                Gender.FEMALE,
+                2020
         );
 
         // when, then
@@ -97,7 +99,11 @@ class UserControllerTest extends RestDocsTest {
                                 fieldWithPath("nickname").type(JsonFieldType.STRING)
                                         .description("사용자 닉네임"),
                                 fieldWithPath("profileCharacter").type(JsonFieldType.STRING)
-                                        .description("사용자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class))
+                                        .description("사용자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class)),
+                                fieldWithPath("gender").type(JsonFieldType.STRING)
+                                        .description("사용자 성별" + getEnumValuesAsString(Gender.class)),
+                                fieldWithPath("birthYear").type(JsonFieldType.NUMBER)
+                                        .description("사용자 출생연도")
                         )
                         .requestSchema(Schema.schema("Update User Request"))
                         .responseFields(

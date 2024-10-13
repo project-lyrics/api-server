@@ -63,7 +63,7 @@ public class ArtistQueryRepositoryTest {
         Pageable pageable = PageRequest.of(0, 3);
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
+        Slice<Artist> artistSlice = artistQueryRepository.findAll(pageable);
 
         // then
         assertAll(
@@ -75,16 +75,13 @@ public class ArtistQueryRepositoryTest {
     }
 
     @Test
-    void 아티스트_리스트를_조회하는_커서가_최대_id값보다_클_경우_Slice의_content가_비어있다() throws Exception {
+    void 아티스트_리스트를_조회하는_페이지로_인한_오프셋이_데이터를_넘을_경우_Slice의_content가_비어있다() throws Exception {
         // given
         Artist artist1 = artistCommandRepository.save(ArtistFixture.create());
-        List<Artist> artistList = List.of(artist1);
-
-        long cursor = 1000L;
-        Pageable pageable = PageRequest.of(0, 3);
+        Pageable pageable = PageRequest.of(2, 100);
 
         // when
-        Slice<Artist> artistSlice = artistQueryRepository.findAll(cursor, pageable);
+        Slice<Artist> artistSlice = artistQueryRepository.findAll(pageable);
 
         // then
         assertAll(
@@ -103,7 +100,7 @@ public class ArtistQueryRepositoryTest {
         artistCommandRepository.save(artist2);
 
         // when
-        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("검정치마", 0L, PageRequest.of(0, 3));
+        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("검정치마", PageRequest.of(0, 3));
 
         // then
         assertThat(searchedArtists.getContent().getFirst().getId()).isEqualTo(artist1.getId());
@@ -116,7 +113,7 @@ public class ArtistQueryRepositoryTest {
         artistCommandRepository.save(artist1);
 
         // when
-        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("긴난보이즈", 0L, PageRequest.of(0, 3));
+        Slice<Artist> searchedArtists = artistQueryRepository.findAllByQuery("긴난보이즈", PageRequest.of(0, 3));
 
         // then
         assertThat(searchedArtists.getContent()).isEmpty();

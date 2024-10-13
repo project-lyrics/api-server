@@ -126,14 +126,28 @@ public class User extends BaseEntity {
     }
 
     public void update(UserUpdateRequest request) {
-        if (Objects.isNull(request.nickname()) && Objects.isNull(request.profileCharacter())) {
+        if (Objects.isNull(request.nickname())
+                && Objects.isNull(request.profileCharacter())
+                && Objects.isNull(request.gender())
+                && Objects.isNull(request.birthYear())
+        ) {
             throw new FailedToUpdateProfileException();
         }
 
-        if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty())
+        if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty()) {
             nickname = new Username(request.nickname());
+        }
 
-        if (Objects.nonNull(request.profileCharacter()))
+        if (Objects.nonNull(request.profileCharacter())) {
             profileCharacter = request.profileCharacter();
+        }
+
+        if (Objects.nonNull(request.gender())) {
+            info = new UserMetaInfo(request.gender(), info.getBirthYear());
+        }
+
+        if (Objects.nonNull(request.birthYear())) {
+            info = new UserMetaInfo(info.getGender(), request.birthYear());
+        }
     }
 }

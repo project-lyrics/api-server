@@ -4,7 +4,7 @@ import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
-import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,17 +23,17 @@ public class ArtistQueryService {
                 .orElseThrow(ArtistNotFoundException::new);
     }
 
-    public CursorBasePaginatedResponse<ArtistGetResponse> getArtistList(Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(cursor, pageable)
+    public OffsetBasePaginatedResponse<ArtistGetResponse> getArtistList(Pageable pageable) {
+        Slice<ArtistGetResponse> artistSlice = artistQueryRepository.findAll(pageable)
                 .map(ArtistGetResponse::of);
 
-        return CursorBasePaginatedResponse.of(artistSlice);
+        return OffsetBasePaginatedResponse.of(artistSlice);
     }
 
-    public CursorBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Long cursor, Pageable pageable) {
-        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, cursor, pageable)
+    public OffsetBasePaginatedResponse<ArtistGetResponse> searchArtists(String query, Pageable pageable) {
+        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, pageable)
                 .map(ArtistGetResponse::of);
 
-        return CursorBasePaginatedResponse.of(searchedArtists);
+        return OffsetBasePaginatedResponse.of(searchedArtists);
     }
 }

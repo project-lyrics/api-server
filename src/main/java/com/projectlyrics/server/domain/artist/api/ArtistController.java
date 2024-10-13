@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
-import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -78,29 +78,29 @@ public class ArtistController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> getArtistList(
-            @RequestParam(name = "cursor", required = false) Long cursor,
-            @RequestParam(name = "size", defaultValue = "10") int size
+    public ResponseEntity<OffsetBasePaginatedResponse<ArtistGetResponse>> getArtistList(
+            @RequestParam(name = "pageNumber", required = false) int page,
+            @RequestParam(name = "pageSize", defaultValue = "12") int size
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(artistQueryService.getArtistList(cursor, PageRequest.ofSize(size)));
+                .body(artistQueryService.getArtistList(PageRequest.of(page, size)));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<CursorBasePaginatedResponse<ArtistGetResponse>> searchArtist(
-            @RequestParam(name = "cursor", required = false) Long cursor,
-            @RequestParam(name = "size", defaultValue = "10") int size,
+    public ResponseEntity<OffsetBasePaginatedResponse<ArtistGetResponse>> searchArtist(
+            @RequestParam(name = "pageNumber", required = false) int page,
+            @RequestParam(name = "pageSize", defaultValue = "12") int size,
             @RequestParam(name = "query", required = false) String query
     ) {
         if (Objects.isNull(query) || query.isEmpty()) {
             ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(artistQueryService.getArtistList(cursor, PageRequest.of(0, size)));
+                    .body(artistQueryService.getArtistList(PageRequest.of(0, size)));
         }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(artistQueryService.searchArtists(query, cursor, PageRequest.of(0, size)));
+                .body(artistQueryService.searchArtists(query, PageRequest.of(page, size)));
     }
 }
