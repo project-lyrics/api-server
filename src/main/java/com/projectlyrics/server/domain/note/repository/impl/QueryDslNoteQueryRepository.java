@@ -1,22 +1,21 @@
 package com.projectlyrics.server.domain.note.repository.impl;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.note.entity.QNote.note;
+import static com.projectlyrics.server.domain.song.entity.QSong.song;
+
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
-import static com.projectlyrics.server.domain.note.entity.QNote.*;
-import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
 @Repository
 @RequiredArgsConstructor
@@ -132,7 +131,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -141,7 +140,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.bookmarks).fetchJoin()
                 .where(
-                        note.bookmarks.isNotEmpty(),
+                        note.bookmarks.any().user.id.eq(userId),
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
