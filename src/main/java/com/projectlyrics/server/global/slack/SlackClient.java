@@ -54,7 +54,7 @@ public class SlackClient {
     }
 
     public void sendNoteReportMessage(Report report) {
-        String lyrics = report.getNote().getLyrics().getContent() != null ? "\n(가사: " + report.getNote().getLyrics().getContent() + ")" : null;
+        String lyrics = report.getNote().getLyrics() != null ? "\n(가사: " + report.getNote().getLyrics().getContent() + ")" : null;
         sendReportMessage(
                 report,
                 "노트",
