@@ -20,6 +20,7 @@ public enum ErrorCode {
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "00008", "이메일 형식이 유효하지 않습니다."),
 
     // Auth
+    USER_FORCED_WITHDRAWAL(HttpStatus.FORBIDDEN, "01000", "강제 탈퇴 이력이 있는 유저입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "토큰이 만료되었습니다."),
     WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "잘못된 토큰 형식으로 입력되었습니다."),
     UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
@@ -31,14 +32,13 @@ public enum ErrorCode {
     INVALID_TOKEN_PREFIX(HttpStatus.BAD_REQUEST, "01009", "Bearer 인증 형식이 아닙니다."),
     INVALID_SOCIAL_TOKEN(HttpStatus.UNAUTHORIZED, "01010", "유효하지 않은 소셜 인증 토큰입니다."),
     AUTH_NOT_FOUND(HttpStatus.NOT_FOUND, "01011", "해당 인증 정보를 찾을 수 없습니다."),
-    USER_FORCED_WITHDRAWAL(HttpStatus.FORBIDDEN, "01012", "강제 탈퇴 이력이 있는 유저입니다"),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "해당 유저가 존재하지 않습니다."),
     INVALID_USERNAME(HttpStatus.BAD_REQUEST, "02001", "The nickname must be at least one character long and include letters, numbers, or a combination of both."),
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
     INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),
-    FAILED_TO_UPDATE_PROFILE(HttpStatus.BAD_REQUEST, "02004", "사용자 프로필을 수정하는 데 실패했습ㄴ디ㅏ."),
+    FAILED_TO_UPDATE_PROFILE(HttpStatus.BAD_REQUEST, "02004", "사용자 프로필을 수정하는 데 실패했습니다."),
 
     // Artist
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "해당 아티스트를 조회할 수 없습니다."),
@@ -85,17 +85,17 @@ public enum ErrorCode {
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "12000", "해당 신고를 조회할 수 없습니다."),
     REPORT_TARGET_CONFLICT(HttpStatus.BAD_REQUEST, "12001", "신고 대상은 Note와 Comment 중 하나여야 합니다."),
     REPORT_TARGET_MISSING(HttpStatus.BAD_REQUEST, "12002", "신고 대상(Note 또는 Comment)가 필요합니다."),
-    DUPLICATE_REPORT(HttpStatus.CONFLICT, "12003", "이미 신고가 완료된 대상입니다"),
+    DUPLICATE_REPORT(HttpStatus.CONFLICT, "12003", "이미 신고가 완료된 대상입니다."),
 
     // Discipline
-    DISCIPLINE_NOT_FOUND(HttpStatus.NOT_FOUND, "14000", "해당 조치를 조회할 수 없습니다"),
-    INVALID_DISCIPLINE_CREATE(HttpStatus.BAD_REQUEST, "14001", "조치 생성에 실패했습니다"),
-    INVALID_DISCIPLINE_ACTION(HttpStatus.FORBIDDEN, "14002", "징계로 인해 해당 작업을 수행할 수 없습니다"),
+    DISCIPLINE_NOT_FOUND(HttpStatus.NOT_FOUND, "13000", "해당 조치를 조회할 수 없습니다."),
+    INVALID_DISCIPLINE_CREATE(HttpStatus.BAD_REQUEST, "13001", "조치 생성에 실패했습니다."),
+    INVALID_DISCIPLINE_ACTION(HttpStatus.FORBIDDEN, "13002", "징계로 인해 해당 작업을 수행할 수 없습니다."),
 
     // Slack
     SLACK_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14000", "슬랙 메세지 전송에 실패했습니다."),
     SLACK_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "14001", "슬랙 메세지 전송 중 에러가 발생했습니다."),
-    SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다"),
+    SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다."),
     SLACK_FEEDBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"14003", "슬랙에 피드백 메세지 제공에 실패했습니다."),
     ;
 
