@@ -10,4 +10,5 @@ public interface NotificationQueryRepository {
     Notification findById(Long id);
     Slice<NotificationGetResponse> findAllByReceiverId(Long receiverId, Long cursorId, Pageable pageable);
     Slice<Notification> findAllBySenderId(Long senderId, Long cursorId, Pageable pageable);
+    boolean hasUnchecked(Long receiverId);
 }

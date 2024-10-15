@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.notification.api.dto.request.PublicNotificationCreateRequest;
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationCheckResponse;
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
+import com.projectlyrics.server.domain.notification.api.dto.response.NotificationHasUncheckedResponse;
 import com.projectlyrics.server.domain.notification.api.dto.response.PublicNotificationCreateResponse;
 import com.projectlyrics.server.domain.notification.service.NotificationCommandService;
 import com.projectlyrics.server.domain.notification.service.NotificationQueryService;
@@ -52,5 +53,16 @@ public class NotificationController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(notificationQueryService.getRecentNotifications(authContext.getId(), cursor, size));
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<NotificationHasUncheckedResponse> hasUnchecked(
+            @Authenticated AuthContext authContext
+    ) {
+        boolean result = notificationQueryService.hasUnchecked(authContext.getId());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new NotificationHasUncheckedResponse(result));
     }
 }

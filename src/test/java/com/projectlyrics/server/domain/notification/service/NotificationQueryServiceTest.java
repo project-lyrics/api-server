@@ -107,4 +107,24 @@ class NotificationQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().stream().map(NotificationGetResponse::checked)).allMatch(checked -> checked.equals(false))
         );
     }
+
+    @Test
+    void 읽지_않은_알림이_있는지_확인할_수_있다() {
+        // given
+        int notificationSize = 10;
+        for (int i = 0; i < notificationSize; i++) {
+            notificationCommandService.createPublicNotification(user.getId(), "content");
+        }
+
+        CursorBasePaginatedResponse<NotificationGetResponse> response = sut.getRecentNotifications(user.getId(), null, 10);
+        for (int i = 0; i < notificationSize; i++) {
+            notificationCommandService.check(response.data().get(i).id(), user.getId());
+        }
+
+        // when
+        boolean result = sut.hasUnchecked(user.getId());
+
+        // then
+        assertThat(result).isFalse();
+    }
 }
