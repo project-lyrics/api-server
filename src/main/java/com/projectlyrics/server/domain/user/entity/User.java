@@ -120,9 +120,9 @@ public class User extends BaseEntity {
     }
 
     public void withdraw() {
-//        nickname = null;
-//        profileCharacter = null;
-//        info = null;
+        nickname = null;
+        profileCharacter = null;
+        info = null;
         termsAgreements.forEach(TermsAgreements::delete);
         delete(id, Clock.systemDefaultZone());
     }
