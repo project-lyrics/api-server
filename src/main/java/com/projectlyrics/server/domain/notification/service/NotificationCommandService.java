@@ -28,7 +28,6 @@ public class NotificationCommandService {
     private final NotificationCommandRepository notificationCommandRepository;
     private final NotificationQueryRepository notificationQueryRepository;
     private final UserQueryRepository userQueryRepository;
-    private final FirebaseMessaging firebaseMessaging;
 
     @Async
     @EventListener

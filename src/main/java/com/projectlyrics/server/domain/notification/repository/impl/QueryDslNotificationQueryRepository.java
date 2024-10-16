@@ -93,4 +93,16 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
 
         return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
     }
+
+    @Override
+    public boolean hasUnchecked(Long receiverId) {
+        Integer result = jpaQueryFactory
+                .selectOne()
+                .from(notification)
+                .where(notification.receiver.id.eq(receiverId))
+                .where(notification.checked.isFalse())
+                .fetchFirst();
+
+        return result != null;
+    }
 }

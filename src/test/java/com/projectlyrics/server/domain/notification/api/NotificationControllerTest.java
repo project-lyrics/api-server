@@ -6,6 +6,7 @@ import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.notification.api.dto.request.PublicNotificationCreateRequest;
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
+import com.projectlyrics.server.domain.notification.api.dto.response.NotificationHasUncheckedResponse;
 import com.projectlyrics.server.domain.notification.domain.NotificationType;
 import com.projectlyrics.server.support.RestDocsTest;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,12 +22,12 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class NotificationControllerTest extends RestDocsTest {
@@ -161,6 +163,37 @@ class NotificationControllerTest extends RestDocsTest {
                                         .description("알림과 관련한 노트가 속한 레코드 아티스트 이미지")
                         )
                         .responseSchema(Schema.schema("Notification List Response"))
+                        .build()
+                )
+        );
+    }
+
+    @Test
+    void 안읽은_알림을_확인하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        Boolean hasUnchecked = true;
+
+        given(notificationQueryService.hasUnchecked(any()))
+                .willReturn(hasUnchecked);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/notifications/check")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andDo(getUncheckedNotificationDocument())
+                .andExpect(content().json(mapper.writeValueAsString(new NotificationHasUncheckedResponse(hasUnchecked))))
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getUncheckedNotificationDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Notification API")
+                        .summary("사용자가 확인하지 않은 알림 존재 여부 조회")
+                        .responseFields(
+                                fieldWithPath("hasUnchecked").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자가 확인하지 않은 알림 존재 여부")
+                        )
+                        .responseSchema(Schema.schema("Notification Has Unchecked Response"))
                         .build()
                 )
         );

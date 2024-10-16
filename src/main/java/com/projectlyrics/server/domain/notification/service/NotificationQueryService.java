@@ -20,4 +20,8 @@ public class NotificationQueryService {
                 notificationQueryRepository.findAllByReceiverId(userId, cursor, Pageable.ofSize(size))
         );
     }
+
+    public boolean hasUnchecked(Long userId) {
+        return notificationQueryRepository.hasUnchecked(userId);
+    }
 }
