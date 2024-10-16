@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.favoriteartist.service;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.exception.ArtistNotFoundException;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
+import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtistCreate;
@@ -36,6 +37,7 @@ public class FavoriteArtistCommandService {
                 .orElseThrow(ArtistNotFoundException::new);
 
         checkIfFavoriteArtistExists(userId, artistId);
+        user.setStatus(EntityStatusEnum.IN_USE);
 
         return favoriteArtistCommandRepository.save(FavoriteArtist.create(FavoriteArtistCreate.of(user, artist)));
     }
@@ -61,6 +63,8 @@ public class FavoriteArtistCommandService {
                 favoriteArtistCommandRepository.save(newFavoriteArtist);
             }
         });
+
+        user.setStatus(EntityStatusEnum.IN_USE);
     }
 
     private List<Artist> getUserFavoriteArtistList(Long userId) {

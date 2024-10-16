@@ -4,6 +4,7 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkEnum;
 import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 import com.projectlyrics.server.domain.common.entity.BaseEntity;
+import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import com.projectlyrics.server.domain.user.exception.FailedToUpdateProfileException;
 import jakarta.persistence.CascadeType;
@@ -78,6 +79,7 @@ public class User extends BaseEntity {
         this.termsAgreements = termsAgreements;
         termsAgreements.forEach(terms -> terms.setUser(this));
         this.feedbackId = UUID.randomUUID().toString();
+        this.setStatus(EntityStatusEnum.YET);
     }
 
     private User(

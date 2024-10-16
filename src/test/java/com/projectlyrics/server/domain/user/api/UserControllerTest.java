@@ -1,5 +1,13 @@
 package com.projectlyrics.server.domain.user.api;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
@@ -15,14 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest extends RestDocsTest {
 
@@ -111,6 +111,38 @@ class UserControllerTest extends RestDocsTest {
                                         .description("성공 여부")
                         )
                         .responseSchema(Schema.schema("Update User Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 처음_방문한_사용자인지의_여부와_200응답을_해야_한다() throws Exception {
+        // given
+        User user = UserFixture.create();
+        UserProfileResponse result = UserProfileResponse.from(user);
+
+        given(userQueryService.getById(any()))
+                .willReturn(result);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/users/first-time")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getUserFirstTimeDocument());
+    }
+
+    private RestDocumentationResultHandler getUserFirstTimeDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("User API")
+                        .summary("사용자 첫방문 여부 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("isFirst").type(JsonFieldType.BOOLEAN)
+                                        .description("사용자 첫방문 여부")
+                        )
+                        .responseSchema(Schema.schema("User First Time Response"))
                         .build())
         );
     }

@@ -9,6 +9,7 @@ import jakarta.persistence.MappedSuperclass;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,6 +24,7 @@ public abstract class BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Setter
     private EntityStatusEnum status;
 
     @CreatedDate

@@ -21,6 +21,7 @@ import com.projectlyrics.server.domain.auth.service.social.apple.AppleSocialServ
 import com.projectlyrics.server.domain.auth.service.social.apple.dto.AppleUserInfo;
 import com.projectlyrics.server.domain.auth.service.social.kakao.KakaoSocialDataApiClient;
 import com.projectlyrics.server.domain.auth.service.social.kakao.dto.KakaoUserInfo;
+import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
@@ -122,6 +123,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
 
         assertThat(userId).isEqualTo(signedUpUser.getId());
+        assertThat(signedUpUser.getStatus()).isEqualTo(EntityStatusEnum.YET);
     }
 
     @Test

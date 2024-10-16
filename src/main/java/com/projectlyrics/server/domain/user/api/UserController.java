@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.user.api;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
+import com.projectlyrics.server.domain.user.dto.response.UserFirstTimeResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserUpdateResponse;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
@@ -42,5 +43,14 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new UserUpdateResponse(true));
+    }
+
+    @GetMapping("/first-time")
+    public ResponseEntity<UserFirstTimeResponse> isFirstTime(
+            @Authenticated AuthContext authContext
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new UserFirstTimeResponse(userQueryService.isFirstTime(authContext.getId())));
     }
 }
