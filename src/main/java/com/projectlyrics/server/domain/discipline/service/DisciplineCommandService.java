@@ -42,7 +42,8 @@ public class DisciplineCommandService {
 
         Discipline discipline = disciplineCommandRepository.save(Discipline.create(DisciplineCreate.of(user, artist, request.disciplineReason(), request.disciplineType(), request.startTime(), request.notificationContent())));
 
-        User admin = userQueryRepository.findById(adminUserId).orElseThrow(UserNotFoundException::new);
+        //TODO 어드민 유저 확실히 정할 것
+        User admin = userQueryRepository.findById(adminUserId).orElse(user);
         eventPublisher.publishEvent(DisciplineEvent.from(admin, discipline));
 
         if (discipline.getType() == DisciplineType.FORCED_WITHDRAWAL) {

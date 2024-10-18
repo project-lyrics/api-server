@@ -129,14 +129,6 @@ public class SlackController {
                     throw new InvalidDisciplineCreateException();
                 }
 
-                System.out.println("-------------------");
-                System.out.println("userId = " + userId);
-                System.out.println("artistId = " + artistId);
-                System.out.println("reportId = " + reportId);
-                System.out.println("startTime = " + startTime);
-                System.out.println("notificationContent = " + notificationContent);;
-                System.out.println("-------------------");
-
                 Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent));
 
                 // 조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
