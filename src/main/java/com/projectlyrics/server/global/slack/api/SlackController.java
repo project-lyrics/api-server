@@ -103,7 +103,6 @@ public class SlackController {
             }
             else if (actionId.startsWith("discipline")) {
                 blocks = new JSONArray();
-                JSONArray actions = json.getJSONArray("actions");
 
                 String startDateString = json.getJSONObject("state").getJSONObject("values")
                         .getJSONObject("start").getJSONObject("discipline_start").getString("selected_date");
@@ -129,6 +128,14 @@ public class SlackController {
                 if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
                     throw new InvalidDisciplineCreateException();
                 }
+
+                System.out.println("-------------------");
+                System.out.println("userId = " + userId);
+                System.out.println("artistId = " + artistId);
+                System.out.println("reportId = " + reportId);
+                System.out.println("startTime = " + startTime);
+                System.out.println("notificationContent = " + notificationContent);;
+                System.out.println("-------------------");
 
                 Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent));
 
