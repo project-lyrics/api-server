@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
+import com.projectlyrics.server.domain.song.exception.SongNotFoundException;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,5 +29,11 @@ public class SongQueryService {
                 songQueryRepository.findAllByQueryAndArtistId(artistId, query, cursor, PageRequest.of(0, size))
                         .map(SongGetResponse::from)
         );
+    }
+
+    public SongSearchResponse getSongById(Long songId) {
+        return songQueryRepository.findById(songId)
+                .map(SongSearchResponse::from)
+                .orElseThrow(SongNotFoundException::new);
     }
 }

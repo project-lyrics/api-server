@@ -1,24 +1,5 @@
 package com.projectlyrics.server.domain.song.api;
 
-import com.epages.restdocs.apispec.ParameterDescriptorWithType;
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
-import com.epages.restdocs.apispec.SimpleType;
-import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
-import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
-import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
-import com.projectlyrics.server.support.RestDocsTest;
-import com.projectlyrics.server.support.fixture.SongFixture;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.restdocs.payload.JsonFieldType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +9,25 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
+import com.projectlyrics.server.domain.song.entity.Song;
+import com.projectlyrics.server.support.RestDocsTest;
+import com.projectlyrics.server.support.fixture.SongFixture;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.JsonFieldType;
 
 class
 SongControllerTest extends RestDocsTest {
@@ -175,6 +175,53 @@ SongControllerTest extends RestDocsTest {
                                         .description("곡 아티스트의 이미지 url")
                         )
                         .responseSchema(Schema.schema("Song Search Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 곡_id로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        Song song = SongFixture.create();
+
+        given(songQueryService.getSongById(any()))
+                .willReturn(SongSearchResponse.from(song));
+
+        // when, then
+        mockMvc.perform(get("/api/v1/songs/{songId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getSongDocument());
+    }
+
+    private RestDocumentationResultHandler getSongDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Song API")
+                        .summary("곡 id로 곡 정보 검색 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .pathParameters(
+                                parameterWithName("songId").type(SimpleType.NUMBER)
+                                        .description("곡 ID")
+                        )
+                        .responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                        .description("곡 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                        .description("곡 이름"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 앨범 이미지 url"),
+                                fieldWithPath("noteCount").type(JsonFieldType.NUMBER)
+                                        .description("곡과 관련된 등록된 노트의 개수"),
+                                fieldWithPath("artist.id").type(JsonFieldType.NUMBER)
+                                        .description("곡 아티스트의 id"),
+                                fieldWithPath("artist.name").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이름"),
+                                fieldWithPath("artist.imageUrl").type(JsonFieldType.STRING)
+                                        .description("곡 아티스트의 이미지 url")
+                        )
+                        .responseSchema(Schema.schema("Song Get Response"))
                         .build())
         );
     }

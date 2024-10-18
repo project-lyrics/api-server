@@ -1,5 +1,8 @@
 package com.projectlyrics.server.domain.song.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
@@ -19,16 +22,12 @@ import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SongQueryServiceTest extends IntegrationTest {
 
@@ -215,6 +214,37 @@ class SongQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().get(2).id()).isEqualTo(3),
                 () -> assertThat(result.data().get(3).id()).isEqualTo(2),
                 () -> assertThat(result.data().get(4).id()).isEqualTo(1)
+        );
+    }
+
+    @Test
+    void 곡_id를_기반으로_곡_관련_정보를_조회해야_한다() {
+        // given
+        Song song = songCommandService.create(requestOfArtist1);
+
+        NoteCreateRequest request = new NoteCreateRequest(
+                "data",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                song.getId()
+        );
+
+        noteCommandRepository.save(Note.create(NoteCreate.from(request, user, song)));
+        noteCommandRepository.save(Note.create(NoteCreate.from(request, user, song)));
+
+        // when
+        SongSearchResponse result = sut.getSongById(song.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.getId()).isEqualTo(song.getId()),
+                () -> assertThat(result.name()).isEqualTo(song.getName()),
+                () -> assertThat(result.imageUrl()).isEqualTo(song.getImageUrl()),
+                () -> assertThat(result.noteCount()).isEqualTo(2L),
+                () -> assertThat(result.artist().id()).isEqualTo(artist1.getId()),
+                () -> assertThat(result.artist().name()).isEqualTo(artist1.getName()),
+                () -> assertThat(result.artist().imageUrl()).isEqualTo(artist1.getImageUrl())
         );
     }
 }
