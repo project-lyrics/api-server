@@ -139,7 +139,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.publisher).fetchJoin()
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
-                .leftJoin(note.bookmarks).fetchJoin()
+                .leftJoin(note.bookmarks, bookmark).fetchJoin()
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
