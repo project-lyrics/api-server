@@ -1,5 +1,7 @@
 package com.projectlyrics.server.domain.notification.service;
 
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.COMMENT_ON_NOTE;
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.DISCIPLINE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -127,10 +129,11 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createCommentNotification(commentEvent).get();
 
         // then
-        List<NotificationGetResponse> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10)).getContent();
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypeAndReceiverId(COMMENT_ON_NOTE, user.getId(), null, 10)
+                .getContent();
 
         assertAll(
-                () -> assertThat(result.getFirst().type()).isEqualTo(NotificationType.COMMENT_ON_NOTE),
+                () -> assertThat(result.getFirst().type()).isEqualTo(COMMENT_ON_NOTE),
                 () -> assertThat(result.getFirst().noteId()).isEqualTo(comment.getNote().getId()),
                 () -> assertThat(result.getFirst().noteContent()).isEqualTo(comment.getNote().getContent()),
                 () -> assertThat(result.getFirst().content()).isNull()
@@ -147,7 +150,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createDisciplineNotification(disciplineEvent).get();
 
         // then
-        List<NotificationGetResponse> result = notificationQueryRepository.findAllByReceiverId(user.getId(), null, PageRequest.ofSize(10))
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypeAndReceiverId(DISCIPLINE, user.getId(), null, 10)
                 .getContent();
 
         assertAll(

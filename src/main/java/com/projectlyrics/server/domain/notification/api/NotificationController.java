@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.COMMENT_ON_NOTE;
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.PUBLIC;
+
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
@@ -44,15 +47,26 @@ public class NotificationController {
         return ResponseEntity.ok(new NotificationCheckResponse(true));
     }
 
-    @GetMapping
-    public ResponseEntity<CursorBasePaginatedResponse<NotificationGetResponse>> getNotifications(
+    @GetMapping("/public")
+    public ResponseEntity<CursorBasePaginatedResponse<NotificationGetResponse>> getAllPublic(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(notificationQueryService.getRecentNotifications(authContext.getId(), cursor, size));
+                .body(notificationQueryService.getRecentNotifications(PUBLIC, authContext.getId(), cursor, size));
+    }
+
+    @GetMapping("/personal")
+    public ResponseEntity<CursorBasePaginatedResponse<NotificationGetResponse>> getAllPersonal(
+            @Authenticated AuthContext authContext,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(notificationQueryService.getRecentNotifications(COMMENT_ON_NOTE, authContext.getId(), cursor, size));
     }
 
     @GetMapping("/check")

@@ -18,7 +18,15 @@ public class QueryDslUtils {
     public static <T> boolean checkIfHasNext(Pageable pageable, List<T> content) {
         if (content.size() > pageable.getPageSize()) {
             content.remove(pageable.getPageSize());
+            return true;
+        }
 
+        return false;
+    }
+
+    public static boolean checkIfHasNext(int size, List<?> content) {
+        if (content.size() > size) {
+            content.remove(size);
             return true;
         }
 

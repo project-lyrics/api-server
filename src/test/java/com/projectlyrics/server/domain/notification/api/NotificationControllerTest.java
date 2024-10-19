@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ class NotificationControllerTest extends RestDocsTest {
     }
 
     @Test
-    void 알림을_최신순으로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+    void 전체_알림을_최신순으로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
         // given
         List<NotificationGetResponse> data = new ArrayList<>();
         for (long id = 1; id <= 10; id++) {
@@ -107,9 +106,9 @@ class NotificationControllerTest extends RestDocsTest {
                     "notification content",
                     LocalDateTime.now(),
                     false,
-                    1L,
-                    "note content",
-                    "https://artist.image.com"
+                    null,
+                    null,
+                    null
             ));
         }
 
@@ -119,24 +118,24 @@ class NotificationControllerTest extends RestDocsTest {
                 data
         );
 
-        given(notificationQueryService.getRecentNotifications(any(), any(), anyInt()))
+        given(notificationQueryService.getRecentNotifications(any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
-        mockMvc.perform(get("/api/v1/notifications")
+        mockMvc.perform(get("/api/v1/notifications/public")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(getNotificationListOfUserDocument())
+                .andDo(getPublicNotificationListOfUserDocument())
                 .andExpect(status().isOk());
     }
 
-    private RestDocumentationResultHandler getNotificationListOfUserDocument() {
+    private RestDocumentationResultHandler getPublicNotificationListOfUserDocument() {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Notification API")
-                        .summary("사용자가 수신한 알림 리스트 최신순 조회")
+                        .summary("사용자가 수신한 전체 알림 리스트 최신순 조회")
                         .queryParameters(getCursorBasePagingQueryParameters())
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
@@ -156,13 +155,85 @@ class NotificationControllerTest extends RestDocsTest {
                                 fieldWithPath("data[].checked").type(JsonFieldType.BOOLEAN)
                                         .description("알림 확인 여부"),
                                 fieldWithPath("data[].noteId").type(JsonFieldType.NUMBER)
-                                        .description("알림과 관련한 노트 Id"),
+                                        .description("알림과 관련한 노트 Id (개인 알림의 경우)"),
                                 fieldWithPath("data[].noteContent").type(JsonFieldType.STRING)
-                                        .description("알림과 관련한 노트 내용"),
+                                        .description("알림과 관련한 노트 내용 (개인 알림의 경우)"),
                                 fieldWithPath("data[].artistImageUrl").type(JsonFieldType.STRING)
-                                        .description("알림과 관련한 노트가 속한 레코드 아티스트 이미지")
+                                        .description("알림과 관련한 노트가 속한 레코드 아티스트 이미지 (개인 알림의 경우)")
                         )
-                        .responseSchema(Schema.schema("Notification List Response"))
+                        .responseSchema(Schema.schema("Public Notification List Response"))
+                        .build()
+                )
+        );
+    }
+
+    @Test
+    void 개인_알림을_최신순으로_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        List<NotificationGetResponse> data = new ArrayList<>();
+        for (long id = 1; id <= 10; id++) {
+            data.add(new NotificationGetResponse(
+                    id,
+                    NotificationType.COMMENT_ON_NOTE,
+                    null,
+                    LocalDateTime.now(),
+                    false,
+                    1L,
+                    "note content",
+                    "https://artist.image.com"
+            ));
+        }
+
+        CursorBasePaginatedResponse<NotificationGetResponse> response = new CursorBasePaginatedResponse<>(
+                data.get(data.size() - 1).getId(),
+                true,
+                data
+        );
+
+        given(notificationQueryService.getRecentNotifications(any(), any(), any(), anyInt()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/notifications/personal")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("cursor", "1")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(getPersonalNotificationListOfUserDocument())
+                .andExpect(status().isOk());
+    }
+
+    private RestDocumentationResultHandler getPersonalNotificationListOfUserDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Notification API")
+                        .summary("사용자가 수신한 개인 알림 리스트 최신순 조회")
+                        .queryParameters(getCursorBasePagingQueryParameters())
+                        .responseFields(
+                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                        .description("다음 cursor에 쓰일 값"),
+                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 데이터 존재 여부"),
+                                fieldWithPath("data").type(JsonFieldType.ARRAY)
+                                        .description("데이터"),
+                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                        .description("알림 Id"),
+                                fieldWithPath("data[].type").type(JsonFieldType.STRING)
+                                        .description("알림 타입 " + getEnumValuesAsString(NotificationType.class)),
+                                fieldWithPath("data[].content").type(JsonFieldType.STRING)
+                                        .description("알림 내용 (전체 알림의 경우)"),
+                                fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+                                        .description("알림 생성 시간 (ISO-8601 표준)"),
+                                fieldWithPath("data[].checked").type(JsonFieldType.BOOLEAN)
+                                        .description("알림 확인 여부"),
+                                fieldWithPath("data[].noteId").type(JsonFieldType.NUMBER)
+                                        .description("알림과 관련한 노트 Id (개인 알림의 경우)"),
+                                fieldWithPath("data[].noteContent").type(JsonFieldType.STRING)
+                                        .description("알림과 관련한 노트 내용 (개인 알림의 경우)"),
+                                fieldWithPath("data[].artistImageUrl").type(JsonFieldType.STRING)
+                                        .description("알림과 관련한 노트가 속한 레코드 아티스트 이미지 (개인 알림의 경우)")
+                        )
+                        .responseSchema(Schema.schema("Personal Notification List Response"))
                         .build()
                 )
         );

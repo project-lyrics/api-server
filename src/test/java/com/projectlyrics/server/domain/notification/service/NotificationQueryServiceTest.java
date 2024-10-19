@@ -3,9 +3,8 @@ package com.projectlyrics.server.domain.notification.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
-import com.projectlyrics.server.domain.comment.domain.Comment;
-import com.projectlyrics.server.domain.comment.domain.CommentCreate;
-import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
+import com.projectlyrics.server.domain.comment.dto.request.CommentCreateRequest;
+import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.COMMENT_ON_NOTE;
 import static com.projectlyrics.server.domain.notification.domain.NotificationType.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -48,7 +48,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
     NoteCommandRepository noteCommandRepository;
 
     @Autowired
-    CommentCommandRepository commentCommandRepository;
+    CommentCommandService commentCommandService;
 
     @Autowired
     NotificationCommandRepository notificationCommandRepository;
@@ -66,6 +66,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
     NotificationQueryService sut;
 
     private User user;
+    private Note note;
 
     @BeforeEach
     void setUp() {
@@ -81,13 +82,11 @@ class NotificationQueryServiceTest extends IntegrationTest {
                 NoteStatus.PUBLISHED,
                 song.getId()
         );
-        Note note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
-
-        commentCommandRepository.save(Comment.create(CommentCreate.of("content", user, note)));
+        note = noteCommandRepository.save(Note.create(NoteCreate.from(noteCreateRequest, user, song)));
     }
 
     @Test
-    void 최근_알림_목록을_읽을_수_있다() {
+    void 최근_전체_알림_목록을_읽을_수_있다() {
         // given
         int notificationSize = 10;
         String notificationContent = "content";
@@ -97,13 +96,38 @@ class NotificationQueryServiceTest extends IntegrationTest {
         }
 
         // when
-        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(user.getId(), null, 10);
+        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(PUBLIC, user.getId(), null, 10);
 
         // then
         assertAll(
                 () -> assertThat(result.data()).hasSize(notificationSize),
                 () -> assertThat(result.data().stream().map(NotificationGetResponse::type)).allMatch(type -> type.equals(PUBLIC)),
                 () -> assertThat(result.data().stream().map(NotificationGetResponse::content)).allMatch(content -> content.equals(notificationContent)),
+                () -> assertThat(result.data().stream().map(NotificationGetResponse::checked)).allMatch(checked -> checked.equals(false))
+        );
+    }
+
+    @Test
+    void 최근_게시글_알림_목록을_읽을_수_있다() {
+        // given
+        int notificationSize = 10;
+
+        for (int i = 0; i< notificationSize; i++) {
+            commentCommandService.create(
+                    new CommentCreateRequest(
+                            "abcde",
+                            note.getId()
+                    ),
+                    user.getId()
+            );
+        }
+
+        // when
+        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(COMMENT_ON_NOTE, user.getId(), null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data().stream().map(NotificationGetResponse::type)).allMatch(type -> type.equals(COMMENT_ON_NOTE)),
                 () -> assertThat(result.data().stream().map(NotificationGetResponse::checked)).allMatch(checked -> checked.equals(false))
         );
     }
@@ -116,7 +140,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
             notificationCommandService.createPublicNotification(user.getId(), "content");
         }
 
-        CursorBasePaginatedResponse<NotificationGetResponse> response = sut.getRecentNotifications(user.getId(), null, 10);
+        CursorBasePaginatedResponse<NotificationGetResponse> response = sut.getRecentNotifications(PUBLIC, user.getId(), null, 10);
         for (int i = 0; i < notificationSize; i++) {
             notificationCommandService.check(response.data().get(i).id(), user.getId());
         }
