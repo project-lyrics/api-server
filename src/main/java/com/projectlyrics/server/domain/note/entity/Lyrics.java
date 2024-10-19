@@ -21,7 +21,7 @@ public class Lyrics {
     @Enumerated(EnumType.STRING)
     private NoteBackground background;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "lyrics")
     private Note note;
 
     private Lyrics(

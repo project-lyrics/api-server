@@ -33,6 +33,7 @@ public class Note extends BaseEntity {
     private NoteStatus noteStatus;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="lyrics_id")
     private Lyrics lyrics;
 
     @ManyToOne(fetch = FetchType.LAZY)
