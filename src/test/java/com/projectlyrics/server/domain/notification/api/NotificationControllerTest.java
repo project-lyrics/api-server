@@ -154,11 +154,11 @@ class NotificationControllerTest extends RestDocsTest {
                                         .description("알림 생성 시간 (ISO-8601 표준)"),
                                 fieldWithPath("data[].checked").type(JsonFieldType.BOOLEAN)
                                         .description("알림 확인 여부"),
-                                fieldWithPath("data[].noteId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data[].noteId").type(JsonFieldType.NULL)
                                         .description("알림과 관련한 노트 Id (개인 알림의 경우)"),
-                                fieldWithPath("data[].noteContent").type(JsonFieldType.STRING)
+                                fieldWithPath("data[].noteContent").type(JsonFieldType.NULL)
                                         .description("알림과 관련한 노트 내용 (개인 알림의 경우)"),
-                                fieldWithPath("data[].artistImageUrl").type(JsonFieldType.STRING)
+                                fieldWithPath("data[].artistImageUrl").type(JsonFieldType.NULL)
                                         .description("알림과 관련한 노트가 속한 레코드 아티스트 이미지 (개인 알림의 경우)")
                         )
                         .responseSchema(Schema.schema("Public Notification List Response"))
@@ -220,7 +220,7 @@ class NotificationControllerTest extends RestDocsTest {
                                         .description("알림 Id"),
                                 fieldWithPath("data[].type").type(JsonFieldType.STRING)
                                         .description("알림 타입 " + getEnumValuesAsString(NotificationType.class)),
-                                fieldWithPath("data[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("data[].content").type(JsonFieldType.NULL)
                                         .description("알림 내용 (전체 알림의 경우)"),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("알림 생성 시간 (ISO-8601 표준)"),
