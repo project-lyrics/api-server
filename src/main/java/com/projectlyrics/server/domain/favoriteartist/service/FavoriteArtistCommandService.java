@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtist;
 import com.projectlyrics.server.domain.favoriteartist.entity.FavoriteArtistCreate;
+import com.projectlyrics.server.domain.favoriteartist.exception.FavoriteArtistAlreadyExistsException;
 import com.projectlyrics.server.domain.favoriteartist.exception.FavoriteArtistNotFoundException;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
@@ -30,7 +31,7 @@ public class FavoriteArtistCommandService {
     private final UserQueryRepository userQueryRepository;
     private final ArtistQueryRepository artistQueryRepository;
 
-    public FavoriteArtist create(Long userId, Long artistId) {
+    public synchronized FavoriteArtist create(Long userId, Long artistId) {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         Artist artist = artistQueryRepository.findById(artistId)
@@ -44,7 +45,7 @@ public class FavoriteArtistCommandService {
 
     private void checkIfFavoriteArtistExists(Long userId, Long artistId) {
         favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
-                .ifPresent(favoriteArtist -> { throw new FavoriteArtistNotFoundException(); });
+                .ifPresent(favoriteArtist -> { throw new FavoriteArtistAlreadyExistsException(); });
     }
 
     public void createAll(Long userId, CreateFavoriteArtistListRequest request) {

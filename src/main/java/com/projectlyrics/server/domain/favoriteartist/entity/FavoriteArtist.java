@@ -20,14 +20,6 @@ import static com.projectlyrics.server.domain.common.util.DomainUtils.checkNull;
 
 @Getter
 @Entity
-@Table(
-        name = "favorite_artists",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "userArtist",
-                        columnNames = {"user_id", "artist_id"}
-                )
-        })
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FavoriteArtist extends BaseEntity {
