@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.note.repository.impl;
 
 import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.bookmark.domain.QBookmark.bookmark;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
@@ -140,7 +141,8 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.bookmarks).fetchJoin()
                 .where(
-                        note.bookmarks.any().user.id.eq(userId),
+                        bookmark.user.id.eq(userId)
+                                .and(bookmark.deletedAt.isNull()),
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
