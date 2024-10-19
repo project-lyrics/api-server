@@ -72,7 +72,7 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
     @Override
     public List<FavoriteArtist> findAllHavingNotesOfUser(Long userId) {
         return jpaQueryFactory
-                .selectFrom(favoriteArtist)
+                .selectFrom(favoriteArtist).distinct()
                 .join(favoriteArtist.artist, artist).fetchJoin()
                 .join(song).on(song.artist.id.eq(artist.id))
                 .join(song.notes, note)

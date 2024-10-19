@@ -49,7 +49,8 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
     User user;
     Artist artist1;
     Artist artist2;
-    NoteCreateRequest request;
+    NoteCreateRequest request1;
+    NoteCreateRequest request2;
 
     @BeforeEach
     void setUp() {
@@ -58,13 +59,22 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
         artist2 = artistCommandRepository.save(ArtistFixture.create());
         Song song1 = songCommandRepository.save(SongFixture.create(artist1));
         Song song2 = songCommandRepository.save(SongFixture.create(artist2));
+        Song song3 = songCommandRepository.save(SongFixture.create(artist1));
 
-        request = new NoteCreateRequest(
+        request1 = new NoteCreateRequest(
                 "content",
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
                 song1.getId()
+        );
+
+        request2 = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                song2.getId()
         );
     }
 
@@ -74,7 +84,7 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
         favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, artist1));
         favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, artist2));
 
-        noteCommandService.create(request, user.getId());
+        noteCommandService.create(request1, user.getId());
 
         // when
         List<FavoriteArtistResponse> result = sut.findAllHavingNotesOfUser(user.getId());
