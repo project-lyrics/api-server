@@ -3,12 +3,14 @@ package com.projectlyrics.server.domain.notification.repository.impl;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
 import com.projectlyrics.server.domain.notification.domain.Notification;
+import com.projectlyrics.server.domain.notification.domain.NotificationType;
 import com.projectlyrics.server.domain.notification.exception.NotificationNotFoundException;
 import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -55,7 +57,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
     }
 
     @Override
-    public Slice<NotificationGetResponse> findAllByReceiverId(Long receiverId, Long cursorId, Pageable pageable) {
+    public Slice<NotificationGetResponse> findAllByTypeAndReceiverId(NotificationType type, Long receiverId, Long cursorId, int size) {
         List<NotificationGetResponse> content = jpaQueryFactory
                 .select(notificationGetResponse)
                 .from(notification)
@@ -65,13 +67,14 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
                 .where(
                         notification.receiver.id.eq(receiverId),
                         QueryDslUtils.gtCursorId(cursorId, notification.id),
-                        notification.deletedAt.isNull()
+                        notification.deletedAt.isNull(),
+                        notification.type.eq(type)
                 )
                 .orderBy(notification.id.desc())
-                .limit(pageable.getPageSize() + 1)
+                .limit(size + 1)
                 .fetch();
 
-        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+        return new SliceImpl<>(content, PageRequest.ofSize(size), QueryDslUtils.checkIfHasNext(size, content));
     }
 
     @Override
