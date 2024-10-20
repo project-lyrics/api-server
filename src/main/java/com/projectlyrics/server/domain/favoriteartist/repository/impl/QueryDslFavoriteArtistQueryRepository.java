@@ -77,6 +77,7 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
                 .join(song).on(song.artist.id.eq(artist.id))
                 .join(song.notes, note)
                 .where(
+                        favoriteArtist.user.id.eq(userId),
                         note.publisher.id.eq(userId),
                         favoriteArtist.deletedAt.isNull()
                 )
