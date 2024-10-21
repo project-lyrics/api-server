@@ -101,7 +101,6 @@ public class Note extends BaseEntity {
     private void addLyrics(Lyrics lyrics) {
         if (!Objects.isNull(lyrics)) {
             this.lyrics = lyrics;
-            lyrics.setNote(this);
         }
     }
 

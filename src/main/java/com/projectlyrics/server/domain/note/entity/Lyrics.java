@@ -21,9 +21,6 @@ public class Lyrics {
     @Enumerated(EnumType.STRING)
     private NoteBackground background;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "lyrics")
-    private Note note;
-
     private Lyrics(
             Long id,
             String content,
@@ -50,9 +47,5 @@ public class Lyrics {
         }
 
         return new Lyrics(content, background);
-    }
-
-    public void setNote(Note note) {
-        this.note = note;
     }
 }
