@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,23 +27,24 @@ import static com.projectlyrics.server.domain.song.entity.QSong.song;
 public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private static final ConstructorExpression<SongSearchResponse> songSearchResponse = Projections.constructor(
+            SongSearchResponse.class,
+            song.id,
+            song.name,
+            song.imageUrl,
+            note.id.count(),
+            Projections.constructor(
+                    ArtistGetResponse.class,
+                    song.artist.id,
+                    song.artist.name,
+                    song.artist.imageUrl
+            )
+    );
 
     @Override
     public Slice<SongSearchResponse> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
         List<SongSearchResponse> content = jpaQueryFactory
-                .select(Projections.constructor(
-                        SongSearchResponse.class,
-                        song.id,
-                        song.name,
-                        song.imageUrl,
-                        note.id.count(),
-                        Projections.constructor(
-                                ArtistGetResponse.class,
-                                song.artist.id,
-                                song.artist.name,
-                                song.artist.imageUrl
-                        )
-                ))
+                .select(songSearchResponse)
                 .from(song)
                 .leftJoin(song.notes, note)
                 .where(
@@ -84,13 +86,15 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
-    public Optional<Song> findById(Long id) {
+    public Optional<SongSearchResponse> findById(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
-                        .selectFrom(song)
-                        .join(song.artist).fetchJoin()
+                        .select(songSearchResponse)
+                        .from(song)
+                        .leftJoin(song.notes, note)
                         .where(
-                                song.id.eq(id)
+                                song.id.eq(id),
+                                note.deletedAt.isNull()
                         )
                         .fetchOne()
         );

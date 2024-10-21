@@ -35,6 +35,12 @@ public class Song {
     @OneToMany(mappedBy = "song")
     private List<Note> notes = new ArrayList<>();
 
+    public Song(
+            Long id
+    ) {
+        this.id = id;
+    }
+
     private Song(
             Long id,
             String spotifyId,

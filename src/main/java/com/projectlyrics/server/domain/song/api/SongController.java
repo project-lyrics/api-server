@@ -50,6 +50,6 @@ public class SongController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(songQueryService.getSongById(songId));
+                .body(songQueryService.getById(songId));
     }
 }

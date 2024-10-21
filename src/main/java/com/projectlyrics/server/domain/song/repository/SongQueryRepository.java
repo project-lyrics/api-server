@@ -9,8 +9,7 @@ import java.util.Optional;
 
 public interface SongQueryRepository {
 
+    Optional<SongSearchResponse> findById(Long id);
     Slice<SongSearchResponse> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable);
     Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable);
-
-    Optional<Song> findById(Long id);
 }

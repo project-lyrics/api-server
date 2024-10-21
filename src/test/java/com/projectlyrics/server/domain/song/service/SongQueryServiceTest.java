@@ -234,7 +234,7 @@ class SongQueryServiceTest extends IntegrationTest {
         noteCommandRepository.save(Note.create(NoteCreate.from(request, user, song)));
 
         // when
-        SongSearchResponse result = sut.getSongById(song.getId());
+        SongSearchResponse result = sut.getById(song.getId());
 
         // then
         assertAll(

@@ -12,6 +12,7 @@ import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionExcepti
 import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
+import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.exception.SongNotFoundException;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
@@ -38,15 +39,15 @@ public class NoteCommandService {
     public Note create(NoteCreateRequest request, Long publisherId) {
         User publisher = userQueryRepository.findById(publisherId)
                 .orElseThrow(UserNotFoundException::new);
-        Song song = songQueryRepository.findById(request.songId())
+        SongSearchResponse song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
 
-        checkDiscipline(song.getArtist().getId(), publisherId);
+        checkDiscipline(song.artist().getId(), publisherId);
 
         if (request.status().equals(NoteStatus.DRAFT)) {
             checkDrafts(publisher.getId());
         }
-        return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, song)));
+        return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, new Song(song.id()))));
     }
 
     private void checkDiscipline(Long artistId, Long userId) {

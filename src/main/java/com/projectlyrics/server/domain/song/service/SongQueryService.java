@@ -31,9 +31,8 @@ public class SongQueryService {
         );
     }
 
-    public SongSearchResponse getSongById(Long songId) {
-        return songQueryRepository.findById(songId)
-                .map(SongSearchResponse::from)
+    public SongSearchResponse getById(Long id) {
+        return songQueryRepository.findById(id)
                 .orElseThrow(SongNotFoundException::new);
     }
 }

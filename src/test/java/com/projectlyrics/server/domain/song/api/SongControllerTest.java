@@ -184,7 +184,7 @@ SongControllerTest extends RestDocsTest {
         // given
         Song song = SongFixture.create();
 
-        given(songQueryService.getSongById(any()))
+        given(songQueryService.getById(any()))
                 .willReturn(SongSearchResponse.from(song));
 
         // when, then
