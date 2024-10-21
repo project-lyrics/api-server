@@ -35,7 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/artists/search")
                 .excludePathPatterns("/api/v1/notes/artists")
                 .excludePathPatterns("/api/v1/notes/songs")
-                .excludePathPatterns("/api/v1/songs/search")
+                .excludePathPatterns("/api/v1/songs/*")
                 .excludePathPatterns("/api/v1/slack/interactive");
 
         registry.addInterceptor(adminInterceptor)
