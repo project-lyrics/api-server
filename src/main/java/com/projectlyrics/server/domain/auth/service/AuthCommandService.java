@@ -16,6 +16,7 @@ import com.projectlyrics.server.domain.comment.repository.CommentCommandReposito
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
+import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.entity.UserCreate;
@@ -42,6 +43,7 @@ public class AuthCommandService {
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
     private final LikeCommandRepository likeCommandRepository;
     private final NoteCommandRepository noteCommandRepository;
+    private final NotificationCommandRepository notificationCommandRepository;
 
     public AuthTokenResponse signUp(AuthSignUpRequest request) {
         SocialInfo socialInfo = authQueryService.getSocialInfo(AuthGetSocialInfo.from(request));
@@ -105,6 +107,7 @@ public class AuthCommandService {
 
         authRepository.findById(user.getSocialInfo().getSocialId())
                 .ifPresent(authRepository::delete);
+        notificationCommandRepository.deleteAllByReceiverId(userId);
         bookmarkCommandRepository.deleteAllByUserId(userId);
         commentCommandRepository.deleteAllByWriterId(userId);
         favoriteArtistCommandRepository.deleteAllByUserId(userId);
@@ -117,6 +120,7 @@ public class AuthCommandService {
     public void forcedWithdrawal(User user) {
         authRepository.findById(user.getSocialInfo().getSocialId())
                 .ifPresent(authRepository::delete);
+        notificationCommandRepository.deleteAllByReceiverId(user.getId());
         bookmarkCommandRepository.deleteAllByUserId(user.getId());
         commentCommandRepository.deleteAllByWriterId(user.getId());
         favoriteArtistCommandRepository.deleteAllByUserId(user.getId());
