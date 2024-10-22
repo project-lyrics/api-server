@@ -16,14 +16,14 @@ public enum ErrorCode {
     NULL_FIELD(HttpStatus.BAD_REQUEST, "00004", "Some field is missing."),
     EMPTY_FIELD(HttpStatus.BAD_REQUEST, "00005", "Some field is empty."),
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
+    //RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "00008", "이메일 형식이 유효하지 않습니다."),
 
     // Auth
     USER_FORCED_WITHDRAWAL(HttpStatus.FORBIDDEN, "01000", "강제 탈퇴 이력이 있는 유저입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "01001", "토큰이 만료되었습니다."),
-    WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "잘못된 토큰 형식으로 입력되었습니다."),
-    UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
+    // WRONG_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "01002", "잘못된 토큰 형식으로 입력되었습니다."),
+    // UNSUPPORTED_AUTH_PROVIDER(HttpStatus.BAD_REQUEST, "01003", "It is unsupported authentication provider"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "01004", "토큰이 유효하지 않습니다."),
     INVALID_KEY(HttpStatus.UNAUTHORIZED, "01005", "The key is not valid."),
     USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "01006", "이미 존재하는 유저입니다."),

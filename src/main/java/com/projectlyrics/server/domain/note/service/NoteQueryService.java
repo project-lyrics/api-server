@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
+import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +25,7 @@ public class NoteQueryService {
     public NoteDetailResponse getNoteById(Long noteId, Long userId) {
         return noteQueryRepository.findById(noteId)
                 .map(note -> NoteDetailResponse.of(note, note.getComments(), userId))
-                .orElseThrow();
+                .orElseThrow(NoteNotFoundException::new);
     }
 
     public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
