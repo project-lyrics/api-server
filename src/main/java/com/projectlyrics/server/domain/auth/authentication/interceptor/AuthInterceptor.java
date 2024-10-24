@@ -32,8 +32,15 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean isExcluded(HttpServletRequest request) {
-        return request.getRequestURI().matches("/api/v1/notes/\\d+") &&
-                request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
+        String requestURI = request.getRequestURI();
+        String requestMethod = request.getMethod();
+
+        return (requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) ||
+                requestURI.equals("/api/v1/artists") ||
+                requestURI.equals("/api/v1/artists/search") ||
+                requestURI.equals("/api/v1/notes/artists") ||
+                requestURI.equals("/api/v1/notes/songs") ||
+                requestURI.matches("/api/v1/songs/.*");
     }
 
     private void setAuthContext(HttpServletRequest request) {
