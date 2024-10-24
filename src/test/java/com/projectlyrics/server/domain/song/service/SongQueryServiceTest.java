@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class SongQueryServiceTest extends IntegrationTest {
-    //
+
     @Autowired
     UserCommandRepository userCommandRepository;
 
