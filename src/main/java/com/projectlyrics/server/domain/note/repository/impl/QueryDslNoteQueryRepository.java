@@ -34,8 +34,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .join(note.song).fetchJoin()
                         .join(song.artist).fetchJoin()
                         .leftJoin(note.comments).fetchJoin()
-                        .leftJoin(note.bookmarks).fetchJoin()
-                        .leftJoin(note.likes).fetchJoin()
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull()
