@@ -56,7 +56,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         artistId == null ? null : artist.id.eq(artistId),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id)
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -78,7 +78,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id)
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -100,7 +100,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id)
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -122,7 +122,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.id.eq(songId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id)
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -146,7 +146,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id)
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)

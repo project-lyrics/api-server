@@ -66,7 +66,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
                 .leftJoin(song.artist, artist)
                 .where(
                         notification.receiver.id.eq(receiverId),
-                        QueryDslUtils.gtCursorId(cursorId, notification.id),
+                        QueryDslUtils.ltCursorId(cursorId, notification.id),
                         notification.deletedAt.isNull(),
                         notification.type.eq(type)
                 )
@@ -87,7 +87,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
                 .leftJoin(notification.comment).fetchJoin()
                 .where(
                         notification.sender.id.eq(senderId),
-                        QueryDslUtils.gtCursorId(cursorId, notification.id),
+                        QueryDslUtils.ltCursorId(cursorId, notification.id),
                         notification.deletedAt.isNull()
                 )
                 .orderBy(notification.id.desc())

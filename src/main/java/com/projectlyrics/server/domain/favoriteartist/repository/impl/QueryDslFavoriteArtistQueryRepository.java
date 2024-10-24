@@ -31,7 +31,7 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
                 .where(
                         favoriteArtist.user.id.eq(userId),
                         favoriteArtist.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, favoriteArtist.id)
+                        QueryDslUtils.ltCursorId(cursorId, favoriteArtist.id)
                 )
                 .leftJoin(favoriteArtist.user, QUser.user)
                 .fetchJoin()

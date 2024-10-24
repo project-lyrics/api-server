@@ -68,7 +68,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .where(
                         songNameContains(query),
                         artistIdEq(artistId),
-                        QueryDslUtils.gtCursorId(cursor, song.id)
+                        QueryDslUtils.ltCursorId(cursor, song.id)
                 )
                 .orderBy(song.id.desc())
                 .limit(pageable.getPageSize() + 1)

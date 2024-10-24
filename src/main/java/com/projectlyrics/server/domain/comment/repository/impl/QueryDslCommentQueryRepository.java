@@ -45,7 +45,7 @@ public class QueryDslCommentQueryRepository implements CommentQueryRepository {
                 .where(
                         comment.note.id.eq(noteId),
                         comment.deletedAt.isNull(),
-                        QueryDslUtils.gtCursorId(cursorId, comment.id)
+                        QueryDslUtils.ltCursorId(cursorId, comment.id)
                 )
                 .orderBy(comment.id.desc())
                 .limit(pageable.getPageSize() + 1)
