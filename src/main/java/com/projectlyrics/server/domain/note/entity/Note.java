@@ -142,12 +142,12 @@ public class Note extends BaseEntity {
 
     public boolean isLiked(Long userId) {
         return likes.stream()
-                .anyMatch(like -> like.isUser(userId) && like.getDeletedAt() == null);
+                    .anyMatch(like -> like.isUser(userId) && like.isInUse());
     }
 
     public boolean isBookmarked(Long userId) {
         return bookmarks.stream()
-                .anyMatch(bookmark -> bookmark.isUser(userId) && bookmark.getDeletedAt() == null);
+                .anyMatch(bookmark -> bookmark.isUser(userId) && bookmark.isInUse());
     }
 
     public List<Comment> getComments() {
