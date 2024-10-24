@@ -43,21 +43,23 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         chain.doFilter(requestWrapper, responseWrapper);
         long end = System.currentTimeMillis();
 
-        log.info("""
-                |
-                | [REQUEST] {} {} {} ({}s)
-                | Headers : {}
-                | Request : {}
-                | Response : {}
-                """.trim(),
-                request.getMethod(),
-                request.getRequestURI(),
-                HttpStatus.valueOf(responseWrapper.getStatus()),
-                (end - start) / 1000.0,
-                getHeaders(request),
-                getRequestBody(requestWrapper),
-                getResponseBody(responseWrapper)
-        );
+        if (responseWrapper.getStatus() != HttpStatus.OK.value()) {
+            log.info("""
+                            |
+                            | [REQUEST] {} {} {} ({}s)
+                            | Headers : {}
+                            | Request : {}
+                            | Response : {}
+                            """.trim(),
+                    request.getMethod(),
+                    request.getRequestURI(),
+                    HttpStatus.valueOf(responseWrapper.getStatus()),
+                    (end - start) / 1000.0,
+                    getHeaders(request),
+                    getRequestBody(requestWrapper),
+                    getResponseBody(responseWrapper)
+            );
+        }
     }
 
     private String getHeaders(HttpServletRequest request) {
