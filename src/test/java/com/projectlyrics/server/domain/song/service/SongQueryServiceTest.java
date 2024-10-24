@@ -177,7 +177,7 @@ class SongQueryServiceTest extends IntegrationTest {
         songCommandService.create(requestOfArtist2);
 
         // when
-        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), query, 0L, 5);
+        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), query, null, 5);
 
         // then
         assertAll(
@@ -204,7 +204,7 @@ class SongQueryServiceTest extends IntegrationTest {
         }
 
         // when
-        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), null, 0L, 5);
+        CursorBasePaginatedResponse<SongGetResponse> result = sut.searchSongsByArtist(artist1.getId(), null, null, 5);
 
         // then
         assertAll(
