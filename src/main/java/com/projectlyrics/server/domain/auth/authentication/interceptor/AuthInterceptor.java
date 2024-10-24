@@ -23,6 +23,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (isExcluded(request)) {
+            setAuthContextIfAvailable(request);
             return true;
         }
 
@@ -40,5 +41,22 @@ public class AuthInterceptor implements HandlerInterceptor {
         JwtClaim claim = jwtExtractor.parseJwtClaim(tokenExtractor.extractToken(authorization));
         authContext.setNickname(claim.nickname());
         authContext.setId(claim.id());
+    }
+
+    private void setAuthContextIfAvailable(HttpServletRequest request) {
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authorization != null) {
+            String token = tokenExtractor.extractToken(authorization);
+
+            if (token != null) {
+                JwtClaim claim = jwtExtractor.parseJwtClaim(token);
+
+                if (claim != null) { //claim이 유효할 때만 authContext 설정
+                    authContext.setNickname(claim.nickname());
+                    authContext.setId(claim.id());
+                }
+            }
+        }
     }
 }
