@@ -95,4 +95,13 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.get(0).artist().id()).isEqualTo(1)
         );
     }
+
+    @Test
+    void 좋아하는_아티스트로_등록되어_있는지_확인할_수_있다() {
+        // given
+        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, artist1));
+
+        // when, then
+        assertThat(sut.existsByUserIdAndArtistId(user.getId(), artist1.getId())).isTrue();
+    }
 }

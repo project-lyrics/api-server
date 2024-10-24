@@ -37,15 +37,12 @@ public class FavoriteArtistCommandService {
         Artist artist = artistQueryRepository.findById(artistId)
                 .orElseThrow(ArtistNotFoundException::new);
 
-        checkIfFavoriteArtistExists(userId, artistId);
+        if (favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId).isPresent()) {
+            throw new FavoriteArtistAlreadyExistsException();
+        }
         user.setStatus(EntityStatusEnum.IN_USE);
 
         return favoriteArtistCommandRepository.save(FavoriteArtist.create(FavoriteArtistCreate.of(user, artist)));
-    }
-
-    private void checkIfFavoriteArtistExists(Long userId, Long artistId) {
-        favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
-                .ifPresent(favoriteArtist -> { throw new FavoriteArtistAlreadyExistsException(); });
     }
 
     public void createAll(Long userId, CreateFavoriteArtistListRequest request) {
@@ -68,13 +65,6 @@ public class FavoriteArtistCommandService {
         user.setStatus(EntityStatusEnum.IN_USE);
     }
 
-    private List<Artist> getUserFavoriteArtistList(Long userId) {
-        return favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
-                .stream()
-                .map(FavoriteArtist::getArtist)
-                .toList();
-    }
-
     public void delete(Long userId, Long artistId) {
         favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
                 .filter(favoriteArtist -> favoriteArtist.isUser(userId))
@@ -82,5 +72,12 @@ public class FavoriteArtistCommandService {
                         favoriteArtist -> favoriteArtist.delete(userId, Clock.systemDefaultZone()),
                         () -> { throw new FavoriteArtistNotFoundException(); }
                 );
+    }
+
+    private List<Artist> getUserFavoriteArtistList(Long userId) {
+        return favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
+                .stream()
+                .map(FavoriteArtist::getArtist)
+                .toList();
     }
 }

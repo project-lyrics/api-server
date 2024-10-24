@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -229,6 +230,32 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                                         .description("아티스트 이미지")
                         )
                         .responseSchema(Schema.schema("Favorite Artist Having Notes Of User Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 관심_아티스트_여부를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // when
+        mockMvc.perform(get("/api/v1/favorite-artists/exists")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("artistId", "1"))
+                .andExpect(status().isOk())
+                .andDo(getFavoriteArtistExistsDocument());
+    }
+
+    private RestDocumentationResultHandler getFavoriteArtistExistsDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Favorite Artist API")
+                        .summary("아티스트의 좋아하는 아티스트 등록 여부 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("exists").type(JsonFieldType.BOOLEAN)
+                                        .description("관심 아티스트 존재 여부")
+                        )
+                        .responseSchema(Schema.schema("Favorite Artist Exists Response"))
                         .build())
         );
     }

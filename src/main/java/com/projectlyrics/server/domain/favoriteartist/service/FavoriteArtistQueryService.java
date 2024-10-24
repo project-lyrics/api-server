@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.favoriteartist.service;
 
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
+import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,5 +33,10 @@ public class FavoriteArtistQueryService {
                 .stream()
                 .map(FavoriteArtistResponse::of)
                 .toList();
+    }
+
+    public boolean existsByUserIdAndArtistId(Long userId, Long artistId) {
+        return favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
+                .isPresent();
     }
 }

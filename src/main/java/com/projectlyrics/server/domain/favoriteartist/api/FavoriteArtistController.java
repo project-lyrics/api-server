@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistCreateResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistDeleteResponse;
+import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistExistsResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.dto.request.CreateFavoriteArtistListRequest;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
@@ -86,5 +87,17 @@ public class FavoriteArtistController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(favoriteArtistQueryService.findAllHavingNotesOfUser(authContext.getId()));
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<FavoriteArtistExistsResponse> exists(
+            @Authenticated AuthContext authContext,
+            @RequestParam(name = "artistId") Long artistId
+    ) {
+        boolean result = favoriteArtistQueryService.existsByUserIdAndArtistId(authContext.getId(), artistId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new FavoriteArtistExistsResponse(result));
     }
 }
