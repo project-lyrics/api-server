@@ -47,7 +47,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                             |
                             | [REQUEST] {} {} {} ({}s)
                             | Headers : {}
-                            | Request : {}
+                            | RequestBody : {}
+                            | RequestParams : {}
                             | Response : {}
                             """.trim(),
                 request.getMethod(),
@@ -56,6 +57,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                 (end - start) / 1000.0,
                 getHeaders(request),
                 getRequestBody(requestWrapper),
+                getRequestParameters(request),
                 getResponseBody(responseWrapper)
         );
     }
@@ -70,6 +72,25 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    private String getRequestParameters(HttpServletRequest request) {
+        Map<String, String[]> paramMap = request.getParameterMap();
+        StringBuilder params = new StringBuilder();
+
+        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+            String key = entry.getKey();
+            String[] values = entry.getValue();
+            for (String value : values) {
+                params.append(key).append("=").append(value).append("&");
+            }
+        }
+
+        if (!params.isEmpty()) {
+            params.deleteCharAt(params.length() - 1);
+        }
+
+        return params.toString();
     }
 
     private String getRequestBody(ContentCachingRequestWrapper request) {

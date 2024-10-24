@@ -12,7 +12,7 @@ import static com.projectlyrics.server.domain.note.entity.QNote.note;
 public class QueryDslUtils {
 
     public static BooleanExpression ltCursorId(Long cursor, NumberPath<Long> id) {
-        return cursor == null ? null : id.lt(cursor);
+        return cursor == null || cursor == 0 ? null : id.lt(cursor);
     }
 
     public static <T> boolean checkIfHasNext(Pageable pageable, List<T> content) {
