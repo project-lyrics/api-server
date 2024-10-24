@@ -15,4 +15,6 @@ public interface FavoriteArtistQueryRepository {
     Optional<FavoriteArtist> findByUserIdAndArtistId(Long userId, Long artistId);
 
     List<FavoriteArtist> findAllHavingNotesOfUser(Long userId);
+
+    List<FavoriteArtist> findAllBookmarked(Long userId);
 }

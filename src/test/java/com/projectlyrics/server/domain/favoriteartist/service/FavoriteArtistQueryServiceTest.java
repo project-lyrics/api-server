@@ -2,9 +2,13 @@ package com.projectlyrics.server.domain.favoriteartist.service;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
+import com.projectlyrics.server.domain.bookmark.domain.Bookmark;
+import com.projectlyrics.server.domain.bookmark.domain.BookmarkCreate;
+import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.dto.response.FavoriteArtistResponse;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
@@ -17,6 +21,7 @@ import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.FavoriteArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +47,9 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
 
     @Autowired
     NoteCommandService noteCommandService;
+
+    @Autowired
+    BookmarkCommandRepository bookmarkCommandRepository;
 
     @Autowired
     FavoriteArtistQueryService sut;
@@ -88,6 +96,23 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
 
         // when
         List<FavoriteArtistResponse> result = sut.findAllHavingNotesOfUser(user.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.size()).isEqualTo(1),
+                () -> assertThat(result.get(0).artist().id()).isEqualTo(1)
+        );
+    }
+
+    @Test
+    void 자신이_북마크한_노트와_연관된_아티스트만_리스트로_조회할_수_있다() {
+        // given
+        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, artist1));
+        Note note = noteCommandService.create(request1, user.getId());
+        bookmarkCommandRepository.save(Bookmark.create(new BookmarkCreate(user, note)));
+
+        // when
+        List<FavoriteArtistResponse> result = sut.findAllBookmarked(user.getId());
 
         // then
         assertAll(

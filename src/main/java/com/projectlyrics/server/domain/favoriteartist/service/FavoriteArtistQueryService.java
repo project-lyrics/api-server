@@ -35,6 +35,13 @@ public class FavoriteArtistQueryService {
                 .toList();
     }
 
+    public List<FavoriteArtistResponse> findAllBookmarked(Long userId) {
+        return favoriteArtistQueryRepository.findAllBookmarked(userId)
+                .stream()
+                .map(FavoriteArtistResponse::of)
+                .toList();
+    }
+
     public boolean existsByUserIdAndArtistId(Long userId, Long artistId) {
         return favoriteArtistQueryRepository.findByUserIdAndArtistId(userId, artistId)
                 .isPresent();

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.bookmark.domain.QBookmark.bookmark;
 import static com.projectlyrics.server.domain.favoriteartist.entity.QFavoriteArtist.favoriteArtist;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
@@ -79,6 +80,25 @@ public class QueryDslFavoriteArtistQueryRepository implements FavoriteArtistQuer
                 .where(
                         favoriteArtist.user.id.eq(userId),
                         note.publisher.id.eq(userId),
+                        note.deletedAt.isNull(),
+                        favoriteArtist.deletedAt.isNull()
+                )
+                .orderBy(favoriteArtist.id.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<FavoriteArtist> findAllBookmarked(Long userId) {
+        return jpaQueryFactory
+                .selectFrom(favoriteArtist).distinct()
+                .join(favoriteArtist.artist, artist).fetchJoin()
+                .join(song).on(song.artist.id.eq(artist.id))
+                .join(song.notes, note)
+                .join(note.bookmarks, bookmark)
+                .where(
+                        favoriteArtist.user.id.eq(userId),
+                        bookmark.user.id.eq(userId),
+                        bookmark.deletedAt.isNull(),
                         favoriteArtist.deletedAt.isNull()
                 )
                 .orderBy(favoriteArtist.id.desc())

@@ -81,12 +81,21 @@ public class FavoriteArtistController {
     }
 
     @GetMapping("/having-notes")
-    public ResponseEntity<List<FavoriteArtistResponse>> findAllHavingNotesOfUser(
+    public ResponseEntity<List<FavoriteArtistResponse>> getAllHavingNotesOfUser(
             @Authenticated AuthContext authContext
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(favoriteArtistQueryService.findAllHavingNotesOfUser(authContext.getId()));
+    }
+
+    @GetMapping("/bookmarked")
+    public ResponseEntity<List<FavoriteArtistResponse>> getAllBookmarked(
+            @Authenticated AuthContext authContext
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(favoriteArtistQueryService.findAllBookmarked(authContext.getId()));
     }
 
     @GetMapping("/exists")

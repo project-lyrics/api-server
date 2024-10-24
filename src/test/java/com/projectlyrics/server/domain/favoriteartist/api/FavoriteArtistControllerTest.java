@@ -235,6 +235,48 @@ class FavoriteArtistControllerTest extends RestDocsTest {
     }
 
     @Test
+    void 북마크한_노트와_연관된_관심_아티스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+
+        List<FavoriteArtistResponse> response = new ArrayList<>();
+        User user = UserFixture.create();
+        for (int i = 0; i < 10; i++) {
+            Artist artist = ArtistFixture.create();
+            response.add(FavoriteArtistResponse.of(FavoriteArtistFixture.create(user, artist)));
+        }
+        given(favoriteArtistQueryService.findAllBookmarked(any()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/favorite-artists/bookmarked")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(response)))
+                .andDo(getFavoriteArtistBookmarkedDocument());
+    }
+
+    private RestDocumentationResultHandler getFavoriteArtistBookmarkedDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Favorite Artist API")
+                        .summary("사용자가 북마크한 노트와 연관된 관심 아티스트 리스트 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER)
+                                        .description("관심 아티스트 id"),
+                                fieldWithPath("[].artist.id").type(JsonFieldType.NUMBER)
+                                        .description("아티스트 id"),
+                                fieldWithPath("[].artist.name").type(JsonFieldType.STRING)
+                                        .description("아티스트 이름"),
+                                fieldWithPath("[].artist.imageUrl").type(JsonFieldType.STRING)
+                                        .description("아티스트 이미지")
+                        )
+                        .responseSchema(Schema.schema("Favorite Artist Bookmarked Response"))
+                        .build())
+        );
+    }
+
+    @Test
     void 관심_아티스트_여부를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
         // when
         mockMvc.perform(get("/api/v1/favorite-artists/exists")
@@ -251,6 +293,8 @@ class FavoriteArtistControllerTest extends RestDocsTest {
                         .tag("Favorite Artist API")
                         .summary("아티스트의 좋아하는 아티스트 등록 여부 조회 API")
                         .requestHeaders(getAuthorizationHeader())
+                        .queryParameters(parameterWithName("artistId").type(SimpleType.NUMBER)
+                                .description("아티스트 id"))
                         .responseFields(
                                 fieldWithPath("exists").type(JsonFieldType.BOOLEAN)
                                         .description("관심 아티스트 존재 여부")
