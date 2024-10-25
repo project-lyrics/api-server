@@ -1,17 +1,13 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
-import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
-import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
-import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
-import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
@@ -28,18 +24,21 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
     public Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
         List<Song> content = jpaQueryFactory
                 .select(song)
                 .from(song)
                 .leftJoin(song.notes, note)
                 .where(
-                        songNameContains(query),
-                        note.deletedAt.isNull()
+                        songNameContains(query)
                 )
                 .groupBy(song.id)
-                .orderBy(note.id.count().desc())
+                .orderBy(
+                        // note.deletedAt이 null인 경우만 카운트하여 정렬
+                        Expressions.numberTemplate(Long.class,
+                                        "count(case when {0} is null then 1 end)", note.deletedAt)
+                                .desc()
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -80,8 +79,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                         .from(song)
                         .leftJoin(song.notes, note)
                         .where(
-                                song.id.eq(id),
-                                note.deletedAt.isNull()
+                                song.id.eq(id)
                         )
                         .fetchOne()
         );

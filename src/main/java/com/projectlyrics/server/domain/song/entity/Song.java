@@ -70,4 +70,8 @@ public class Song {
                 songCreate.artist()
         );
     }
+
+    public List<Note> getNotes() {
+        return notes.stream().filter(note -> note.isInUse()).toList();
+    }
 }
