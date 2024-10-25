@@ -42,7 +42,13 @@ public class NoteCommandService {
         SongSearchResponse song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
 
-        checkDiscipline(song.artist().getId(), publisherId);
+        System.out.println("----------------------------");
+        System.out.println("song.artist().id() = " + song.artist().id());
+        System.out.println("song.artist().name() = " + song.artist().name());
+        System.out.println("song.artist().imageUrl() = " + song.artist().imageUrl());
+        System.out.println("----------------------------");
+
+        checkDiscipline(song.artist().id(), publisherId);
 
         if (request.status().equals(NoteStatus.DRAFT)) {
             checkDrafts(publisher.getId());
