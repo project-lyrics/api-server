@@ -27,24 +27,11 @@ import org.springframework.stereotype.Repository;
 public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private static final ConstructorExpression<SongSearchResponse> songSearchResponse = Projections.constructor(
-            SongSearchResponse.class,
-            song.id,
-            song.name,
-            song.imageUrl,
-            note.id.count(),
-            Projections.constructor(
-                    ArtistGetResponse.class,
-                    song.artist.id,
-                    song.artist.name,
-                    song.artist.imageUrl
-            )
-    );
 
     @Override
-    public Slice<SongSearchResponse> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
-        List<SongSearchResponse> content = jpaQueryFactory
-                .select(songSearchResponse)
+    public Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
+        List<Song> content = jpaQueryFactory
+                .select(song)
                 .from(song)
                 .leftJoin(song.notes, note)
                 .where(
@@ -86,13 +73,12 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
-    public Optional<SongSearchResponse> findById(Long id) {
+    public Optional<Song> findById(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
-                        .select(songSearchResponse)
+                        .select(song)
                         .from(song)
                         .leftJoin(song.notes, note)
-                        .leftJoin(song.artist, artist)
                         .where(
                                 song.id.eq(id),
                                 note.deletedAt.isNull()

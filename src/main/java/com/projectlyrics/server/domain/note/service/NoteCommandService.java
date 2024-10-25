@@ -12,18 +12,16 @@ import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionExcepti
 import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
-import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.exception.SongNotFoundException;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Clock;
 
 @Service
 @Transactional
@@ -39,22 +37,22 @@ public class NoteCommandService {
     public Note create(NoteCreateRequest request, Long publisherId) {
         User publisher = userQueryRepository.findById(publisherId)
                 .orElseThrow(UserNotFoundException::new);
-        SongSearchResponse song = songQueryRepository.findById(request.songId())
+        Song song = songQueryRepository.findById(request.songId())
                 .orElseThrow(SongNotFoundException::new);
 
         System.out.println("----------------------------");
-        System.out.println("song.artist() = " + song.artist());
-        System.out.println("song.artist().id() = " + song.artist().id());
-        System.out.println("song.artist().name() = " + song.artist().name());
-        System.out.println("song.artist().imageUrl() = " + song.artist().imageUrl());
+        System.out.println("song.artist() = " + song.getArtist());
+        System.out.println("song.artist().id() = " + song.getArtist().getId());
+        System.out.println("song.artist().name() = " + song.getArtist().getName());
+        System.out.println("song.artist().imageUrl() = " + song.getArtist().getImageUrl());
         System.out.println("----------------------------");
 
-        checkDiscipline(song.artist().id(), publisherId);
+        checkDiscipline(song.getArtist().getId(), publisherId);
 
         if (request.status().equals(NoteStatus.DRAFT)) {
             checkDrafts(publisher.getId());
         }
-        return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, new Song(song.id()))));
+        return noteCommandRepository.save(Note.create(NoteCreate.from(request, publisher, new Song(song.getId()))));
     }
 
     private void checkDiscipline(Long artistId, Long userId) {

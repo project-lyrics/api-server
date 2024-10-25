@@ -21,6 +21,7 @@ public class SongQueryService {
     public OffsetBasePaginatedResponse<SongSearchResponse> searchSongs(String query, int pageNumber, int pageSize) {
         return OffsetBasePaginatedResponse.of(
                 songQueryRepository.findAllByQueryOrderByNoteCountDesc(query, PageRequest.of(pageNumber, pageSize))
+                        .map(SongSearchResponse::from)
         );
     }
 
@@ -33,6 +34,7 @@ public class SongQueryService {
 
     public SongSearchResponse getById(Long id) {
         return songQueryRepository.findById(id)
+                .map(SongSearchResponse::from)
                 .orElseThrow(SongNotFoundException::new);
     }
 }
