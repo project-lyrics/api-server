@@ -43,6 +43,7 @@ public class NoteCommandService {
                 .orElseThrow(SongNotFoundException::new);
 
         System.out.println("----------------------------");
+        System.out.println("song.artist() = " + song.artist());
         System.out.println("song.artist().id() = " + song.artist().id());
         System.out.println("song.artist().name() = " + song.artist().name());
         System.out.println("song.artist().imageUrl() = " + song.artist().imageUrl());

@@ -1,5 +1,9 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.note.entity.QNote.note;
+import static com.projectlyrics.server.domain.song.entity.QSong.song;
+
 import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
@@ -9,18 +13,14 @@ import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static com.projectlyrics.server.domain.note.entity.QNote.note;
-import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
 @Repository
 @RequiredArgsConstructor
@@ -92,6 +92,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                         .select(songSearchResponse)
                         .from(song)
                         .leftJoin(song.notes, note)
+                        .leftJoin(song.artist, artist)
                         .where(
                                 song.id.eq(id),
                                 note.deletedAt.isNull()
