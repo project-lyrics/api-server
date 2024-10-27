@@ -36,10 +36,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         return false;
     }
     private boolean isExcluded(HttpServletRequest request) {
-        return request.getRequestURI().matches("/api/v1/artists") &&
-                request.getMethod().equalsIgnoreCase(HttpMethod.GET.name()) ||
-                request.getRequestURI().matches("/api/v1/artists/\\d+") &&
-                request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
+        return request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
     }
 
     private void setAuthContext(HttpServletRequest request) {

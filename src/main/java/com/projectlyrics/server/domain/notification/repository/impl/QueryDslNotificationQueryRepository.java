@@ -1,5 +1,10 @@
 package com.projectlyrics.server.domain.notification.repository.impl;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.note.entity.QNote.note;
+import static com.projectlyrics.server.domain.notification.domain.QNotification.notification;
+import static com.projectlyrics.server.domain.song.entity.QSong.song;
+
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
 import com.projectlyrics.server.domain.notification.domain.Notification;
@@ -9,20 +14,14 @@ import com.projectlyrics.server.domain.notification.repository.NotificationQuery
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Objects;
-
-import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
-import static com.projectlyrics.server.domain.note.entity.QNote.note;
-import static com.projectlyrics.server.domain.notification.domain.QNotification.notification;
-import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
 @Repository
 @RequiredArgsConstructor
@@ -102,8 +101,10 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
         Integer result = jpaQueryFactory
                 .selectOne()
                 .from(notification)
-                .where(notification.receiver.id.eq(receiverId))
-                .where(notification.checked.isFalse())
+                .where(
+                        notification.receiver.id.eq(receiverId)
+                                .and(notification.checked.isFalse())
+                )
                 .fetchFirst();
 
         return result != null;

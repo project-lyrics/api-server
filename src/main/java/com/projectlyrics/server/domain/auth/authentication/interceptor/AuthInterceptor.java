@@ -35,12 +35,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        return (requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) ||
+        return (requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
+                requestURI.matches("/api/v1/artists/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
                 requestURI.equals("/api/v1/artists") ||
                 requestURI.equals("/api/v1/artists/search") ||
                 requestURI.equals("/api/v1/notes/artists") ||
                 requestURI.equals("/api/v1/notes/songs") ||
-                requestURI.matches("/api/v1/songs/.*");
+                requestURI.matches("/api/v1/songs/.*"));
     }
 
     private void setAuthContext(HttpServletRequest request) {
