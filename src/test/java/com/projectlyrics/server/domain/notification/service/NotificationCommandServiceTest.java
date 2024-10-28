@@ -129,7 +129,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createCommentNotification(commentEvent).get();
 
         // then
-        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypeAndReceiverId(COMMENT_ON_NOTE, user.getId(), null, 10)
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypesAndReceiverId(List.of(COMMENT_ON_NOTE), user.getId(), null, 10)
                 .getContent();
 
         assertAll(
@@ -150,7 +150,7 @@ class NotificationCommandServiceTest extends IntegrationTest {
         sut.createDisciplineNotification(disciplineEvent).get();
 
         // then
-        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypeAndReceiverId(DISCIPLINE, user.getId(), null, 10)
+        List<NotificationGetResponse> result = notificationQueryRepository.findAllByTypesAndReceiverId(List.of(DISCIPLINE), user.getId(), null, 10)
                 .getContent();
 
         assertAll(

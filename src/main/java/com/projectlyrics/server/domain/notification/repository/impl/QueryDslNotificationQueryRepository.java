@@ -56,7 +56,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
     }
 
     @Override
-    public Slice<NotificationGetResponse> findAllByTypeAndReceiverId(NotificationType type, Long receiverId, Long cursorId, int size) {
+    public Slice<NotificationGetResponse> findAllByTypesAndReceiverId(List<NotificationType> types, Long receiverId, Long cursorId, int size) {
         List<NotificationGetResponse> content = jpaQueryFactory
                 .select(notificationGetResponse)
                 .from(notification)
@@ -67,7 +67,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
                         notification.receiver.id.eq(receiverId),
                         QueryDslUtils.ltCursorId(cursorId, notification.id),
                         notification.deletedAt.isNull(),
-                        notification.type.eq(type)
+                        notification.type.in(types)
                 )
                 .orderBy(notification.id.desc())
                 .limit(size + 1)
@@ -75,6 +75,7 @@ public class QueryDslNotificationQueryRepository implements NotificationQueryRep
 
         return new SliceImpl<>(content, PageRequest.ofSize(size), QueryDslUtils.checkIfHasNext(size, content));
     }
+
 
     @Override
     public Slice<Notification> findAllBySenderId(Long senderId, Long cursorId, Pageable pageable) {

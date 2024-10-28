@@ -23,6 +23,7 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +97,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
         }
 
         // when
-        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(PUBLIC, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(List.of(PUBLIC), user.getId(), null, 10);
 
         // then
         assertAll(
@@ -123,7 +124,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
         }
 
         // when
-        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(COMMENT_ON_NOTE, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NotificationGetResponse> result = sut.getRecentNotifications(List.of(COMMENT_ON_NOTE), user.getId(), null, 10);
 
         // then
         assertAll(
@@ -140,7 +141,7 @@ class NotificationQueryServiceTest extends IntegrationTest {
             notificationCommandService.createPublicNotification(user.getId(), "content");
         }
 
-        CursorBasePaginatedResponse<NotificationGetResponse> response = sut.getRecentNotifications(PUBLIC, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NotificationGetResponse> response = sut.getRecentNotifications(List.of(PUBLIC), user.getId(), null, 10);
         for (int i = 0; i < notificationSize; i++) {
             notificationCommandService.check(response.data().get(i).id(), user.getId());
         }

@@ -1,5 +1,8 @@
 package com.projectlyrics.server.domain.notification.api;
 
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.DISCIPLINE;
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.PUBLIC;
+
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.Authenticated;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
@@ -11,13 +14,18 @@ import com.projectlyrics.server.domain.notification.api.dto.response.PublicNotif
 import com.projectlyrics.server.domain.notification.service.NotificationCommandService;
 import com.projectlyrics.server.domain.notification.service.NotificationQueryService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import static com.projectlyrics.server.domain.notification.domain.NotificationType.COMMENT_ON_NOTE;
-import static com.projectlyrics.server.domain.notification.domain.NotificationType.PUBLIC;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -55,7 +63,7 @@ public class NotificationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(notificationQueryService.getRecentNotifications(PUBLIC, authContext.getId(), cursor, size));
+                .body(notificationQueryService.getRecentNotifications(List.of(PUBLIC), authContext.getId(), cursor, size));
     }
 
     @GetMapping("/personal")
@@ -66,7 +74,7 @@ public class NotificationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(notificationQueryService.getRecentNotifications(COMMENT_ON_NOTE, authContext.getId(), cursor, size));
+                .body(notificationQueryService.getRecentNotifications(List.of(PUBLIC, DISCIPLINE), authContext.getId(), cursor, size));
     }
 
     @GetMapping("/check")

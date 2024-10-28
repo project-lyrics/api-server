@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.notification.api.dto.response.NotificationGetResponse;
 import com.projectlyrics.server.domain.notification.domain.NotificationType;
 import com.projectlyrics.server.domain.notification.repository.NotificationQueryRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +16,9 @@ public class NotificationQueryService {
 
     private final NotificationQueryRepository notificationQueryRepository;
 
-    public CursorBasePaginatedResponse<NotificationGetResponse> getRecentNotifications(NotificationType type, Long userId, Long cursor, int size) {
+    public CursorBasePaginatedResponse<NotificationGetResponse> getRecentNotifications(List<NotificationType> types, Long userId, Long cursor, int size) {
         return CursorBasePaginatedResponse.of(
-                notificationQueryRepository.findAllByTypeAndReceiverId(type, userId, cursor, size)
+                notificationQueryRepository.findAllByTypesAndReceiverId(types, userId, cursor, size)
         );
     }
 
