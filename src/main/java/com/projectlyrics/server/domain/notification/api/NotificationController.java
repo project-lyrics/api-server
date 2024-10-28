@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.notification.api;
 
+import static com.projectlyrics.server.domain.notification.domain.NotificationType.COMMENT_ON_NOTE;
 import static com.projectlyrics.server.domain.notification.domain.NotificationType.DISCIPLINE;
 import static com.projectlyrics.server.domain.notification.domain.NotificationType.PUBLIC;
 
@@ -74,7 +75,7 @@ public class NotificationController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(notificationQueryService.getRecentNotifications(List.of(PUBLIC, DISCIPLINE), authContext.getId(), cursor, size));
+                .body(notificationQueryService.getRecentNotifications(List.of(COMMENT_ON_NOTE, DISCIPLINE), authContext.getId(), cursor, size));
     }
 
     @GetMapping("/check")
