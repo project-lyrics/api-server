@@ -145,11 +145,11 @@ public class User extends BaseEntity {
         }
 
         if (Objects.nonNull(request.gender())) {
-            info = new UserMetaInfo(request.gender(), info.getBirthYear());
+            info = new UserMetaInfo(request.gender(), info == null ? null : info.getBirthYear());
         }
 
         if (Objects.nonNull(request.birthYear())) {
-            info = new UserMetaInfo(info.getGender(), request.birthYear());
+            info = new UserMetaInfo(info == null ? null : info.getGender(), request.birthYear());
         }
     }
 }
