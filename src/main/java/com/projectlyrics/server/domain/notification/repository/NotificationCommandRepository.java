@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface NotificationCommandRepository extends JpaRepository<Notification, Long> {
 
     void deleteAllByReceiverId(Long receiverId);
+    void deleteAllBySenderId(Long senderId);
 }

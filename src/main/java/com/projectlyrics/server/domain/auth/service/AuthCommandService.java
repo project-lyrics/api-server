@@ -108,6 +108,7 @@ public class AuthCommandService {
         authRepository.findById(user.getSocialInfo().getSocialId())
                 .ifPresent(authRepository::delete);
         notificationCommandRepository.deleteAllByReceiverId(userId);
+        notificationCommandRepository.deleteAllBySenderId(userId);
         bookmarkCommandRepository.deleteAllByUserId(userId);
         commentCommandRepository.deleteAllByWriterId(userId);
         favoriteArtistCommandRepository.deleteAllByUserId(userId);
