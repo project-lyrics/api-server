@@ -6,6 +6,6 @@ import com.projectlyrics.server.global.exception.FeelinException;
 public class UnchangedUsernameException extends FeelinException {
 
     public UnchangedUsernameException() {
-        super(ErrorCode.USER_NOT_FOUND);
+        super(ErrorCode.UNCHANGED_USERNAME);
     }
 }
