@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
 import com.projectlyrics.server.domain.user.exception.FailedToUpdateProfileException;
+import com.projectlyrics.server.domain.user.exception.UnchangedUsernameException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -137,6 +138,9 @@ public class User extends BaseEntity {
         }
 
         if (Objects.nonNull(request.nickname()) && !request.nickname().isEmpty()) {
+            if (nickname.equals(request.nickname())) {
+                throw new UnchangedUsernameException();
+            }
             nickname = new Username(request.nickname());
         }
 

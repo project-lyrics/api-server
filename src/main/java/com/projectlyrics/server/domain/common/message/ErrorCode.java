@@ -39,6 +39,7 @@ public enum ErrorCode {
     INVALID_AGE(HttpStatus.BAD_REQUEST, "02002", "The age must 14 years or older"),
     INVALID_PROFILE_CHARACTER(HttpStatus.BAD_REQUEST, "02003", "올바르지 않은 프로필 캐릭터입니다."),
     FAILED_TO_UPDATE_PROFILE(HttpStatus.BAD_REQUEST, "02004", "사용자 프로필을 수정하는 데 실패했습니다."),
+    UNCHANGED_USERNAME(HttpStatus.BAD_REQUEST, "02005", "동일한 닉네임으로 프로필을 수정할 수 없습니다"),
 
     // Artist
     ARTIST_NOT_FOUND(HttpStatus.NOT_FOUND, "03000", "해당 아티스트를 조회할 수 없습니다."),
