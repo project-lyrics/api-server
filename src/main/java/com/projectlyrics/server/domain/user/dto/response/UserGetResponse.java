@@ -11,7 +11,7 @@ public record UserGetResponse(
     public static UserGetResponse from(User user) {
         return new UserGetResponse(
                 user.getId(),
-                user.getDeletedAt() == null ? user.getNickname().getValue() : "(알 수 없음)",
+                user.getDeletedAt() == null ? user.getNickname().getValue() : "(알수없음)",
                 user.getDeletedAt() == null ? user.getProfileCharacter().getType() : "shortHair"
         );
     }
