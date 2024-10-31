@@ -128,6 +128,14 @@ public class User extends BaseEntity {
         delete(id, Clock.systemDefaultZone());
     }
 
+    public void forcedWithdrawal(Clock clock) {
+        nickname = null;
+        profileCharacter = null;
+        info = null;
+        termsAgreements.forEach(TermsAgreements::delete);
+        forcedDelete(Clock.systemDefaultZone());
+    }
+
     public void update(UserUpdateRequest request) {
         if (Objects.isNull(request.nickname())
                 && Objects.isNull(request.profileCharacter())

@@ -299,15 +299,12 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
         AuthTokenResponse signUpResponse = sut.signUp(request);
 
-        Note note = writeNote(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
-
         // when
         sut.delete(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
 
         // then
         assertThat(userQueryRepository.findById(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id())).isEmpty();
         assertThat(authRepository.findByRefreshToken(signUpResponse.refreshToken())).isEmpty();
-        assertThat(noteQueryRepository.findById(note.getId())).isEmpty();
     }
 
     @Test
@@ -316,6 +313,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
         AuthTokenResponse signUpResponse = sut.signUp(request);
+        Note note = writeNote(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
 
         // when
         sut.delete(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
@@ -327,6 +325,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         assertThat(result.getSocialInfo().getSocialId()).isEqualTo(user.getSocialInfo().getSocialId());
         assertThat(result.getSocialInfo().getAuthProvider()).isEqualTo(user.getSocialInfo().getAuthProvider());
         assertThat(result.getRole()).isEqualTo(user.getRole());
+        assertThat(noteQueryRepository.findById(note.getId())).isNotEmpty();
     }
 
     private Note writeNote(Long userId) {

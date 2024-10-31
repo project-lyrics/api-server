@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -49,6 +50,7 @@ public abstract class BaseEntity {
     private Long deletedBy;
 
     @Value("${admin}")
+    @Transient
     private Long adminUserId;
 
     protected BaseEntity() {this.status = EntityStatusEnum.IN_USE;}
@@ -64,15 +66,15 @@ public abstract class BaseEntity {
         this.deletedBy = deletedById;
     }
 
+    public void forcedDelete(Clock clock) {
+        this.status = EntityStatusEnum.FORCED_WITHDRAWAL;
+        this.deletedAt = LocalDateTime.now(clock);
+        this.deletedBy = adminUserId; //admin
+    }
+
     public void restore() {
         this.status = EntityStatusEnum.IN_USE;
         this.deletedAt = null;
         this.deletedBy = null;
-    }
-
-    public void forcedWithdrawal(Clock clock) {
-        this.status = EntityStatusEnum.FORCED_WITHDRAWAL;
-        this.deletedAt = LocalDateTime.now(clock);
-        this.deletedBy = adminUserId; //admin
     }
 }

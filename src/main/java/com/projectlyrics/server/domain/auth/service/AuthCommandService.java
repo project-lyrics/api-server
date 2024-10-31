@@ -12,10 +12,8 @@ import com.projectlyrics.server.domain.auth.exception.AuthNotFoundException;
 import com.projectlyrics.server.domain.auth.exception.ForcedWithdrawalUserException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
-import com.projectlyrics.server.domain.comment.repository.CommentCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
-import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.notification.repository.NotificationCommandRepository;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -39,10 +37,8 @@ public class AuthCommandService {
     private final UserCommandRepository userCommandRepository;
     private final UserQueryRepository userQueryRepository;
     private final BookmarkCommandRepository bookmarkCommandRepository;
-    private final CommentCommandRepository commentCommandRepository;
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
     private final LikeCommandRepository likeCommandRepository;
-    private final NoteCommandRepository noteCommandRepository;
     private final NotificationCommandRepository notificationCommandRepository;
 
     public AuthTokenResponse signUp(AuthSignUpRequest request) {
@@ -106,14 +102,15 @@ public class AuthCommandService {
                 .orElseThrow(UserNotFoundException::new);
 
         authRepository.findById(user.getSocialInfo().getSocialId())
-                .ifPresent(authRepository::delete);
+                .ifPresentOrElse(
+                authRepository::delete,
+                () -> { throw new AuthNotFoundException(); }
+        );
         notificationCommandRepository.deleteAllByReceiverId(userId);
         notificationCommandRepository.deleteAllBySenderId(userId);
         bookmarkCommandRepository.deleteAllByUserId(userId);
-        commentCommandRepository.deleteAllByWriterId(userId);
         favoriteArtistCommandRepository.deleteAllByUserId(userId);
         likeCommandRepository.deleteAllByUserId(userId);
-        noteCommandRepository.deleteAllByPublisherId(userId);
 
         user.withdraw();
     }
@@ -122,11 +119,11 @@ public class AuthCommandService {
         authRepository.findById(user.getSocialInfo().getSocialId())
                 .ifPresent(authRepository::delete);
         notificationCommandRepository.deleteAllByReceiverId(user.getId());
+        notificationCommandRepository.deleteAllBySenderId(user.getId());
         bookmarkCommandRepository.deleteAllByUserId(user.getId());
-        commentCommandRepository.deleteAllByWriterId(user.getId());
         favoriteArtistCommandRepository.deleteAllByUserId(user.getId());
         likeCommandRepository.deleteAllByUserId(user.getId());
-        noteCommandRepository.deleteAllByPublisherId(user.getId());
+
         user.forcedWithdrawal(Clock.systemDefaultZone());
     }
 }
