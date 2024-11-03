@@ -54,6 +54,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : artist.id.eq(artistId),
+                        note.publisher.deletedAt.isNull(),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id)
@@ -143,6 +144,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
+                        note.publisher.deletedAt.isNull(),
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
