@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Repository
@@ -14,18 +15,34 @@ public class JdbcSongCommandRepository implements SongCommandRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final String insertQuery = "INSERT INTO songs (artist_id, spotify_id, name, release_date, album_name, image_url) VALUES (?, ?, ?, ?, ?, ?)";
+    private final String insertQueryWithId = "INSERT INTO songs (id, artist_id, spotify_id, name, release_date, album_name, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     @Override
     public Song save(Song song) {
-        jdbcTemplate.update(
-                insertQuery,
-                song.getArtist().getId(),
-                song.getSpotifyId(),
-                song.getName(),
-                song.getReleaseDate(),
-                song.getAlbumName(),
-                song.getImageUrl()
-        );
+        if (Objects.nonNull(song.getId())) {
+            jdbcTemplate.update(
+                    insertQueryWithId,
+                    song.getId(),
+                    song.getArtist().getId(),
+                    song.getSpotifyId(),
+                    song.getName(),
+                    song.getReleaseDate(),
+                    song.getAlbumName(),
+                    song.getImageUrl()
+            );
+        }
+
+        else {
+            jdbcTemplate.update(
+                    insertQuery,
+                    song.getArtist().getId(),
+                    song.getSpotifyId(),
+                    song.getName(),
+                    song.getReleaseDate(),
+                    song.getAlbumName(),
+                    song.getImageUrl()
+            );
+        }
 
         return song;
     }
