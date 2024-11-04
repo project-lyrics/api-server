@@ -379,7 +379,7 @@ class AuthControllerTest extends RestDocsTest {
     @Test
     void 만료된_토큰이면_400응답을_해야_한다() throws Exception {
         //given
-        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoidGVzdDEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcyMTEzNTI2MCwiZXhwIjoxNzIxMTM1MjYwfQ.Xj-lRRIWkYj_7JlfLl0hcjEfgABrnL7s8M2aBCdN71U";
+        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQ3LCJuaWNrbmFtZSI6ImtvbnUiLCJyb2xlIjoiVVNFUiIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzMwNzM5MDgzLCJleHAiOjE3MzA3MzkyNjN9.pwyi1iqtdAGE3bYrglojj0FuSBl4J2Lzgm228mvEWxA";
 
         //when then
         mockMvc.perform(get("/api/v1/auth/validate-token")
