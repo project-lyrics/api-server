@@ -22,22 +22,31 @@ public class Auth {
     private AuthProvider authProvider;
     @Indexed
     private String refreshToken;
+    @Indexed
+    private String deviceId;
 
     private Auth(
             String socialId,
             AuthProvider authProvider,
-            String refreshToken
+            String refreshToken,
+            String deviceId
     ) {
         this.socialId = socialId;
         this.authProvider = authProvider;
         this.refreshToken = refreshToken;
+        this.deviceId = deviceId;
     }
 
-    public static Auth create(SocialInfo socialInfo, String refreshToken) {
+    public static Auth create(
+            SocialInfo socialInfo,
+            String refreshToken,
+            String deviceId
+    ) {
         return new Auth(
                 socialInfo.getSocialId(),
                 socialInfo.getAuthProvider(),
-                refreshToken
+                refreshToken,
+                deviceId
         );
     }
 }
