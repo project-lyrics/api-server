@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface AuthRepository extends CrudRepository<Auth, String> {
 
     Optional<Auth> findByRefreshToken(String refreshToken);
+    Optional<Auth> findByDeviceId(String deviceId);
 }
