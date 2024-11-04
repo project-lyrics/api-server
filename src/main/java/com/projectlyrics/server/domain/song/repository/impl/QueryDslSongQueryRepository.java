@@ -34,9 +34,8 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 )
                 .groupBy(song.id)
                 .orderBy(
-                        // note.deletedAt이 null인 경우만 카운트하여 정렬
                         Expressions.numberTemplate(Long.class,
-                                        "count(case when {0} is null then 1 end)", note.deletedAt)
+                                        "(select count(n) from Note n where n.song.id = song.id and n.deletedAt is null)")
                                 .desc()
                 )
                 .offset(pageable.getOffset())
