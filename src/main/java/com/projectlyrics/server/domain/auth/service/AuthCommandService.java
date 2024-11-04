@@ -41,13 +41,13 @@ public class AuthCommandService {
     private final LikeCommandRepository likeCommandRepository;
     private final NotificationCommandRepository notificationCommandRepository;
 
-    public AuthTokenResponse signUp(AuthSignUpRequest request) {
+    public AuthTokenResponse signUp(AuthSignUpRequest request, String deviceId) {
         SocialInfo socialInfo = authQueryService.getSocialInfo(AuthGetSocialInfo.from(request));
         checkIfAlreadyExists(socialInfo);
 
         User user = userCommandRepository.save(User.create(UserCreate.of(socialInfo, request)));
 
-        AuthToken authToken = issueAndSaveToken(user);
+        AuthToken authToken = issueAndSaveToken(user, deviceId);
         return AuthTokenResponse.of(authToken, user.getId());
     }
 
@@ -60,12 +60,12 @@ public class AuthCommandService {
         }
     }
 
-    public AuthTokenResponse signIn(AuthSignInRequest request) {
+    public AuthTokenResponse signIn(AuthSignInRequest request, String deviceId) {
         SocialInfo socialInfo = authQueryService.getSocialInfo(AuthGetSocialInfo.from(request));
         User user = userQueryRepository.findBySocialIdAndAuthProvider(socialInfo.getSocialId(), socialInfo.getAuthProvider())
                 .orElseThrow(UserNotFoundException::new);
 
-        AuthToken authToken = issueAndSaveToken(user);
+        AuthToken authToken = issueAndSaveToken(user, deviceId);
         return AuthTokenResponse.of(authToken, user.getId());
     }
 
@@ -75,13 +75,13 @@ public class AuthCommandService {
         User user = userQueryRepository.findBySocialIdAndAuthProvider(auth.getSocialId(), auth.getAuthProvider())
                 .orElseThrow(UserNotFoundException::new);
 
-        AuthToken authToken = issueAndSaveToken(user);
+        AuthToken authToken = issueAndSaveToken(user, auth.getDeviceId());
         return AuthTokenResponse.of(authToken, user.getId());
     }
 
-    private AuthToken issueAndSaveToken(User user) {
+    private AuthToken issueAndSaveToken(User user, String deviceId) {
         AuthToken authToken = jwtProvider.issueTokens(user.getId(), user.getNickname().getValue(), user.getRole());
-        authRepository.save(Auth.create(user.getSocialInfo(), authToken.refreshToken()));
+        authRepository.save(Auth.create(user.getSocialInfo(), authToken.refreshToken(), deviceId));
 
         return authToken;
     }
