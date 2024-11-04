@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Profile({"dev"})
+@Profile({"local"})
 @Component
 @RequiredArgsConstructor
 public class DummyDataInitializer {
@@ -27,27 +27,54 @@ public class DummyDataInitializer {
     private final ArtistCommandRepository artistCommandRepository;
     private final SongCommandRepository songCommandRepository;
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
-        List<Artist> artists = saveInitialArtists();
-        saveInitialSongs(artists);
+        List<Artist> artists = getArtists();
+        saveSongs(artists);
+    }
+
+    private List<Artist> getArtists() {
+        List<Artist> artists = new ArrayList<>();
+
+        try {
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/no_songs_artists.csv"));
+            String[] line;
+
+            while ((line = reader.readNext()) != null) {
+                ArtistCreate artistCreate = new ArtistCreate(
+                        Long.parseLong(line[4]),
+                        null,
+                        null,
+                        null,
+                        line[10],
+                        null
+                );
+
+                artists.add(Artist.create(artistCreate));
+            }
+
+        } catch (Exception e) {
+            log.error("failed to read csv file", e);
+        }
+
+        return artists;
     }
 
     private List<Artist> saveInitialArtists() {
         List<Artist> artists = new ArrayList<>();
 
         try {
-            CSVReader reader = new CSVReader(new FileReader("src/main/resources/artists.csv"));
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/no_songs_artists.csv"));
             String[] line;
 
             while ((line = reader.readNext()) != null) {
                 ArtistCreate artistCreate = new ArtistCreate(
-                        Long.parseLong(line[0]),
-                        line[1],
-                        line[2],
-                        line[3],
-                        line[4],
-                        line[5]
+                        Long.parseLong(line[4]),
+                        line[8],
+                        null,
+                        null,
+                        line[10],
+                        line[8]
                 );
 
                 artists.add(Artist.create(artistCreate));
@@ -59,22 +86,22 @@ public class DummyDataInitializer {
         return artistCommandRepository.saveAll(artists);
     }
 
-    private void saveInitialSongs(List<Artist> artists) {
+    private void saveSongs(List<Artist> artists) {
         List<Song> songs = new ArrayList<>();
 
         try {
-            CSVReader reader = new CSVReader(new FileReader("src/main/resources/songs.csv"));
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/missing_songs.csv"));
             String[] line;
 
             while ((line = reader.readNext()) != null) {
                 SongCreate songCreate = new SongCreate(
-                        Long.parseLong(line[0]),
-                        line[3],
+                        null,
+                        line[0],
                         line[1],
-                        parse(line[6]),
-                        line[5],
+                        parse(line[2]),
+                        line[3],
                         line[4],
-                        findArtist(Long.parseLong(line[2]), artists)
+                        findArtist(line[5], artists)
                 );
 
                 songs.add(Song.create(songCreate));
@@ -94,10 +121,10 @@ public class DummyDataInitializer {
         }
     }
 
-    private Artist findArtist(Long id, List<Artist> artists) {
+    private Artist findArtist(String spotifyId, List<Artist> artists) {
         return artists.stream()
-                .filter(artist -> artist.getId().equals(id))
+                .filter(artist -> artist.getSpotifyId().equals(spotifyId))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(RuntimeException::new);
     }
 }
