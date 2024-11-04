@@ -144,7 +144,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
-                        note.publisher.deletedAt.isNull(),
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
