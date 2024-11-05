@@ -50,3 +50,5 @@ slack:
     id: secret
 
 admin: 1
+
+version: 1.0.0.3
