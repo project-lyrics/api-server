@@ -18,6 +18,8 @@ public enum ErrorCode {
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
     //RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "00008", "이메일 형식이 유효하지 않습니다."),
+    UPDATE_REQUIRED(HttpStatus.UPGRADE_REQUIRED, "00009", "최신 버전이 아니므로 업데이트가 필요합니다."),
+    VERSION_HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "00010", "클라이언트 버전 헤더가 누락되었습니다."),
 
     // Auth
     USER_FORCED_WITHDRAWAL(HttpStatus.FORBIDDEN, "01000", "강제 탈퇴 이력이 있는 유저입니다."),
