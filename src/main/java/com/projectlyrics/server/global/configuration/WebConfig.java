@@ -54,6 +54,11 @@ public class WebConfig implements WebMvcConfigurer {
                     .addPathPatterns("/api/v1/auth/sign-up");
         }
 
+        if (Objects.nonNull(versionVerificationInterceptor)) {
+            registry.addInterceptor(versionVerificationInterceptor)
+                    .addPathPatterns("/api/**");
+        }
+
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/api/v1/artists/**")
                 .addPathPatterns("/api/v1/notifications/public")
