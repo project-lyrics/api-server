@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "auth", timeToLive = 60 * 60 * 24 * 1000L * 14)
+@RedisHash(value = "auth", timeToLive = 4 * 60 * 1000L)
 public class Auth {
 
     @Id
