@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInter
 import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthArgumentResolver authArgumentResolver;
     private final AdminInterceptor adminInterceptor;
     private final SlackInterceptor slackInterceptor;
+    @Autowired(required = false)
+    private VersionVerificationInterceptor versionVerificationInterceptor;
 
     @Autowired(required = false)
     private DeviceIdInterceptor deviceIdInterceptor;
@@ -39,11 +42,21 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/auth/token")
                 .excludePathPatterns("/api/v1/slack/interactive");
 
+        if (Objects.nonNull(versionVerificationInterceptor)) {
+            registry.addInterceptor(versionVerificationInterceptor)
+                    .addPathPatterns("/api/**");
+        }
+
         if (Objects.nonNull(deviceIdInterceptor)) {
             registry.addInterceptor(deviceIdInterceptor)
                     .addPathPatterns("/api/**")
                     .excludePathPatterns("/api/v1/auth/sign-in")
                     .addPathPatterns("/api/v1/auth/sign-up");
+        }
+
+        if (Objects.nonNull(versionVerificationInterceptor)) {
+            registry.addInterceptor(versionVerificationInterceptor)
+                    .addPathPatterns("/api/**");
         }
 
         registry.addInterceptor(adminInterceptor)

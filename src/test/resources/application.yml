@@ -24,6 +24,8 @@ slack:
 
 admin: 1
 
+version: 1.0.0.3
+
 ---
 spring:
   config:
@@ -57,7 +59,7 @@ spring:
     url: jdbc:mysql://localhost:3306/lyrics?serverTimezone=UTC&useSSL=false&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: root
     password:
-    
+
   jpa:
     hibernate:
       ddl-auto: create
