@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final AdminInterceptor adminInterceptor;
     private final SlackInterceptor slackInterceptor;
     @Autowired(required = false)
-    private final VersionVerificationInterceptor versionVerificationInterceptor;
+    private VersionVerificationInterceptor versionVerificationInterceptor;
 
     @Autowired(required = false)
     private DeviceIdInterceptor deviceIdInterceptor;
