@@ -25,19 +25,21 @@ public class AuthController {
 
     @PostMapping("/sign-in")
     public ResponseEntity<AuthTokenResponse> signIn(
-            @RequestBody @Valid AuthSignInRequest request
+            @RequestBody @Valid AuthSignInRequest request,
+            @RequestHeader("Device-Id") String deviceId
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authCommandService.signIn(request));
+                .body(authCommandService.signIn(request, deviceId));
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<AuthTokenResponse> signUp(
-            @RequestBody @Valid AuthSignUpRequest request
+            @RequestBody @Valid AuthSignUpRequest request,
+            @RequestHeader("Device-Id") String deviceId
     ) {
         return ResponseEntity
-                .ok(authCommandService.signUp(request));
+                .ok(authCommandService.signUp(request, deviceId));
     }
 
     @PostMapping("/token")

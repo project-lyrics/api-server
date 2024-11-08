@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "auth", timeToLive = 60 * 60 * 24 * 1000L * 14)
+@RedisHash(value = "auth", timeToLive = 4 * 60)
 public class Auth {
 
     @Id
@@ -22,22 +22,31 @@ public class Auth {
     private AuthProvider authProvider;
     @Indexed
     private String refreshToken;
+    @Indexed
+    private String deviceId;
 
     private Auth(
             String socialId,
             AuthProvider authProvider,
-            String refreshToken
+            String refreshToken,
+            String deviceId
     ) {
         this.socialId = socialId;
         this.authProvider = authProvider;
         this.refreshToken = refreshToken;
+        this.deviceId = deviceId;
     }
 
-    public static Auth create(SocialInfo socialInfo, String refreshToken) {
+    public static Auth create(
+            SocialInfo socialInfo,
+            String refreshToken,
+            String deviceId
+    ) {
         return new Auth(
                 socialInfo.getSocialId(),
                 socialInfo.getAuthProvider(),
-                refreshToken
+                refreshToken,
+                deviceId
         );
     }
 }

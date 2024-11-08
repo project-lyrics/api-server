@@ -2,6 +2,7 @@ package com.projectlyrics.server.global.configuration;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
@@ -28,6 +29,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired(required = false)
     private final VersionVerificationInterceptor versionVerificationInterceptor;
 
+    @Autowired(required = false)
+    private DeviceIdInterceptor deviceIdInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
@@ -41,6 +45,13 @@ public class WebConfig implements WebMvcConfigurer {
         if (Objects.nonNull(versionVerificationInterceptor)) {
             registry.addInterceptor(versionVerificationInterceptor)
                     .addPathPatterns("/api/**");
+        }
+
+        if (Objects.nonNull(deviceIdInterceptor)) {
+            registry.addInterceptor(deviceIdInterceptor)
+                    .addPathPatterns("/api/**")
+                    .excludePathPatterns("/api/v1/auth/sign-in")
+                    .addPathPatterns("/api/v1/auth/sign-up");
         }
 
         registry.addInterceptor(adminInterceptor)
