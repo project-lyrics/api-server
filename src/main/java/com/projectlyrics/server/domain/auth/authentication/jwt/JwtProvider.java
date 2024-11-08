@@ -22,8 +22,8 @@ public class JwtProvider {
     private static final String REFRESH_TOKEN_TYPE = "refreshToken";
 //    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000L;
 //    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 1000L * 14;
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 2 * 60 * 1000L;
-    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 4 * 60 * 1000L;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000L * 60 * 30;
+    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7 * 3;
 
     private final Key key;
     private final Clock clock;
