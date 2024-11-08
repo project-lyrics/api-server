@@ -39,17 +39,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class AuthControllerTest extends RestDocsTest {
 
+    private static final String deviceIdHeader = "Device-Id";
+    private static final String deviceIdValue = "device_id";
+
     @Test
     void 로그인할_때_소셜_로그인_인증된_유저는_인증_토큰과_200응답을_해야_한다() throws Exception {
         //given
         AuthSignInRequest request = new AuthSignInRequest("socialAccessToken", AuthProvider.KAKAO);
         AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
-        given(authCommandService.signIn(any()))
+        given(authCommandService.signIn(any(), any()))
                 .willReturn(response);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-in")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -62,13 +66,14 @@ class AuthControllerTest extends RestDocsTest {
         //given
         AuthSignInRequest request = new AuthSignInRequest("socialAccessToken", AuthProvider.KAKAO);
         UserNotFoundException e = new UserNotFoundException();
-        given(authCommandService.signIn(any()))
+        given(authCommandService.signIn(any(), any()))
                 .willThrow(e);
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-in")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -80,12 +85,13 @@ class AuthControllerTest extends RestDocsTest {
         //given
         AuthSignInRequest request = new AuthSignInRequest("socialAccessToken", AuthProvider.KAKAO);
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_SOCIAL_TOKEN);
-        given(authCommandService.signIn(any()))
+        given(authCommandService.signIn(any(), any()))
                 .willThrow(FeignException.class);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-in")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -125,12 +131,13 @@ class AuthControllerTest extends RestDocsTest {
                 false
         );
         AuthTokenResponse response = new AuthTokenResponse(accessToken, refreshToken, 1L);
-        given(authCommandService.signUp(any()))
+        given(authCommandService.signUp(any(), any()))
                 .willReturn(response);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -152,12 +159,13 @@ class AuthControllerTest extends RestDocsTest {
         );
         NotAgreeToTermsException e = new NotAgreeToTermsException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
-        given(authCommandService.signUp(any()))
+        given(authCommandService.signUp(any(), any()))
                 .willThrow(e);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -179,12 +187,13 @@ class AuthControllerTest extends RestDocsTest {
         );
         AlreadyExistsUserException e = new AlreadyExistsUserException();
         ErrorResponse response = ErrorResponse.of(e.getErrorCode());
-        given(authCommandService.signUp(any()))
+        given(authCommandService.signUp(any(), any()))
                 .willThrow(e);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -205,12 +214,13 @@ class AuthControllerTest extends RestDocsTest {
                 false
         );
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_SOCIAL_TOKEN);
-        given(authCommandService.signUp(any()))
+        given(authCommandService.signUp(any(), any()))
                 .willThrow(FeignException.class);
 
         //when then
         mockMvc.perform(post("/api/v1/auth/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(deviceIdHeader, deviceIdValue)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(mapper.writeValueAsString(response)))
@@ -369,7 +379,7 @@ class AuthControllerTest extends RestDocsTest {
     @Test
     void 만료된_토큰이면_400응답을_해야_한다() throws Exception {
         //given
-        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm5pY2tuYW1lIjoidGVzdDEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcyMTEzNTI2MCwiZXhwIjoxNzIxMTM1MjYwfQ.Xj-lRRIWkYj_7JlfLl0hcjEfgABrnL7s8M2aBCdN71U";
+        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQ3LCJuaWNrbmFtZSI6ImtvbnUiLCJyb2xlIjoiVVNFUiIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzMwNzM5MDgzLCJleHAiOjE3MzA3MzkyNjN9.pwyi1iqtdAGE3bYrglojj0FuSBl4J2Lzgm228mvEWxA";
 
         //when then
         mockMvc.perform(get("/api/v1/auth/validate-token")
