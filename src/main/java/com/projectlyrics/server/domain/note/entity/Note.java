@@ -123,9 +123,7 @@ public class Note extends BaseEntity {
     }
 
     private void updateLyrics(Lyrics lyrics) {
-        if (!Objects.isNull(lyrics)) {
-            this.lyrics = lyrics;
-        }
+        this.lyrics = lyrics;
     }
 
     private void updateNoteStatus(NoteStatus noteStatus) {
