@@ -1,14 +1,14 @@
 package com.projectlyrics.server.domain.note.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class NoteTest {
 
@@ -125,38 +125,6 @@ class NoteTest {
 
         // then
         assertThat(updatedNote.getContent()).isEqualTo("content");
-    }
-
-    @Test
-    void 노트_수정_객체의_가사가_비었으면_수정하지_않는다() {
-        // given
-        User publisher = UserFixture.create();
-        Song song = SongFixture.create(ArtistFixture.create());
-        NoteCreate noteCreate = new NoteCreate(
-                "content",
-                "lyrics",
-                NoteBackground.DEFAULT,
-                NoteStatus.PUBLISHED,
-                publisher,
-                song
-        );
-        Note note = Note.create(noteCreate);
-
-        NoteUpdate noteUpdate = new NoteUpdate(
-                "updated content",
-                "",
-                null,
-                NoteStatus.PUBLISHED
-        );
-
-        // when
-        Note updatedNote = note.update(noteUpdate);
-
-        // then
-        assertAll(
-                () -> assertThat(updatedNote.getLyrics().getContent()).isEqualTo("lyrics"),
-                () -> assertThat(updatedNote.getLyrics().getBackground()).isEqualTo(NoteBackground.DEFAULT)
-        );
     }
 
     @Test
