@@ -49,7 +49,6 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     public Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable) {
         List<Song> content = jpaQueryFactory
                 .selectFrom(song)
-                .leftJoin(song.notes, note)
                 .where(
                         songNameContains(query),
                         artistIdEq(artistId),
