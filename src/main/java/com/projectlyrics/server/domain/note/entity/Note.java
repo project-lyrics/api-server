@@ -28,7 +28,9 @@ public class Note extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 1000)
     private String content;
+
     @Enumerated(EnumType.STRING)
     private NoteStatus noteStatus;
 
