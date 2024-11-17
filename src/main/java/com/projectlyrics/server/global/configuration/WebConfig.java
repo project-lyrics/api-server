@@ -2,10 +2,13 @@ package com.projectlyrics.server.global.configuration;
 
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
+import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -13,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
+import java.util.Objects;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,6 +26,11 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthArgumentResolver authArgumentResolver;
     private final AdminInterceptor adminInterceptor;
     private final SlackInterceptor slackInterceptor;
+    @Autowired(required = false)
+    private VersionVerificationInterceptor versionVerificationInterceptor;
+
+    @Autowired(required = false)
+    private DeviceIdInterceptor deviceIdInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -32,6 +41,23 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/auth/sign-up")
                 .excludePathPatterns("/api/v1/auth/token")
                 .excludePathPatterns("/api/v1/slack/interactive");
+
+        if (Objects.nonNull(versionVerificationInterceptor)) {
+            registry.addInterceptor(versionVerificationInterceptor)
+                    .addPathPatterns("/api/**");
+        }
+
+        if (Objects.nonNull(deviceIdInterceptor)) {
+            registry.addInterceptor(deviceIdInterceptor)
+                    .addPathPatterns("/api/**")
+                    .excludePathPatterns("/api/v1/auth/sign-in")
+                    .addPathPatterns("/api/v1/auth/sign-up");
+        }
+
+        if (Objects.nonNull(versionVerificationInterceptor)) {
+            registry.addInterceptor(versionVerificationInterceptor)
+                    .addPathPatterns("/api/**");
+        }
 
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/api/v1/artists/**")

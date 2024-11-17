@@ -18,6 +18,9 @@ public enum ErrorCode {
     INVALID_URL_PREFIX(HttpStatus.BAD_REQUEST, "00006", "URL should start with http:// or https://."),
     //RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "00007", "Resource not found."),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "00008", "이메일 형식이 유효하지 않습니다."),
+    UPDATE_REQUIRED(HttpStatus.UPGRADE_REQUIRED, "00009", "최신 버전이 아니므로 업데이트가 필요합니다."),
+    VERSION_HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "00010", "클라이언트 버전 헤더가 누락되었습니다."),
+    MISSING_REQUEST_HEADER(HttpStatus.BAD_REQUEST, "00011", "필수 헤더가 누락되었습니다."),
 
     // Auth
     USER_FORCED_WITHDRAWAL(HttpStatus.FORBIDDEN, "01000", "강제 탈퇴 이력이 있는 유저입니다."),
@@ -32,6 +35,7 @@ public enum ErrorCode {
     INVALID_TOKEN_PREFIX(HttpStatus.BAD_REQUEST, "01009", "Bearer 인증 형식이 아닙니다."),
     INVALID_SOCIAL_TOKEN(HttpStatus.UNAUTHORIZED, "01010", "유효하지 않은 소셜 인증 토큰입니다."),
     AUTH_NOT_FOUND(HttpStatus.NOT_FOUND, "01011", "해당 인증 정보를 찾을 수 없습니다."),
+    NOT_REGISTERED_DEVICE(HttpStatus.NOT_FOUND, "01012", "타 기기에서 로그인했거나 등록되지 않은 기기입니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "02000", "해당 유저가 존재하지 않습니다."),

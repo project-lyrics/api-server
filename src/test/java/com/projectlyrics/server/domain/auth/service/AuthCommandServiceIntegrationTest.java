@@ -93,6 +93,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
 
     private User user;
     private AuthSignUpRequest request;
+    private String deviceId;
 
     @BeforeEach
     void setUp() {
@@ -107,6 +108,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 List.of(new AuthSignUpRequest.TermsInput(true, "title", "agreement")),
                 false
         );
+        deviceId = "device-id";
     }
 
     @Test
@@ -116,7 +118,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when
-        AuthTokenResponse response = sut.signUp(request);
+        AuthTokenResponse response = sut.signUp(request, deviceId);
 
         // then
         User signedUpUser = userQueryRepository.findBySocialIdAndAuthProvider(user.getSocialInfo().getSocialId(), AuthProvider.KAKAO).get();
@@ -134,7 +136,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when, then
-        assertThatThrownBy(() -> sut.signUp(request))
+        assertThatThrownBy(() -> sut.signUp(request, deviceId))
                 .isInstanceOf(AlreadyExistsUserException.class);
     }
 
@@ -147,7 +149,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when, then
-        assertThatThrownBy(() -> sut.signUp(request))
+        assertThatThrownBy(() -> sut.signUp(request, deviceId))
                 .isInstanceOf(ForcedWithdrawalUserException.class);
     }
 
@@ -169,14 +171,14 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when, then
-        assertThatThrownBy(() -> sut.signUp(unAgreedRequest))
+        assertThatThrownBy(() -> sut.signUp(unAgreedRequest, deviceId))
                 .isInstanceOf(NotAgreeToTermsException.class);
     }
 
     @Test
     void 소셜_인증에_실패한_경우_회원가입에_실패해야_한다() throws Exception {
         // when, then
-        assertThatThrownBy(() -> sut.signUp(request))
+        assertThatThrownBy(() -> sut.signUp(request, deviceId))
                 .isInstanceOf(FeignException.class);
     }
 
@@ -187,7 +189,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when
-        AuthTokenResponse response = sut.signUp(request);
+        AuthTokenResponse response = sut.signUp(request, deviceId);
         Auth auth = authRepository.findByRefreshToken(response.refreshToken()).get();
 
         // then
@@ -202,7 +204,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when
-        AuthTokenResponse response = sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.KAKAO));
+        AuthTokenResponse response = sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.KAKAO), deviceId);
 
         // then
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
@@ -217,7 +219,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(appleSocialService).getSocialData(any());
 
         // when
-        AuthTokenResponse response = sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.APPLE));
+        AuthTokenResponse response = sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.APPLE), deviceId);
 
         // then
         Long userId = jwtExtractor.parseJwtClaim(response.accessToken()).id();
@@ -231,7 +233,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
 
         // when, then
-        assertThatThrownBy(() -> sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.KAKAO)))
+        assertThatThrownBy(() -> sut.signIn(new AuthSignInRequest("accessToken", AuthProvider.KAKAO), deviceId))
                 .isInstanceOf(UserNotFoundException.class);
     }
 
@@ -241,7 +243,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         String socialAccessToken = "accessToken";
 
         // when, then
-        assertThatThrownBy(() -> sut.signIn(new AuthSignInRequest(socialAccessToken, AuthProvider.KAKAO)))
+        assertThatThrownBy(() -> sut.signIn(new AuthSignInRequest(socialAccessToken, AuthProvider.KAKAO), deviceId))
                 .isInstanceOf(FeignException.class);
     }
 
@@ -250,7 +252,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         // given
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
-        AuthTokenResponse signUpResponse = sut.signUp(request);
+        AuthTokenResponse signUpResponse = sut.signUp(request, deviceId);
 
         // when
         AuthTokenResponse reissuedToken = sut.reissueToken(signUpResponse.refreshToken());
@@ -267,7 +269,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         // given
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
-        AuthTokenResponse signUpResponse = sut.signUp(request);
+        AuthTokenResponse signUpResponse = sut.signUp(request, deviceId);
 
         // when
         AuthTokenResponse reissuedToken = sut.reissueToken(signUpResponse.refreshToken());
@@ -283,7 +285,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         // given
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
-        AuthTokenResponse signUpResponse = sut.signUp(request);
+        AuthTokenResponse signUpResponse = sut.signUp(request, deviceId);
 
         // when
         sut.signOut(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
@@ -297,7 +299,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         // given
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
-        AuthTokenResponse signUpResponse = sut.signUp(request);
+        AuthTokenResponse signUpResponse = sut.signUp(request, deviceId);
 
         // when
         sut.delete(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
@@ -312,7 +314,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         // given
         doReturn(new KakaoUserInfo(user.getSocialInfo().getSocialId()))
                 .when(kakaoSocialDataApiClient).getUserInfo(any());
-        AuthTokenResponse signUpResponse = sut.signUp(request);
+        AuthTokenResponse signUpResponse = sut.signUp(request, deviceId);
         Note note = writeNote(jwtExtractor.parseJwtClaim(signUpResponse.accessToken()).id());
 
         // when
