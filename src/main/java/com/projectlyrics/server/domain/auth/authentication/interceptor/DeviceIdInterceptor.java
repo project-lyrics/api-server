@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Profile({"dev", "local"})
+@Profile({"dev", "prod"})
 @Component
 @Transactional
 @RequiredArgsConstructor
