@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Profile({"dev", "local"})
+@Profile({"dev", "prod", })
 @Component
 public class VersionVerificationInterceptor implements HandlerInterceptor {
 
