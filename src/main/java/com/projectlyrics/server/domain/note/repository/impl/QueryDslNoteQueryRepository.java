@@ -11,6 +11,7 @@ import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +55,14 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .join(note.song).fetchJoin()
                         .join(song.artist).fetchJoin()
                         .leftJoin(note.comments, comment).fetchJoin()
-                        .leftJoin(block)
-                            .on(block.blocked.eq(comment.writer)
-                                    .and(block.blocker.id.eq(userId)))
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull(),
-                                block.id.isNull()
+                                comment.writer.notIn(
+                                        JPAExpressions.select(block.blocked)
+                                                .from(block)
+                                                .where(block.blocker.id.eq(userId))
+                                )
                         )
                         .fetchOne()
         );
