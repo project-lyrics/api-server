@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BlockCommandRepository extends JpaRepository<Block, Long> {
 
+    void deleteAllByBlockerId(Long userId);
+    void deleteAllByBlockedId(Long userId);
 }
