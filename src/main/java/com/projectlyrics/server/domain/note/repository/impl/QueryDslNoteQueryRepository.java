@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.note.repository.impl;
 import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.bookmark.domain.QBookmark.bookmark;
+import static com.projectlyrics.server.domain.comment.domain.QComment.comment;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
@@ -38,6 +39,28 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Note> findById(Long id, Long userId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(note)
+                        .leftJoin(note.lyrics).fetchJoin()
+                        .join(note.publisher).fetchJoin()
+                        .join(note.song).fetchJoin()
+                        .join(song.artist).fetchJoin()
+                        .leftJoin(note.comments).fetchJoin()
+                        .leftJoin(block)
+                            .on(block.blocked.eq(comment.writer)
+                                    .and(block.blocker.id.eq(userId)))
+                        .where(
+                                note.id.eq(id),
+                                note.deletedAt.isNull(),
+                                block.id.isNull()
                         )
                         .fetchOne()
         );

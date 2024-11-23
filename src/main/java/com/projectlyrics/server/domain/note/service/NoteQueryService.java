@@ -23,7 +23,7 @@ public class NoteQueryService {
     private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
 
     public NoteDetailResponse getNoteById(Long noteId, Long userId) {
-        return noteQueryRepository.findById(noteId)
+        return noteQueryRepository.findById(noteId, userId)
                 .map(note -> NoteDetailResponse.of(note, note.getComments(), userId))
                 .orElseThrow(NoteNotFoundException::new);
     }
