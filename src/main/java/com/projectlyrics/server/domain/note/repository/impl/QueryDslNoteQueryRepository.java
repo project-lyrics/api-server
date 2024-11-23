@@ -53,7 +53,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .join(note.publisher).fetchJoin()
                         .join(note.song).fetchJoin()
                         .join(song.artist).fetchJoin()
-                        .leftJoin(note.comments).fetchJoin()
+                        .leftJoin(note.comments, comment).fetchJoin()
                         .leftJoin(block)
                             .on(block.blocked.eq(comment.writer)
                                     .and(block.blocker.id.eq(userId)))

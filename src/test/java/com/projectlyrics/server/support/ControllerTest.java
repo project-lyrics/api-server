@@ -10,6 +10,7 @@ import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
 import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.service.AuthQueryService;
+import com.projectlyrics.server.domain.block.service.BlockCommandService;
 import com.projectlyrics.server.domain.bookmark.service.BookmarkCommandService;
 import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
@@ -110,6 +111,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserCommandService userCommandService;
+
+    @MockBean
+    protected BlockCommandService blockCommandService;
 
     @MockBean
     protected SlackClient slackClient;
