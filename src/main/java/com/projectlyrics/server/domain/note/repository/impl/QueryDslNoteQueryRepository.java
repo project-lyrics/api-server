@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.note.repository.impl;
 
 import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
+import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.bookmark.domain.QBookmark.bookmark;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
@@ -51,13 +52,18 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist, artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
+                .leftJoin(block)
+                    .on(block.blocked.eq(note.publisher)
+                            .and(block.blocker.id.eq(userId))
+                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : artist.id.eq(artistId),
                         note.publisher.deletedAt.isNull(),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id),
+                        block.id.isNull()
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -67,7 +73,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -75,11 +81,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
+                .leftJoin(block)
+                    .on(block.blocked.eq(note.publisher)
+                            .and(block.blocker.id.eq(userId))
+                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id),
+                        block.id.isNull()
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -89,7 +100,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -97,11 +108,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
+                .leftJoin(block)
+                    .on(block.blocked.eq(note.publisher)
+                            .and(block.blocker.id.eq(userId))
+                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id),
+                        block.id.isNull()
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -111,7 +127,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllBySongId(boolean hasLyrics, Long songId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllBySongId(boolean hasLyrics, Long songId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -119,11 +135,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
+                .leftJoin(block)
+                    .on(block.blocked.eq(note.publisher)
+                            .and(block.blocker.id.eq(userId))
+                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.id.eq(songId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id),
+                        block.id.isNull()
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -141,13 +162,18 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.bookmarks, bookmark).fetchJoin()
+                .leftJoin(block)
+                    .on(block.blocked.eq(note.publisher)
+                            .and(block.blocker.id.eq(userId))
+                    )
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, note.id)
+                        QueryDslUtils.ltCursorId(cursorId, note.id),
+                        block.id.isNull()
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
