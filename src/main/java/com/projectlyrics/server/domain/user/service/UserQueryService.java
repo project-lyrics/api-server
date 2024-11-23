@@ -31,6 +31,8 @@ public class UserQueryService {
     }
 
     public List<UserGetResponse> getAllBlocks(Long id) {
-        return userQueryRepository.findAllBlocked(id);
+        return userQueryRepository.findAllBlocked(id).stream()
+                .map(UserGetResponse::from)
+                .toList();
     }
 }
