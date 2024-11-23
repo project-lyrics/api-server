@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.projectlyrics.server.domain.user.dto.request.UserUpdateRequest;
+import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.Gender;
@@ -23,6 +24,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class UserControllerTest extends RestDocsTest {
 
@@ -66,6 +70,45 @@ class UserControllerTest extends RestDocsTest {
                                         .description("인증 플랫폼" + getEnumValuesAsString(AuthProvider.class))
                         )
                         .responseSchema(Schema.schema("User Profile Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 블락한_사용자들의_리스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+        // given
+        List<UserGetResponse> result = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            User user = UserFixture.create();
+            result.add(UserGetResponse.from(user));
+        }
+
+        given(userQueryService.getAllBlocks(any()))
+                .willReturn(result);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/users/blocks")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getUserBlockListDocument());
+    }
+
+    private RestDocumentationResultHandler getUserBlockListDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("User API")
+                        .summary("사용자 차단 리스트 조회 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER)
+                                        .description("사용자 Id"),
+                                fieldWithPath("[].nickname").type(JsonFieldType.STRING)
+                                        .description("사용자 닉네임"),
+                                fieldWithPath("[].profileCharacterType").type(JsonFieldType.STRING)
+                                        .description("사용자 프로필 이미지 타입" + getEnumValuesAsString(ProfileCharacter.class))
+                        )
+                        .responseSchema(Schema.schema("User Block List Response"))
                         .build())
         );
     }

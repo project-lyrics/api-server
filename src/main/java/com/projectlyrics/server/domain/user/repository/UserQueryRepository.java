@@ -17,6 +17,8 @@ public interface UserQueryRepository {
 
     List<User> findAll();
 
+    List<User> findAllBlocked(Long id);
+
     boolean existsBySocialInfo(SocialInfo socialInfo);
 
     boolean existsBySocialInfoAndForceDelete(SocialInfo socialInfo);

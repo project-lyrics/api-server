@@ -11,6 +11,7 @@ import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException
 import com.projectlyrics.server.domain.auth.exception.AuthNotFoundException;
 import com.projectlyrics.server.domain.auth.exception.ForcedWithdrawalUserException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
+import com.projectlyrics.server.domain.block.repository.BlockCommandRepository;
 import com.projectlyrics.server.domain.bookmark.repository.BookmarkCommandRepository;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistCommandRepository;
 import com.projectlyrics.server.domain.like.repository.LikeCommandRepository;
@@ -40,6 +41,7 @@ public class AuthCommandService {
     private final FavoriteArtistCommandRepository favoriteArtistCommandRepository;
     private final LikeCommandRepository likeCommandRepository;
     private final NotificationCommandRepository notificationCommandRepository;
+    private final BlockCommandRepository blockCommandRepository;
 
     public AuthTokenResponse signUp(AuthSignUpRequest request, String deviceId) {
         SocialInfo socialInfo = authQueryService.getSocialInfo(AuthGetSocialInfo.from(request));
@@ -106,6 +108,8 @@ public class AuthCommandService {
                 authRepository::delete,
                 () -> { throw new AuthNotFoundException(); }
         );
+        blockCommandRepository.deleteAllByBlockedId(userId);
+        blockCommandRepository.deleteAllByBlockerId(userId);
         notificationCommandRepository.deleteAllByReceiverId(userId);
         notificationCommandRepository.deleteAllBySenderId(userId);
         bookmarkCommandRepository.deleteAllByUserId(userId);
@@ -118,6 +122,8 @@ public class AuthCommandService {
     public void forcedWithdrawal(User user) {
         authRepository.findById(user.getSocialInfo().getSocialId())
                 .ifPresent(authRepository::delete);
+        blockCommandRepository.deleteAllByBlockedId(user.getId());
+        blockCommandRepository.deleteAllByBlockerId(user.getId());
         notificationCommandRepository.deleteAllByReceiverId(user.getId());
         notificationCommandRepository.deleteAllBySenderId(user.getId());
         bookmarkCommandRepository.deleteAllByUserId(user.getId());

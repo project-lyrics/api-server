@@ -1,13 +1,16 @@
 package com.projectlyrics.server.domain.user.repository.impl;
 
+import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
 
+import com.projectlyrics.server.domain.block.domain.Block;
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +71,19 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
                 .selectFrom(user)
                 .where(
                         user.deletedAt.isNull()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<User> findAllBlocked(Long id) {
+        return jpaQueryFactory
+                .select(block.blocked)
+                .from(block)
+                .join(user).on(block.blocker.id.eq(id))
+                .where(
+                        block.blocker.id.eq(id),
+                        block.deletedAt.isNull()
                 )
                 .fetch();
     }

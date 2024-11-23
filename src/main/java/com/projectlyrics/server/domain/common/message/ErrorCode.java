@@ -102,6 +102,10 @@ public enum ErrorCode {
     SLACK_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "14001", "슬랙 메세지 전송 중 에러가 발생했습니다."),
     SLACK_INTERACTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "14002", "슬랙 상호작용 인터렉션에 문제가 발생했습니다."),
     SLACK_FEEDBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"14003", "슬랙에 피드백 메세지 제공에 실패했습니다."),
+
+    // Block
+    BLOCK_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "15000", "이미 차단을 추가한 상태입니다."),
+    BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "15001", "해당 차단을 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
