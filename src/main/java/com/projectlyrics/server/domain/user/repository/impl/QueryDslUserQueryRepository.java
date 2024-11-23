@@ -1,13 +1,17 @@
 package com.projectlyrics.server.domain.user.repository.impl;
 
+import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
 
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
+import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +23,13 @@ import org.springframework.stereotype.Repository;
 public class QueryDslUserQueryRepository implements UserQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    private static final ConstructorExpression<UserGetResponse> userGetResponse = Projections.constructor(
+            UserGetResponse.class,
+            user.id,
+            user.nickname,
+            user.profileCharacter
+    );
 
     @Override
     public Optional<User> findBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider) {
@@ -66,6 +77,18 @@ public class QueryDslUserQueryRepository implements UserQueryRepository {
     public List<User> findAll() {
         return jpaQueryFactory
                 .selectFrom(user)
+                .where(
+                        user.deletedAt.isNull()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<UserGetResponse> findAllBlocked(Long id) {
+        return jpaQueryFactory
+                .select(userGetResponse)
+                .from(user)
+                .join(block).on(block.blocker.id.eq(user.id))
                 .where(
                         user.deletedAt.isNull()
                 )

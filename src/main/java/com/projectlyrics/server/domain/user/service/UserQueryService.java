@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.user.service;
 
 import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
+import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 import com.projectlyrics.server.domain.user.dto.response.UserProfileResponse;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
@@ -8,6 +9,8 @@ import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,5 +28,9 @@ public class UserQueryService {
     public UserProfileResponse getById(Long id) {
         return UserProfileResponse.from(userQueryRepository.findById(id)
                         .orElseThrow(UserNotFoundException::new));
+    }
+
+    public List<UserGetResponse> getAllBlocks(Long id) {
+        return userQueryRepository.findAllBlocked(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.user.repository;
 
+import com.projectlyrics.server.domain.user.dto.response.UserGetResponse;
 import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.SocialInfo;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -16,6 +17,8 @@ public interface UserQueryRepository {
     Optional<User> findDeletedBySocialIdAndAuthProvider(String socialId, AuthProvider authProvider);
 
     List<User> findAll();
+
+    List<UserGetResponse> findAllBlocked(Long id);
 
     boolean existsBySocialInfo(SocialInfo socialInfo);
 
