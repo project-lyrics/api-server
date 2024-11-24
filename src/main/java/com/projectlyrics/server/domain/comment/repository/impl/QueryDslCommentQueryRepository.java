@@ -45,7 +45,7 @@ public class QueryDslCommentQueryRepository implements CommentQueryRepository {
                                 JPAExpressions
                                         .select(block.blocked.id)
                                         .from(block)
-                                        .where(block.blocker.id.eq(userId))
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
                         )
                 )
                 .orderBy(comment.id.asc())
