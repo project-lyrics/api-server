@@ -58,11 +58,12 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull(),
-                                comment.writer.notIn(
-                                        JPAExpressions.select(block.blocked)
-                                                .from(block)
-                                                .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
-                                )
+                                comment.isNull()
+                                        .or(comment.writer.notIn(
+                                                JPAExpressions.select(block.blocked)
+                                                        .from(block)
+                                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                                        ))
                         )
                         .fetchOne()
         );
