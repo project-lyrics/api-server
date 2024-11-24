@@ -55,15 +55,14 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         .join(note.song).fetchJoin()
                         .join(song.artist).fetchJoin()
                         .leftJoin(note.comments, comment).fetchJoin()
+                        .leftJoin(block)
+                            .on(block.blocked.eq(comment.writer)
+                                    .and(block.blocker.id.eq(userId))
+                                    .and(block.deletedAt.isNull()))
                         .where(
                                 note.id.eq(id),
                                 note.deletedAt.isNull(),
-                                comment.isNull()
-                                        .or(comment.writer.notIn(
-                                                JPAExpressions.select(block.blocked)
-                                                        .from(block)
-                                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
-                                        ))
+                                block.id.isNull()
                         )
                         .fetchOne()
         );
