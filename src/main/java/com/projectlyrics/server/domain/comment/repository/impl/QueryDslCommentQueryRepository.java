@@ -2,17 +2,15 @@ package com.projectlyrics.server.domain.comment.repository.impl;
 
 import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
-import com.projectlyrics.server.domain.common.util.QueryDslUtils;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.comment.domain.QComment.comment;
 
 @Repository
@@ -37,32 +35,20 @@ public class QueryDslCommentQueryRepository implements CommentQueryRepository {
     }
 
     @Override
-    public Slice<Comment> findAllByNoteId(Long noteId, Long cursorId, Pageable pageable) {
-        List<Comment> content = jpaQueryFactory
+    public List<Comment> findAllByNoteId(Long noteId, Long userId) {
+        return jpaQueryFactory
                 .selectFrom(comment)
-                .leftJoin(comment.writer).fetchJoin()
-                .leftJoin(comment.note).fetchJoin()
                 .where(
                         comment.note.id.eq(noteId),
                         comment.deletedAt.isNull(),
-                        QueryDslUtils.ltCursorId(cursorId, comment.id)
+                        comment.writer.id.notIn(
+                                JPAExpressions
+                                        .select(block.blocked.id)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId))
+                        )
                 )
-                .orderBy(comment.id.desc())
-                .limit(pageable.getPageSize() + 1)
+                .orderBy(comment.id.asc())
                 .fetch();
-
-        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
-    }
-
-    @Override
-    public long countByNoteId(Long noteId) {
-        return jpaQueryFactory
-                .select(comment.count())
-                .from(comment)
-                .where(
-                        comment.note.id.eq(noteId),
-                        comment.deletedAt.isNull()
-                )
-                .fetchOne();
     }
 }

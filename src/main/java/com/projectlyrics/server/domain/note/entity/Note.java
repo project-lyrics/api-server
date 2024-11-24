@@ -161,8 +161,4 @@ public class Note extends BaseEntity {
     public List<Bookmark> getBookmarks() {
         return bookmarks.stream().filter(bookmark -> bookmark.isInUse()).collect(Collectors.toList());
     }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 }

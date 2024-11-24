@@ -126,8 +126,8 @@ class NoteQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.song().id()).isEqualTo(note.getSong().getId()),
                 () -> assertThat(result.publisher().id()).isEqualTo(note.getPublisher().getId()),
                 () -> assertThat(result.comments().size()).isEqualTo(2),
-                () -> assertThat(result.comments().get(0).id()).isEqualTo(comment1.getId()),
-                () -> assertThat(result.comments().get(1).id()).isEqualTo(comment2.getId())
+                () -> assertThat(result.comments().get(0).id()).isEqualTo(comment2.getId()),
+                () -> assertThat(result.comments().get(1).id()).isEqualTo(comment1.getId())
         );
     }
 
