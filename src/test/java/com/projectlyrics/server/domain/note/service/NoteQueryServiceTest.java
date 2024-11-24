@@ -150,6 +150,25 @@ class NoteQueryServiceTest extends IntegrationTest {
     }
 
     @Test
+    void 노트_id와_일치하는_노트_조회시_모든_노트의_댓글의_작성자를_차단해도_노트정보를_조회해야_한다() {
+        // given
+        Note note = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
+        commentCommandRepository.save(CommentFixture.create(note, user1));
+        commentCommandRepository.save(CommentFixture.create(note, user2));
+        blockCommandRepository.save(BlockFixture.create(user, user1));
+        blockCommandRepository.save(BlockFixture.create(user, user2));
+
+        // when
+        NoteDetailResponse result = sut.getNoteById(note.getId(), user.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result.id()).isNotNull(),
+                () -> assertThat(result.comments().size()).isEqualTo(0)
+        );
+    }
+
+    @Test
     void 사용자_id와_일치하는_작성자와_연관된_노트_리스트를_최신순으로_조회해야_한다() {
         // given
         List<Note> notes = new ArrayList<>();

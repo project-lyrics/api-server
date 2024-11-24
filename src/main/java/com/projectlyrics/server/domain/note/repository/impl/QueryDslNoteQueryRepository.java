@@ -7,6 +7,7 @@ import static com.projectlyrics.server.domain.comment.domain.QComment.comment;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
+import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
@@ -47,31 +48,43 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
 
     @Override
     public Optional<Note> findById(Long id, Long userId) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(note)
-                        .leftJoin(note.lyrics).fetchJoin()
-                        .join(note.publisher).fetchJoin()
-                        .join(note.song).fetchJoin()
-                        .join(song.artist).fetchJoin()
-                        .leftJoin(note.comments, comment)
-                            .on(comment.deletedAt.isNull()
-                                    .and(comment.writer.id.notIn(
-                                            JPAExpressions.select(block.blocked.id)
-                                                    .from(block)
-                                                    .where(
-                                                            block.blocker.id.eq(userId),
-                                                            block.deletedAt.isNull()
-                                                    )
-                                    ))
-                        ).fetchJoin()
-                        .where(
-                                note.id.eq(id),
-                                note.deletedAt.isNull()
-                        )
-                        .fetchOne()
-        );
+        // 1. Note 객체를 조회
+        Note n = jpaQueryFactory
+                .selectFrom(note)
+                .leftJoin(note.lyrics).fetchJoin()
+                .join(note.publisher).fetchJoin()
+                .join(note.song).fetchJoin()
+                .join(song.artist).fetchJoin()
+                .leftJoin(note.comments, comment)
+                .where(
+                        note.id.eq(id),
+                        note.deletedAt.isNull()
+                )
+                .fetchOne();
+
+        // 2. 만약 Note가 조회되었다면 댓글을 필터링하여 적용
+        if (n != null) {
+            List<Comment> filteredComments = jpaQueryFactory
+                    .selectFrom(comment)
+                    .leftJoin(block)
+                    .on(block.blocked.eq(comment.writer)
+                            .and(block.blocker.id.eq(userId))
+                            .and(block.deletedAt.isNull()))
+                    .where(
+                            comment.note.id.eq(id),
+                            comment.deletedAt.isNull(),
+                            block.id.isNull()
+                    )
+                    .fetch();
+
+            // 3. 필터링된 댓글을 Note 객체에 업데이트
+            n.setComments(filteredComments);
+        }
+
+        return Optional.ofNullable(n);
     }
+
+
 
     @Override
     public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
