@@ -61,7 +61,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                                 comment.writer.notIn(
                                         JPAExpressions.select(block.blocked)
                                                 .from(block)
-                                                .where(block.blocker.id.eq(userId))
+                                                .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
                                 )
                         )
                         .fetchOne()
@@ -77,10 +77,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist, artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
-                .leftJoin(block)
-                    .on(block.blocked.eq(note.publisher)
-                            .and(block.blocker.id.eq(userId))
-                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         artistId == null ? null : artist.id.eq(artistId),
@@ -88,7 +84,11 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
-                        block.id.isNull().or(block.deletedAt.isNotNull())
+                        note.publisher.notIn(
+                            JPAExpressions.select(block.blocked)
+                                    .from(block)
+                                    .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                        )
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -106,16 +106,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
-                .leftJoin(block)
-                    .on(block.blocked.eq(note.publisher)
-                            .and(block.blocker.id.eq(userId))
-                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
-                        block.id.isNull().or(block.deletedAt.isNotNull())
+                        note.publisher.notIn(
+                                JPAExpressions.select(block.blocked)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                        )
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -133,16 +133,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
-                .leftJoin(block)
-                    .on(block.blocked.eq(note.publisher)
-                            .and(block.blocker.id.eq(userId))
-                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
-                        block.id.isNull().or(block.deletedAt.isNotNull())
+                        note.publisher.notIn(
+                                JPAExpressions.select(block.blocked)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                        )
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -160,16 +160,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
-                .leftJoin(block)
-                    .on(block.blocked.eq(note.publisher)
-                            .and(block.blocker.id.eq(userId))
-                    )
                 .where(
                         QueryDslUtils.hasLyrics(hasLyrics),
                         note.song.id.eq(songId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
-                        block.id.isNull().or(block.deletedAt.isNotNull())
+                        note.publisher.notIn(
+                                JPAExpressions.select(block.blocked)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                        )
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
@@ -187,10 +187,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(note.song).fetchJoin()
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.bookmarks, bookmark).fetchJoin()
-                .leftJoin(block)
-                    .on(block.blocked.eq(note.publisher)
-                            .and(block.blocker.id.eq(userId))
-                    )
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
@@ -198,7 +194,11 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
-                        block.id.isNull().or(block.deletedAt.isNotNull())
+                        note.publisher.notIn(
+                                JPAExpressions.select(block.blocked)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                        )
                 )
                 .orderBy(note.id.desc())
                 .limit(pageable.getPageSize() + 1)
