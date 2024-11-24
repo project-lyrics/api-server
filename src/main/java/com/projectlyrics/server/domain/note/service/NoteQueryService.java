@@ -1,9 +1,12 @@
 package com.projectlyrics.server.domain.note.service;
 
+import com.projectlyrics.server.domain.comment.domain.Comment;
+import com.projectlyrics.server.domain.comment.repository.CommentQueryRepository;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQueryRepository;
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
+import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,15 @@ import java.util.List;
 public class NoteQueryService {
 
     private final NoteQueryRepository noteQueryRepository;
+    private final CommentQueryRepository commentQueryRepository;
     private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
 
     public NoteDetailResponse getNoteById(Long noteId, Long userId) {
-        return noteQueryRepository.findById(noteId, userId)
-                .map(note -> NoteDetailResponse.of(note, note.getComments(), userId))
+        Note note = noteQueryRepository.findById(noteId, userId)
                 .orElseThrow(NoteNotFoundException::new);
+        List<Comment> comments = commentQueryRepository.findAllByNoteId(noteId, userId);
+
+        return NoteDetailResponse.of(note, comments, userId);
     }
 
     public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {

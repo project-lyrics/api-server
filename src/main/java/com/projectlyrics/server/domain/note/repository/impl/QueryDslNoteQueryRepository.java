@@ -7,15 +7,16 @@ import static com.projectlyrics.server.domain.comment.domain.QComment.comment;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
-import com.projectlyrics.server.domain.comment.domain.Comment;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import java.util.List;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -48,8 +49,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
 
     @Override
     public Optional<Note> findById(Long id, Long userId) {
-        // 1. Note 객체를 조회
-        Note n = jpaQueryFactory
+        return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
                 .join(note.publisher).fetchJoin()
@@ -60,30 +60,8 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         note.id.eq(id),
                         note.deletedAt.isNull()
                 )
-                .fetchOne();
-
-        // 2. 만약 Note가 조회되었다면 댓글을 필터링하여 적용
-        if (n != null) {
-            List<Comment> filteredComments = jpaQueryFactory
-                    .selectFrom(comment)
-                    .leftJoin(block)
-                    .on(block.blocked.eq(comment.writer)
-                            .and(block.blocker.id.eq(userId))
-                            .and(block.deletedAt.isNull()))
-                    .where(
-                            comment.note.id.eq(id),
-                            comment.deletedAt.isNull(),
-                            block.id.isNull()
-                    )
-                    .fetch();
-
-            // 3. 필터링된 댓글을 Note 객체에 업데이트
-            n.setComments(filteredComments);
-        }
-
-        return Optional.ofNullable(n);
+                .fetchOne());
     }
-
 
 
     @Override
@@ -103,9 +81,9 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
-                            JPAExpressions.select(block.blocked)
-                                    .from(block)
-                                    .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
+                                JPAExpressions.select(block.blocked)
+                                        .from(block)
+                                        .where(block.blocker.id.eq(userId).and(block.deletedAt.isNull()))
                         )
                 )
                 .orderBy(note.id.desc())
@@ -227,14 +205,16 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
 
     @Override
     public long countDraftNotesByUserId(Long userId) {
-        return jpaQueryFactory
-                .select(note.count())
-                .from(note)
-                .where(
-                        note.publisher.id.eq(userId),
-                        note.noteStatus.eq(NoteStatus.DRAFT),
-                        note.deletedAt.isNull()
-                )
-                .fetchOne();
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .select(note.count())
+                        .from(note)
+                        .where(
+                                note.publisher.id.eq(userId),
+                                note.noteStatus.eq(NoteStatus.DRAFT),
+                                note.deletedAt.isNull()
+                        )
+                        .fetchOne()
+        ).orElse(0L);
     }
 }
