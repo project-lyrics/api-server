@@ -1,4 +1,4 @@
-package com.projectlyrics.server.domain.auth.authentication.interceptor;
+package com.projectlyrics.server.global.slack.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +22,6 @@ public class SlackInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 요청 본문을 캐싱할 수 있도록 ContentCachingRequestWrapper로 감쌈
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
 
         String method = request.getMethod();
