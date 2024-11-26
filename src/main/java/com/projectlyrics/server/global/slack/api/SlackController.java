@@ -12,6 +12,8 @@ import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
 import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
+import com.projectlyrics.server.global.slack.domain.Slack;
+import com.projectlyrics.server.global.slack.domain.SlackAction;
 import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureException;
 import com.projectlyrics.server.global.slack.exception.SlackInteractionFailureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
+import static com.projectlyrics.server.domain.discipline.domain.DisciplineReason.FAKE_REPORT;
+import static com.projectlyrics.server.global.slack.domain.SlackAction.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/slack/interactive")
 @RequiredArgsConstructor
@@ -57,99 +63,70 @@ public class SlackController {
     @PostMapping
     public ResponseEntity<Void> handleInteractiveMessage(HttpServletRequest request) {
         try {
+            Slack slack = new Slack(request);
+
             ContentCachingRequestWrapper requestWrapper = (ContentCachingRequestWrapper) request;
             String payload = new String(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding());
             // Slack에서 보낸 payload 디코딩 및 JSON 변환
-            String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8.name());
+            String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
 
             // 액션 정보 추출
             JSONObject action = json.getJSONArray("actions").getJSONObject(0);
-            String actionId = action.getString("action_id");
+            SlackAction actionId = slack.getActionId();
             JSONObject valueJson = new JSONObject(action.getString("value"));
-
-            // 스레드 타임스탬프 추출
-            String threadTs = json.getJSONObject("container").optString("message_ts");  // Extract thread_ts if present
 
             // 메시지 블록 생성
             JSONArray blocks = new JSONArray();
-            // actionId에 따라 처리
-            if (actionId.startsWith("report")) {
-                blocks = new JSONArray();
-                Long reportId = valueJson.getLong("reportId");
-                ApprovalStatus approvalStatus = ApprovalStatus.valueOf(valueJson.getString("approvalStatus"));
-                Boolean isFalseReport = valueJson.getBoolean("isFalseReport");
 
-                reportCommandService.resolve(ReportResolveRequest.of(approvalStatus, isFalseReport), reportId);
-                // 메시지 블록에 추가
+            if (actionId.equals(REPORT_ACCEPT) || actionId.equals(REPORT_FAKE)) {
+                reportCommandService.resolve(ReportResolveRequest.of(slack.getApprovalStatus(), slack.getIsFalseReport()), slack.getReportId());
+
                 blocks.put(new JSONObject()
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":white_check_mark: *승인 여부*: " + approvalStatus + "  *허위 신고 여부*: " + isFalseReport)
+                                .put("text", ":white_check_mark: *승인 여부*: " + slack.getApprovalStatus() + "  *허위 신고 여부*: " + slack.getIsFalseReport())
                         )
                 );
 
-                if (actionId.contains("accept")) {
-                    Long userId = valueJson.getLong("userId");
-                    Long artistId = valueJson.getLong("artistId");
-                    addDisciplineForAcceptance(userId, reportId, artistId, blocks);
+                if (actionId.equals(REPORT_ACCEPT)) {
+                    addDisciplineForAcceptance(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks);
                 }
-                else if (actionId.contains("fake")) {
-                    Long userId = valueJson.getLong("userId");
-                    Long artistId = valueJson.getLong("artistId");
-                    addDisciplineForFalseReport(userId, reportId, artistId, blocks);
+                else {
+                    addDisciplineForFalseReport(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks);
                 }
             }
-            else if (actionId.startsWith("discipline")) {
-                blocks = new JSONArray();
 
-                String startDateString = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("start").getJSONObject("discipline_start").getString("selected_date");
-                JSONArray selectedDisciplineType = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("type").getJSONObject("discipline_type").getJSONArray("selected_options");
-                JSONArray selectedDisciplineReason = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("reason").getJSONObject("discipline_reason").getJSONArray("selected_options");
-                String content = json.getJSONObject("state").getJSONObject("values")
-                        .getJSONObject("content").getJSONObject("discipline_content").getString("value");
-
-                // 필요한 값으로 변수 초기화
-                LocalDate startDate = LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                DisciplineType disciplineType = DisciplineType.valueOf(selectedDisciplineType.getJSONObject(0).getString("value"));
-                DisciplineReason disciplineReason = DisciplineReason.valueOf(selectedDisciplineReason.getJSONObject(0).getString("value"));
-
-                Long userId = valueJson.getLong("userId");
-                Long artistId = valueJson.getLong("artistId");
-                Long reportId = valueJson.getLong("reportId");
-                LocalDateTime startTime = startDate.atStartOfDay();
-                String notificationContent = content;
-
-                // 데이터 검증
-                if (userId == null || artistId == null || reportId == null || disciplineReason == null || disciplineType == null || startTime == null || notificationContent == null) {
-                    throw new InvalidDisciplineCreateException();
-                }
-
-                Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(userId, artistId, disciplineReason, disciplineType, startTime, notificationContent));
+            else if (actionId.equals(DISCIPLINE)) {
+                Discipline discipline = disciplineCommandService.create(DisciplineCreateRequest.of(slack.getUserId(), slack.getArtistId(), slack.getDisciplineReason(), slack.getDisciplineType(), slack.getStart(), slack.getDisciplineContent()));
 
                 // 조치가 들어오면 (허위 신고가 아닌 건에 한해) 해당 노트/댓글 삭제
-                if (disciplineReason != DisciplineReason.FAKE_REPORT) {
-                    reportCommandService.deleteReportedTarget(reportId);
+                if (slack.getDisciplineReason() != FAKE_REPORT) {
+                    reportCommandService.deleteReportedTarget(slack.getReportId());
                 }
 
                 blocks.put(new JSONObject()
                         .put("type", "section")
                         .put("text", new JSONObject()
                                 .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자" + userId + "에 대한 조치가 완료되었습니다.* \n*조치 사유:* " + disciplineReason.getDescription() + "\n*조치 내용:* " + disciplineType.getDescription() + "\n*조치 기간:* " + discipline.getStartTime() + " ~ " + discipline.getEndTime())
+                                .put("text", ":mega: *사용자" + slack.getUserId() + "에 대한 조치가 완료되었습니다.*" +
+                                        " \n*조치 사유:* " + slack.getDisciplineReason().getDescription() +
+                                        "\n*조치 내용:* " + slack.getDisciplineType().getDescription() +
+                                        "\n*조치 기간:* " + discipline.getStartTime() + " ~ " + discipline.getEndTime()
+                                )
                         )
                 );
             }
 
-            sendFeedbackToSlack(blocks, threadTs);
+            sendFeedbackToSlack(blocks, slack.getThreadTimestamp());
 
             return ResponseEntity.ok().build();
         } catch (ReportNotFoundException |
-                 InvalidNoteDeletionException | InvalidCommentDeletionException | InvalidDisciplineCreateException e) {
+                 InvalidNoteDeletionException |
+                 InvalidCommentDeletionException |
+                 InvalidDisciplineCreateException e
+        ) {
             throw e;
         } catch (JSONException e) {
             System.out.println("JSON Parsing Error: " + e.getMessage());
@@ -254,10 +231,10 @@ public class SlackController {
                 .put(new JSONObject()
                         .put("text", new JSONObject()
                                 .put("type", "plain_text")
-                                .put("text", DisciplineReason.FAKE_REPORT.getDescription())
+                                .put("text", FAKE_REPORT.getDescription())
                                 .put("emoji", true)
                         )
-                        .put("value", DisciplineReason.FAKE_REPORT.name())
+                        .put("value", FAKE_REPORT.name())
                 );
         addDiscipline(userId, reportId, artistId, blocks, disciplineReason);
     }
