@@ -15,12 +15,12 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SlackClient {
@@ -30,8 +30,6 @@ public class SlackClient {
 
     @Value("${slack.channel.id}")
     private String channelId;
-
-    private static final Logger logger = LoggerFactory.getLogger(SlackClient.class);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public void sendMessage(List<LayoutBlock> blocks, String message) {
@@ -44,11 +42,11 @@ public class SlackClient {
             );
 
             if (!chatPostMessageResponse.isOk()) {
-                logger.error("Slack API error: {}", chatPostMessageResponse.getError());
+                log.error("Slack API error: {}", chatPostMessageResponse.getError());
                 throw new SlackNotificationFailureException();
             }
         } catch (IOException | SlackApiException e) {
-            logger.error("Failed to send Slack message: {}", e.getMessage(), e);
+            log.error("Failed to send Slack message: {}", e.getMessage(), e);
             throw new SlackNotificationProcessingException();
         }
     }

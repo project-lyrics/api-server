@@ -18,12 +18,6 @@ public class SlackResponseBuilder {
                         .put("text", text));
     }
 
-    public static JSONObject createActions(List<JSONObject> buttonElements) {
-        return new JSONObject()
-                .put("type", "actions")
-                .put("elements", new JSONArray(buttonElements));
-    }
-
     public static JSONObject createPlainTextInput(String actionId, String label, String placeholder, String blockId) {
         return new JSONObject()
                 .put("type", "input")
@@ -96,5 +90,4 @@ public class SlackResponseBuilder {
     private static JSONObject createMarkdownText(String text) {
         return new JSONObject().put("type", "mrkdwn").put("text", text);
     }
-
 }
