@@ -1,8 +1,11 @@
 package com.projectlyrics.server.domain.discipline.domain;
 
+import com.projectlyrics.server.global.slack.domain.SlackSelectEnum;
 import java.time.Period;
+import java.util.Arrays;
+import java.util.List;
 
-public enum DisciplineType {
+public enum DisciplineType implements SlackSelectEnum {
     WARNING("경고", Period.ZERO),
     ALL_3DAYS("3일간 모든 아티스트 레코드 노트/댓글 작성 제한", Period.ofDays(3)),
     ALL_14DAYS("14일간 모든 아티스트 레코드 노트/댓글 작성 제한", Period.ofDays(14)),
@@ -22,11 +25,16 @@ public enum DisciplineType {
         this.period = period;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
     public Period getPeriod() {
         return period;
+    }
+
+    public static List<DisciplineType> getAllTypes() {
+        return Arrays.asList(DisciplineType.values());
     }
 }
