@@ -42,10 +42,10 @@ public class SlackService {
         ));
 
         if (slack.getActionId().equals(REPORT_ACCEPT)) {
-            addDiscipline(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks, DisciplineReason.getOtherTypes());
+            addDiscipline(slack, blocks, DisciplineReason.getOtherTypes());
         }
         else {
-            addDiscipline(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks, DisciplineReason.getFakeReportType());
+            addDiscipline(slack, blocks, DisciplineReason.getFakeReportType());
         }
 
         return blocks;
@@ -71,20 +71,20 @@ public class SlackService {
     }
 
 
-    private <E extends Enum<E> & SlackSelectEnum> void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, List<E> disciplineReason) {
+    private <E extends Enum<E> & SlackSelectEnum> void addDiscipline(Slack slack, JSONArray blocks, List<E> disciplineReason) {
         blocks.put(createDivider())
                 .put(createSection(":pencil2: *조치 관련 설정*"))
                 .put(createDatepicker("discipline_start", "조치 시작 날짜", "start", LocalDate.now()))
                 .put(createMultiStaticSelect(
                         "discipline_type",
-                        "사용자 " + userId + "에 대한 조치",
+                        "사용자 " + slack.getUserId() + "에 대한 조치",
                         DisciplineType.getAllTypes(),
                         "type",
                         "옵션을 선택하세요"
                 ))
                 .put(createMultiStaticSelect(
                         "discipline_reason",
-                        "사용자 " + userId + "에 대한 조치 이유",
+                        "사용자 " + slack.getUserId() + "에 대한 조치 이유",
                         disciplineReason,
                         "reason",
                         "이유를 선택하세요"
@@ -95,6 +95,6 @@ public class SlackService {
                         "{시작시간}, {종료시간}을 포함해서 알림 메시지를 작성해보세요 (단 영구 탈퇴와 경고의 경우는 제외)",
                         "content"
                 ))
-                .put(createSubmitSection(userId, reportId, artistId, "사용자에 대한 조치 및 이유를 선택하고 제출해주세요."));
+                .put(createSubmitSection(slack, "사용자에 대한 조치 및 이유를 선택하고 제출해주세요."));
     }
 }
