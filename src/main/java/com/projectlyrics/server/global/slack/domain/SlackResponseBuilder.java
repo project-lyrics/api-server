@@ -71,11 +71,11 @@ public class SlackResponseBuilder {
                 .put("value", value.toString());
     }
 
-    public static JSONObject createSubmitSection(Long userId, Long reportId, Long artistId, String description) {
+    public static JSONObject createSubmitSection(Slack slack, String description) {
         JSONObject value = new JSONObject()
-                .put("userId", userId)
-                .put("reportId", reportId)
-                .put("artistId", artistId);
+                .put("userId", slack.userId)
+                .put("reportId", slack.reportId)
+                .put("artistId", slack.artistId);
 
         return new JSONObject()
                 .put("type", "section")
