@@ -1,6 +1,10 @@
 package com.projectlyrics.server.domain.discipline.domain;
 
-public enum DisciplineReason {
+import com.projectlyrics.server.global.slack.domain.SlackSelectEnum;
+import java.util.Arrays;
+import java.util.List;
+
+public enum DisciplineReason implements SlackSelectEnum {
     INAPPROPRIATE_CONTENT("커뮤니티 성격에 맞지 않음"),
     DEFAMATION("타 유저 혹은 아티스트 비방"),
     EXPLICIT_CONTENT("불쾌감을 조성하는 음란성/선정적인 내용"),
@@ -17,7 +21,18 @@ public enum DisciplineReason {
         this.description = description;
     }
 
+    @Override
     public String getDescription() {
         return description;
+    }
+
+    public static List<DisciplineReason> getFakeReportType() {
+        return List.of(FAKE_REPORT);
+    }
+
+    public static List<DisciplineReason> getOtherTypes() {
+        return Arrays.stream(values())
+                .filter(reason -> reason != FAKE_REPORT)
+                .toList();
     }
 }

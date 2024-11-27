@@ -1,5 +1,16 @@
 package com.projectlyrics.server.global.slack.api;
 
+import static com.projectlyrics.server.domain.discipline.domain.DisciplineReason.FAKE_REPORT;
+import static com.projectlyrics.server.global.slack.domain.SlackAction.DISCIPLINE;
+import static com.projectlyrics.server.global.slack.domain.SlackAction.REPORT_ACCEPT;
+import static com.projectlyrics.server.global.slack.domain.SlackAction.REPORT_FAKE;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createDatepicker;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createDivider;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createMultiStaticSelect;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createPlainTextInput;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createSection;
+import static com.projectlyrics.server.global.slack.domain.SlackResponseBuilder.createSubmitSection;
+
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.discipline.domain.Discipline;
 import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
@@ -8,20 +19,19 @@ import com.projectlyrics.server.domain.discipline.dto.request.DisciplineCreateRe
 import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreateException;
 import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
-import com.projectlyrics.server.domain.report.domain.ApprovalStatus;
 import com.projectlyrics.server.domain.report.dto.request.ReportResolveRequest;
 import com.projectlyrics.server.domain.report.exception.ReportNotFoundException;
 import com.projectlyrics.server.domain.report.service.ReportCommandService;
 import com.projectlyrics.server.global.slack.domain.Slack;
 import com.projectlyrics.server.global.slack.domain.SlackAction;
+import com.projectlyrics.server.global.slack.domain.SlackSelectEnum;
 import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureException;
 import com.projectlyrics.server.global.slack.exception.SlackInteractionFailureException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -39,9 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-
-import static com.projectlyrics.server.domain.discipline.domain.DisciplineReason.FAKE_REPORT;
-import static com.projectlyrics.server.global.slack.domain.SlackAction.*;
 
 @Slf4j
 @RestController
@@ -72,9 +79,7 @@ public class SlackController {
             JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
 
             // 액션 정보 추출
-            JSONObject action = json.getJSONArray("actions").getJSONObject(0);
             SlackAction actionId = slack.getActionId();
-            JSONObject valueJson = new JSONObject(action.getString("value"));
 
             // 메시지 블록 생성
             JSONArray blocks = new JSONArray();
@@ -82,19 +87,16 @@ public class SlackController {
             if (actionId.equals(REPORT_ACCEPT) || actionId.equals(REPORT_FAKE)) {
                 reportCommandService.resolve(ReportResolveRequest.of(slack.getApprovalStatus(), slack.getIsFalseReport()), slack.getReportId());
 
-                blocks.put(new JSONObject()
-                        .put("type", "section")
-                        .put("text", new JSONObject()
-                                .put("type", "mrkdwn")
-                                .put("text", ":white_check_mark: *승인 여부*: " + slack.getApprovalStatus() + "  *허위 신고 여부*: " + slack.getIsFalseReport())
-                        )
-                );
+                blocks.put(createSection(
+                        ":white_check_mark: *승인 여부*: " + slack.getApprovalStatus() +
+                                "  *허위 신고 여부*: " + slack.getIsFalseReport()
+                ));
 
                 if (actionId.equals(REPORT_ACCEPT)) {
-                    addDisciplineForAcceptance(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks);
+                    addDiscipline(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks, DisciplineReason.getOtherTypes());
                 }
                 else {
-                    addDisciplineForFalseReport(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks);
+                    addDiscipline(slack.getUserId(), slack.getReportId(), slack.getArtistId(), blocks, DisciplineReason.getFakeReportType());
                 }
             }
 
@@ -106,17 +108,12 @@ public class SlackController {
                     reportCommandService.deleteReportedTarget(slack.getReportId());
                 }
 
-                blocks.put(new JSONObject()
-                        .put("type", "section")
-                        .put("text", new JSONObject()
-                                .put("type", "mrkdwn")
-                                .put("text", ":mega: *사용자" + slack.getUserId() + "에 대한 조치가 완료되었습니다.*" +
-                                        " \n*조치 사유:* " + slack.getDisciplineReason().getDescription() +
-                                        "\n*조치 내용:* " + slack.getDisciplineType().getDescription() +
-                                        "\n*조치 기간:* " + discipline.getStartTime() + " ~ " + discipline.getEndTime()
-                                )
-                        )
-                );
+                blocks.put(createSection(
+                        ":mega: *사용자 " + slack.getUserId() + "에 대한 조치가 완료되었습니다.*" +
+                                "\n*조치 사유:* " + slack.getDisciplineReason().getDescription() +
+                                "\n*조치 내용:* " + slack.getDisciplineType().getDescription() +
+                                "\n*조치 기간:* " + discipline.getStartTime() + " ~ " + discipline.getEndTime()
+                ));
             }
 
             sendFeedbackToSlack(blocks, slack.getThreadTimestamp());
@@ -165,281 +162,31 @@ public class SlackController {
         }
     }
 
-    private void addDisciplineForAcceptance(Long userId, Long reportId, Long artistId, JSONArray blocks) {
-        JSONArray disciplineReason = new JSONArray()
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", DisciplineReason.INAPPROPRIATE_CONTENT.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", DisciplineReason.INAPPROPRIATE_CONTENT.name())
-                )
-                .put(new JSONObject()
-                    .put("text", new JSONObject()
-                            .put("type", "plain_text")
-                            .put("text", DisciplineReason.DEFAMATION.getDescription())
-                            .put("emoji", true)
-                    )
-                    .put("value", DisciplineReason.DEFAMATION.name())
-                )
-                .put(new JSONObject()
-                    .put("text", new JSONObject()
-                            .put("type", "plain_text")
-                            .put("text", DisciplineReason.EXPLICIT_CONTENT.getDescription())
-                            .put("emoji", true)
-                    )
-                    .put("value", DisciplineReason.EXPLICIT_CONTENT.name())
-                )
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", DisciplineReason.COMMERCIAL_ADS.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", DisciplineReason.COMMERCIAL_ADS.name())
-                )
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", DisciplineReason.INFO_DISCLOSURE.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", DisciplineReason.INFO_DISCLOSURE.name())
-                )
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", DisciplineReason.POLITICAL_RELIGIOUS.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", DisciplineReason.POLITICAL_RELIGIOUS.name())
-                )
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", DisciplineReason.OTHER.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", DisciplineReason.OTHER.name())
-                );
-        addDiscipline(userId, reportId, artistId, blocks, disciplineReason);
+    private <E extends Enum<E> & SlackSelectEnum> void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, List<E> disciplineReason) {
+        blocks.put(createDivider())
+                .put(createSection(":pencil2: *조치 관련 설정*"))
+                .put(createDatepicker("discipline_start", "조치 시작 날짜", "start", LocalDate.now()))
+                .put(createMultiStaticSelect(
+                        "discipline_type",
+                        "사용자 " + userId + "에 대한 조치",
+                        DisciplineType.getAllTypes(),
+                        "type",
+                        "옵션을 선택하세요"
+                ))
+                .put(createMultiStaticSelect(
+                        "discipline_reason",
+                        "사용자 " + userId + "에 대한 조치 이유",
+                        disciplineReason,
+                        "reason",
+                        "이유를 선택하세요"
+                ))
+                .put(createPlainTextInput(
+                        "discipline_content",
+                        "사용자에 전달될 조치 알림 메시지",
+                        "{시작시간}, {종료시간}을 포함해서 알림 메시지를 작성해보세요 (단 영구 탈퇴와 경고의 경우는 제외)",
+                        "content"
+                ))
+                .put(createSubmitSection(userId, reportId, artistId, "사용자에 대한 조치 및 이유를 선택하고 제출해주세요."));
     }
 
-    private void addDisciplineForFalseReport(Long userId, Long reportId, Long artistId, JSONArray blocks) {
-        JSONArray disciplineReason = new JSONArray()
-                .put(new JSONObject()
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", FAKE_REPORT.getDescription())
-                                .put("emoji", true)
-                        )
-                        .put("value", FAKE_REPORT.name())
-                );
-        addDiscipline(userId, reportId, artistId, blocks, disciplineReason);
-    }
-
-    private void addDiscipline(Long userId, Long reportId, Long artistId, JSONArray blocks, JSONArray disciplineReason) {
-        // 구분선 추가
-        blocks.put(new JSONObject()
-                .put("type", "divider")
-        );
-
-        // 제목 추가
-        blocks.put(new JSONObject()
-                .put("type", "section")
-                .put("text", new JSONObject()
-                        .put("type", "mrkdwn")
-                        .put("text", ":pencil2: *조치 관련 설정*")  // 제목에 대한 마크다운 형식
-                )
-        );
-
-        //시작 날짜 선택 폼 추가
-        blocks.put(new JSONObject()
-                .put("type", "input")
-                .put("block_id", "start")
-                .put("element", new JSONObject()
-                        .put("type", "datepicker")  // 슬랙에서 날짜 선택을 할 수 있는 Date Picker 사용
-                        .put("initial_date", LocalDate.now().toString())  // 기본 값은 오늘 날짜
-                        .put("placeholder", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", "시작 날짜를 선택하세요")
-                                .put("emoji", true)
-                        )
-                        .put("action_id", "discipline_start")  // 이 action_id로 선택된 날짜를 처리
-                )
-                .put("label", new JSONObject()
-                        .put("type", "plain_text")
-                        .put("text", "조치 시작 날짜")
-                        .put("emoji", true)
-                )
-        );
-
-        // 조치 선택 폼 추가
-        blocks.put(new JSONObject()
-                .put("type", "input")
-                .put("block_id", "type")
-                .put("element", new JSONObject()
-                        .put("type", "multi_static_select")
-                        .put("placeholder", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", "옵션을 선택하세요")
-                                .put("emoji", true)
-                        )
-                        .put("options", new JSONArray()
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.WARNING.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.WARNING.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ARTIST_3DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ARTIST_3DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ARTIST_14DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ARTIST_14DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ARTIST_30DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ARTIST_30DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ARTIST_3MONTHS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ARTIST_3MONTHS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ALL_3DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ALL_3DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ALL_14DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ALL_14DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ALL_30DAYS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ALL_30DAYS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.ALL_3MONTHS.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.ALL_3MONTHS.name())
-                                )
-                                .put(new JSONObject()
-                                        .put("text", new JSONObject()
-                                                .put("type", "plain_text")
-                                                .put("text", DisciplineType.FORCED_WITHDRAWAL.getDescription())
-                                                .put("emoji", true)
-                                        )
-                                        .put("value", DisciplineType.FORCED_WITHDRAWAL.name())
-                                )
-                        )
-                        .put("action_id", "discipline_type")
-                )
-                .put("label", new JSONObject()
-                        .put("type", "plain_text")
-                        .put("text", " 사용자 " + userId + "에 대한 조치")
-                        .put("emoji", true)
-                )
-        );
-
-        // 징계 이유 선택 폼 추가
-        blocks.put(new JSONObject()
-                .put("type", "input")
-                .put("block_id", "reason")
-                .put("element", new JSONObject()
-                        .put("type", "multi_static_select")
-                        .put("placeholder", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", "이유를 선택하세요")
-                                .put("emoji", true)
-                        )
-                        .put("options", disciplineReason)
-                        .put("action_id", "discipline_reason")
-                )
-                .put("label", new JSONObject()
-                        .put("type", "plain_text")
-                        .put("text", " 사용자 " + userId + "에 대한 조치 이유")
-                        .put("emoji", true)
-                )
-        );
-
-        // 사용자 알림 메세지 입력 폼 추가
-        blocks.put(new JSONObject()
-                .put("type", "input")
-                .put("block_id", "content")
-                .put("element", new JSONObject()
-                        .put("type", "plain_text_input")
-                        .put("action_id", "discipline_content")
-                        .put("placeholder", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", "{시작시간}, {종료시간}을 포함해서 알림 메세지를 작성해보세요 (단 영구 탈퇴와 경고의 경우는 제외)")
-                                .put("emoji", true)
-                        )
-                )
-                .put("label", new JSONObject()
-                        .put("type", "plain_text")
-                        .put("text", "사용자에 전달될 조치 알림 메세지")
-                        .put("emoji", true)
-                )
-        );
-
-        // 제출 버튼 추가
-        blocks.put(new JSONObject()
-                .put("type", "section")
-                .put("text", new JSONObject()
-                        .put("type", "mrkdwn")
-                        .put("text", "사용자에 대한 조치 및 이유를 선택하고 제출해주세요.")
-                )
-                .put("accessory", new JSONObject()
-                        .put("type", "button")
-                        .put("text", new JSONObject()
-                                .put("type", "plain_text")
-                                .put("text", "제출")
-                                .put("emoji", true)
-                        )
-                        .put("value", new JSONObject() // userId와 artistId를 value에 담음
-                                .put("userId", userId)
-                                .put("reportId", reportId)
-                                .put("artistId", artistId)
-                                .toString() // JSON 객체를 문자열로 변환
-                        )
-                        .put("action_id", "discipline_submit")
-                )
-        );
-    }
 }
