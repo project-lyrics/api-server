@@ -5,9 +5,9 @@ import com.projectlyrics.server.domain.artist.service.ArtistCommandService;
 import com.projectlyrics.server.domain.artist.service.ArtistQueryService;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.authentication.TokenExtractor;
+import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtExtractor;
 import com.projectlyrics.server.domain.auth.authentication.jwt.JwtProvider;
-import com.projectlyrics.server.domain.auth.authentication.jwt.AuthToken;
 import com.projectlyrics.server.domain.auth.service.AuthCommandService;
 import com.projectlyrics.server.domain.auth.service.AuthQueryService;
 import com.projectlyrics.server.domain.block.service.BlockCommandService;
@@ -29,6 +29,7 @@ import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import com.projectlyrics.server.global.slack.SlackClient;
+import com.projectlyrics.server.global.slack.service.SlackService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -114,6 +115,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected BlockCommandService blockCommandService;
+
+    @MockBean
+    protected SlackService slackService;
 
     @MockBean
     protected SlackClient slackClient;
