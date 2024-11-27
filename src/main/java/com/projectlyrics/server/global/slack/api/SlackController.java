@@ -14,8 +14,6 @@ import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureExcep
 import com.projectlyrics.server.global.slack.exception.SlackInteractionFailureException;
 import com.projectlyrics.server.global.slack.service.SlackService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 @Slf4j
 @RestController
@@ -51,30 +48,18 @@ public class SlackController {
     public ResponseEntity<Void> handleInteractiveMessage(HttpServletRequest request) {
         try {
             Slack slack = new Slack(request);
-
-            ContentCachingRequestWrapper requestWrapper = (ContentCachingRequestWrapper) request;
-            String payload = new String(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding());
-            // Slack에서 보낸 payload 디코딩 및 JSON 변환
-            String decodedPayload = URLDecoder.decode(payload, StandardCharsets.UTF_8);
-            JSONObject json = new JSONObject(decodedPayload.substring("payload=".length()));
-
-            // 액션 정보 추출
             SlackAction actionId = slack.getActionId();
-
-            // 메시지 블록 생성
             JSONArray blocks = new JSONArray();
 
             if (actionId.equals(REPORT_ACCEPT) || actionId.equals(REPORT_FAKE)) {
                 blocks = slackService.resolveReport(slack);
-            }
-
-            else if (actionId.equals(DISCIPLINE)) {
+            } else if (actionId.equals(DISCIPLINE)) {
                 blocks = slackService.createDiscipline(slack);
             }
 
             sendFeedbackToSlack(blocks, slack.getThreadTimestamp());
-
-            return ResponseEntity.ok().build();
+            return ResponseEntity
+                    .ok(null);
         } catch (ReportNotFoundException |
                  InvalidNoteDeletionException |
                  InvalidCommentDeletionException |
@@ -82,12 +67,10 @@ public class SlackController {
         ) {
             throw e;
         } catch (JSONException e) {
-            System.out.println("JSON Parsing Error: " + e.getMessage());
+            log.error("JSON parsing error: {}", e.getMessage());
             throw new SlackInteractionFailureException();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to send message to Slack", e);
-            System.out.println(e);
             throw new SlackInteractionFailureException();
         }
     }
@@ -113,7 +96,6 @@ public class SlackController {
 
             restTemplate.postForEntity(slackApiUrl, entity, String.class);
         } catch (Exception e) {
-            System.out.println(e);
             throw new SlackFeedbackFailureException();
         }
     }
