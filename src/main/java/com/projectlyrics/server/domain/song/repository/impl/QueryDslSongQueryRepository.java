@@ -36,7 +36,8 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .orderBy(
                         Expressions.numberTemplate(Long.class,
                                         "(select count(n) from Note n where n.song.id = song.id and n.deletedAt is null)")
-                                .desc()
+                                .desc(),
+                        song.id.asc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
