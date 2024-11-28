@@ -1,5 +1,9 @@
 package com.projectlyrics.server.global.slack.domain;
 
+import com.projectlyrics.server.domain.discipline.domain.DisciplineReason;
+
+import java.util.List;
+
 public enum SlackAction {
 
     REPORT_ACCEPT,
@@ -7,29 +11,23 @@ public enum SlackAction {
     DISCIPLINE,
     ;
 
-    public static SlackAction from(String actionId) {
-        if (actionId.startsWith("discipline")) {
-            return DISCIPLINE;
-        }
-
-        if (actionId.startsWith("report")) {
-            if (actionId.contains("accept")) {
-                return REPORT_ACCEPT;
-            }
-
-            if (actionId.contains("fake")) {
-                return REPORT_FAKE;
-            }
-        }
-
-        return null;
-    }
-
     public boolean isReport() {
-        return this == REPORT_FAKE || this == REPORT_ACCEPT;
+        return this.equals(REPORT_FAKE) || this.equals(REPORT_ACCEPT);
     }
 
     public boolean isDiscipline() {
-        return this == DISCIPLINE;
+        return this.equals(DISCIPLINE);
+    }
+
+    public List<DisciplineReason> getReasons() {
+        if (this.equals(REPORT_ACCEPT)) {
+            return DisciplineReason.getOtherTypes();
+        }
+
+        if (this.equals(REPORT_FAKE)) {
+            return DisciplineReason.getFakeReportType();
+        }
+
+        return null;
     }
 }
