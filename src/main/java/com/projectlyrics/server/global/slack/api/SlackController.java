@@ -1,9 +1,5 @@
 package com.projectlyrics.server.global.slack.api;
 
-import static com.projectlyrics.server.global.slack.domain.SlackAction.DISCIPLINE;
-import static com.projectlyrics.server.global.slack.domain.SlackAction.REPORT_ACCEPT;
-import static com.projectlyrics.server.global.slack.domain.SlackAction.REPORT_FAKE;
-
 import com.projectlyrics.server.domain.comment.exception.InvalidCommentDeletionException;
 import com.projectlyrics.server.domain.discipline.exception.InvalidDisciplineCreateException;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
@@ -51,9 +47,9 @@ public class SlackController {
             SlackAction actionId = slack.getActionId();
             JSONArray blocks = new JSONArray();
 
-            if (actionId.equals(REPORT_ACCEPT) || actionId.equals(REPORT_FAKE)) {
+            if (actionId.isReport()) {
                 blocks = slackService.resolveReport(slack);
-            } else if (actionId.equals(DISCIPLINE)) {
+            } else if (actionId.isDiscipline()) {
                 blocks = slackService.createDiscipline(slack);
             }
 

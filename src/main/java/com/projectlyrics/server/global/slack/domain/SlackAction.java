@@ -24,4 +24,12 @@ public enum SlackAction {
 
         return null;
     }
+
+    public boolean isReport() {
+        return this == REPORT_FAKE || this == REPORT_ACCEPT;
+    }
+
+    public boolean isDiscipline() {
+        return this == DISCIPLINE;
+    }
 }
