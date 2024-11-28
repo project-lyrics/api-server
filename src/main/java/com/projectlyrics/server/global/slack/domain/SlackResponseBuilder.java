@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SlackResponseBuilder {
+
     public static JSONObject createDivider() {
         return new JSONObject().put("type", "divider");
     }
@@ -84,10 +85,15 @@ public class SlackResponseBuilder {
     }
 
     private static JSONObject createPlainText(String text) {
-        return new JSONObject().put("type", "plain_text").put("text", text).put("emoji", true);
+        return new JSONObject()
+                .put("type", "plain_text")
+                .put("text", text)
+                .put("emoji", true);
     }
 
     private static JSONObject createMarkdownText(String text) {
-        return new JSONObject().put("type", "mrkdwn").put("text", text);
+        return new JSONObject()
+                .put("type", "mrkdwn")
+                .put("text", text);
     }
 }
