@@ -115,6 +115,6 @@ tasks.named('test') {
 }
 
 task runSongCollector(type: JavaExec) {
-    mainClass = 'com.projectlyrics.server.global.dev.SongCollectorRunner'
+    mainClass = 'com.projectlyrics.server.global.dev.cron.SongCollectorRunner'
     classpath = sourceSets.main.runtimeClasspath
 }
