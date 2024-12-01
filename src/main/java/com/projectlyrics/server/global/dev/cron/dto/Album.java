@@ -1,9 +1,14 @@
 package com.projectlyrics.server.global.dev.cron.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
+@Setter
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Album {
 
@@ -20,43 +25,7 @@ public class Album {
         this.id = id;
     }
 
-    public int getTotal_tracks() {
-        return total_tracks;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRelease_date() {
-        return release_date;
-    }
-
-    public void setTotal_tracks(int total_tracks) {
-        this.total_tracks = total_tracks;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
+    public LocalDate getDate() {
+        return LocalDate.parse(release_date);
     }
 }
