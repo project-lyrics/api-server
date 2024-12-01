@@ -10,6 +10,8 @@ import com.projectlyrics.server.global.dev.cron.dto.Album;
 import com.projectlyrics.server.global.dev.cron.dto.AlbumListResponse;
 import com.projectlyrics.server.global.dev.cron.dto.Track;
 import com.projectlyrics.server.global.dev.cron.dto.TrackListResponse;
+import com.projectlyrics.server.global.slack.domain.SlackResponseBuilder;
+import com.projectlyrics.server.global.slack.service.SlackService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,9 +33,10 @@ public class SongCollector {
     private final SongCommandRepository songCommandRepository;
     private final SongQueryRepository songQueryRepository;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final SlackService slackService;
 
     @Value("${slack.channel.songs_id")
-    private String songChannelId;
+    private String channelId;
 
     public void collect() {
         List<Artist> artists = artistQueryRepository.findAll();
@@ -44,15 +47,10 @@ public class SongCollector {
                     .filter(this::notRegistered)
                     .toList();
 
-            newSongs.forEach(song -> {
-
-            });
-
             songCommandRepository.saveAll(newSongs);
+            sendToSlack(newSongs);
         }
     }
-
-
 
     private List<Artist> subList(List<Artist> artists) {
         int now = LocalDateTime.now().getHour();
@@ -141,7 +139,8 @@ public class SongCollector {
                 .isEmpty();
     }
 
-    // TODO: 슬랙으로 보내야 함
-    private void print(List<Song> songs) {
+    private void sendToSlack(List<Song> songs) {
+        songs.forEach(song ->
+            slackService.sendFeedbackToSlack(SlackResponseBuilder.createSong(song), null, channelId));
     }
 }

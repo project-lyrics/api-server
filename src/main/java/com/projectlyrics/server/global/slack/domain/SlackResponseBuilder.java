@@ -2,10 +2,44 @@ package com.projectlyrics.server.global.slack.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.projectlyrics.server.domain.song.entity.Song;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SlackResponseBuilder {
+
+    public static JSONArray createSong(Song song) {
+        JSONArray blocks = new JSONArray();
+
+        JSONObject section = new JSONObject();
+        section.put("type", "section");
+
+        String songDetails = String.format(
+                "*Song Name:* %s\n*Artist:* %s\n*Album:* %s\n*Release Date:* %s\n",
+                song.getName(),
+                song.getArtist().getName(),
+                song.getAlbumName(),
+                song.getReleaseDate()
+        );
+
+        JSONObject text = new JSONObject();
+        text.put("type", "mrkdwn");
+        text.put("text", songDetails);
+
+        section.put("text", text);
+        blocks.put(section);
+
+        if (song.getImageUrl() != null && !song.getImageUrl().isEmpty()) {
+            JSONObject imageBlock = new JSONObject();
+            imageBlock.put("type", "image");
+            imageBlock.put("image_url", song.getImageUrl());
+            imageBlock.put("alt_text", "Album cover for " + song.getName());
+            blocks.put(imageBlock);
+        }
+
+        return blocks;
+    }
 
     public static JSONObject createDivider() {
         return new JSONObject().put("type", "divider");
