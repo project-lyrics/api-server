@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "songs")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Song {
+public class Song extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
