@@ -43,7 +43,7 @@ public class SongCollector {
 
     private static List<Song> getSongs(Artist artist) {
         HttpResponse<String> response;
-        String url = "https://api.spotify.com/v1/artists/" + artist.getSpotifyId() + "/albums?limit=50&market=KR&locale=ko_KR";
+        String url = "https://api.spotify.com/v1/artists/" + artist.getSpotifyId() + "/albums?limit=50&market=KR&locale=ko_KR&include_groups=album,single";
         List<Song> songs = new ArrayList<>();
         AlbumListResponse albumListResponse = null;
 
