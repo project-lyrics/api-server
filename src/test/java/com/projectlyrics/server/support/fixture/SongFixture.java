@@ -9,10 +9,11 @@ import java.time.LocalDate;
 public class SongFixture extends BaseFixture {
 
     public static Song create() {
+        long id = getUniqueId();
         return Song.create(
                 new SongCreate(
-                        getUniqueId(),
-                        "24ebPi6UpTNw2vdzxGbO9n",
+                        id,
+                        "24ebPi6UpTNw2vdzxGbO9n" + id,
                         "Flying Bob",
                         LocalDate.parse("2022-09-15"),
                         "TEEN TROUBLES",
@@ -23,10 +24,12 @@ public class SongFixture extends BaseFixture {
     }
 
     public static Song create(Artist artist) {
+        long id = getUniqueId();
+
         return Song.create(
                 new SongCreate(
-                        getUniqueId(),
-                        "24ebPi6UpTNw2vdzxGbO9n",
+                        id,
+                        "24ebPi6UpTNw2vdzxGbO9n" + id,
                         "Flying Bob",
                         LocalDate.parse("2022-09-15"),
                         "TEEN TROUBLES",
