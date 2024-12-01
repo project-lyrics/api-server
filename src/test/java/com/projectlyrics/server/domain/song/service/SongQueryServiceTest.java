@@ -62,7 +62,7 @@ class SongQueryServiceTest extends IntegrationTest {
 
         requestOfArtist1 = new SongCreateRequest(
                 1L,
-                "spotifyId",
+                "spotifyId1",
                 "Kiss And Tell",
                 LocalDate.now(),
                 "albumName",
@@ -71,7 +71,7 @@ class SongQueryServiceTest extends IntegrationTest {
         );
         requestOfArtist2 = new SongCreateRequest(
                 2L,
-                "spotifyId",
+                "spotifyId2",
                 "Kiss And Tell",
                 LocalDate.now(),
                 "albumName",
@@ -80,7 +80,7 @@ class SongQueryServiceTest extends IntegrationTest {
         );
         request2OfArtist2 = new SongCreateRequest(
                 3L,
-                "spotifyId",
+                "spotifyId3",
                 "Kiss And Tell",
                 LocalDate.now(),
                 "albumName",
@@ -193,7 +193,7 @@ class SongQueryServiceTest extends IntegrationTest {
         for (int i = 0; i < 5; i++) {
             SongCreateRequest request = new SongCreateRequest(
                     (long) (i + 1),
-                    "spotifyId",
+                    "spotifyId" + i,
                     "Kiss And Tell",
                     LocalDate.now(),
                     "albumName",

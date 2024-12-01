@@ -1,7 +1,10 @@
 package com.projectlyrics.server.domain.song.entity;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.global.dev.cron.dto.Album;
+import com.projectlyrics.server.global.dev.cron.dto.Track;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,6 +26,7 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String spotifyId;
     private String name;
     private LocalDate releaseDate;
@@ -59,6 +63,19 @@ public class Song {
         this.artist = artist;
     }
 
+    public Song(
+            Album album,
+            Track track,
+            Artist artist
+    ) {
+        this.spotifyId = track.getId();
+        this.name = track.getName();
+        this.releaseDate = album.getDate();
+        this.albumName = album.getName();
+        this.imageUrl = album.getImages().getFirst().getUrl();
+        this.artist = artist;
+    }
+
     public static Song create(SongCreate songCreate) {
         return new Song(
                 songCreate.id(),
@@ -72,6 +89,8 @@ public class Song {
     }
 
     public List<Note> getNotes() {
-        return notes.stream().filter(note -> note.isInUse()).toList();
+        return notes.stream()
+                .filter(BaseEntity::isInUse)
+                .toList();
     }
 }

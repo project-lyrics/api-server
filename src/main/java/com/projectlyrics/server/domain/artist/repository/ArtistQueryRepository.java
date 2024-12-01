@@ -16,5 +16,7 @@ public interface ArtistQueryRepository {
 
     Slice<Artist> findAll(Pageable pageable);
 
+    List<Artist> findAll();
+
     List<Artist> findAllByIds(List<Long> artistIds);
 }
