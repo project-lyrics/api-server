@@ -18,10 +18,17 @@ import com.projectlyrics.server.global.slack.domain.Slack;
 
 import java.time.LocalDate;
 
+import com.projectlyrics.server.global.slack.exception.SlackFeedbackFailureException;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -30,6 +37,34 @@ public class SlackService {
 
     private final ReportCommandService reportCommandService;
     private final DisciplineCommandService disciplineCommandService;
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${slack.token}")
+    private String token;
+
+    public void sendFeedbackToSlack(JSONArray blocks, String threadTs, String channelId) {
+        try {
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("channel", channelId);
+            responseJson.put("blocks", blocks);
+
+            // 스레드에 답장할 경우 thread_ts 포함
+            if (threadTs != null && !threadTs.isEmpty()) {
+                responseJson.put("thread_ts", threadTs);
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + token);
+
+            HttpEntity<String> entity = new HttpEntity<>(responseJson.toString(), headers);
+            String slackApiUrl = "https://slack.com/api/chat.postMessage";
+
+            restTemplate.postForEntity(slackApiUrl, entity, String.class);
+        } catch (Exception e) {
+            throw new SlackFeedbackFailureException();
+        }
+    }
 
     public JSONArray resolveReport(Slack slack) {
         JSONArray blocks = new JSONArray();

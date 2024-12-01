@@ -12,6 +12,7 @@ import com.projectlyrics.server.global.dev.cron.dto.Track;
 import com.projectlyrics.server.global.dev.cron.dto.TrackListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,9 @@ public class SongCollector {
     private final SongQueryRepository songQueryRepository;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Value("${slack.channel.songs_id")
+    private String songChannelId;
+
     public void collect() {
         List<Artist> artists = artistQueryRepository.findAll();
 
@@ -40,9 +44,15 @@ public class SongCollector {
                     .filter(this::notRegistered)
                     .toList();
 
+            newSongs.forEach(song -> {
+
+            });
+
             songCommandRepository.saveAll(newSongs);
         }
     }
+
+
 
     private List<Artist> subList(List<Artist> artists) {
         int now = LocalDateTime.now().getHour();
