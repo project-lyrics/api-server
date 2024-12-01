@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.report.domain;
 
-public enum ReportReason {
+public enum ReportReason{
     INAPPROPRIATE_CONTENT("커뮤니티 성격에 맞지 않음"),
     DEFAMATION("타 유저 혹은 아티스트 비방"),
     EXPLICIT_CONTENT("불쾌감을 조성하는 음란성/선정적인 내용"),

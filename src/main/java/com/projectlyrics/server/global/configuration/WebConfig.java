@@ -3,7 +3,7 @@ package com.projectlyrics.server.global.configuration;
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdInterceptor;
-import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
+import com.projectlyrics.server.global.slack.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
