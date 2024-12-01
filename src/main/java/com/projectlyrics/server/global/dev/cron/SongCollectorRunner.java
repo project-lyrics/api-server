@@ -20,11 +20,9 @@ public class SongCollectorRunner {
                 .web(NONE)
                 .run(args);
 
-        collect();
+        SongCollector songCollector = context.getBean(SongCollector.class);
+        songCollector.collect();
 
         context.close();
-    }
-
-    private static void collect() {
     }
 }
