@@ -47,6 +47,7 @@ public class SongCollector {
         List<Song> songs = new ArrayList<>();
         AlbumListResponse albumListResponse = null;
 
+        log.info("songs of {} is being collected", artist.getName());
         try {
             do {
                 response = HttpRequestClient.send(url);
@@ -66,7 +67,7 @@ public class SongCollector {
                 }
             } while (isFailed(response) || hasNext(albumListResponse));
         } catch (Exception e) {
-            log.error("failed to get albums of an artist {} at all", artist.getId());
+            log.error("failed to get albums of an artist {} of id {} at all", artist.getName(), artist.getId());
         }
 
         return songs;
@@ -89,7 +90,7 @@ public class SongCollector {
                 }
             } while (isFailed(response) || hasNext(trackListResponse));
         } catch (Exception e) {
-            log.error("failed to get songs of an album at all");
+            log.error("failed to get songs of an album {} of artist {} of id {} at all", album.getName(), album.getId(), album.getId());
         }
 
         return tracks;
