@@ -9,7 +9,7 @@ phases:
   pre_build:
     commands:
       - echo "downloading application.yml from S3..."
-      - aws s3 cp s3://my-config-bucket/application.yml src/main/resources/application.yml
+      - aws s3 cp s3://feelin/application.yml src/main/resources/application.yml
   build:
     commands:
       - echo "running song collector..."
