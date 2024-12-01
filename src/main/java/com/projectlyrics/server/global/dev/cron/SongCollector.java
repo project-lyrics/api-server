@@ -34,7 +34,7 @@ public class SongCollector {
         for (Artist artist : artistQueryRepository.findAll()) {
             List<Song> newSongs = getSongs(artist)
                     .stream()
-                    .filter(this::exists)
+                    .filter(this::notRegistered)
                     .toList();
 
             songCommandRepository.saveAll(newSongs);
@@ -112,9 +112,9 @@ public class SongCollector {
         return Objects.nonNull(response) && Objects.nonNull(response.getNext());
     }
 
-    private boolean exists(Song song) {
+    private boolean notRegistered(Song song) {
         return songQueryRepository.findBySpotifyId(song.getSpotifyId())
-                .isPresent();
+                .isEmpty();
     }
 
     // TODO: 슬랙으로 보내야 함
