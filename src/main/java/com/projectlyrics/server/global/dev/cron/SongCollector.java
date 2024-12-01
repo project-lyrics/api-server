@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,9 @@ public class SongCollector {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public void collect() {
-        for (Artist artist : artistQueryRepository.findAll()) {
+        List<Artist> artists = artistQueryRepository.findAll();
+
+        for (Artist artist : subList(artists)) {
             List<Song> newSongs = getSongs(artist)
                     .stream()
                     .filter(this::notRegistered)
@@ -39,6 +42,16 @@ public class SongCollector {
 
             songCommandRepository.saveAll(newSongs);
         }
+    }
+
+    private List<Artist> subList(List<Artist> artists) {
+        int now = LocalDateTime.now().getHour();
+        int size = artists.size() / 23;
+
+        int from = now * size;
+        int to = Math.min(from + size, artists.size());
+
+        return artists.subList(from, to);
     }
 
     private static List<Song> getSongs(Artist artist) {
