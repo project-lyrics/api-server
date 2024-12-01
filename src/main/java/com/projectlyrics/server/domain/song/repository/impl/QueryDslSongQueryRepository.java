@@ -42,7 +42,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 jpaQueryFactory
                         .selectFrom(song)
                         .where(song.spotifyId.eq(spotifyId))
-                        .fetchOne()
+                        .fetchFirst()
         );
     }
 
