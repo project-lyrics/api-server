@@ -35,7 +35,7 @@ public class SongCollector {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final SlackService slackService;
 
-    @Value("${slack.channel.songs_id")
+    @Value("${slack.channel.songs_id}")
     private String channelId;
 
     public void collect() {
