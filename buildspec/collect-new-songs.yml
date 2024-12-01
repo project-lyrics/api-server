@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    commands:
+      - echo "java 21 installed"
+  pre_build:
+    commands:
+      - echo "downloading application.yml from S3..."
+      - aws s3 cp s3://my-config-bucket/application.yml src/main/resources/application.yml
+  build:
+    commands:
+      - echo "running song collector..."
+      - chmod +x ./gradlew
+      - ./gradlew runSongCollector -x test
+artifacts:
+  files:
+    - '**/*'
