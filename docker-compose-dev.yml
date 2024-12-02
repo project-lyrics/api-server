@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  redis:
+    container_name: redis
+    image: redis:alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: always
+  blue:
+    container_name: blue
+    image: jinkonu/feelin-dev:latest
+    pull_policy: always
+    expose:
+      - 8080
+    ports:
+      - "8081:8080"
+    environment:
+      - TZ=Asia/Seoul
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./firebase-key.json:/src/main/resources/firebase-key.json
+    depends_on:
+      - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+  green:
+    container_name: green
+    image: jinkonu/feelin-dev:latest
+    pull_policy: always
+    expose:
+      - 8080
+    ports:
+      - "8082:8080"
+    environment:
+      - TZ=Asia/Seoul
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./firebase-key.json:/src/main/resources/firebase-key.json
+    depends_on:
+      - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  redis-data:
