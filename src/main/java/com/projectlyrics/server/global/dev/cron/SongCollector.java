@@ -53,6 +53,10 @@ public class SongCollector {
     }
 
     private List<Artist> subList(List<Artist> artists) {
+        if (artists.size() <= 23) {
+            return artists;
+        }
+        
         int now = LocalDateTime.now().getHour();
         int size = artists.size() / 23;
 
