@@ -21,6 +21,7 @@ slack:
     secret: secret
   channel:
     id: secret
+    songs_id: secret
 
 admin: 1
 

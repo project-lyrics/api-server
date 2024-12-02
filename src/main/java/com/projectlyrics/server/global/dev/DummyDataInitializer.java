@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Profile({"local"})
+@Profile({"x"})
 @Component
 @RequiredArgsConstructor
 public class DummyDataInitializer {
