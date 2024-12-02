@@ -24,6 +24,11 @@ services:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
     depends_on:
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
   green:
     container_name: green
     image: jinkonu/feelin-api:latest
@@ -40,6 +45,11 @@ services:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
     depends_on:
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 volumes:
   redis-data:
