@@ -30,7 +30,11 @@ public class JdbcSongCommandRepository implements SongCommandRepository {
                     song.getName(),
                     song.getReleaseDate(),
                     song.getAlbumName(),
-                    song.getImageUrl()
+                    song.getImageUrl(),
+                    LocalDateTime.now().toString(),
+                    0,
+                    EntityStatusEnum.IN_USE.toString(),
+                    0
             );
         }
 
@@ -42,7 +46,11 @@ public class JdbcSongCommandRepository implements SongCommandRepository {
                     song.getName(),
                     song.getReleaseDate(),
                     song.getAlbumName(),
-                    song.getImageUrl()
+                    song.getImageUrl(),
+                    LocalDateTime.now().toString(),
+                    0,
+                    EntityStatusEnum.IN_USE.toString(),
+                    0
             );
         }
 
