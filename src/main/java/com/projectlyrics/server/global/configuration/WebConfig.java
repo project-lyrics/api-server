@@ -42,21 +42,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/auth/token")
                 .excludePathPatterns("/api/v1/slack/interactive");
 
-        if (Objects.nonNull(versionVerificationInterceptor)) {
-            registry.addInterceptor(versionVerificationInterceptor)
-                    .addPathPatterns("/api/**");
-        }
-
         if (Objects.nonNull(deviceIdInterceptor)) {
             registry.addInterceptor(deviceIdInterceptor)
                     .addPathPatterns("/api/**")
                     .excludePathPatterns("/api/v1/auth/sign-in")
-                    .addPathPatterns("/api/v1/auth/sign-up");
+                    .excludePathPatterns("/api/v1/slack/interactive")
+                    .excludePathPatterns("/api/v1/auth/sign-up");
         }
 
         if (Objects.nonNull(versionVerificationInterceptor)) {
             registry.addInterceptor(versionVerificationInterceptor)
-                    .addPathPatterns("/api/**");
+                    .addPathPatterns("/api/**")
+                    .excludePathPatterns("/api/v1/slack/interactive");
         }
 
         registry.addInterceptor(adminInterceptor)
