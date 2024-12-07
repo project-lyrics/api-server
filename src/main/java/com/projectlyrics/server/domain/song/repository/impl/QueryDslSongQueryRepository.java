@@ -24,6 +24,29 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    @Override
+    public Optional<Song> findById(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .select(song)
+                        .from(song)
+                        .leftJoin(song.notes, note)
+                        .where(song.id.eq(id))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Song> findBySpotifyId(String spotifyId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(song)
+                        .where(song.spotifyId.eq(spotifyId))
+                        .fetchFirst()
+        );
+    }
+
+    @Override
     public Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
         List<Song> content = jpaQueryFactory
                 .select(song)
@@ -68,19 +91,5 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private static BooleanExpression artistIdEq(Long artistId) {
         return Objects.isNull(artistId) ? null : song.artist.id.eq(artistId);
-    }
-
-    @Override
-    public Optional<Song> findById(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .select(song)
-                        .from(song)
-                        .leftJoin(song.notes, note)
-                        .where(
-                                song.id.eq(id)
-                        )
-                        .fetchOne()
-        );
     }
 }

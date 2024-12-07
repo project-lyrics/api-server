@@ -61,6 +61,13 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
+    public List<Artist> findAll() {
+        return jpaQueryFactory
+                .selectFrom(artist)
+                .fetch();
+    }
+
+    @Override
     public List<Artist> findAllByIds(List<Long> artistIds) {
         return jpaQueryFactory.selectFrom(artist)
                 .where(

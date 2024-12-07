@@ -113,3 +113,8 @@ bootJar {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+task runSongCollector(type: JavaExec) {
+    mainClass = 'com.projectlyrics.server.global.dev.cron.SongCollectorRunner'
+    classpath = sourceSets.main.runtimeClasspath
+}

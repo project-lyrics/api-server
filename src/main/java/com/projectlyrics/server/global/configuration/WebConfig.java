@@ -3,7 +3,7 @@ package com.projectlyrics.server.global.configuration;
 import com.projectlyrics.server.domain.auth.authentication.AuthArgumentResolver;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AuthInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdInterceptor;
-import com.projectlyrics.server.domain.auth.authentication.interceptor.SlackInterceptor;
+import com.projectlyrics.server.global.slack.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
@@ -45,9 +45,12 @@ public class WebConfig implements WebMvcConfigurer {
         if (Objects.nonNull(deviceIdInterceptor)) {
             registry.addInterceptor(deviceIdInterceptor)
                     .addPathPatterns("/api/**")
+                    .excludePathPatterns("/actuator/health")
                     .excludePathPatterns("/api/v1/auth/sign-in")
+                    .excludePathPatterns("/api/v1/auth/sign-up")
+                    .excludePathPatterns("/api/v1/auth/token")
                     .excludePathPatterns("/api/v1/slack/interactive")
-                    .excludePathPatterns("/api/v1/auth/sign-up");
+                    .excludePathPatterns("/api/v1/auth/validate-token");
         }
 
         if (Objects.nonNull(versionVerificationInterceptor)) {

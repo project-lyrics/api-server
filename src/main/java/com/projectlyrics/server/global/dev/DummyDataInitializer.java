@@ -29,7 +29,7 @@ public class DummyDataInitializer {
 
     @PostConstruct
     public void init() {
-        List<Artist> artists = getArtists();
+        List<Artist> artists = saveInitialArtists();
         saveSongs(artists);
     }
 
@@ -42,12 +42,12 @@ public class DummyDataInitializer {
 
             while ((line = reader.readNext()) != null) {
                 ArtistCreate artistCreate = new ArtistCreate(
-                        Long.parseLong(line[4]),
                         null,
+                        line[1],
+                        line[2],
                         null,
-                        null,
-                        line[10],
-                        null
+                        line[4],
+                        line[5]
                 );
 
                 artists.add(Artist.create(artistCreate));
@@ -69,12 +69,12 @@ public class DummyDataInitializer {
 
             while ((line = reader.readNext()) != null) {
                 ArtistCreate artistCreate = new ArtistCreate(
-                        Long.parseLong(line[4]),
-                        line[8],
                         null,
+                        line[1],
+                        line[2],
                         null,
-                        line[10],
-                        line[8]
+                        line[4],
+                        line[5]
                 );
 
                 artists.add(Artist.create(artistCreate));
