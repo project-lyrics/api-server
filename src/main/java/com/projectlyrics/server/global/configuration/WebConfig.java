@@ -45,9 +45,12 @@ public class WebConfig implements WebMvcConfigurer {
         if (Objects.nonNull(deviceIdInterceptor)) {
             registry.addInterceptor(deviceIdInterceptor)
                     .addPathPatterns("/api/**")
+                    .excludePathPatterns("/actuator/health")
                     .excludePathPatterns("/api/v1/auth/sign-in")
+                    .excludePathPatterns("/api/v1/auth/sign-up")
+                    .excludePathPatterns("/api/v1/auth/token")
                     .excludePathPatterns("/api/v1/slack/interactive")
-                    .excludePathPatterns("/api/v1/auth/sign-up");
+                    .excludePathPatterns("/api/v1/auth/validate-token");
         }
 
         if (Objects.nonNull(versionVerificationInterceptor)) {

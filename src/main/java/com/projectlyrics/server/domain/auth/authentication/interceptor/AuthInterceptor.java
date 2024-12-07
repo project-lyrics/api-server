@@ -21,7 +21,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final JwtExtractor jwtExtractor;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (isExcluded(request)) {
             setAuthContextIfAvailable(request);
             return true;

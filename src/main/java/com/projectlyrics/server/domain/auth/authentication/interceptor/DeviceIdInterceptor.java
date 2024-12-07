@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,18 +20,26 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
     private final AuthRepository authRepository;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (included(request)) {
-            authRepository.findByDeviceId(request.getHeader("Device-Id"))
-                    .orElseThrow(NotRegisteredDeviceException::new);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (isExcluded(request)) {
+            return true;
         }
 
+        authRepository.findByDeviceId(request.getHeader("Device-Id"))
+                .orElseThrow(NotRegisteredDeviceException::new);
         return true;
     }
 
-    private boolean included(HttpServletRequest request) {
+    private boolean isExcluded(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        return !requestURI.matches("/api/v1/auth/sign-in") &&
-                !requestURI.matches("/api/v1/auth/sign-up");
+        String requestMethod = request.getMethod();
+
+        return (requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
+                requestURI.matches("/api/v1/artists/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
+                requestURI.equals("/api/v1/artists") ||
+                requestURI.equals("/api/v1/artists/search") ||
+                requestURI.equals("/api/v1/notes/artists") ||
+                requestURI.equals("/api/v1/notes/songs") ||
+                requestURI.matches("/api/v1/songs/.*"));
     }
 }
