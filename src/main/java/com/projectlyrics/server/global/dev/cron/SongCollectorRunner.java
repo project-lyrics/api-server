@@ -1,11 +1,11 @@
 package com.projectlyrics.server.global.dev.cron;
 
+import static org.springframework.boot.WebApplicationType.NONE;
+
 import com.projectlyrics.server.ServerApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import static org.springframework.boot.WebApplicationType.NONE;
 
 @Slf4j
 public class SongCollectorRunner {
@@ -23,6 +23,6 @@ public class SongCollectorRunner {
         SongCollector songCollector = context.getBean(SongCollector.class);
         songCollector.collect();
 
-        context.close();
+        //context.close();
     }
 }
