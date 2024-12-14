@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.auth.authentication.interceptor;
 
+import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.exception.NotRegisteredDeviceException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class DeviceIdInterceptor implements HandlerInterceptor {
 
     private final AuthRepository authRepository;
+    private final AuthContext authContext;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -25,8 +27,10 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        authRepository.findByDeviceId(request.getHeader("Device-Id"))
-                .orElseThrow(NotRegisteredDeviceException::new);
+        if (isOldDevice(request.getHeader("Device-Id"))) {
+            throw new NotRegisteredDeviceException();
+        }
+
         return true;
     }
 
@@ -41,5 +45,11 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
                 requestURI.equals("/api/v1/notes/artists") ||
                 requestURI.equals("/api/v1/notes/songs") ||
                 requestURI.matches("/api/v1/songs/.*"));
+    }
+
+    private boolean isOldDevice(String deviceId) {
+        return authContext.getId() > 0 &&
+                authContext.getNickname() != null &&
+                authRepository.findByDeviceId(deviceId).isEmpty();
     }
 }
