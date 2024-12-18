@@ -23,7 +23,7 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (isExcluded(request)) {
+        if (isExcluded(request) && hasNoAuth()) {
             return true;
         }
 
@@ -47,9 +47,12 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
                 requestURI.matches("/api/v1/songs/.*"));
     }
 
+    private boolean hasNoAuth() {
+        return authContext.getId() <= 0 &&
+                authContext.getNickname() == null;
+    }
+
     private boolean isOldDevice(String deviceId) {
-        return authContext.getId() > 0 &&
-                authContext.getNickname() != null &&
-                authRepository.findByDeviceId(deviceId).isEmpty();
+        return authRepository.findByDeviceId(deviceId).isEmpty();
     }
 }
