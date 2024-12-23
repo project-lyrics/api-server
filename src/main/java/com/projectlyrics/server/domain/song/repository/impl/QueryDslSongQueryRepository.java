@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
@@ -91,5 +92,13 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private static BooleanExpression artistIdEq(Long artistId) {
         return Objects.isNull(artistId) ? null : song.artist.id.eq(artistId);
+    }
+
+    @Override
+    public List<Song> findAll() {
+        return jpaQueryFactory
+                .selectFrom(song)
+                .join(song.artist, artist).fetchJoin()
+                .fetch();
     }
 }
