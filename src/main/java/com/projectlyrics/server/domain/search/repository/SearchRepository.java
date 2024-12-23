@@ -70,11 +70,13 @@ public class SearchRepository {
         }
     }
 
-    public List<SongSearch> search(String query) {
+    public List<SongSearch> search(String query, int pageNumber, int pageSize) {
         try {
             SearchRequest request = new SearchRequest.Builder()
                     .index(SongSearch.INDEX)
                     .query(q -> q.queryString(qs -> qs.fields(SongSearch.FIELDS).query(query)))
+                    .from(pageNumber * pageSize)
+                    .size(pageSize)
                     .build();
             SearchResponse<SongSearch> response = searchClient.search(request, SongSearch.class);
 

@@ -17,4 +17,12 @@ public record OffsetBasePaginatedResponse<T>(
                 slice.getContent()
         );
     }
+
+    public static <T> OffsetBasePaginatedResponse<T> of(int pageNumber, int pageSize, List<T> data) {
+        if (data.size() > pageSize) {
+            return new OffsetBasePaginatedResponse<>(pageNumber, true, data);
+        }
+
+        return new OffsetBasePaginatedResponse<>(pageNumber, false, data);
+    }
 }

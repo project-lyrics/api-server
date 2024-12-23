@@ -14,4 +14,5 @@ public interface SongQueryRepository {
     Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable);
     Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable);
     List<Song> findAll();
+    List<Song> findAllByIds(List<Long> ids);
 }

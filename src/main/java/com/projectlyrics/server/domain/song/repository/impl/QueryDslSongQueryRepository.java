@@ -101,4 +101,13 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .join(song.artist, artist).fetchJoin()
                 .fetch();
     }
+
+    @Override
+    public List<Song> findAllByIds(List<Long> ids) {
+        return jpaQueryFactory
+                .selectFrom(song)
+                .join(song.artist, artist).fetchJoin()
+                .where(song.id.in(ids))
+                .fetch();
+    }
 }
