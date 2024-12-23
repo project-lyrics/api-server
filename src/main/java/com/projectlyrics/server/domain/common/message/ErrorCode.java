@@ -112,6 +112,7 @@ public enum ErrorCode {
 
     // Search
     FAILED_TO_INDEX(HttpStatus.INTERNAL_SERVER_ERROR, "16000", "데이터를 인덱싱하는 데 실패했습니다."),
+    FAILED_TO_SEARCH(HttpStatus.INTERNAL_SERVER_ERROR, "16001", "데이터를 검색하는 데 실패했습니다."),
     ;
 
     private final HttpStatus responseStatus;
