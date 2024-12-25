@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +26,10 @@ public class SongQueryService {
     private final SearchRepository searchRepository;
 
     public OffsetBasePaginatedResponse<SongSearchResponse> searchSongs(String query, int pageNumber, int pageSize) {
+        if (Objects.isNull(query) || query.isEmpty()) {
+            return getSongsByNoteCount(pageNumber, pageSize);
+        }
+
         List<Long> searchedIds = searchRepository.search(query, pageNumber, pageSize + 1).stream()
                 .map(SongSearch::id)
                 .toList();
@@ -39,6 +43,13 @@ public class SongQueryService {
                 .toList();
 
         return OffsetBasePaginatedResponse.of(pageNumber, pageSize, response);
+    }
+
+    private OffsetBasePaginatedResponse<SongSearchResponse> getSongsByNoteCount(int pageNumber, int pageSize) {
+        return OffsetBasePaginatedResponse.of(
+                songQueryRepository.findAllOrderByNoteCountDesc(PageRequest.of(pageNumber, pageSize))
+                        .map(SongSearchResponse::from)
+        );
     }
 
     public CursorBasePaginatedResponse<SongGetResponse> searchSongsByArtist(Long artistId, String query, Long cursor, int size) {

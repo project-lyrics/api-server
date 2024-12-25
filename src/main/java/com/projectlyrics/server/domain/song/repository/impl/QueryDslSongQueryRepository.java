@@ -48,14 +48,11 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
-    public Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
+    public Slice<Song> findAllOrderByNoteCountDesc(Pageable pageable) {
         List<Song> content = jpaQueryFactory
-                .select(song)
-                .from(song)
+                .selectFrom(song)
                 .leftJoin(song.notes, note)
-                .where(
-                        songNameContains(query)
-                )
+                .join(song.artist, artist).fetchJoin()
                 .groupBy(song.id)
                 .orderBy(
                         Expressions.numberTemplate(Long.class,

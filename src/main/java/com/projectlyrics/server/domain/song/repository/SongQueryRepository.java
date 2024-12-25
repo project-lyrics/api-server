@@ -11,7 +11,7 @@ public interface SongQueryRepository {
 
     Optional<Song> findById(Long id);
     Optional<Song> findBySpotifyId(String spotifyId);
-    Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable);
+    Slice<Song> findAllOrderByNoteCountDesc(Pageable pageable);
     Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable);
     List<Song> findAll();
     List<Song> findAllByIds(List<Long> ids);
