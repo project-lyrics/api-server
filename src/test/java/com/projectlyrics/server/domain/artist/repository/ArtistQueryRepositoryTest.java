@@ -28,9 +28,6 @@ public class ArtistQueryRepositoryTest {
     @Autowired
     private ArtistCommandRepository artistCommandRepository;
 
-    @MockBean
-    private OpenSearchClient openSearchClientp;
-
     @Test
     void id로_Optional로_감싼_아티스트를_조회한다() {
         // given

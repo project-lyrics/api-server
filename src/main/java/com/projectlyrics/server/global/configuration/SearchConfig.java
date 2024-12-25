@@ -33,7 +33,6 @@ public class SearchConfig {
     @Value("${search.api.password}")
     private String password;
 
-    @Profile({"dev", "prod"})
     @Bean
     public OpenSearchClient openSearchClient() {
         return new OpenSearchClient(new RestClientTransport(restClient(), new JacksonJsonpMapper(new ObjectMapper())));
