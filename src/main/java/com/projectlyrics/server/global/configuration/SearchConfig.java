@@ -14,6 +14,7 @@ import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class SearchConfig {
     @Value("${search.api.password}")
     private String password;
 
+    @Profile({"dev", "prod"})
     @Bean
     public OpenSearchClient openSearchClient() {
         return new OpenSearchClient(new RestClientTransport(restClient(), new JacksonJsonpMapper(new ObjectMapper())));
