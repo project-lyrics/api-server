@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,17 +32,8 @@ public class SongQueryService {
             return getSongsByNoteCount(pageNumber, pageSize);
         }
 
-        List<Long> searchedIds = searchRepository.search(query, pageNumber, pageSize + 1).stream()
-                .map(SongSearch::id)
-                .toList();
-        List<Song> songs = songQueryRepository.findAllByIds(searchedIds);
-        List<SongSearchResponse> response = searchedIds.stream()
-                .map(id -> songs.stream()
-                        .filter(song -> song.getId().equals(id))
-                        .findFirst()
-                        .get())
-                .map(SongSearchResponse::from)
-                .toList();
+        List<SongSearch> searchResult = searchRepository.search(query, pageNumber, pageSize + 1);
+        List<SongSearchResponse> response = convertToResponse(searchResult);
 
         return OffsetBasePaginatedResponse.of(pageNumber, pageSize, response);
     }
@@ -50,6 +43,21 @@ public class SongQueryService {
                 songQueryRepository.findAllOrderByNoteCountDesc(PageRequest.of(pageNumber, pageSize))
                         .map(SongSearchResponse::from)
         );
+    }
+
+    private List<SongSearchResponse> convertToResponse(List<SongSearch> searchResult) {
+        List<Long> searchedIds = searchResult.stream()
+                .map(SongSearch::id)
+                .toList();
+
+        Map<Long, Song> songs = songQueryRepository.findAllByIds(searchedIds)
+                .stream()
+                .collect(Collectors.toMap(Song::getId, song -> song));
+
+        return searchedIds.stream()
+                .map(songs::get)
+                .map(SongSearchResponse::from)
+                .toList();
     }
 
     public CursorBasePaginatedResponse<SongGetResponse> searchSongsByArtist(Long artistId, String query, Long cursor, int size) {
