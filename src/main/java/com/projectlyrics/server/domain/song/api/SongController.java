@@ -24,7 +24,7 @@ public class SongController {
     @GetMapping("/search")
     public ResponseEntity<OffsetBasePaginatedResponse<SongSearchResponse>> searchSongs(
             @RequestParam(name = "query", required = false) String query,
-            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(name = "pageNumber", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize
     ) {
         return ResponseEntity
