@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
+import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
@@ -47,14 +48,11 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
-    public Slice<Song> findAllByQueryOrderByNoteCountDesc(String query, Pageable pageable) {
+    public Slice<Song> findAllOrderByNoteCountDesc(Pageable pageable) {
         List<Song> content = jpaQueryFactory
-                .select(song)
-                .from(song)
+                .selectFrom(song)
                 .leftJoin(song.notes, note)
-                .where(
-                        songNameContains(query)
-                )
+                .join(song.artist, artist).fetchJoin()
                 .groupBy(song.id)
                 .orderBy(
                         Expressions.numberTemplate(Long.class,
@@ -91,5 +89,23 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     private static BooleanExpression artistIdEq(Long artistId) {
         return Objects.isNull(artistId) ? null : song.artist.id.eq(artistId);
+    }
+
+    @Override
+    public List<Song> findAll() {
+        return jpaQueryFactory
+                .selectFrom(song)
+                .join(song.artist, artist).fetchJoin()
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findAllByIds(List<Long> ids) {
+        return jpaQueryFactory
+                .selectFrom(song)
+                .leftJoin(song.notes, note).fetchJoin()
+                .join(song.artist, artist).fetchJoin()
+                .where(song.id.in(ids))
+                .fetch();
     }
 }

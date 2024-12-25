@@ -2,6 +2,9 @@ package com.projectlyrics.server.domain.song.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
@@ -13,6 +16,8 @@ import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteCreate;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
+import com.projectlyrics.server.domain.search.domain.SongSearch;
+import com.projectlyrics.server.domain.search.repository.SearchRepository;
 import com.projectlyrics.server.domain.song.dto.request.SongCreateRequest;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
@@ -23,11 +28,14 @@ import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class SongQueryServiceTest extends IntegrationTest {
 
@@ -45,6 +53,9 @@ class SongQueryServiceTest extends IntegrationTest {
 
     @Autowired
     SongQueryService sut;
+
+    @MockBean
+    SearchRepository songSearchRepository;
 
     private User user;
     private Artist artist1;
@@ -103,6 +114,9 @@ class SongQueryServiceTest extends IntegrationTest {
                 artist1.getId()
         );
         Song song = songCommandService.create(request);
+
+        when(songSearchRepository.search(any(), anyInt(), anyInt()))
+                .thenReturn(List.of(new SongSearch(1L, null, null, null, null, null, null)));
 
         // when
         OffsetBasePaginatedResponse<SongSearchResponse> result = sut.searchSongs(query, 0, 5);
