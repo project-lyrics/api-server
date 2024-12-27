@@ -79,7 +79,7 @@ jobs:
           host: ${{ secrets.HOST_PROD }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          source: ./scripts/deploy.sh
+          source: ./scripts/deploy-prod.sh
           target: /home/ubuntu/
 
       - name: send docker compose file to main server
@@ -111,6 +111,6 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            sudo chmod 777 /home/ubuntu/scripts/deploy.sh
-            /home/ubuntu/scripts/deploy.sh
+            sudo chmod 777 /home/ubuntu/scripts/deploy-prod.sh
+            /home/ubuntu/scripts/deploy-prod.sh
             docker image prune -f
