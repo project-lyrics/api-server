@@ -74,7 +74,7 @@ public class SearchRepository {
         try {
             SearchRequest request = new SearchRequest.Builder()
                     .index(SongSearch.INDEX)
-                    .query(q -> q.queryString(qs -> qs.fields(SongSearch.FIELDS).query(query)))
+                    .query(q -> q.multiMatch(qs -> qs.fields(SongSearch.FIELDS).query(query)))
                     .from(pageNumber * pageSize)
                     .size(pageSize)
                     .build();
