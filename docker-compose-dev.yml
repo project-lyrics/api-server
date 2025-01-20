@@ -8,6 +8,12 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
   blue:
     container_name: blue
     image: jinkonu/feelin-dev:latest
