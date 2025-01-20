@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.http.HttpResponse;
@@ -38,7 +40,10 @@ public class SongCollector {
     @Value("${slack.channel.songs_id}")
     private String channelId;
 
+    @Async
+    @Scheduled(cron = "0 0 * * * *")
     public void collect() {
+        log.info("song collector starts collecting!");
         List<Artist> artists = artistQueryRepository.findAll();
 
         for (Artist artist : subList(artists)) {
