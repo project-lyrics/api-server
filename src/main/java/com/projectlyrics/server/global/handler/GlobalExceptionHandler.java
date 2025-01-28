@@ -44,14 +44,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeelinException.class)
     public ResponseEntity<ErrorResponse> handleFeelinException(FeelinException e) {
-        System.out.printf("Handling FeelinException: errorCode={}, message={}, data={}\n",
-                e.getErrorCode().getErrorCode(), e.getMessage(), e.getData());
-
-        ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getData());
 
         return ResponseEntity
                 .status(e.getErrorCode().getResponseStatus())
-                .body(response);
+                .body(ErrorResponse.of(e.getErrorCode(), e.getData()));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

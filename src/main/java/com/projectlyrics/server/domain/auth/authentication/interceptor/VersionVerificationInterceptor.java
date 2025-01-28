@@ -25,7 +25,6 @@ public class VersionVerificationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
             if (compareVersions(request.getHeader("App-Version"), version) < 0) {
-                System.out.println("sssssss");
                 throw new UpdateRequiredException();
             }
         } catch (NullPointerException e) {
