@@ -1,9 +1,16 @@
 package com.projectlyrics.server.support;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.snippet.Attributes.Attribute;
+
 import com.epages.restdocs.apispec.HeaderDescriptorWithType;
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.support.config.RestDocsConfiguration;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +25,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.snippet.Attributes.Attribute;
 
 @Import(RestDocsConfiguration.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -50,7 +49,9 @@ public abstract class RestDocsTest extends ControllerTest {
                 fieldWithPath("errorCode").type(JsonFieldType.STRING)
                         .description("에러코드"),
                 fieldWithPath("errorMessage").type(JsonFieldType.STRING)
-                        .description("메세지")
+                        .description("메세지"),
+                fieldWithPath("data").type(JsonFieldType.OBJECT).optional()
+                        .description("추가 데이터 (null일 수 있습니다.)")
         };
     }
 
