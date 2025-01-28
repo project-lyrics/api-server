@@ -3,6 +3,7 @@ package com.projectlyrics.server.global.handler;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
 import com.projectlyrics.server.global.exception.FeelinException;
+import com.projectlyrics.server.global.exception.UpdateRequiredException;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,13 +43,22 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
     }
 
-    @ExceptionHandler(FeelinException.class)
-    public ResponseEntity<ErrorResponse> handleFeelinException(FeelinException e) {
-        log.debug("Handling FeelinException: errorCode={}, message={}, data={}",
+    @ExceptionHandler(UpdateRequiredException.class)
+    public ResponseEntity<ErrorResponse> handleFeelinException(UpdateRequiredException e) {
+        System.out.printf("Handling FeelinException: errorCode={}, message={}, data={}\n",
                 e.getErrorCode().getErrorCode(), e.getMessage(), e.getData());
 
         ErrorResponse response = ErrorResponse.of(e.getErrorCode(), e.getData());
-        log.debug("Generated ErrorResponse: {}", response);
+
+        return ResponseEntity
+                .status(e.getErrorCode().getResponseStatus())
+                .body(response);
+    }
+
+    @ExceptionHandler(FeelinException.class)
+    public ResponseEntity<ErrorResponse> handleFeelinException(FeelinException e) {
+
+        ErrorResponse response = ErrorResponse.of(e.getErrorCode());
 
         return ResponseEntity
                 .status(e.getErrorCode().getResponseStatus())
