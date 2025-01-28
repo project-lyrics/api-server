@@ -37,9 +37,6 @@ public class FeelinException extends RuntimeException {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
         this.data = data;
-
-        System.out.printf("FeelinException created: errorCode={}, message={}, data={}\n",
-                errorCode.getErrorCode(), errorCode.getErrorMessage(), data);
     }
 
     public FeelinException(ErrorCode errorCode, String messageForLog, Object data) {
