@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.Objects;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,7 +46,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFeelinException(FeelinException e) {
         return ResponseEntity
                 .status(e.getErrorCode().getResponseStatus())
-                .body(ErrorResponse.of(e.getErrorCode()));
+                .body(ErrorResponse.of(e.getErrorCode(), e.getData()));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
