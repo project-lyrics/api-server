@@ -1,8 +1,7 @@
 package com.projectlyrics.server.global.exception;
 
-import lombok.Getter;
-
 import com.projectlyrics.server.domain.common.message.ErrorCode;
+import lombok.Getter;
 
 @Getter
 public class FeelinException extends RuntimeException {
@@ -38,6 +37,9 @@ public class FeelinException extends RuntimeException {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
         this.data = data;
+
+        System.out.printf("FeelinException created: errorCode={}, message={}, data={}\n",
+                errorCode.getErrorCode(), errorCode.getErrorMessage(), data);
     }
 
     public FeelinException(ErrorCode errorCode, String messageForLog, Object data) {
