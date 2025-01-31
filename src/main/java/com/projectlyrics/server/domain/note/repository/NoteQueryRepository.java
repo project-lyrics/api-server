@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface NoteQueryRepository {
 
-    Optional<Note> findById(Long id);
+    Note findById(Long id);
     Optional<Note> findById(Long id, Long userId);
 
     Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable);

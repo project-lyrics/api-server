@@ -10,6 +10,7 @@ import static com.projectlyrics.server.domain.song.entity.QSong.song;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,21 +31,21 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Note> findById(Long id) {
+    public Note findById(Long id) {
         return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(note)
-                        .leftJoin(note.lyrics).fetchJoin()
-                        .join(note.publisher).fetchJoin()
-                        .join(note.song).fetchJoin()
-                        .join(song.artist).fetchJoin()
-                        .leftJoin(note.comments).fetchJoin()
-                        .where(
-                                note.id.eq(id),
-                                note.deletedAt.isNull()
-                        )
-                        .fetchOne()
-        );
+                        jpaQueryFactory
+                                .selectFrom(note)
+                                .leftJoin(note.lyrics).fetchJoin()
+                                .join(note.publisher).fetchJoin()
+                                .join(note.song).fetchJoin()
+                                .join(song.artist).fetchJoin()
+                                .leftJoin(note.comments, comment)
+                                .where(
+                                        note.id.eq(id),
+                                        note.deletedAt.isNull()
+                                )
+                                .fetchOne()
+                ).orElseThrow(NoteNotFoundException::new);
     }
 
     @Override
