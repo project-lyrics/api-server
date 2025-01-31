@@ -64,7 +64,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .fetchOne());
     }
 
-
     @Override
     public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
