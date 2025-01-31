@@ -26,7 +26,6 @@ services:
       - TZ=Asia/Seoul
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SPRING_PROFILES_ACTIVE=dev
     volumes:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
     depends_on:
@@ -48,7 +47,6 @@ services:
       - TZ=Asia/Seoul
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SPRING_PROFILES_ACTIVE=dev
     volumes:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
     depends_on:
