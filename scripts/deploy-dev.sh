@@ -41,7 +41,7 @@ if [ -z "$IS_GREEN_EXIST" ];then
 else
   echo "### GREEN -> BLUE ###"
   echo ">>> pull blue image"
-  docker pull jinkonu/feelin-dev:latest1
+  docker pull jinkonu/feelin-dev:latest
   echo ">>> remove old blue container"
   docker compose rm -fs blue
   echo ">>> up blue container"
