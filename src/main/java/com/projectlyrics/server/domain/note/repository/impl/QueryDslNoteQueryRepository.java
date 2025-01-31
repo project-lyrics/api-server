@@ -49,22 +49,6 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Optional<Note> findById(Long id, Long userId) {
-        return Optional.ofNullable(jpaQueryFactory
-                .selectFrom(note)
-                .leftJoin(note.lyrics).fetchJoin()
-                .join(note.publisher).fetchJoin()
-                .join(note.song).fetchJoin()
-                .join(song.artist).fetchJoin()
-                .leftJoin(note.comments, comment)
-                .where(
-                        note.id.eq(id),
-                        note.deletedAt.isNull()
-                )
-                .fetchOne());
-    }
-
-    @Override
     public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)

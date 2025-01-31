@@ -7,7 +7,6 @@ import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQ
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
-import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +26,7 @@ public class NoteQueryService {
     private final FavoriteArtistQueryRepository favoriteArtistQueryRepository;
 
     public NoteDetailResponse getNoteById(Long noteId, Long userId) {
-        Note note = noteQueryRepository.findById(noteId, userId)
-                .orElseThrow(NoteNotFoundException::new);
+        Note note = noteQueryRepository.findById(noteId);
         List<Comment> comments = commentQueryRepository.findAllByNoteId(noteId, userId);
 
         return NoteDetailResponse.of(note, comments, userId);
