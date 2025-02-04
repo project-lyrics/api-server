@@ -3,7 +3,14 @@ spring:
     active: test
 
 jwt:
-  secret: lyrics2024lyrics2024lyrics2024lyrics2024lyrics2024lyrics2024lyrics2024lyrics2024lyrics2024
+  secret: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+  token:
+    type: secret
+    access-token-type: secret
+    refresh-token-type: secret
+    expiration:
+      access-token: 100000
+      refresh-token: 1000000
 
 logging:
   pattern:
