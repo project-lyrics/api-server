@@ -17,20 +17,29 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private static final String TOKEN_TYPE = "tokenType";
-    private static final String ACCESS_TOKEN_TYPE = "accessToken";
-    private static final String REFRESH_TOKEN_TYPE = "refreshToken";
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 3;
-    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7 * 3;
-
+    private final String TOKEN_TYPE;
+    private final String ACCESS_TOKEN_TYPE;
+    private final String REFRESH_TOKEN_TYPE;
+    private final long ACCESS_TOKEN_EXPIRATION_TIME;
+    private final long REFRESH_TOKEN_EXPIRATION_TIME;
     private final Key key;
     private final Clock clock;
 
     public JwtProvider(
-            @Value("${jwt.secret}") String key,
+            @Value("${jwt.token.type}") String tokenType,
+            @Value("${jwt.token.access-token-type}") String accessTokenType,
+            @Value("${jwt.token.refresh-token-type}") String refreshTokenType,
+            @Value("${jwt.token.expiration.access-token}") long accessTokenExpirationTime,
+            @Value("${jwt.token.expiration.refresh-token}") long refreshTokenExpirationTime,
+            @Value("${jwt.secret}") String secretKey,
             Clock clock
     ) {
-        this.key = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
+        this.TOKEN_TYPE = tokenType;
+        this.ACCESS_TOKEN_TYPE = accessTokenType;
+        this.REFRESH_TOKEN_TYPE = refreshTokenType;
+        this.ACCESS_TOKEN_EXPIRATION_TIME = accessTokenExpirationTime;
+        this.REFRESH_TOKEN_EXPIRATION_TIME = refreshTokenExpirationTime;
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.clock = clock;
     }
 
