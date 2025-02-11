@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "comments")
+@Table(name = "event_receipt")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventReceipt extends BaseEntity {
