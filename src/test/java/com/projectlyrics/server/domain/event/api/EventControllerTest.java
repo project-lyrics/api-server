@@ -2,6 +2,7 @@ package com.projectlyrics.server.domain.event.api;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.support.RestDocsTest;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -57,6 +59,36 @@ class EventControllerTest extends RestDocsTest {
                                         .description("성공 여부")
                         )
                         .responseSchema(Schema.schema("Create Event Response"))
+                        .build())
+        );
+    }
+
+    @Test
+    void 이벤트를_거부하면_200응답을_해야_한다() throws Exception {
+        // when, then
+        mockMvc.perform(post("/api/v1/events/refuse")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("eventId", "1"))
+                .andExpect(status().isOk())
+                .andDo(getRefuseEventDocument());
+    }
+
+    private RestDocumentationResultHandler getRefuseEventDocument() {
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Event API")
+                        .summary("이벤트 거부 API")
+                        .requestHeaders(getAuthorizationHeader())
+                        .queryParameters(parameterWithName("eventId").type(SimpleType.NUMBER)
+                                .description("거부할 이벤트 ID")
+                        )
+                        .requestSchema(Schema.schema("Refuse Event Request"))
+                        .responseFields(
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부")
+                        )
+                        .responseSchema(Schema.schema("Refuse Event Response"))
                         .build())
         );
     }
