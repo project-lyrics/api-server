@@ -14,6 +14,7 @@ import com.projectlyrics.server.domain.block.service.BlockCommandService;
 import com.projectlyrics.server.domain.bookmark.service.BookmarkCommandService;
 import com.projectlyrics.server.domain.comment.service.CommentCommandService;
 import com.projectlyrics.server.domain.discipline.service.DisciplineCommandService;
+import com.projectlyrics.server.domain.event.service.EventCommandService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistCommandService;
 import com.projectlyrics.server.domain.favoriteartist.service.FavoriteArtistQueryService;
 import com.projectlyrics.server.domain.like.service.LikeCommandService;
@@ -121,6 +122,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected SlackClient slackClient;
+
+    @MockBean
+    protected EventCommandService eventCommandService;
 
     public String accessToken;
     public String refreshToken;
