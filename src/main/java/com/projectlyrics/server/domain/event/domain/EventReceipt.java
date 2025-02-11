@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.event.domain;
 
+import com.projectlyrics.server.domain.common.entity.BaseEntity;
 import com.projectlyrics.server.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comments")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventReceipt {
+public class EventReceipt extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
