@@ -7,7 +7,7 @@ import com.projectlyrics.server.support.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -23,7 +23,7 @@ class EventCommandServiceTest extends IntegrationTest {
     @Test
     void 이벤트를_발행해야_한다() {
         // given
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDateTime.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
 
         // when
         Event result = sut.create(request);
