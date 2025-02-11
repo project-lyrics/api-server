@@ -33,7 +33,7 @@ public class Event {
         this.dueDate = dueDate;
     }
 
-    public static Event Event(EventCreate eventCreate) {
+    public static Event create(EventCreate eventCreate) {
         return new Event(
                 eventCreate.imageUrl(),
                 eventCreate.redirectUrl(),
