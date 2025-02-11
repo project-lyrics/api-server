@@ -5,7 +5,6 @@ import com.projectlyrics.server.domain.event.domain.EventCreate;
 import com.projectlyrics.server.domain.event.domain.EventReceipt;
 import com.projectlyrics.server.domain.event.domain.EventReceiptCreate;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
-import com.projectlyrics.server.domain.event.dto.request.EventRefusalRequest;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
 import com.projectlyrics.server.domain.event.repository.EventReceiptCommandRepository;
@@ -30,9 +29,9 @@ public class EventCommandService {
         return eventCommandRepository.save(Event.create(EventCreate.of(request)));
     }
 
-    public EventReceipt refuse(EventRefusalRequest request) {
-        Event event = eventQueryRepository.findById(request.eventId());
-        User user = userQueryRepository.findById(request.userId())
+    public EventReceipt refuse(Long eventId, Long userId) {
+        Event event = eventQueryRepository.findById(eventId);
+        User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         EventReceipt eventReceipt = EventReceipt.create(new EventReceiptCreate(event, user));
