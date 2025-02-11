@@ -30,7 +30,7 @@ public class EventController {
     @PostMapping("/refuse")
     public ResponseEntity<EventRefusalResponse> refuse(
             @Authenticated AuthContext authContext,
-            @RequestParam Long eventId
+            @RequestParam("eventId") Long eventId
     ) {
         eventCommandService.refuse(eventId, authContext.getId());
 
