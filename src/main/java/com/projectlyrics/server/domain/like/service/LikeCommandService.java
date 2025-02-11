@@ -31,8 +31,7 @@ public class LikeCommandService {
     public synchronized Like create(Long noteId, Long userId) {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        Note note = noteQueryRepository.findById(noteId)
-                .orElseThrow(NoteNotFoundException::new);
+        Note note = noteQueryRepository.findById(noteId);
 
         checkIfLikeExists(noteId, userId);
 

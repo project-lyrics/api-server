@@ -48,8 +48,7 @@ public class ReportCommandService {
         User reporter = userQueryRepository.findById(reporterId)
                 .orElseThrow(UserNotFoundException::new);
         Note note = Optional.ofNullable(request.noteId())
-                .map(noteId -> noteQueryRepository.findById(noteId)
-                        .orElseThrow(NoteNotFoundException::new))
+                .map(noteQueryRepository::findById)
                 .orElse(null);
         Comment comment = Optional.ofNullable(request.commentId())
                 .map(commentId -> commentQueryRepository.findById(commentId)
@@ -88,13 +87,8 @@ public class ReportCommandService {
                 .orElseThrow(ReportNotFoundException::new);
 
         if (report.getNote() != null) {
-                noteQueryRepository.findById(report.getNote().getId())
-                        .ifPresentOrElse(
-                                note -> note.delete(adminUserId, Clock.systemDefaultZone()),
-                                () -> {
-                                    throw new InvalidNoteDeletionException();
-                                }
-                        );
+                Note note = noteQueryRepository.findById(report.getNote().getId());
+                note.delete(adminUserId, Clock.systemDefaultZone());
         } else {
             commentQueryRepository.findById(report.getComment().getId())
                     .ifPresentOrElse(

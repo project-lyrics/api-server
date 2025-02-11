@@ -327,7 +327,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
         assertThat(result.getSocialInfo().getSocialId()).isEqualTo(user.getSocialInfo().getSocialId());
         assertThat(result.getSocialInfo().getAuthProvider()).isEqualTo(user.getSocialInfo().getAuthProvider());
         assertThat(result.getRole()).isEqualTo(user.getRole());
-        assertThat(noteQueryRepository.findById(note.getId())).isNotEmpty();
+        assertThat(noteQueryRepository.findById(note.getId())).isNotNull();
     }
 
     private Note writeNote(Long userId) {

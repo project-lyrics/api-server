@@ -4,12 +4,14 @@ import static com.projectlyrics.server.domain.artist.entity.QArtist.artist;
 import static com.projectlyrics.server.domain.block.domain.QBlock.block;
 import static com.projectlyrics.server.domain.bookmark.domain.QBookmark.bookmark;
 import static com.projectlyrics.server.domain.comment.domain.QComment.comment;
+import static com.projectlyrics.server.domain.common.util.QueryDslUtils.hasLyrics;
 import static com.projectlyrics.server.domain.note.entity.QNote.note;
 import static com.projectlyrics.server.domain.song.entity.QSong.song;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,39 +32,22 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Note> findById(Long id) {
+    public Note findById(Long id) {
         return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(note)
-                        .leftJoin(note.lyrics).fetchJoin()
-                        .join(note.publisher).fetchJoin()
-                        .join(note.song).fetchJoin()
-                        .join(song.artist).fetchJoin()
-                        .leftJoin(note.comments).fetchJoin()
-                        .where(
-                                note.id.eq(id),
-                                note.deletedAt.isNull()
-                        )
-                        .fetchOne()
-        );
+                        jpaQueryFactory
+                                .selectFrom(note)
+                                .leftJoin(note.lyrics).fetchJoin()
+                                .join(note.publisher).fetchJoin()
+                                .join(note.song).fetchJoin()
+                                .join(song.artist).fetchJoin()
+                                .leftJoin(note.comments, comment)
+                                .where(
+                                        note.id.eq(id),
+                                        note.deletedAt.isNull()
+                                )
+                                .fetchOne()
+                ).orElseThrow(NoteNotFoundException::new);
     }
-
-    @Override
-    public Optional<Note> findById(Long id, Long userId) {
-        return Optional.ofNullable(jpaQueryFactory
-                .selectFrom(note)
-                .leftJoin(note.lyrics).fetchJoin()
-                .join(note.publisher).fetchJoin()
-                .join(note.song).fetchJoin()
-                .join(song.artist).fetchJoin()
-                .leftJoin(note.comments, comment)
-                .where(
-                        note.id.eq(id),
-                        note.deletedAt.isNull()
-                )
-                .fetchOne());
-    }
-
 
     @Override
     public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
@@ -74,7 +59,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist, artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
-                        QueryDslUtils.hasLyrics(hasLyrics),
+                        hasLyrics(hasLyrics),
                         artistId == null ? null : artist.id.eq(artistId),
                         note.publisher.deletedAt.isNull(),
                         note.publisher.id.eq(userId),
@@ -103,7 +88,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
-                        QueryDslUtils.hasLyrics(hasLyrics),
+                        hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
@@ -130,7 +115,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
-                        QueryDslUtils.hasLyrics(hasLyrics),
+                        hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
@@ -157,7 +142,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .join(song.artist).fetchJoin()
                 .leftJoin(note.comments).fetchJoin()
                 .where(
-                        QueryDslUtils.hasLyrics(hasLyrics),
+                        hasLyrics(hasLyrics),
                         note.song.id.eq(songId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
@@ -186,7 +171,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         bookmark.user.id.eq(userId)
                                 .and(bookmark.deletedAt.isNull()),
-                        QueryDslUtils.hasLyrics(hasLyrics),
+                        hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),

@@ -1,5 +1,16 @@
 package com.projectlyrics.server.domain.auth.api;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.projectlyrics.server.domain.auth.dto.request.AuthSignInRequest;
@@ -7,37 +18,36 @@ import com.projectlyrics.server.domain.auth.dto.request.AuthSignUpRequest;
 import com.projectlyrics.server.domain.auth.dto.request.TokenReissueRequest;
 import com.projectlyrics.server.domain.auth.dto.response.AuthTokenResponse;
 import com.projectlyrics.server.domain.auth.exception.AlreadyExistsUserException;
-import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
 import com.projectlyrics.server.domain.auth.exception.NotAgreeToTermsException;
 import com.projectlyrics.server.domain.auth.exception.TokenExpiredException;
 import com.projectlyrics.server.domain.common.dto.ErrorResponse;
 import com.projectlyrics.server.domain.common.message.ErrorCode;
+import com.projectlyrics.server.domain.user.entity.AuthProvider;
 import com.projectlyrics.server.domain.user.entity.Gender;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.support.RestDocsTest;
 import feign.FeignException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.time.Year;
+import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 
-import java.time.Year;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 class AuthControllerTest extends RestDocsTest {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private static final String deviceIdHeader = "Device-Id";
     private static final String deviceIdValue = "device_id";
@@ -378,10 +388,10 @@ class AuthControllerTest extends RestDocsTest {
 
     @Test
     void 만료된_토큰이면_400응답을_해야_한다() throws Exception {
-        //given
-        String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjQ3LCJuaWNrbmFtZSI6ImtvbnUiLCJyb2xlIjoiVVNFUiIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzMwNzM5MDgzLCJleHAiOjE3MzA3MzkyNjN9.pwyi1iqtdAGE3bYrglojj0FuSBl4J2Lzgm228mvEWxA";
+        // given
+        String expiredToken = createExpiredToken();
 
-        //when then
+        // when then
         mockMvc.perform(get("/api/v1/auth/validate-token")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredToken))
                 .andExpect(status().isBadRequest())
@@ -395,6 +405,19 @@ class AuthControllerTest extends RestDocsTest {
                         )
                 );
     }
+
+    private String createExpiredToken() {
+        return Jwts.builder()
+                .claim("userId", 18)
+                .claim("nickname", "subin")
+                .claim("role", "USER")
+                .claim("tokenType", "secret")
+                .setIssuedAt(new Date(System.currentTimeMillis() - 3600000))
+                .setExpiration(new Date(System.currentTimeMillis() - 1800000))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 
     @Test
     void 유효하지_않은_토큰이면_401응답을_해야_한다() throws Exception {

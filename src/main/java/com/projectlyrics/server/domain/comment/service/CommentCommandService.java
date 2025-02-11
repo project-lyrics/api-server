@@ -40,8 +40,7 @@ public class CommentCommandService {
     public Comment create(CommentCreateRequest request, Long writerId) {
         User writer = userQueryRepository.findById(writerId)
                 .orElseThrow(UserNotFoundException::new);
-        Note note = noteQueryRepository.findById(request.noteId())
-                .orElseThrow(NoteNotFoundException::new);
+        Note note = noteQueryRepository.findById(request.noteId());
 
         checkDiscipline(note.getSong().getArtist().getId(), writerId);
 

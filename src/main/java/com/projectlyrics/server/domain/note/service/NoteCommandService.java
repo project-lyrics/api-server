@@ -66,18 +66,22 @@ public class NoteCommandService {
     }
 
     public void delete(long publisherId, long noteId) {
-        noteQueryRepository.findById(noteId)
-                .filter(note -> note.isPublisher(publisherId))
-                .ifPresentOrElse(
-                        note -> note.delete(publisherId, Clock.systemDefaultZone()),
-                        () -> { throw new InvalidNoteDeletionException(); });
+        Note note = noteQueryRepository.findById(noteId);
+
+        if (note.isPublisher(publisherId)) {
+            note.delete(publisherId, Clock.systemDefaultZone());
+        } else {
+            throw new InvalidNoteDeletionException();
+        }
     }
 
     public Note update(NoteUpdateRequest request, Long noteId, Long publisherId) {
-        Note note = noteQueryRepository.findById(noteId)
-                .filter(foundNote -> foundNote.isPublisher(publisherId))
-                .orElseThrow(InvalidNoteUpdateException::new);
+        Note note = noteQueryRepository.findById(noteId);
 
-        return note.update(NoteUpdate.from(request));
+        if (note.isPublisher(publisherId)) {
+            return note.update(NoteUpdate.from(request));
+        } else {
+            throw new InvalidNoteUpdateException();
+        }
     }
 }
