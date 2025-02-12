@@ -1,23 +1,31 @@
 package com.projectlyrics.server.domain.event.api;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
+import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
+import com.projectlyrics.server.domain.event.dto.response.EventGetResponse;
 import com.projectlyrics.server.support.RestDocsTest;
+import com.projectlyrics.server.support.fixture.EventFixture;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-
-import java.time.LocalDate;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class EventControllerTest extends RestDocsTest {
 
@@ -90,6 +98,60 @@ class EventControllerTest extends RestDocsTest {
                         )
                         .responseSchema(Schema.schema("Refuse Event Response"))
                         .build())
+        );
+    }
+
+    @Test
+    void 사용자가_이벤트_리스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception{
+        // given
+        List<EventGetResponse> data = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Event event = EventFixture.create();
+            data.add(EventGetResponse.of(event));
+        }
+
+        CursorBasePaginatedResponse<EventGetResponse> response = new CursorBasePaginatedResponse<>(
+                data.get(data.size() - 1).getId(),
+                true,
+                data
+        );
+        given(eventQueryService.getAllExcludingRefusals(any(), any(), any()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/events")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .param("cursor", "1")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(getAllExcludingRefusalsDocument());
+    }
+
+    private RestDocumentationResultHandler getAllExcludingRefusalsDocument() {
+
+        return restDocs.document(
+                resource(ResourceSnippetParameters.builder()
+                        .tag("Event API")
+                        .summary("진행 중인 모든 이벤트 리스트 조회 API (사용자가 거부한 이벤트 제외)")
+                        .requestHeaders(getAuthorizationHeader())
+                        .responseFields(
+                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                        .description("다음 cursor에 쓰일 값"),
+                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 데이터 존재 여부"),
+                                fieldWithPath("data").type(JsonFieldType.ARRAY)
+                                        .description("데이터"),
+                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                        .description("이벤트 Id"),
+                                fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
+                                        .description("이미지 url"),
+                                fieldWithPath("data[].redirectUrl").type(JsonFieldType.STRING)
+                                        .description("리다이렉트 url")
+                        )
+                        .responseSchema(Schema.schema("Event List Response"))
+                        .build()
+                )
         );
     }
 }
