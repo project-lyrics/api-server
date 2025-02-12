@@ -1,15 +1,21 @@
 package com.projectlyrics.server.domain.event.repository.impl;
 
+import static com.projectlyrics.server.domain.event.domain.QEvent.event;
+import static com.projectlyrics.server.domain.event.domain.QEventReceipt.eventReceipt;
+
+import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.exception.EventNotFoundException;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-
-import static com.projectlyrics.server.domain.event.domain.QEvent.event;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,5 +31,27 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
                         .where(event.id.eq(id))
                         .fetchFirst()
         ).orElseThrow(EventNotFoundException::new);
+    }
+
+    @Override
+    public Slice<Event> findAllExcludingRefusals(Long userId, Long cursorId, Pageable pageable) {
+        List<Event> content = jpaQueryFactory
+                .selectFrom(event)
+                .leftJoin(eventReceipt).on(
+                        eventReceipt.event.eq(event)
+                                .and(eventReceipt.user.id.eq(userId))
+                                .and(eventReceipt.deletedAt.isNull())
+                )
+                .fetchJoin()
+                .where(
+                        event.dueDate.after(LocalDateTime.now()),
+                        eventReceipt.id.isNull().or(eventReceipt.refusal.isFalse()),
+                        event.deletedAt.isNull()
+                )
+                .orderBy(event.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
     }
 }
