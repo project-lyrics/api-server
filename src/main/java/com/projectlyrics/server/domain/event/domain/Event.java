@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "comments")
+@Table(name = "events")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event extends BaseEntity {
