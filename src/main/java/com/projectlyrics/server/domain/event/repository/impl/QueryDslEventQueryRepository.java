@@ -28,7 +28,8 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(event)
-                        .where(event.id.eq(id))
+                        .where(event.id.eq(id),
+                                event.deletedAt.isNull())
                         .fetchFirst()
         ).orElseThrow(EventNotFoundException::new);
     }

@@ -23,7 +23,9 @@ public class QueryDslEventReceiptQueryRepository implements EventReceiptQueryRep
                 jpaQueryFactory
                         .selectFrom(eventReceipt)
                         .where(eventReceipt.event.id.eq(eventId)
-                                .and(user.id.eq(userId)))
+                                .and(user.id.eq(userId))
+                                .and(eventReceipt.deletedAt.isNull())
+                        )
                         .fetchFirst()
         ).orElseThrow(EventReceiptNotFoundException::new);
     }
