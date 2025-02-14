@@ -55,7 +55,6 @@ public abstract class BaseEntity {
 
     protected BaseEntity() {this.status = EntityStatusEnum.IN_USE;}
 
-
     public boolean isInUse() {
         return EntityStatusEnum.IN_USE.equals(this.status);
     }
