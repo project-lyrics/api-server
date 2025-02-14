@@ -3,6 +3,7 @@ package com.projectlyrics.server.domain.event.api;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -115,7 +116,7 @@ class EventControllerTest extends RestDocsTest {
                 true,
                 data
         );
-        given(eventQueryService.getAllExcludingRefusals(any(), any(), any()))
+        given(eventQueryService.getAllExcludingRefusals(any(Long.class), any(Long.class), anyInt()))
                 .willReturn(response);
 
         // when, then
