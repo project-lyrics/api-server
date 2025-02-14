@@ -19,13 +19,11 @@ import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import java.lang.reflect.Field;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 public class EventQueryServiceTest extends IntegrationTest {
@@ -47,9 +45,6 @@ public class EventQueryServiceTest extends IntegrationTest {
 
     @Autowired
     EventQueryService sut;
-
-    @MockBean
-    private Clock clock;
 
     private User user;
     private EventCreateRequest activeEventCreateRequest;
