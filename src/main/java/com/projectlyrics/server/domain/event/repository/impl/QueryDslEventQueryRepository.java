@@ -8,6 +8,7 @@ import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.exception.EventNotFoundException;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
                         eventReceipt.event.eq(event)
                                 .and(eventReceipt.user.id.eq(userId))
                                 .and(eventReceipt.deletedAt.isNull())
+                                .and(eventReceipt.createdAt.goe(LocalDate.now().atStartOfDay()))
                 )
                 .fetchJoin()
                 .where(
