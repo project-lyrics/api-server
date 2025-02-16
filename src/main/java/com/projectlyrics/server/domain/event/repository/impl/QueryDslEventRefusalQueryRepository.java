@@ -3,9 +3,9 @@ package com.projectlyrics.server.domain.event.repository.impl;
 import static com.projectlyrics.server.domain.event.domain.QEventReceipt.eventReceipt;
 import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
-import com.projectlyrics.server.domain.event.domain.EventReceipt;
-import com.projectlyrics.server.domain.event.exception.EventReceiptNotFoundException;
-import com.projectlyrics.server.domain.event.repository.EventReceiptQueryRepository;
+import com.projectlyrics.server.domain.event.domain.EventRefusal;
+import com.projectlyrics.server.domain.event.exception.EventRefusalNotFoundException;
+import com.projectlyrics.server.domain.event.repository.EventRefusalQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryDslEventReceiptQueryRepository implements EventReceiptQueryRepository {
+public class QueryDslEventRefusalQueryRepository implements EventRefusalQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public EventReceipt findByEventIdAndUserId(Long eventId, Long userId) {
+    public EventRefusal findByEventIdAndUserId(Long eventId, Long userId) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(eventReceipt)
@@ -27,6 +27,6 @@ public class QueryDslEventReceiptQueryRepository implements EventReceiptQueryRep
                                 .and(eventReceipt.deletedAt.isNull())
                         )
                         .fetchFirst()
-        ).orElseThrow(EventReceiptNotFoundException::new);
+        ).orElseThrow(EventRefusalNotFoundException::new);
     }
 }

@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
 import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.domain.EventCreate;
-import com.projectlyrics.server.domain.event.domain.EventReceipt;
-import com.projectlyrics.server.domain.event.domain.EventReceiptCreate;
+import com.projectlyrics.server.domain.event.domain.EventRefusal;
+import com.projectlyrics.server.domain.event.domain.EventRefusalCreate;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.domain.event.dto.response.EventGetResponse;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
-import com.projectlyrics.server.domain.event.repository.EventReceiptCommandRepository;
-import com.projectlyrics.server.domain.event.repository.EventReceiptQueryRepository;
+import com.projectlyrics.server.domain.event.repository.EventRefusalCommandRepository;
+import com.projectlyrics.server.domain.event.repository.EventRefusalQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
@@ -38,10 +38,10 @@ public class EventQueryServiceTest extends IntegrationTest {
     EventCommandRepository eventCommandRepository;
 
     @Autowired
-    EventReceiptCommandRepository eventReceiptCommandRepository;
+    EventRefusalCommandRepository eventRefusalCommandRepository;
 
     @Autowired
-    EventReceiptQueryRepository eventReceiptQueryRepository;
+    EventRefusalQueryRepository eventRefusalQueryRepository;
 
     @Autowired
     EventQueryService sut;
@@ -97,8 +97,8 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent3 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
-        eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent1, user)));
-        eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent3, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
 
         // when
         CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
@@ -120,13 +120,14 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent3 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
-        EventReceipt receipt = eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent1, user)));
-        eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent3, user)));
+        EventRefusal receipt = eventRefusalCommandRepository.save(
+                EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
 
-        Field createdAtField = EventReceipt.class.getSuperclass().getDeclaredField("createdAt");  // 리플렉션을 사용하여 createdAt 필드에 접근
+        Field createdAtField = EventRefusal.class.getSuperclass().getDeclaredField("createdAt");  // 리플렉션을 사용하여 createdAt 필드에 접근
         createdAtField.setAccessible(true); // private 필드에 접근하기 위해 accessible 설정
         createdAtField.set(receipt, LocalDateTime.now().minusDays(1));  //receipt을 createdAt 필드를 하루 전으로 설정
-        eventReceiptCommandRepository.save(receipt);
+        eventRefusalCommandRepository.save(receipt);
 
         // when
         CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
@@ -149,14 +150,15 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent3 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
-        EventReceipt receipt = eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent1, user)));
-        eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent3, user)));
+        EventRefusal receipt = eventRefusalCommandRepository.save(
+                EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
 
-        Field createdAtField = EventReceipt.class.getSuperclass().getDeclaredField("createdAt");
+        Field createdAtField = EventRefusal.class.getSuperclass().getDeclaredField("createdAt");
         createdAtField.setAccessible(true);
         createdAtField.set(receipt, LocalDateTime.now().minusDays(1));
-        eventReceiptCommandRepository.save(receipt); //어제 다시 activeEvent1 거부
-        eventReceiptCommandRepository.save(EventReceipt.create(new EventReceiptCreate(activeEvent1, user))); //오늘 다시 activeEvent1 거부
+        eventRefusalCommandRepository.save(receipt); //어제 다시 activeEvent1 거부
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent1, user))); //오늘 다시 activeEvent1 거부
 
         // when
         CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);

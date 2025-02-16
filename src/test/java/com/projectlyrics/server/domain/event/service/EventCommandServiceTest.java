@@ -1,21 +1,20 @@
 package com.projectlyrics.server.domain.event.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.projectlyrics.server.domain.event.domain.Event;
-import com.projectlyrics.server.domain.event.domain.EventReceipt;
+import com.projectlyrics.server.domain.event.domain.EventRefusal;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
-import com.projectlyrics.server.domain.event.repository.EventReceiptQueryRepository;
+import com.projectlyrics.server.domain.event.repository.EventRefusalQueryRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class EventCommandServiceTest extends IntegrationTest {
 
@@ -26,7 +25,7 @@ class EventCommandServiceTest extends IntegrationTest {
     EventQueryRepository eventQueryRepository;
 
     @Autowired
-    EventReceiptQueryRepository eventReceiptQueryRepository;
+    EventRefusalQueryRepository eventRefusalQueryRepository;
 
     @Autowired
     EventCommandService sut;
@@ -60,7 +59,7 @@ class EventCommandServiceTest extends IntegrationTest {
         sut.refuse(event.getId(), user.getId());
 
         // then
-        EventReceipt result = eventReceiptQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
+        EventRefusal result = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
         assertAll(
                 () -> assertThat(result.getEvent().getId()).isEqualTo(event.getId()),
                 () -> assertThat(result.getUser().getId()).isEqualTo(user.getId())

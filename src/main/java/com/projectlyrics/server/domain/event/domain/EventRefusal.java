@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "event_receipt")
+@Table(name = "event_refusal")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventReceipt extends BaseEntity {
+public class EventRefusal extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class EventReceipt extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    private EventReceipt(
+    private EventRefusal(
             Event event,
             User user
     ) {
@@ -37,10 +37,10 @@ public class EventReceipt extends BaseEntity {
         this.user = user;
     }
 
-    public static EventReceipt create(EventReceiptCreate eventReceiptCreate) {
-        return new EventReceipt(
-                eventReceiptCreate.event(),
-                eventReceiptCreate.user()
+    public static EventRefusal create(EventRefusalCreate eventRefusalCreate) {
+        return new EventRefusal(
+                eventRefusalCreate.event(),
+                eventRefusalCreate.user()
         );
     }
 }
