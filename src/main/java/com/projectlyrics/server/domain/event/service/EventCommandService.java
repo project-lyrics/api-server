@@ -34,7 +34,7 @@ public class EventCommandService {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        EventRefusal eventReceipt = EventRefusal.create(new EventRefusalCreate(event, user));
-        return eventRefusalCommandRepository.save(eventReceipt);
+        EventRefusal eventRefusal = EventRefusal.create(new EventRefusalCreate(event, user));
+        return eventRefusalCommandRepository.save(eventRefusal);
     }
 }
