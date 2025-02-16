@@ -43,7 +43,7 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
                         eventRefusal.event.eq(event)
                                 .and(eventRefusal.user.id.eq(userId))
                                 .and(eventRefusal.deletedAt.isNull())
-                                .and(eventRefusal.createdAt.goe(LocalDate.now().atStartOfDay()))
+                                .and(eventRefusal.updatedAt.goe(LocalDate.now().atStartOfDay()))
                 )
                 .fetchJoin()
                 .where(

@@ -76,4 +76,8 @@ public abstract class BaseEntity {
         this.deletedAt = null;
         this.deletedBy = null;
     }
+
+    public void touch() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
