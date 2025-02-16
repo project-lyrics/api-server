@@ -1,7 +1,7 @@
 package com.projectlyrics.server.domain.event.repository.impl;
 
 import static com.projectlyrics.server.domain.event.domain.QEvent.event;
-import static com.projectlyrics.server.domain.event.domain.QEventReceipt.eventReceipt;
+import static com.projectlyrics.server.domain.event.domain.QEventRefusal.eventRefusal;
 
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.event.domain.Event;
@@ -39,16 +39,16 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
     public Slice<Event> findAllExceptRefusals(Long userId, Long cursorId, Pageable pageable) {
         List<Event> content = jpaQueryFactory
                 .selectFrom(event)
-                .leftJoin(eventReceipt).on(
-                        eventReceipt.event.eq(event)
-                                .and(eventReceipt.user.id.eq(userId))
-                                .and(eventReceipt.deletedAt.isNull())
-                                .and(eventReceipt.createdAt.goe(LocalDate.now().atStartOfDay()))
+                .leftJoin(eventRefusal).on(
+                        eventRefusal.event.eq(event)
+                                .and(eventRefusal.user.id.eq(userId))
+                                .and(eventRefusal.deletedAt.isNull())
+                                .and(eventRefusal.createdAt.goe(LocalDate.now().atStartOfDay()))
                 )
                 .fetchJoin()
                 .where(
                         event.dueDate.after(LocalDateTime.now()),
-                        eventReceipt.id.isNull().or(eventReceipt.refusal.isFalse()),
+                        eventRefusal.id.isNull().or(eventRefusal.refusal.isFalse()),
                         event.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, event.id)
                 )

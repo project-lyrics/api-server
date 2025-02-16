@@ -1,6 +1,6 @@
 package com.projectlyrics.server.domain.event.repository.impl;
 
-import static com.projectlyrics.server.domain.event.domain.QEventReceipt.eventReceipt;
+import static com.projectlyrics.server.domain.event.domain.QEventRefusal.eventRefusal;
 import static com.projectlyrics.server.domain.user.entity.QUser.user;
 
 import com.projectlyrics.server.domain.event.domain.EventRefusal;
@@ -21,10 +21,10 @@ public class QueryDslEventRefusalQueryRepository implements EventRefusalQueryRep
     public EventRefusal findByEventIdAndUserId(Long eventId, Long userId) {
         return Optional.ofNullable(
                 jpaQueryFactory
-                        .selectFrom(eventReceipt)
-                        .where(eventReceipt.event.id.eq(eventId)
+                        .selectFrom(eventRefusal)
+                        .where(eventRefusal.event.id.eq(eventId)
                                 .and(user.id.eq(userId))
-                                .and(eventReceipt.deletedAt.isNull())
+                                .and(eventRefusal.deletedAt.isNull())
                         )
                         .fetchFirst()
         ).orElseThrow(EventRefusalNotFoundException::new);
