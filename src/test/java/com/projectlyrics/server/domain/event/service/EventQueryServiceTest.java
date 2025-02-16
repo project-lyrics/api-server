@@ -52,6 +52,7 @@ public class EventQueryServiceTest extends IntegrationTest {
     private User user;
     private EventCreateRequest activeEventCreateRequest;
     private EventCreateRequest expiredEventCreateRequest;
+    private EventRefusal refusal;
 
     @BeforeEach
     void setUp() {
@@ -124,13 +125,13 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent3 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
-        EventRefusal receipt = eventRefusalCommandRepository.save(
+        EventRefusal refusal = eventRefusalCommandRepository.save(
                 EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
         eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
 
         entityManager.createQuery("UPDATE EventRefusal er SET er.updatedAt = :updatedAt WHERE er.id = :id")
                 .setParameter("updatedAt", LocalDateTime.now().minusDays(1))  // 하루 전으로 설정
-                .setParameter("id", receipt.getId())
+                .setParameter("id", refusal.getId())
                 .executeUpdate();
 
         entityManager.flush();  // 변경 사항을 DB에 반영
