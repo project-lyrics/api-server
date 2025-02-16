@@ -49,7 +49,8 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
                 .where(
                         event.dueDate.after(LocalDateTime.now()),
                         eventReceipt.id.isNull().or(eventReceipt.refusal.isFalse()),
-                        event.deletedAt.isNull()
+                        event.deletedAt.isNull(),
+                        QueryDslUtils.ltCursorId(cursorId, event.id)
                 )
                 .orderBy(event.id.desc())
                 .limit(pageable.getPageSize() + 1)
