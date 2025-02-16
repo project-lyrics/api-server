@@ -36,7 +36,7 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
     }
 
     @Override
-    public Slice<Event> findAllExcludingRefusals(Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Event> findAllExceptRefusals(Long userId, Long cursorId, Pageable pageable) {
         List<Event> content = jpaQueryFactory
                 .selectFrom(event)
                 .leftJoin(eventReceipt).on(
