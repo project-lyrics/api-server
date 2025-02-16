@@ -18,6 +18,7 @@ logging:
 
 server:
   port: 8080
+  timezone: Asia/Seoul
 
 firebase:
   key-file: src/main/resources/firebase-key.json

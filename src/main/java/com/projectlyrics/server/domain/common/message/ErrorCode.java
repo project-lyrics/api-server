@@ -113,6 +113,10 @@ public enum ErrorCode {
     // Search
     FAILED_TO_INDEX(HttpStatus.INTERNAL_SERVER_ERROR, "16000", "데이터를 인덱싱하는 데 실패했습니다."),
     FAILED_TO_SEARCH(HttpStatus.INTERNAL_SERVER_ERROR, "16001", "데이터를 검색하는 데 실패했습니다."),
+
+    // Event
+    EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "17000", "해당 이벤트를 조회할 수 없습니다."),
+    EVENT_REFUSAL_NOT_FOUND(HttpStatus.NOT_FOUND, "17001", "해당 이벤트 수신 거절 내역을 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
