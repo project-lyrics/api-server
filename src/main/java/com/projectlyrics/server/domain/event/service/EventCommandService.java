@@ -5,6 +5,7 @@ import com.projectlyrics.server.domain.event.domain.EventCreate;
 import com.projectlyrics.server.domain.event.domain.EventRefusal;
 import com.projectlyrics.server.domain.event.domain.EventRefusalCreateByUser;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
+import com.projectlyrics.server.domain.event.exception.EventRefusalNotFoundException;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
 import com.projectlyrics.server.domain.event.repository.EventRefusalCommandRepository;
@@ -12,7 +13,6 @@ import com.projectlyrics.server.domain.event.repository.EventRefusalQueryReposit
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +41,13 @@ public class EventCommandService {
     }
 
     private EventRefusal createOrUpdateEventRefusal(Event event, User user) {
-        Optional<EventRefusal> optionalRefusal = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
+        try {
+            EventRefusal eventRefusal = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
+            eventRefusal.touch();
 
-        return optionalRefusal.map(refusal -> {
-            refusal.touch();
-            return eventRefusalCommandRepository.save(refusal);
-        }).orElseGet(() -> eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(event, user)))
-        );
+            return eventRefusal;
+        } catch (EventRefusalNotFoundException e) {
+            return eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(event, user)));
+        }
     }
 }

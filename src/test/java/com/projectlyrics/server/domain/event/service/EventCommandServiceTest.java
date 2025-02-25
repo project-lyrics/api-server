@@ -60,11 +60,11 @@ class EventCommandServiceTest extends IntegrationTest {
         sut.refuseByUser(event.getId(), user.getId());
 
         // then
-        Optional<EventRefusal> result = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
+        EventRefusal result = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
+
         assertAll(
-                () -> assertThat(result).isPresent(),
-                () -> assertThat(result.get().getEvent().getId()).isEqualTo(event.getId()),
-                () -> assertThat(result.get().getUser().getId()).isEqualTo(user.getId())
+                () -> assertThat(result.getEvent().getId()).isEqualTo(event.getId()),
+                () -> assertThat(result.getUser().getId()).isEqualTo(user.getId())
         );
     }
 
