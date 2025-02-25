@@ -32,6 +32,11 @@ public class EventController {
                 .ok(new EventCreateResponse(true));
     }
 
+    /* 안보기를 하려면 사용자 id가 필요하다
+    로그인하지 않은 사용자도 받아야 하는데, 이걸 고려를 못했습니다.
+    기기 id만으로 거르자.
+    *  */
+
     @GetMapping
     public ResponseEntity<CursorBasePaginatedResponse<EventGetResponse>> getAllExcludingRefusals(
             @Authenticated AuthContext authContext,
@@ -44,6 +49,12 @@ public class EventController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    /*
+    * 로그인하지 않은 사용자도 받아야 하는데, 이걸 고려를 못했습니다.
+    기기 id만으로 거르자.
+    * 기기 id 매번 주는지 보자.
+    * */
 
     @PostMapping("/refuse")
     public ResponseEntity<EventRefusalResponse> refuse(

@@ -34,10 +34,10 @@ public class EventCommandService {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        return createOrUpdateEventRefusalByUser(event, user);
+        return upsertEventRefusalByUser(event, user);
     }
 
-    private EventRefusal createOrUpdateEventRefusalByUser(Event event, User user) {
+    private EventRefusal upsertEventRefusalByUser(Event event, User user) {
         try {
             EventRefusal eventRefusal = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
             eventRefusal.touch();
@@ -51,10 +51,10 @@ public class EventCommandService {
     public synchronized EventRefusal refuseByDevice(Long eventId, String deviceId) {
         Event event = eventQueryRepository.findById(eventId);
 
-        return createOrUpdateEventRefusalByDeviceId(event, deviceId);
+        return upsertEventRefusalByDeviceId(event, deviceId);
     }
 
-    private EventRefusal createOrUpdateEventRefusalByDeviceId(Event event, String deviceId) {
+    private EventRefusal upsertEventRefusalByDeviceId(Event event, String deviceId) {
         try {
             EventRefusal eventRefusal = eventRefusalQueryRepository.findByEventIdAndDeviceId(event.getId(), deviceId);
             eventRefusal.touch();
