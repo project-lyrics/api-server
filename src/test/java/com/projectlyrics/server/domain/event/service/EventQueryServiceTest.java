@@ -80,7 +80,7 @@ public class EventQueryServiceTest extends IntegrationTest {
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
 
         // when
-        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
+        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusalsByUser(user.getId(), null, 6);
 
         // then
         assertAll(
@@ -105,7 +105,7 @@ public class EventQueryServiceTest extends IntegrationTest {
         eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(activeEvent3, user)));
 
         // when
-        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
+        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusalsByUser(user.getId(), null, 6);
 
         // then
         assertAll(
@@ -138,7 +138,7 @@ public class EventQueryServiceTest extends IntegrationTest {
         entityManager.clear();
 
         // when
-        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
+        CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusalsByUser(user.getId(), null, 6);
 
         // then
         assertAll(

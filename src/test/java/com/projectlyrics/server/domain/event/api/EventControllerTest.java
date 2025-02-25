@@ -116,7 +116,7 @@ class EventControllerTest extends RestDocsTest {
                 true,
                 data
         );
-        given(eventQueryService.getAllExcludingRefusals(any(Long.class), any(Long.class), anyInt()))
+        given(eventQueryService.getAllExcludingRefusalsByUser(any(Long.class), any(Long.class), anyInt()))
                 .willReturn(response);
 
         // when, then
