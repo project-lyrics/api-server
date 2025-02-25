@@ -12,12 +12,7 @@ import com.projectlyrics.server.domain.event.service.EventQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -53,9 +48,14 @@ public class EventController {
     @PostMapping("/refuse")
     public ResponseEntity<EventRefusalResponse> refuse(
             @Authenticated AuthContext authContext,
+            @RequestHeader("Device-Id") String deviceId,
             @RequestParam("eventId") Long eventId
     ) {
-        eventCommandService.refuse(eventId, authContext.getId());
+        if (authContext.isAnonymous()) {
+            eventCommandService.refuseByUser(eventId, authContext.getId());
+        } else {
+            eventCommandService.refuseByDevice(eventId, deviceId);
+        }
 
         return ResponseEntity
                 .ok(new EventRefusalResponse(true));
