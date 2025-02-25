@@ -63,9 +63,9 @@ public class EventController {
             @RequestParam("eventId") Long eventId
     ) {
         if (authContext.isAnonymous()) {
-            eventCommandService.refuseByUser(eventId, authContext.getId());
-        } else {
             eventCommandService.refuseByDevice(eventId, deviceId);
+        } else {
+            eventCommandService.refuseByUser(eventId, authContext.getId());
         }
 
         return ResponseEntity
