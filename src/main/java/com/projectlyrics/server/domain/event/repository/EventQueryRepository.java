@@ -9,4 +9,5 @@ public interface EventQueryRepository {
     Event findById(Long id);
 
     Slice<Event> findAllExceptRefusalsByUserId(Long userId, Long cursorId, Pageable pageable);
+    Slice<Event> findAllExceptRefusalsByDeviceId(String deviceId, Long cursorId, Pageable pageable);
 }
