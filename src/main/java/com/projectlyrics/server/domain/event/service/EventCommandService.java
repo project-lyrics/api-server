@@ -32,13 +32,14 @@ public class EventCommandService {
         return eventCommandRepository.save(Event.create(EventCreate.of(request)));
     }
 
-    public synchronized EventRefusal refuse(Long eventId, Long userId) {
+    public synchronized EventRefusal refuseByUser(Long eventId, Long userId) {
         Event event = eventQueryRepository.findById(eventId);
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         return createOrUpdateEventRefusal(event, user);
     }
+
     private EventRefusal createOrUpdateEventRefusal(Event event, User user) {
         Optional<EventRefusal> optionalRefusal = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
 

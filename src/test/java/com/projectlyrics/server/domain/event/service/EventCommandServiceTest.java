@@ -57,7 +57,7 @@ class EventCommandServiceTest extends IntegrationTest {
         Event event = sut.create(request);
 
         // when
-        sut.refuse(event.getId(), user.getId());
+        sut.refuseByUser(event.getId(), user.getId());
 
         // then
         Optional<EventRefusal> result = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
@@ -77,13 +77,13 @@ class EventCommandServiceTest extends IntegrationTest {
         Event event = sut.create(request);
 
         // when
-        EventRefusal eventRefusalBefore = sut.refuse(event.getId(), user.getId());
+        EventRefusal eventRefusalBefore = sut.refuseByUser(event.getId(), user.getId());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // 2초 대기
         }
-        EventRefusal eventRefusalAfter = sut.refuse(event.getId(), user.getId());
+        EventRefusal eventRefusalAfter = sut.refuseByUser(event.getId(), user.getId());
 
         // then
         assertAll(
