@@ -28,6 +28,8 @@ public class EventRefusal extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    private String deviceId;
+
     private EventRefusal(
             Event event,
             User user
@@ -37,10 +39,26 @@ public class EventRefusal extends BaseEntity {
         this.user = user;
     }
 
-    public static EventRefusal create(EventRefusalCreate eventRefusalCreate) {
+    private EventRefusal(
+            Event event,
+            String deviceId
+    ) {
+        this.refusal = true;
+        this.event = event;
+        this.deviceId = deviceId;
+    }
+
+    public static EventRefusal create(EventRefusalCreateByUser eventRefusalCreateByUser) {
         return new EventRefusal(
-                eventRefusalCreate.event(),
-                eventRefusalCreate.user()
+                eventRefusalCreateByUser.event(),
+                eventRefusalCreateByUser.user()
+        );
+    }
+
+    public static EventRefusal create(EventRefusalCreateByDevice eventRefusalCreateByDevice) {
+        return new EventRefusal(
+                eventRefusalCreateByDevice.event(),
+                eventRefusalCreateByDevice.deviceId()
         );
     }
 }

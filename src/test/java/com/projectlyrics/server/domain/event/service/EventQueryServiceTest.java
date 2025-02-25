@@ -7,7 +7,7 @@ import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedRespon
 import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.domain.EventCreate;
 import com.projectlyrics.server.domain.event.domain.EventRefusal;
-import com.projectlyrics.server.domain.event.domain.EventRefusalCreate;
+import com.projectlyrics.server.domain.event.domain.EventRefusalCreateByUser;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.domain.event.dto.response.EventGetResponse;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
@@ -101,8 +101,8 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent3 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
-        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
-        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(activeEvent1, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(activeEvent3, user)));
 
         // when
         CursorBasePaginatedResponse<EventGetResponse> result = sut.getAllExcludingRefusals(user.getId(), null, 6);
@@ -126,8 +126,8 @@ public class EventQueryServiceTest extends IntegrationTest {
         Event activeEvent4 = eventCommandRepository.save(Event.create(EventCreate.of(activeEventCreateRequest)));
         eventCommandRepository.save(Event.create(EventCreate.of(expiredEventCreateRequest)));
         EventRefusal refusal = eventRefusalCommandRepository.save(
-                EventRefusal.create(new EventRefusalCreate(activeEvent1, user)));
-        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(activeEvent3, user)));
+                EventRefusal.create(new EventRefusalCreateByUser(activeEvent1, user)));
+        eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(activeEvent3, user)));
 
         entityManager.createQuery("UPDATE EventRefusal er SET er.updatedAt = :updatedAt WHERE er.id = :id")
                 .setParameter("updatedAt", LocalDateTime.now().minusDays(1))  // 하루 전으로 설정

@@ -3,7 +3,7 @@ package com.projectlyrics.server.domain.event.service;
 import com.projectlyrics.server.domain.event.domain.Event;
 import com.projectlyrics.server.domain.event.domain.EventCreate;
 import com.projectlyrics.server.domain.event.domain.EventRefusal;
-import com.projectlyrics.server.domain.event.domain.EventRefusalCreate;
+import com.projectlyrics.server.domain.event.domain.EventRefusalCreateByUser;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
 import com.projectlyrics.server.domain.event.repository.EventQueryRepository;
@@ -45,7 +45,7 @@ public class EventCommandService {
         return optionalRefusal.map(refusal -> {
             refusal.touch();
             return eventRefusalCommandRepository.save(refusal);
-        }).orElseGet(() -> eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreate(event, user)))
+        }).orElseGet(() -> eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(event, user)))
         );
     }
 }
