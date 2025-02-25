@@ -29,4 +29,21 @@ public class QueryDslEventRefusalQueryRepository implements EventRefusalQueryRep
 
         return eventRefusal;
     }
+
+    @Override
+    public EventRefusal findByEventIdAndDeviceId(Long eventId, String deviceId) {
+        EventRefusal eventRefusal = jpaQueryFactory
+                .selectFrom(QEventRefusal.eventRefusal)
+                .where(QEventRefusal.eventRefusal.event.id.eq(eventId)
+                        .and(QEventRefusal.eventRefusal.deviceId.eq(deviceId))
+                        .and(QEventRefusal.eventRefusal.deletedAt.isNull())
+                )
+                .fetchFirst();
+
+        if (eventRefusal == null) {
+            throw new EventRefusalNotFoundException();
+        }
+
+        return eventRefusal;
+    }
 }
