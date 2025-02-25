@@ -116,7 +116,7 @@ class EventControllerTest extends RestDocsTest {
                 true,
                 data
         );
-        given(eventQueryService.getAllExcludingRefusalsByUser(any(Long.class), any(Long.class), anyInt()))
+        given(eventQueryService.getAllExceptRefusedByUser(any(Long.class), any(Long.class), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -126,10 +126,10 @@ class EventControllerTest extends RestDocsTest {
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(getAllExcludingRefusalsDocument());
+                .andDo(getAllExceptRefusedDocument());
     }
 
-    private RestDocumentationResultHandler getAllExcludingRefusalsDocument() {
+    private RestDocumentationResultHandler getAllExceptRefusedDocument() {
 
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()

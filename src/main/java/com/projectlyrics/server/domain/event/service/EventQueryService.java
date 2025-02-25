@@ -16,24 +16,24 @@ public class EventQueryService {
 
     private final EventQueryRepository eventQueryRepository;
 
-    public CursorBasePaginatedResponse<EventGetResponse> getAllExcludingRefusalsByUser(
+    public CursorBasePaginatedResponse<EventGetResponse> getAllExceptRefusedByUser(
             Long userId,
             Long cursor,
             int size
     ) {
-        Slice<EventGetResponse> events = eventQueryRepository.findAllExceptRefusalsByUserId(userId, cursor, PageRequest.ofSize(size))
+        Slice<EventGetResponse> events = eventQueryRepository.findAllExceptRefusedByUserId(userId, cursor, PageRequest.ofSize(size))
                 .map(EventGetResponse::of);
 
         return CursorBasePaginatedResponse.of(events);
 
     }
 
-    public CursorBasePaginatedResponse<EventGetResponse> getAllExcludingRefusalsByDeviceId(
+    public CursorBasePaginatedResponse<EventGetResponse> getAllExceptRefusedByDeviceId(
             String deviceId,
             Long cursor,
             int size
     ) {
-        Slice<EventGetResponse> events = eventQueryRepository.findAllExceptRefusalsByDeviceId(deviceId, cursor, PageRequest.ofSize(size))
+        Slice<EventGetResponse> events = eventQueryRepository.findAllExceptRefusedByDeviceId(deviceId, cursor, PageRequest.ofSize(size))
                 .map(EventGetResponse::of);
 
         return CursorBasePaginatedResponse.of(events);

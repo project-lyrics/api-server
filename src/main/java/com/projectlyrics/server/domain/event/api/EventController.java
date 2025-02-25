@@ -33,7 +33,7 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorBasePaginatedResponse<EventGetResponse>> getAllExcludingRefusals(
+    public ResponseEntity<CursorBasePaginatedResponse<EventGetResponse>> getAllExceptRefused(
             @Authenticated AuthContext authContext,
             @RequestHeader("Device-Id") String deviceId,
             @RequestParam(name = "cursor", required = false) Long cursor,
@@ -42,9 +42,9 @@ public class EventController {
         CursorBasePaginatedResponse<EventGetResponse> response;
 
         if (authContext.isAnonymous()) {
-            response = eventQueryService.getAllExcludingRefusalsByUser(authContext.getId(), cursor, size);
+            response = eventQueryService.getAllExceptRefusedByUser(authContext.getId(), cursor, size);
         } else {
-            response = eventQueryService.getAllExcludingRefusalsByDeviceId(deviceId, cursor, size);
+            response = eventQueryService.getAllExceptRefusedByDeviceId(deviceId, cursor, size);
         }
 
         return ResponseEntity

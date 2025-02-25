@@ -37,12 +37,12 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
     }
 
     @Override
-    public Slice<Event> findAllExceptRefusalsByUserId(Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Event> findAllExceptRefusedByUserId(Long userId, Long cursorId, Pageable pageable) {
         return findAllExceptRefusals(eventRefusal.user.id.eq(userId), cursorId, pageable);
     }
 
     @Override
-    public Slice<Event> findAllExceptRefusalsByDeviceId(String deviceId, Long cursorId, Pageable pageable) {
+    public Slice<Event> findAllExceptRefusedByDeviceId(String deviceId, Long cursorId, Pageable pageable) {
         return findAllExceptRefusals(eventRefusal.deviceId.eq(deviceId), cursorId, pageable);
     }
 
