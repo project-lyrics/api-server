@@ -48,7 +48,7 @@ public class EventCommandService {
         }
     }
 
-    public synchronized EventRefusal refuseByDevice(Long eventId, String deviceId) {
+    public synchronized EventRefusal refuseByDeviceId(Long eventId, String deviceId) {
         Event event = eventQueryRepository.findById(eventId);
 
         return upsertEventRefusalByDeviceId(event, deviceId);
