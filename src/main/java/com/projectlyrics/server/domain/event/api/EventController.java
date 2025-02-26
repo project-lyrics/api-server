@@ -42,9 +42,9 @@ public class EventController {
         CursorBasePaginatedResponse<EventGetResponse> response;
 
         if (authContext.isAnonymous()) {
-            response = eventQueryService.getAllExceptRefusedByUser(authContext.getId(), cursor, size);
-        } else {
             response = eventQueryService.getAllExceptRefusedByDeviceId(deviceId, cursor, size);
+        } else {
+            response = eventQueryService.getAllExceptRefusedByUser(authContext.getId(), cursor, size);
         }
 
         return ResponseEntity

@@ -30,6 +30,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 class EventControllerTest extends RestDocsTest {
 
+    private static final String deviceIdHeader = "Device-Id";
+    private static final String deviceIdValue = "device_id";
+
     @Test
     void 이벤트를_저장하면_200응답을_해야_한다() throws Exception {
         // given
@@ -77,6 +80,7 @@ class EventControllerTest extends RestDocsTest {
         // when, then
         mockMvc.perform(post("/api/v1/events/refuse")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .header(deviceIdHeader, deviceIdValue)
                         .contentType(MediaType.APPLICATION_JSON)
                         .queryParam("eventId", "1"))
                 .andExpect(status().isOk())
@@ -122,6 +126,7 @@ class EventControllerTest extends RestDocsTest {
         // when, then
         mockMvc.perform(get("/api/v1/events")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .header(deviceIdHeader, deviceIdValue)
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
