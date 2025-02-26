@@ -1,6 +1,10 @@
 package com.projectlyrics.server.domain.event.service;
 
-import com.projectlyrics.server.domain.event.domain.*;
+import com.projectlyrics.server.domain.event.domain.Event;
+import com.projectlyrics.server.domain.event.domain.EventCreate;
+import com.projectlyrics.server.domain.event.domain.EventRefusal;
+import com.projectlyrics.server.domain.event.domain.EventRefusalCreateByDevice;
+import com.projectlyrics.server.domain.event.domain.EventRefusalCreateByUser;
 import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import com.projectlyrics.server.domain.event.exception.EventRefusalNotFoundException;
 import com.projectlyrics.server.domain.event.repository.EventCommandRepository;
@@ -10,6 +14,7 @@ import com.projectlyrics.server.domain.event.repository.EventRefusalQueryReposit
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,34 +39,31 @@ public class EventCommandService {
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        return upsertEventRefusalByUser(event, user);
-    }
-
-    private EventRefusal upsertEventRefusalByUser(Event event, User user) {
-        try {
-            EventRefusal eventRefusal = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
-            eventRefusal.touch();
-
-            return eventRefusal;
-        } catch (EventRefusalNotFoundException e) {
-            return eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByUser(event, user)));
-        }
+        return upsertEventRefusal(
+                () -> eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId()),
+                () -> EventRefusal.create(new EventRefusalCreateByUser(event, user))
+        );
     }
 
     public synchronized EventRefusal refuseByDeviceId(Long eventId, String deviceId) {
         Event event = eventQueryRepository.findById(eventId);
 
-        return upsertEventRefusalByDeviceId(event, deviceId);
+        return upsertEventRefusal(
+                () -> eventRefusalQueryRepository.findByEventIdAndDeviceId(event.getId(), deviceId),
+                () -> EventRefusal.create(new EventRefusalCreateByDevice(event, deviceId))
+        );
     }
 
-    private EventRefusal upsertEventRefusalByDeviceId(Event event, String deviceId) {
+    private EventRefusal upsertEventRefusal(
+            Supplier<EventRefusal> findExistingRefusal,
+            Supplier<EventRefusal> createNewRefusal
+    ) {
         try {
-            EventRefusal eventRefusal = eventRefusalQueryRepository.findByEventIdAndDeviceId(event.getId(), deviceId);
+            EventRefusal eventRefusal = findExistingRefusal.get();
             eventRefusal.touch();
-
             return eventRefusal;
         } catch (EventRefusalNotFoundException e) {
-            return eventRefusalCommandRepository.save(EventRefusal.create(new EventRefusalCreateByDevice(event, deviceId)));
+            return eventRefusalCommandRepository.save(createNewRefusal.get());
         }
     }
 }
