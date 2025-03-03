@@ -35,13 +35,14 @@ public class AuthInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        return (requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
-                requestURI.matches("/api/v1/artists/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()) ||
+        return ((requestURI.matches("/api/v1/notes/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) ||
+                (requestURI.matches("/api/v1/artists/\\d+") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) ||
                 requestURI.equals("/api/v1/artists") ||
                 requestURI.equals("/api/v1/artists/search") ||
                 requestURI.equals("/api/v1/notes/artists") ||
                 requestURI.equals("/api/v1/notes/songs") ||
-                requestURI.matches("/api/v1/songs/.*"));
+                requestURI.matches("/api/v1/songs/.*") ||
+                (requestURI.matches("/api/v1/events/.*") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) );
     }
 
     private void setAuthContext(HttpServletRequest request) {
@@ -60,7 +61,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (token != null) {
                 JwtClaim claim = jwtExtractor.parseJwtClaim(token);
 
-                if (claim != null) { //claim이 유효할 때만 authContext 설정
+                if (claim != null) {
                     authContext.setNickname(claim.nickname());
                     authContext.setId(claim.id());
                 }

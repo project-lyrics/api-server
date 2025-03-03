@@ -3,18 +3,22 @@ package com.projectlyrics.server.domain.auth.authentication;
 import com.projectlyrics.server.domain.auth.exception.InvalidTokenException;
 import com.projectlyrics.server.domain.user.entity.Role;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Objects;
 
+@Setter
 @Getter
 @RequestScope
 @Component
 public class AuthContext {
 
     private String nickname;
+    @Setter
     private long id;
+    @Setter
     private Role role;
 
     public void setNickname(String nickname) {
@@ -24,11 +28,7 @@ public class AuthContext {
         this.nickname = nickname;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public boolean isAnonymous() {
+        return Objects.isNull(nickname);
     }
 }

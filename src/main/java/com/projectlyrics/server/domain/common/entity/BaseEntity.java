@@ -55,7 +55,6 @@ public abstract class BaseEntity {
 
     protected BaseEntity() {this.status = EntityStatusEnum.IN_USE;}
 
-
     public boolean isInUse() {
         return EntityStatusEnum.IN_USE.equals(this.status);
     }
@@ -76,5 +75,9 @@ public abstract class BaseEntity {
         this.status = EntityStatusEnum.IN_USE;
         this.deletedAt = null;
         this.deletedBy = null;
+    }
+
+    public void touch() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
