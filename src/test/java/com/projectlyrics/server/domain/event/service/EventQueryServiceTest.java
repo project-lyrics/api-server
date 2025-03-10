@@ -59,14 +59,12 @@ public class EventQueryServiceTest extends IntegrationTest {
     void setUp() {
         user = userCommandRepository.save(UserFixture.create());
         activeEventCreateRequest = new EventCreateRequest(
-                "popupImageUrl",
-                "bannerImageUrl",
+                "imageUrl",
                 "redirectUrl",
                 LocalDate.now().plusDays(1)
         );
         expiredEventCreateRequest = new EventCreateRequest(
-                "popupImageUrl",
-                "bannerImageUrl",
+                "imageUrl",
                 "redirectUrl",
                 LocalDate.now().minusDays(1)
         );

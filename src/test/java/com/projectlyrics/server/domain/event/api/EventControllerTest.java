@@ -37,8 +37,7 @@ class EventControllerTest extends RestDocsTest {
     void 이벤트를_저장하면_200응답을_해야_한다() throws Exception {
         // given
         EventCreateRequest request = new EventCreateRequest(
-                "popupImageUrl",
-                "bannerImageUrl",
+                "imageUrl",
                 "redirectUrl",
                 LocalDate.now()
         );
@@ -59,10 +58,8 @@ class EventControllerTest extends RestDocsTest {
                         .summary("이벤트 등록 API")
                         .requestHeaders(getAuthorizationHeader())
                         .requestFields(
-                                fieldWithPath("popupImageUrl").type(JsonFieldType.STRING)
-                                        .description("팝업 이미지 url"),
-                                fieldWithPath("bannerImageUrl").type(JsonFieldType.STRING)
-                                        .description("배너 이미지 url"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING)
+                                        .description("이미지 URL"),
                                 fieldWithPath("redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 URL"),
                                 fieldWithPath("dueDate").type(JsonFieldType.STRING)
@@ -153,10 +150,8 @@ class EventControllerTest extends RestDocsTest {
                                         .description("데이터"),
                                 fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
                                         .description("이벤트 Id"),
-                                fieldWithPath("data[].popupImageUrl").type(JsonFieldType.STRING)
-                                        .description("팝업 이미지 url"),
-                                fieldWithPath("data[].bannerImageUrl").type(JsonFieldType.STRING)
-                                        .description("배너 이미지 url"),
+                                fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
+                                        .description("이미지 url"),
                                 fieldWithPath("data[].redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 url")
                         )

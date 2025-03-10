@@ -5,15 +5,13 @@ import com.projectlyrics.server.domain.event.dto.request.EventCreateRequest;
 import java.time.LocalDateTime;
 
 public record EventCreate(
-        String popupImageUrl,
-        String bannerImageUrl,
+        String imageUrl,
         String redirectUrl,
         LocalDateTime dueDate
 ) {
     public static EventCreate of(EventCreateRequest request) {
         return new EventCreate(
-                request.popupImageUrl(),
-                request.bannerImageUrl(),
+                request.imageUrl(),
                 request.redirectUrl(),
                 request.dueDate().atStartOfDay()
         );

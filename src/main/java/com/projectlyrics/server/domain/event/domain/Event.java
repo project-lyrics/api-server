@@ -25,27 +25,23 @@ public class Event extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String popupImageUrl;
-    private String bannerImageUrl;
+    private String imageUrl;
     private String redirectUrl;
     private LocalDateTime dueDate;
 
     private Event(
-            String popupImageUrl,
-            String bannerImageUrl,
+            String imageUrl,
             String redirectUrl,
             LocalDateTime dueDate
     ) {
-        this.popupImageUrl = popupImageUrl;
-        this.bannerImageUrl = bannerImageUrl;
+        this.imageUrl = imageUrl;
         this.redirectUrl = redirectUrl;
         this.dueDate = dueDate;
     }
 
     public static Event create(EventCreate eventCreate) {
         return new Event(
-                eventCreate.popupImageUrl(),
-                eventCreate.bannerImageUrl(),
+                eventCreate.imageUrl(),
                 eventCreate.redirectUrl(),
                 eventCreate.dueDate()
         );
@@ -54,8 +50,7 @@ public class Event extends BaseEntity {
     public static Event createWithId(Long id, EventCreate eventCreate) {
         return new Event(
                 id,
-                eventCreate.popupImageUrl(),
-                eventCreate.bannerImageUrl(),
+                eventCreate.imageUrl(),
                 eventCreate.redirectUrl(),
                 eventCreate.dueDate()
         );
