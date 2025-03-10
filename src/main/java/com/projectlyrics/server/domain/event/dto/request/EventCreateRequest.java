@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 
 public record EventCreateRequest(
-        String imageUrl,
+        String popupImageUrl,
+        String bannerImageUrl,
         String redirectUrl,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         LocalDate dueDate
