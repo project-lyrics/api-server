@@ -5,14 +5,16 @@ import com.projectlyrics.server.domain.event.domain.Event;
 
 public record EventGetResponse (
         Long id,
-        String imageUrl,
+        String popupImageUrl,
+        String bannerImageUrl,
         String redirectUrl
 ) implements CursorResponse {
 
     public static EventGetResponse of(Event event) {
         return new EventGetResponse(
                 event.getId(),
-                event.getImageUrl(),
+                event.getPopupImageUrl(),
+                event.getBannerImageUrl(),
                 event.getRedirectUrl()
         );
     }

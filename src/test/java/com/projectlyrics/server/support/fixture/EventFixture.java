@@ -16,7 +16,8 @@ public class EventFixture extends BaseFixture{
         return Event.createWithId(
                 getUniqueId(),
                 new EventCreate(
-                      "imageUrl",
+                        "popupImageUrl",
+                        "bannerImageUrl",
                         "redirectUrl",
                         LocalDate.now().atTime(23, 59, 59)
                 )
