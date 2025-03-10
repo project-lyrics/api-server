@@ -33,7 +33,7 @@ class EventCommandServiceTest extends IntegrationTest {
     @Test
     void 이벤트를_발행해야_한다() {
         // given
-        EventCreateRequest request = new EventCreateRequest("popupImageUrl", "bannerImageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
 
         // when
         Event event = sut.create(request);
@@ -41,8 +41,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // then
         Event result = eventQueryRepository.findById(event.getId());
         assertAll(
-                () -> assertThat(result.getPopupImageUrl()).isEqualTo(request.popupImageUrl()),
-                () -> assertThat(result.getBannerImageUrl()).isEqualTo(request.bannerImageUrl()),
+                () -> assertThat(result.getImageUrl()).isEqualTo(request.imageUrl()),
                 () -> assertThat(result.getRedirectUrl()).isEqualTo(request.redirectUrl()),
                 () -> assertThat(result.getDueDate()).isEqualTo(request.dueDate().atStartOfDay())
         );
@@ -53,7 +52,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("popupImageUrl", "bannerImageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -73,7 +72,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("popupImageUrl", "bannerImageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -93,7 +92,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("popupImageUrl", "bannerImageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -119,7 +118,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("popupImageUrl", "bannerImageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
         Event event = sut.create(request);
 
         // when
