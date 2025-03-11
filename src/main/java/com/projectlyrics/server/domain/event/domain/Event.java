@@ -27,15 +27,18 @@ public class Event extends BaseEntity {
 
     private String imageUrl;
     private String redirectUrl;
+    private String buttonText;
     private LocalDateTime dueDate;
 
     private Event(
             String imageUrl,
             String redirectUrl,
+            String buttonText,
             LocalDateTime dueDate
     ) {
         this.imageUrl = imageUrl;
         this.redirectUrl = redirectUrl;
+        this.buttonText = buttonText;
         this.dueDate = dueDate;
     }
 
@@ -43,6 +46,7 @@ public class Event extends BaseEntity {
         return new Event(
                 eventCreate.imageUrl(),
                 eventCreate.redirectUrl(),
+                eventCreate.buttonText(),
                 eventCreate.dueDate()
         );
     }
@@ -52,6 +56,7 @@ public class Event extends BaseEntity {
                 id,
                 eventCreate.imageUrl(),
                 eventCreate.redirectUrl(),
+                eventCreate.buttonText(),
                 eventCreate.dueDate()
         );
     }

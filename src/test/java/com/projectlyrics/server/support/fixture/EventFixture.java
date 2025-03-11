@@ -18,6 +18,7 @@ public class EventFixture extends BaseFixture{
                 new EventCreate(
                       "imageUrl",
                         "redirectUrl",
+                        "button",
                         LocalDate.now().atTime(23, 59, 59)
                 )
         );

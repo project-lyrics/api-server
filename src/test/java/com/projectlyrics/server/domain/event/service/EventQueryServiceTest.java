@@ -61,11 +61,13 @@ public class EventQueryServiceTest extends IntegrationTest {
         activeEventCreateRequest = new EventCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                "button",
                 LocalDate.now().plusDays(1)
         );
         expiredEventCreateRequest = new EventCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                "button",
                 LocalDate.now().minusDays(1)
         );
     }

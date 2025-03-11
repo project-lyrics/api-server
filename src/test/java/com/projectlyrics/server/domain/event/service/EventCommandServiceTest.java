@@ -33,7 +33,7 @@ class EventCommandServiceTest extends IntegrationTest {
     @Test
     void 이벤트를_발행해야_한다() {
         // given
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
 
         // when
         Event event = sut.create(request);
@@ -52,7 +52,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -72,7 +72,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -92,7 +92,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
@@ -118,7 +118,7 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "buttton", LocalDate.now());
         Event event = sut.create(request);
 
         // when
