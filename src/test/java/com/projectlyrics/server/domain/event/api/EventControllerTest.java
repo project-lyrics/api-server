@@ -39,6 +39,7 @@ class EventControllerTest extends RestDocsTest {
         EventCreateRequest request = new EventCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                "button",
                 LocalDate.now()
         );
 
@@ -62,6 +63,8 @@ class EventControllerTest extends RestDocsTest {
                                         .description("이미지 URL"),
                                 fieldWithPath("redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 URL"),
+                                fieldWithPath("buttonText").type(JsonFieldType.STRING)
+                                        .description("버튼 문구"),
                                 fieldWithPath("dueDate").type(JsonFieldType.STRING)
                                         .description("이벤트 마감일")
                         )
@@ -152,6 +155,8 @@ class EventControllerTest extends RestDocsTest {
                                         .description("이벤트 Id"),
                                 fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
                                         .description("이미지 url"),
+                                fieldWithPath("data[].buttonText").type(JsonFieldType.STRING)
+                                        .description("버튼 문구"),
                                 fieldWithPath("data[].redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 url")
                         )
