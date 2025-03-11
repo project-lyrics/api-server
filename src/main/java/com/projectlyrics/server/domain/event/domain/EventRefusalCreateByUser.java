@@ -4,6 +4,7 @@ import com.projectlyrics.server.domain.user.entity.User;
 
 public record EventRefusalCreateByUser(
         Event event,
-        User user
+        User user,
+        int refusalPeriod
 ) {
 }
