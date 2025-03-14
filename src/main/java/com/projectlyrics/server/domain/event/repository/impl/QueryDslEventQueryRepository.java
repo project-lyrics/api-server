@@ -57,7 +57,7 @@ public class QueryDslEventQueryRepository implements EventQueryRepository {
                         eventRefusal.event.eq(event)
                                 .and(filterCondition)
                                 .and(eventRefusal.deletedAt.isNull())
-                                .and(eventRefusal.updatedAt.goe(LocalDate.now().atStartOfDay()))
+                                .and(eventRefusal.deadline.after(LocalDate.now()))
                 )
                 .fetchJoin()
                 .where(

@@ -14,6 +14,7 @@ import com.projectlyrics.server.domain.event.repository.EventRefusalQueryReposit
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
+import java.time.LocalDate;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,33 +35,36 @@ public class EventCommandService {
         return eventCommandRepository.save(Event.create(EventCreate.of(request)));
     }
 
-    public synchronized EventRefusal refuseByUser(Long eventId, Long userId) {
+    public synchronized EventRefusal refuseByUser(Long eventId, Long userId, int refusalPeriod) {
         Event event = eventQueryRepository.findById(eventId);
         User user = userQueryRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         return upsertEventRefusal(
                 () -> eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId()),
-                () -> EventRefusal.create(new EventRefusalCreateByUser(event, user))
+                () -> EventRefusal.create(new EventRefusalCreateByUser(event, user, refusalPeriod)),
+                refusalPeriod
         );
     }
 
-    public synchronized EventRefusal refuseByDeviceId(Long eventId, String deviceId) {
+    public synchronized EventRefusal refuseByDeviceId(Long eventId, String deviceId, int refusalPeriod) {
         Event event = eventQueryRepository.findById(eventId);
 
         return upsertEventRefusal(
                 () -> eventRefusalQueryRepository.findByEventIdAndDeviceId(event.getId(), deviceId),
-                () -> EventRefusal.create(new EventRefusalCreateByDevice(event, deviceId))
+                () -> EventRefusal.create(new EventRefusalCreateByDevice(event, deviceId, refusalPeriod)),
+                refusalPeriod
         );
     }
 
     private EventRefusal upsertEventRefusal(
             Supplier<EventRefusal> findExistingRefusal,
-            Supplier<EventRefusal> createNewRefusal
+            Supplier<EventRefusal> createNewRefusal,
+            int refusalPeriod
     ) {
         try {
             EventRefusal eventRefusal = findExistingRefusal.get();
-            eventRefusal.touch();
+            eventRefusal.setDeadline(LocalDate.now().plusDays(refusalPeriod));
             return eventRefusal;
         } catch (EventRefusalNotFoundException e) {
             return eventRefusalCommandRepository.save(createNewRefusal.get());

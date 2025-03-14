@@ -39,6 +39,7 @@ class EventControllerTest extends RestDocsTest {
         EventCreateRequest request = new EventCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                "button",
                 LocalDate.now()
         );
 
@@ -62,6 +63,8 @@ class EventControllerTest extends RestDocsTest {
                                         .description("이미지 URL"),
                                 fieldWithPath("redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 URL"),
+                                fieldWithPath("buttonText").type(JsonFieldType.STRING)
+                                        .description("버튼 문구"),
                                 fieldWithPath("dueDate").type(JsonFieldType.STRING)
                                         .description("이벤트 마감일")
                         )
@@ -136,28 +139,35 @@ class EventControllerTest extends RestDocsTest {
 
     private RestDocumentationResultHandler getAllExceptRefusedDocument() {
 
-        return restDocs.document(
+        RestDocumentationResultHandler document = restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Event API")
                         .summary("진행 중인 모든 이벤트 리스트 조회 API (사용자가 거부한 이벤트 제외)")
                         .requestHeaders(getAuthorizationHeader())
                         .responseFields(
-                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
+                                fieldWithPath("refusalPeriod").type(JsonFieldType.NUMBER)
+                                        .description("거절 기간(1:하루동안 보지 않기/7:일주일간 보지 않기)"),
+                                fieldWithPath("event").type(JsonFieldType.OBJECT)
+                                        .description("이벤트 페이지네이션 관련 데아터"),
+                                fieldWithPath("event.nextCursor").type(JsonFieldType.NUMBER)
                                         .description("다음 cursor에 쓰일 값"),
-                                fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("event.hasNext").type(JsonFieldType.BOOLEAN)
                                         .description("다음 데이터 존재 여부"),
-                                fieldWithPath("data").type(JsonFieldType.ARRAY)
+                                fieldWithPath("event.data").type(JsonFieldType.ARRAY)
                                         .description("데이터"),
-                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("event.data[].id").type(JsonFieldType.NUMBER)
                                         .description("이벤트 Id"),
-                                fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
+                                fieldWithPath("event.data[].imageUrl").type(JsonFieldType.STRING)
                                         .description("이미지 url"),
-                                fieldWithPath("data[].redirectUrl").type(JsonFieldType.STRING)
+                                fieldWithPath("event.data[].buttonText").type(JsonFieldType.STRING)
+                                        .description("버튼 문구"),
+                                fieldWithPath("event.data[].redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 url")
                         )
                         .responseSchema(Schema.schema("Event List Response"))
                         .build()
                 )
         );
+        return document;
     }
 }

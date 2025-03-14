@@ -33,7 +33,7 @@ class EventCommandServiceTest extends IntegrationTest {
     @Test
     void 이벤트를_발행해야_한다() {
         // given
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
 
         // when
         Event event = sut.create(request);
@@ -52,11 +52,11 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
-        sut.refuseByUser(event.getId(), user.getId());
+        sut.refuseByUser(event.getId(), user.getId(), 1);
 
         // then
         EventRefusal result = eventRefusalQueryRepository.findByEventIdAndUserId(event.getId(), user.getId());
@@ -72,11 +72,11 @@ class EventCommandServiceTest extends IntegrationTest {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
-        sut.refuseByDeviceId(event.getId(), deviceId);
+        sut.refuseByDeviceId(event.getId(), deviceId, 1);
 
         // then
         EventRefusal result = eventRefusalQueryRepository.findByEventIdAndDeviceId(event.getId(), deviceId);
@@ -88,54 +88,44 @@ class EventCommandServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 동일_유저와_이벤트의_거부_기록이_있으면_updatedAt만_갱신한다() {
+    void 동일_유저와_이벤트의_거부_기록이_있으면_deadline만_갱신한다() {
         // given
         User user = userCommandRepository.save(UserFixture.create());
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "button", LocalDate.now());
         Event event = sut.create(request);
 
         // when
-        EventRefusal eventRefusalBefore = sut.refuseByUser(event.getId(), user.getId());
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // 2초 대기
-        }
-        EventRefusal eventRefusalAfter = sut.refuseByUser(event.getId(), user.getId());
+        EventRefusal eventRefusalBefore = sut.refuseByUser(event.getId(), user.getId(),1);
+        EventRefusal eventRefusalAfter = sut.refuseByUser(event.getId(), user.getId(), 2);
 
         // then
         assertAll(
                 () -> assertThat(eventRefusalBefore.getId()).isEqualTo(eventRefusalAfter.getId()),
                 () -> assertThat(eventRefusalBefore.getEvent().getId()).isEqualTo(eventRefusalAfter.getEvent().getId()),
                 () -> assertThat(eventRefusalBefore.getUser().getId()).isEqualTo(eventRefusalAfter.getUser().getId()),
-                () -> assertThat(eventRefusalBefore.getUpdatedAt().plusSeconds(1).isBefore(eventRefusalAfter.getUpdatedAt()))
+                () -> assertThat(eventRefusalBefore.getDeadline().isEqual(eventRefusalAfter.getDeadline()))
         );
     }
 
     @Test
-    void 동일_디바이스id와_이벤트의_거부_기록이_있으면_updatedAt만_갱신한다() {
+    void 동일_디바이스id와_이벤트의_거부_기록이_있으면_deadline만_갱신한다() {
         // given
         String deviceId = "DEVICE_ID";
 
-        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", LocalDate.now());
+        EventCreateRequest request = new EventCreateRequest("imageUrl", "redirectUrl", "buttton", LocalDate.now());
         Event event = sut.create(request);
 
         // when
-        EventRefusal eventRefusalBefore = sut.refuseByDeviceId(event.getId(), deviceId);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // 2초 대기
-        }
-        EventRefusal eventRefusalAfter = sut.refuseByDeviceId(event.getId(), deviceId);
+        EventRefusal eventRefusalBefore = sut.refuseByDeviceId(event.getId(), deviceId,1);
+        EventRefusal eventRefusalAfter = sut.refuseByDeviceId(event.getId(), deviceId,2);
 
         // then
         assertAll(
                 () -> assertThat(eventRefusalBefore.getId()).isEqualTo(eventRefusalAfter.getId()),
                 () -> assertThat(eventRefusalBefore.getEvent().getId()).isEqualTo(eventRefusalAfter.getEvent().getId()),
                 () -> assertThat(eventRefusalBefore.getDeviceId()).isEqualTo(eventRefusalAfter.getDeviceId()),
-                () -> assertThat(eventRefusalBefore.getUpdatedAt().plusSeconds(1).isBefore(eventRefusalAfter.getUpdatedAt()))
+                () -> assertThat(eventRefusalBefore.getDeadline().isEqual(eventRefusalAfter.getDeadline()))
         );
     }
 }
