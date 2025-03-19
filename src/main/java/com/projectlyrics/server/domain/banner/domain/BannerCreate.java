@@ -12,7 +12,7 @@ public record BannerCreate(
         return new BannerCreate(
                 request.imageUrl(),
                 request.redirectUrl(),
-                request.dueDate().atStartOfDay()
+                request.dueDate() == null ? null: request.dueDate().atStartOfDay()
         );
     }
 }
