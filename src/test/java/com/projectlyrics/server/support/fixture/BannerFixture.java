@@ -1,25 +1,22 @@
 package com.projectlyrics.server.support.fixture;
 
-import com.projectlyrics.server.domain.event.domain.Event;
-import com.projectlyrics.server.domain.event.domain.EventCreate;
+import com.projectlyrics.server.domain.banner.domain.Banner;
+import com.projectlyrics.server.domain.banner.domain.BannerCreate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class EventFixture extends BaseFixture{
-
+public class BannerFixture extends BaseFixture{
     private Long id;
     private String imageUrl = "imageUrl";
     private String redirectUrl = "redirectUrl";
-    private String buttonText = "button";
     private LocalDateTime dueDate = LocalDate.now().atTime(23, 59, 59);
 
-    public static Event create() {
-        return Event.createWithId(
+    public static Banner create() {
+        return Banner.createWithId(
                 getUniqueId(),
-                new EventCreate(
-                      "imageUrl",
+                new BannerCreate(
+                        "imageUrl",
                         "redirectUrl",
-                        "button",
                         LocalDate.now().plusDays(1).atTime(23, 59, 59)
                 )
         );
