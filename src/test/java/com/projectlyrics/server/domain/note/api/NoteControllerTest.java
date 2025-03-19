@@ -1,5 +1,18 @@
 package com.projectlyrics.server.domain.note.api;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
@@ -15,25 +28,20 @@ import com.projectlyrics.server.domain.note.entity.NoteStatus;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
-import com.projectlyrics.server.support.fixture.*;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
+import com.projectlyrics.server.support.fixture.CommentFixture;
+import com.projectlyrics.server.support.fixture.NoteFixture;
+import com.projectlyrics.server.support.fixture.SongFixture;
+import com.projectlyrics.server.support.fixture.UserFixture;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class NoteControllerTest extends RestDocsTest {
 
@@ -190,7 +198,7 @@ class NoteControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("노트 단건 조회 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .pathParameters(
                                 parameterWithName("noteId").type(SimpleType.NUMBER)
                                         .description("노트 ID")
@@ -506,7 +514,7 @@ class NoteControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("특정 아티스트와 관련된 노트 리스트 조회 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
@@ -609,7 +617,7 @@ class NoteControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
                         .summary("특정 곡과 관련된 노트 리스트 조회 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)

@@ -75,7 +75,7 @@ SongControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Song API")
                         .summary("노트 개수 역순 정렬 곡 검색 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
@@ -152,7 +152,7 @@ SongControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Song API")
                         .summary("아티스트 id 기반 최신순 정렬 곡 검색 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER)
@@ -200,7 +200,7 @@ SongControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Song API")
                         .summary("곡 id로 곡 정보 검색 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .pathParameters(
                                 parameterWithName("songId").type(SimpleType.NUMBER)
                                         .description("곡 ID")

@@ -1,35 +1,36 @@
 package com.projectlyrics.server.domain.artist.api;
 
-import com.epages.restdocs.apispec.ParameterDescriptorWithType;
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
-import com.epages.restdocs.apispec.SimpleType;
-import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
-import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
-import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
-import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
-import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
-import com.projectlyrics.server.support.RestDocsTest;
-import com.projectlyrics.server.support.fixture.ArtistFixture;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.restdocs.payload.JsonFieldType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistCreateRequest;
+import com.projectlyrics.server.domain.artist.dto.request.ArtistUpdateRequest;
+import com.projectlyrics.server.domain.artist.dto.response.ArtistGetResponse;
+import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
+import com.projectlyrics.server.support.RestDocsTest;
+import com.projectlyrics.server.support.fixture.ArtistFixture;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.JsonFieldType;
 
 class ArtistControllerTest extends RestDocsTest {
 
@@ -167,7 +168,7 @@ class ArtistControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Artist API")
                         .summary("아티스트 단건 조회 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .pathParameters(
                                 parameterWithName("artistId").type(SimpleType.NUMBER)
                                         .description("아티스트 id")
@@ -219,7 +220,7 @@ class ArtistControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Artist API")
                         .summary("아티스트 리스트 조회 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(getOffsetBasePagingQueryParameters())
                         .responseFields(
                                 fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
@@ -285,7 +286,7 @@ class ArtistControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Artist API")
                         .summary("아티스트 검색 API")
-                        .requestHeaders(getAuthorizationHeader())
+                        .requestHeaders(getAuthorizationHeader().optional())
                         .queryParameters(queryParams)
                         .responseFields(
                                 fieldWithPath("pageNumber").type(JsonFieldType.NUMBER)
