@@ -117,6 +117,9 @@ public enum ErrorCode {
     // Event
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "17000", "해당 이벤트를 조회할 수 없습니다."),
     EVENT_REFUSAL_NOT_FOUND(HttpStatus.NOT_FOUND, "17001", "해당 이벤트 수신 거절 내역을 조회할 수 없습니다."),
+
+    //Banner
+    BANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "18000", "해당 배너를 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
