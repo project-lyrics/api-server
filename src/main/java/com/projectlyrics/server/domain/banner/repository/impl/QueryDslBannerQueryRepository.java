@@ -6,6 +6,8 @@ import com.projectlyrics.server.domain.banner.domain.Banner;
 import com.projectlyrics.server.domain.banner.exception.BannerNotFoundException;
 import com.projectlyrics.server.domain.banner.repository.BannerQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,5 +27,18 @@ public class QueryDslBannerQueryRepository implements BannerQueryRepository {
                                 banner.deletedAt.isNull())
                         .fetchFirst()
         ).orElseThrow(BannerNotFoundException::new);
+    }
+
+    @Override
+    public List<Banner> findRecentBanners(int size) {
+        return jpaQueryFactory
+                .selectFrom(banner)
+                .where(
+                        banner.dueDate.isNull().or(banner.dueDate.after(LocalDateTime.now())),
+                        banner.deletedAt.isNull()
+                )
+                .orderBy(banner.id.desc())
+                .limit(size)
+                .fetch();
     }
 }

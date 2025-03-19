@@ -42,7 +42,9 @@ public class AuthInterceptor implements HandlerInterceptor {
                 requestURI.equals("/api/v1/notes/artists") ||
                 requestURI.equals("/api/v1/notes/songs") ||
                 requestURI.matches("/api/v1/songs/.*") ||
-                (requestURI.matches("/api/v1/events") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())) );
+                (requestURI.matches("/api/v1/events") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name()))||
+                requestURI.matches("/api/v1/events/refuse") ||
+                (requestURI.matches("/api/v1/banners") && requestMethod.equalsIgnoreCase(HttpMethod.GET.name())));
     }
 
     private void setAuthContext(HttpServletRequest request) {
