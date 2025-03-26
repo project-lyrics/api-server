@@ -38,6 +38,7 @@ public class BannerQueryServiceTest extends IntegrationTest {
 
     private BannerCreateRequest activeBannerCreateRequest;
     private BannerCreateRequest expiredBannerCreateRequest;
+    private BannerCreateRequest upcomingBannerCreateRequest;
     private BannerCreateRequest bannerCreateRequest;
 
     @BeforeEach
@@ -46,16 +47,25 @@ public class BannerQueryServiceTest extends IntegrationTest {
         activeBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                LocalDate.now(),
                 LocalDate.now().plusDays(1)
         );
         expiredBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                LocalDate.now().minusDays(2),
                 LocalDate.now().minusDays(1)
         );
-        bannerCreateRequest = new BannerCreateRequest(
+        upcomingBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2)
+        );
+                bannerCreateRequest = new BannerCreateRequest(
+                "imageUrl",
+                "redirectUrl",
+                null,
                 null
         );
     }
@@ -105,7 +115,7 @@ public class BannerQueryServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 배너_리스트_조회시_마감기한이_이미_지난_배너는_제외해야_한다() {
+    void 배너_리스트_조회시_시작기한이_남았거나_마감기한이_이미_지난_배너는_제외해야_한다() {
         // given
         List<Banner> banners = new ArrayList<>();
         for (int i=0; i<3; i++) {
@@ -116,6 +126,9 @@ public class BannerQueryServiceTest extends IntegrationTest {
         }
         for (int i=0; i<5; i++) {
             banners.add(bannerCommandRepository.save(Banner.create(BannerCreate.of(expiredBannerCreateRequest))));
+        }
+        for (int i=0; i<3; i++) {
+            banners.add(bannerCommandRepository.save(Banner.create(BannerCreate.of(upcomingBannerCreateRequest))));
         }
 
         // when

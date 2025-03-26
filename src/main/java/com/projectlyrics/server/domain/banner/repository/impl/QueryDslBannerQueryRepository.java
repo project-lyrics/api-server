@@ -34,6 +34,7 @@ public class QueryDslBannerQueryRepository implements BannerQueryRepository {
         return jpaQueryFactory
                 .selectFrom(banner)
                 .where(
+                        banner.startDate.isNull().or(banner.startDate.before(LocalDateTime.now())),
                         banner.dueDate.isNull().or(banner.dueDate.after(LocalDateTime.now())),
                         banner.deletedAt.isNull()
                 )

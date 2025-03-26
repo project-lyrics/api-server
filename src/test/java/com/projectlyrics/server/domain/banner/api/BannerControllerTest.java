@@ -32,6 +32,7 @@ public class BannerControllerTest extends RestDocsTest {
         BannerCreateRequest request = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
+                LocalDate.now(),
                 LocalDate.now()
         );
 
@@ -55,6 +56,9 @@ public class BannerControllerTest extends RestDocsTest {
                                         .description("이미지 URL"),
                                 fieldWithPath("redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 URL"),
+                                fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                        .description("배너 노출 시작일")
+                                        .optional(),
                                 fieldWithPath("dueDate").type(JsonFieldType.STRING)
                                         .description("배너 노출 마감일")
                                         .optional()

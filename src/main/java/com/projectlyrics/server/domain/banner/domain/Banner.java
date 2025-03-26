@@ -27,14 +27,17 @@ public class Banner extends BaseEntity {
     private String imageUrl;
     private String redirectUrl;
     private LocalDateTime dueDate;
+    private LocalDateTime startDate;
 
     private Banner(
             String imageUrl,
             String redirectUrl,
+            LocalDateTime startDate,
             LocalDateTime dueDate
     ) {
         this.imageUrl = imageUrl;
         this.redirectUrl = redirectUrl;
+        this.startDate = startDate;
         this.dueDate = dueDate;
     }
 
@@ -42,6 +45,7 @@ public class Banner extends BaseEntity {
         return new Banner(
                 bannerCreate.imageUrl(),
                 bannerCreate.redirectUrl(),
+                bannerCreate.startDate(),
                 bannerCreate.dueDate()
         );
     }
@@ -51,6 +55,7 @@ public class Banner extends BaseEntity {
                 id,
                 bannerCreate.imageUrl(),
                 bannerCreate.redirectUrl(),
+                bannerCreate.startDate(),
                 bannerCreate.dueDate()
         );
     }
