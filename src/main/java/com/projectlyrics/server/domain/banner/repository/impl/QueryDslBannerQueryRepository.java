@@ -20,7 +20,7 @@ public class QueryDslBannerQueryRepository implements BannerQueryRepository {
 
     @Override
     public Banner findById(Long id) {
-        return Optional.of(
+        return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(banner)
                         .where(banner.id.eq(id),
