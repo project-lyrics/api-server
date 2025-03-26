@@ -10,7 +10,7 @@ public record BannerCreateRequest(
         LocalDate startDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         LocalDate dueDate,
-        boolean hide,
+        boolean hideOther,
         Long hiddenBannerId
 
 ) {

@@ -22,7 +22,7 @@ public class BannerCommandService {
     private Long defaultBannerId;
 
     public Banner create(BannerCreateRequest request) {
-        if (request.hide()) {
+        if (request.hideOther()) {
             Long hiddenBannerId = request.hiddenBannerId() == null ? defaultBannerId : request.hiddenBannerId();
             Banner hiddenBanner =  bannerQueryRepository.findById(hiddenBannerId);
             hiddenBanner.setStartDate(request.dueDate() == null ? null : request.dueDate().atStartOfDay());
