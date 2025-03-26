@@ -9,10 +9,8 @@ import com.projectlyrics.server.domain.banner.dto.request.BannerCreateRequest;
 import com.projectlyrics.server.domain.banner.dto.response.BannerGetResponse;
 import com.projectlyrics.server.domain.banner.repository.BannerCommandRepository;
 import com.projectlyrics.server.domain.banner.repository.BannerQueryRepository;
-import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.support.IntegrationTest;
-import com.projectlyrics.server.support.fixture.UserFixture;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +32,6 @@ public class BannerQueryServiceTest extends IntegrationTest {
     @Autowired
     BannerQueryService sut;
 
-    private User user;
-
     private BannerCreateRequest activeBannerCreateRequest;
     private BannerCreateRequest expiredBannerCreateRequest;
     private BannerCreateRequest upcomingBannerCreateRequest;
@@ -43,29 +39,36 @@ public class BannerQueryServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        user = userCommandRepository.save(UserFixture.create());
         activeBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
                 LocalDate.now(),
-                LocalDate.now().plusDays(1)
+                LocalDate.now().plusDays(1),
+                false,
+                null
         );
         expiredBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
                 LocalDate.now().minusDays(2),
-                LocalDate.now().minusDays(1)
+                LocalDate.now().minusDays(1),
+                false,
+                null
         );
         upcomingBannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
                 LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(2)
+                LocalDate.now().plusDays(2),
+                false,
+                null
         );
                 bannerCreateRequest = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
                 null,
+                null,
+                false,
                 null
         );
     }

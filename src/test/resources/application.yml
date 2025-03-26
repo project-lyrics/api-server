@@ -35,6 +35,8 @@ admin: 1
 
 version: 0.0.1
 
+default_banner_id : 1
+
 search:
   api:
     host: host
