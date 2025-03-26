@@ -17,6 +17,7 @@ public class BannerFixture extends BaseFixture{
                 new BannerCreate(
                         "imageUrl",
                         "redirectUrl",
+                        LocalDate.now().minusDays(1).atTime(23, 59, 59),
                         LocalDate.now().plusDays(1).atTime(23, 59, 59)
                 )
         );
