@@ -19,10 +19,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "total_views")
+@Table(name = "views")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TotalView extends BaseEntity {
+public class View extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,7 @@ public class TotalView extends BaseEntity {
 
     private String deviceId;
 
-    private TotalView(
+    private View(
             Note note,
             User user,
             String deviceId
@@ -48,20 +48,20 @@ public class TotalView extends BaseEntity {
         this.deviceId = deviceId;
     }
 
-    public static TotalView create(TotalViewCreate totalViewCreate) {
-        return new TotalView(
-                totalViewCreate.note(),
-                totalViewCreate.user(),
-                totalViewCreate.deviceId()
+    public static View create(ViewCreate viewCreate) {
+        return new View(
+                viewCreate.note(),
+                viewCreate.user(),
+                viewCreate.deviceId()
         );
     }
 
-    public static TotalView createWithId(Long id, TotalViewCreate totalViewCreate) {
-        return new TotalView(
+    public static View createWithId(Long id, ViewCreate viewCreate) {
+        return new View(
                 id,
-                totalViewCreate.note(),
-                totalViewCreate.user(),
-                totalViewCreate.deviceId()
+                viewCreate.note(),
+                viewCreate.user(),
+                viewCreate.deviceId()
         );
     }
 }
