@@ -31,6 +31,7 @@ import com.projectlyrics.server.domain.song.service.SongQueryService;
 import com.projectlyrics.server.domain.user.entity.Role;
 import com.projectlyrics.server.domain.user.service.UserCommandService;
 import com.projectlyrics.server.domain.user.service.UserQueryService;
+import com.projectlyrics.server.domain.view.service.ViewCommandService;
 import com.projectlyrics.server.global.configuration.ClockConfig;
 import com.projectlyrics.server.global.slack.SlackClient;
 import com.projectlyrics.server.global.slack.service.SlackService;
@@ -137,6 +138,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected BannerQueryService bannerQueryService;
+
+    @MockBean
+    protected ViewCommandService viewCommandService;
 
     public String accessToken;
     public String refreshToken;
