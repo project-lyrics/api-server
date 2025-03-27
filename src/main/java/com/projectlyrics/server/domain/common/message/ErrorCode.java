@@ -122,7 +122,7 @@ public enum ErrorCode {
     BANNER_NOT_FOUND(HttpStatus.NOT_FOUND, "18000", "해당 배너를 조회할 수 없습니다."),
 
     //View
-    VIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "19000", "해당 중복 제외 조회수를 조회할 수 없습니다."),
+    VIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "19000", "해당 조회수를 조회할 수 없습니다."),
     ;
 
     private final HttpStatus responseStatus;
