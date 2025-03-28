@@ -16,7 +16,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class ViewControllerTest extends RestDocsTest {
-    private static final String deviceIdHeader = "Device-Id";
+    private static final String deviceIdKey = "Device-Id";
     private static final String deviceIdValue = "device_id";
 
     @Test
@@ -29,7 +29,7 @@ public class ViewControllerTest extends RestDocsTest {
         // when, then
         mockMvc.perform(post("/api/v1/views")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                        .header(deviceIdHeader, deviceIdValue)
+                        .header(deviceIdKey, deviceIdValue)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
