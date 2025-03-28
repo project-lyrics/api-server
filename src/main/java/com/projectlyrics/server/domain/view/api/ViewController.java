@@ -27,7 +27,7 @@ public class ViewController {
             @RequestBody ViewCreateRequest request
             ) {
         if (authContext.isAnonymous()) {
-            viewCommandService.create(request, null, deviceId);
+            viewCommandService.create(request, deviceId);
         } else {
             viewCommandService.create(request, authContext.getId(), deviceId);
         }

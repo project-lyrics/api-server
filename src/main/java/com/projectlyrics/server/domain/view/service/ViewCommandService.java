@@ -24,8 +24,12 @@ public class ViewCommandService {
 
     public View create(ViewCreateRequest request, Long userId, String deviceId) {
         Note note = noteQueryRepository.findById(request.noteId());
-        User user = userId == null? null: userQueryRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userQueryRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return viewCommandRepository.save(View.create(ViewCreate.of(note, user, deviceId)));
+    }
+
+    public View create(ViewCreateRequest request, String deviceId) {
+        Note note = noteQueryRepository.findById(request.noteId());
+        return viewCommandRepository.save(View.create(ViewCreate.of(note, null, deviceId)));
     }
 }
