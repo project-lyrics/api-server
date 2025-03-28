@@ -95,7 +95,7 @@ public class ViewCommandServiceTest extends IntegrationTest {
         ViewCreateRequest request = new ViewCreateRequest(note.getId());
 
         // when
-        View view = sut.create(request, null, deviceId);
+        View view = sut.create(request, deviceId);
 
         // then
         View result = viewQueryRepository.findById(view.getId());
