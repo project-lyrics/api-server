@@ -114,6 +114,7 @@ class AuthControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Auth API")
                         .summary("로그인 API")
+                        .requestHeaders(getDeviceIdHeader())
                         .requestFields(
                                 fieldWithPath("socialAccessToken").type(JsonFieldType.STRING)
                                         .description("소셜 인증 토큰"),
@@ -243,6 +244,7 @@ class AuthControllerTest extends RestDocsTest {
                 resource(ResourceSnippetParameters.builder()
                         .tag("Auth API")
                         .summary("회원가입 API")
+                        .requestHeaders(getDeviceIdHeader())
                         .requestFields(
                                 fieldWithPath("socialAccessToken").type(JsonFieldType.STRING)
                                         .description("소셜 인증 토큰"),

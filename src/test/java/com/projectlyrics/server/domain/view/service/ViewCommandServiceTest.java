@@ -17,7 +17,6 @@ import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.domain.user.repository.UserCommandRepository;
 import com.projectlyrics.server.domain.view.domain.View;
-import com.projectlyrics.server.domain.view.dto.request.ViewCreateRequest;
 import com.projectlyrics.server.domain.view.repository.ViewQueryRepository;
 import com.projectlyrics.server.support.IntegrationTest;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
@@ -74,10 +73,9 @@ public class ViewCommandServiceTest extends IntegrationTest {
     void 조회수를_발행해야_한다() {
         // given
         String deviceId = "DEVICE_ID";
-        ViewCreateRequest request = new ViewCreateRequest(note.getId());
 
         // when
-        View view = sut.create(request, user.getId(), deviceId);
+        View view = sut.create(note.getId(), user.getId(), deviceId);
 
         // then
         View result = viewQueryRepository.findById(view.getId());
@@ -92,10 +90,9 @@ public class ViewCommandServiceTest extends IntegrationTest {
     void 유저id_없이도_조회수를_발행해야_한다() {
         // given
         String deviceId = "DEVICE_ID";
-        ViewCreateRequest request = new ViewCreateRequest(note.getId());
 
         // when
-        View view = sut.create(request, deviceId);
+        View view = sut.create(note.getId(), deviceId);
 
         // then
         View result = viewQueryRepository.findById(view.getId());

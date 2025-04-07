@@ -96,6 +96,7 @@ class EventControllerTest extends RestDocsTest {
                         .tag("Event API")
                         .summary("이벤트 거부 API")
                         .requestHeaders(getAuthorizationHeader().optional())
+                        .requestHeaders(getDeviceIdHeader().optional())
                         .queryParameters(parameterWithName("eventId").type(SimpleType.NUMBER)
                                 .description("거부할 이벤트 ID")
                         )
@@ -144,6 +145,7 @@ class EventControllerTest extends RestDocsTest {
                         .tag("Event API")
                         .summary("진행 중인 모든 이벤트 리스트 조회 API (사용자가 거부한 이벤트 제외)")
                         .requestHeaders(getAuthorizationHeader().optional())
+                        .requestHeaders(getDeviceIdHeader().optional())
                         .responseFields(
                                 fieldWithPath("refusalPeriod").type(JsonFieldType.NUMBER)
                                         .description("거절 기간(1:하루동안 보지 않기/7:일주일간 보지 않기)"),

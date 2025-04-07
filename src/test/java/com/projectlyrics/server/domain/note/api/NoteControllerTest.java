@@ -44,6 +44,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 class NoteControllerTest extends RestDocsTest {
+    private static final String deviceIdKey = "Device-Id";
+    private static final String deviceIdValue = "device_id";
 
     @Test
     void 노트를_저장하면_200응답을_해야_한다() throws Exception {
@@ -188,6 +190,7 @@ class NoteControllerTest extends RestDocsTest {
         // when, then
         mockMvc.perform(get("/api/v1/notes/{noteId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .header(deviceIdKey, deviceIdValue)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(getNoteDetailDocument());
@@ -197,8 +200,9 @@ class NoteControllerTest extends RestDocsTest {
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
-                        .summary("노트 단건 조회 API")
+                        .summary("노트 단건 조회 API (API 호출시 deviceId를 통해 해당 노트에 대한 조회수 기록)")
                         .requestHeaders(getAuthorizationHeader().optional())
+                        .requestHeaders(getDeviceIdHeader())
                         .pathParameters(
                                 parameterWithName("noteId").type(SimpleType.NUMBER)
                                         .description("노트 ID")

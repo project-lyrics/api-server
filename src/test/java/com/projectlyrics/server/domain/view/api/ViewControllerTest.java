@@ -1,5 +1,6 @@
 package com.projectlyrics.server.domain.view.api;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -7,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
-import com.projectlyrics.server.domain.view.dto.request.ViewCreateRequest;
+import com.epages.restdocs.apispec.SimpleType;
 import com.projectlyrics.server.support.RestDocsTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -22,16 +23,12 @@ public class ViewControllerTest extends RestDocsTest {
     @Test
     void 조회수를_저장하면_200응답을_해야_한다() throws Exception {
         // given
-        ViewCreateRequest request = new ViewCreateRequest(
-                1L
-        );
 
         // when, then
-        mockMvc.perform(post("/api/v1/views")
+        mockMvc.perform(post("/api/v1/views/{noteId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .header(deviceIdKey, deviceIdValue)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(getCreateViewDocument());
     }
@@ -42,9 +39,9 @@ public class ViewControllerTest extends RestDocsTest {
                         .tag("View API")
                         .summary("조회 생성 API")
                         .requestHeaders(getAuthorizationHeader())
-                        .requestFields(
-                                fieldWithPath("noteId").type(JsonFieldType.NUMBER)
-                                        .description("조회한 노트 ID")
+                        .pathParameters(
+                                parameterWithName("noteId").type(SimpleType.NUMBER)
+                                        .description("노트 ID")
                         )
                         .requestSchema(Schema.schema("Create View Request"))
                         .responseFields(
