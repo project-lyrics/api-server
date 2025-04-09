@@ -9,4 +9,5 @@ public interface AuthRepository extends CrudRepository<Auth, String> {
 
     Optional<Auth> findByRefreshToken(String refreshToken);
     Optional<Auth> findByDeviceId(String deviceId);
+    Optional<Auth> findBySocialIdAndDeviceId(String socialId, String deviceId);
 }
