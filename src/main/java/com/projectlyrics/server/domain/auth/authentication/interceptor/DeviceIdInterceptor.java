@@ -3,6 +3,8 @@ package com.projectlyrics.server.domain.auth.authentication.interceptor;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.exception.NotRegisteredDeviceException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
+import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
+import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class DeviceIdInterceptor implements HandlerInterceptor {
 
     private final AuthRepository authRepository;
+    private final UserQueryRepository userQueryRepository;
     private final AuthContext authContext;
 
     @Override
@@ -56,6 +59,9 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
     }
 
     private boolean isOldDevice(String deviceId) {
-        return authRepository.findByDeviceId(deviceId).isEmpty();
+        return userQueryRepository.findById(authContext.getId())
+                .map(user -> authRepository.findBySocialIdAndDeviceId(user.getSocialInfo().getSocialId(), deviceId))
+                .orElseThrow(() -> new UserNotFoundException())
+                .isEmpty();
     }
 }
