@@ -44,6 +44,12 @@ public abstract class RestDocsTest extends ControllerTest {
                 .description("Bearer ${accessToken}");
     }
 
+    protected static HeaderDescriptorWithType getDeviceIdHeader() {
+        return headerWithName("Device-Id").type(SimpleType.STRING)
+                .description("기기 식별자");
+    }
+
+
     protected static FieldDescriptor[] getErrorResponseFields() {
         return new FieldDescriptor[]{
                 fieldWithPath("errorCode").type(JsonFieldType.STRING)
