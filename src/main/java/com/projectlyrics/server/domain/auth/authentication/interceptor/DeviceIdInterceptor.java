@@ -3,7 +3,6 @@ package com.projectlyrics.server.domain.auth.authentication.interceptor;
 import com.projectlyrics.server.domain.auth.authentication.AuthContext;
 import com.projectlyrics.server.domain.auth.exception.NotRegisteredDeviceException;
 import com.projectlyrics.server.domain.auth.repository.AuthRepository;
-import com.projectlyrics.server.domain.user.exception.UserNotFoundException;
 import com.projectlyrics.server.domain.user.repository.UserQueryRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,9 +58,6 @@ public class DeviceIdInterceptor implements HandlerInterceptor {
     }
 
     private boolean isOldDevice(String deviceId) {
-        return userQueryRepository.findById(authContext.getId())
-                .map(user -> authRepository.findBySocialIdAndDeviceId(user.getSocialInfo().getSocialId(), deviceId))
-                .orElseThrow(() -> new UserNotFoundException())
-                .isEmpty();
+        return authRepository.findByDeviceId(deviceId).isEmpty();
     }
 }
