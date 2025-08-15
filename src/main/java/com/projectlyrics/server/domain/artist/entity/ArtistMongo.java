@@ -1,7 +1,6 @@
 package com.projectlyrics.server.domain.artist.entity;
 
 import jakarta.persistence.Id;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,7 +24,7 @@ public class ArtistMongo {
                         artist.getName(),
                         artist.getSecondName(),
                         artist.getThirdName())
-                .filter(Objects::nonNull)
+                .filter(s -> s != null && !s.isBlank())
                 .collect(Collectors.joining(" "));
         return new ArtistMongo(artist.getId(), searchNames);
     }
