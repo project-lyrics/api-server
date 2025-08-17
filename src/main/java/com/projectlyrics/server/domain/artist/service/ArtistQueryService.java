@@ -59,4 +59,11 @@ public class ArtistQueryService {
                 artists
         );
     }
+
+    // 테스트용. 기존 search
+    public OffsetBasePaginatedResponse<ArtistGetResponse> searchArtistsWithLike(String query, Pageable pageable) {
+        Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, pageable)
+                .map(ArtistGetResponse::of);
+        return OffsetBasePaginatedResponse.of(searchedArtists);
+    }
 }
