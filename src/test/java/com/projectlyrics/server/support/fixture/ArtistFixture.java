@@ -58,4 +58,15 @@ public class ArtistFixture extends BaseFixture {
                 "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
         );
     }
+
+    public static Artist create(Long id, String name, String secondName, String thirdName) {
+        return Artist.withId(
+                id,
+                name,
+                secondName,
+                thirdName,
+                "6WeDO4GynFmK4OxwkBzMW8",
+                "https://i.scdn.co/image/ab6761610000e5eb8609536d21beed6769d09d7f"
+        );
+    }
 }
