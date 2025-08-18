@@ -15,9 +15,13 @@ public class SongMongo {
     @Field("name")
     private final String name;
 
-    public SongMongo(Long id, Long artistId, String name) {
+    private SongMongo(Long id, Long artistId, String name) {
         this.id = id;
         this.artistId = artistId;
         this.name = name;
+    }
+
+    public static SongMongo of(Song song) {
+        return new SongMongo(song.getId(), song.getArtist().getId(), song.getName());
     }
 }
