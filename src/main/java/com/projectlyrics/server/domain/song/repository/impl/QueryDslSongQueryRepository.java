@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
@@ -121,6 +122,21 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
                 .leftJoin(song.notes, note).fetchJoin()
                 .join(song.artist, artist).fetchJoin()
                 .where(song.id.in(ids))
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findAllByIdsInOrder(List<Long> songIds) {
+        NumberExpression<Integer> orderExpression =
+                Expressions.numberTemplate(Integer.class, "FIELD({0}, {1})", song.id,
+                        songIds.stream().map(String::valueOf).toArray());
+
+        return jpaQueryFactory
+                .selectFrom(song)
+                .leftJoin(song.notes, note).fetchJoin()
+                .join(song.artist, artist).fetchJoin()
+                .where(song.id.in(songIds))
+                .orderBy(orderExpression.asc())
                 .fetch();
     }
 }

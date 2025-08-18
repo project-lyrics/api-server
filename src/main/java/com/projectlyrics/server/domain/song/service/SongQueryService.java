@@ -1,12 +1,14 @@
 package com.projectlyrics.server.domain.song.service;
 
 import com.projectlyrics.server.domain.common.dto.util.CursorBasePaginatedResponse;
+import com.projectlyrics.server.domain.common.dto.util.IdsWithHasNext;
 import com.projectlyrics.server.domain.common.dto.util.OffsetBasePaginatedResponse;
 import com.projectlyrics.server.domain.search.domain.SongSearch;
 import com.projectlyrics.server.domain.song.dto.response.SongGetResponse;
 import com.projectlyrics.server.domain.song.dto.response.SongSearchResponse;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.exception.SongNotFoundException;
+import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import java.util.List;
 import java.util.Map;
@@ -23,17 +25,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class SongQueryService {
 
     private final SongQueryRepository songQueryRepository;
+    private final SongMongoQueryRepository songMongoQueryRepository;
 
     public OffsetBasePaginatedResponse<SongSearchResponse> searchSongs(String query, int pageNumber, int pageSize) {
         if (Objects.isNull(query) || query.isEmpty()) {
             return getSongsByNoteCount(pageNumber, pageSize);
         }
 
-        List<SongSearchResponse> response = songQueryRepository.findAllByQuery(query,
-                        PageRequest.of(pageNumber, pageSize))
-                .map(SongSearchResponse::from).stream().toList();
+        IdsWithHasNext idsWithHasNext = songMongoQueryRepository.searchSongsByName(
+                query,
+                pageNumber * pageSize,
+                pageSize
+        );
 
-        return OffsetBasePaginatedResponse.of(pageNumber, pageSize, response);
+        List<Long> songsIds = idsWithHasNext.ids();
+
+        if (songsIds.size() == 0 && pageNumber == 0) {
+            return OffsetBasePaginatedResponse.of(songQueryRepository.findAllByQuery(query,
+                            PageRequest.of(pageNumber, pageSize))
+                    .map(SongSearchResponse::from)
+            );
+        }
+
+        List<SongSearchResponse> songs = songQueryRepository.findAllByIdsInOrder(songsIds).stream()
+                .map(SongSearchResponse::from)
+                .toList();
+
+        return OffsetBasePaginatedResponse.of(
+                pageNumber,
+                idsWithHasNext.hasNext(),
+                songs
+        );
     }
 
     private OffsetBasePaginatedResponse<SongSearchResponse> getSongsByNoteCount(int pageNumber, int pageSize) {
