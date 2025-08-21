@@ -7,5 +7,6 @@ import java.util.List;
 public interface SongCommandRepository {
 
     Song save(Song song);
-    void saveAll(List<Song> songs);
+
+    List<Song> saveAll(List<Song> songs);
 }
