@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.entity.SongMongo;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.song.repository.SongMongoCommandRepository;
+import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.global.dev.cron.dto.Album;
 import com.projectlyrics.server.global.dev.cron.dto.AlbumListResponse;
@@ -22,6 +23,8 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,6 +39,7 @@ public class SongCollector {
     private final SongCommandRepository songCommandRepository;
     private final SongQueryRepository songQueryRepository;
     private final SongMongoCommandRepository songMongoCommandRepository;
+    private final SongMongoQueryRepository songMongoQueryRepository;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final SlackService slackService;
 
@@ -66,6 +70,39 @@ public class SongCollector {
             sendToSlack(newSongs);
         }
     }
+
+    @Async
+    @Scheduled(cron = "0 30 0 * * *")
+    public void syncMongo() {
+        log.info("song mongo sync started!");
+
+        int page = 0;
+        int size = 1000;
+        Slice<Song> songPage;
+
+        do {
+            songPage = songQueryRepository.findAll(PageRequest.of(page, size));
+
+            List<Long> batchSongIds = songPage.stream()
+                    .map(Song::getId)
+                    .toList();
+
+            List<Long> existingIdsInMongo = songMongoQueryRepository.findAllIdByIdIn(batchSongIds);
+
+            List<SongMongo> songsToSave = songPage.stream()
+                    .filter(song -> !existingIdsInMongo.contains(song.getId()))
+                    .map(SongMongo::of)
+                    .toList();
+
+            if (!songsToSave.isEmpty()) {
+                songMongoCommandRepository.saveAll(songsToSave);
+                log.info("synced {} songs from MySQL into MongoDB", songsToSave.size());
+            }
+
+            page++;
+        } while (songPage.hasNext());
+    }
+
 
     private List<Artist> subList(List<Artist> artists) {
         if (artists.size() <= 23) {

@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.song.repository.impl;
 
 import com.projectlyrics.server.domain.common.dto.util.IdsWithHasNext;
+import com.projectlyrics.server.domain.song.entity.SongMongo;
 import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -75,5 +78,14 @@ public class SongMongoQueryRepositoryImpl implements SongMongoQueryRepository {
         }
 
         return new IdsWithHasNext(ids, hasNext);
+    }
+
+    public List<Long> findAllIdByIdIn(List<Long> ids) {
+        Query query = new Query(Criteria.where("_id").in(ids));
+        query.fields().include("_id");
+        return mongoTemplate.find(query, SongMongo.class)
+                .stream()
+                .map(SongMongo::getId)
+                .toList();
     }
 }
