@@ -11,19 +11,15 @@ public class SongMongo {
     @Getter
     private final Long id;
 
-    @Field("artist_id")
-    private final Long artistId;
-
     @Field("name")
     private final String name;
 
-    private SongMongo(Long id, Long artistId, String name) {
+    private SongMongo(Long id, String name) {
         this.id = id;
-        this.artistId = artistId;
         this.name = name;
     }
 
     public static SongMongo of(Song song) {
-        return new SongMongo(song.getId(), song.getArtist().getId(), song.getName());
+        return new SongMongo(song.getId(), song.getName());
     }
 }
