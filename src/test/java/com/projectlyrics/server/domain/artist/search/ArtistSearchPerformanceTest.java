@@ -16,8 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles("local")
 @Disabled("성능 측정용이라 기본 실행에서 제외함")
 class ArtistSearchPerformanceTest {
 
@@ -117,54 +119,80 @@ class ArtistSearchPerformanceTest {
     @Test
     void searchPerformanceTest() {
         List<String> keywords = List.of(
-                "검", "10", "하현", "보수동", "언니네 이발관",
-                "s", "St", "Stella Ja", "Mingginyu"
+                "검", "검정", "잔", "잔나", "최", "최유",
+                "실", "실리", "sil", "Silica", "데", "데이", "Dam",
+                "새", "10", "십", "혁", "HY",
+                "카", "카더", "car", "너드", "Nerd",
+                "허", "우", "OO", "백아", "Baek",
+                "브", "Bro", "쏜", "THOR",
+                "S", "SU", "설",
+                "한", "HAN", "윤", "백예", "yer",
+                "유다", "Yd", "신지", "웨이", "wave",
+                "L", "LU", "루시",
+                "TO", "TOU", "터치",
+                "알레", "ALE",
+                "하현", "김사",
+                "언니", "나상", "Band",
+                "박소", "짙", "밍", "Ming",
+                "뜻돌", "라쿠", "Lac",
+                "치즈", "CHE", "김현",
+                "볼빨", "스텔", "Stel",
+                "민", "다섯", "Das",
+                "델리", "Del", "소수",
+                "가을", "신인",
+                "dos", "도시",
+                "보수", "이고",
+                "결", "KYU",
+                "정우",
+                "유라", "you",
+                "알레", "ALEP"
         );
 
-        int runsPerKeyword = 10; // 키워드당 반복 횟수
+        // 각 케이스별 latency(ms) 저장
+        List<Long> mysqlLikeServiceLatencies = new java.util.ArrayList<>();
+        List<Long> mongoAtlasServiceLatencies = new java.util.ArrayList<>();
+        List<Long> mysqlLikeRepoLatencies = new java.util.ArrayList<>();
+        List<Long> mongoAtlasRepoLatencies = new java.util.ArrayList<>();
 
-        long mongoAtlasRepositoryTotal = 0;
-        long mysqlLikeRepositoryTotal = 0;
-        long mongoAtlasServiceTotal = 0;
-        long mysqlLikeServiceTotal = 0;
-
-        // DB 캐시 / JIT 최적화 피하고 정확한 성능 측정을 위해 반복문 분리
+        // MySQL LIKE 테스트 - service
         for (String keyword : keywords) {
-            for (int i = 0; i < runsPerKeyword; i++) {
-                // Mongo Atlas 검색 (service)
-                long start = System.nanoTime();
-                artistQueryService.searchArtists(keyword, PageRequest.of(0, 12));
-                mongoAtlasServiceTotal += System.nanoTime() - start;
-
-                // MySQL LIKE 검색 (service)
-                start = System.nanoTime();
-                artistQueryService.searchArtistsWithLike(keyword, PageRequest.of(0, 12));
-                mysqlLikeServiceTotal += System.nanoTime() - start;
-            }
+            long start = System.nanoTime();
+            artistQueryService.searchArtistsWithLike(keyword, PageRequest.of(0, 5));
+            mysqlLikeServiceLatencies.add((System.nanoTime() - start) / 1_000_000);
         }
 
+        // Mongo Atlas Search 테스트 - service
         for (String keyword : keywords) {
-            for (int i = 0; i < runsPerKeyword; i++) {
-                // Mongo Atlas 검색 (repository)
-                long start = System.nanoTime();
-                artistMongoQueryRepository.searchArtistIdsByName(keyword, 0, 12);
-                mongoAtlasRepositoryTotal += System.nanoTime() - start;
-
-                // MySQL LIKE 검색 (repository)
-                start = System.nanoTime();
-                artistQueryRepository.findAllByQuery(keyword, PageRequest.of(0, 12));
-                mysqlLikeRepositoryTotal += System.nanoTime() - start;
-            }
+            long start = System.nanoTime();
+            artistQueryService.searchArtists(keyword, PageRequest.of(0, 5));
+            mongoAtlasServiceLatencies.add((System.nanoTime() - start) / 1_000_000);
         }
 
-        int totalRuns = keywords.size() * runsPerKeyword;
+        // MySQL LIKE 테스트 - repository
+        for (String keyword : keywords) {
+            long start = System.nanoTime();
+            artistQueryRepository.findAllByQuery(keyword, PageRequest.of(0, 5));
+            mysqlLikeRepoLatencies.add((System.nanoTime() - start) / 1_000_000);
+        }
 
-        System.out.println(
-                "Mongo Atlas Repository 평균(ms): " + mongoAtlasRepositoryTotal / (double) totalRuns / 1_000_000.0);
-        System.out.println(
-                "MySQL LIKE Repository 평균(ms): " + mysqlLikeRepositoryTotal / (double) totalRuns / 1_000_000.0);
-        System.out.println("Mongo Atlas Service 평균(ms): " + mongoAtlasServiceTotal / (double) totalRuns / 1_000_000.0);
-        System.out.println("MySQL LIKE Service 평균(ms): " + mysqlLikeServiceTotal / (double) totalRuns / 1_000_000.0);
+        // Mongo Atlas Search 테스트 - repository
+        for (String keyword : keywords) {
+            long start = System.nanoTime();
+            artistMongoQueryRepository.searchArtistIdsByName(keyword, 0, 12);
+            mongoAtlasRepoLatencies.add((System.nanoTime() - start) / 1_000_000);
+        }
+
+        java.util.function.Function<List<Long>, String> stats = (latencies) -> {
+            latencies.sort(Long::compare);
+            double avg = latencies.stream().mapToLong(Long::longValue).average().orElse(0.0);
+            long p99 = latencies.get((int) Math.ceil(latencies.size() * 0.99) - 1);
+            return String.format("평균=%.3f ms, P99=%d ms", avg, p99);
+        };
+
+        System.out.println("MySQL LIKE Repository -> " + stats.apply(mysqlLikeRepoLatencies));
+        System.out.println("Mongo Atlas Repository -> " + stats.apply(mongoAtlasRepoLatencies));
+        System.out.println("MySQL LIKE Service -> " + stats.apply(mysqlLikeServiceLatencies));
+        System.out.println("Mongo Atlas Service -> " + stats.apply(mongoAtlasServiceLatencies));
     }
 
     @AfterEach
