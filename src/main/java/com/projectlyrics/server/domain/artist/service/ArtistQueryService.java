@@ -44,9 +44,7 @@ public class ArtistQueryService {
         List<Long> artistIds = idsWithHasNext.ids();
 
         if (artistIds.size() == 0 && pageable.getOffset() == 0) {
-            Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, pageable)
-                    .map(ArtistGetResponse::of);
-            return OffsetBasePaginatedResponse.of(searchedArtists);
+            return searchArtistsWithLike(query, pageable);
         }
 
         List<ArtistGetResponse> artists = artistQueryRepository.findAllByIdsInOrder(artistIds).stream()
@@ -60,7 +58,6 @@ public class ArtistQueryService {
         );
     }
 
-    // 테스트용. 기존 search
     public OffsetBasePaginatedResponse<ArtistGetResponse> searchArtistsWithLike(String query, Pageable pageable) {
         Slice<ArtistGetResponse> searchedArtists = artistQueryRepository.findAllByQuery(query, pageable)
                 .map(ArtistGetResponse::of);

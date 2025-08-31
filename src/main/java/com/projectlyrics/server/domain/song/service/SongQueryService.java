@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +42,7 @@ public class SongQueryService {
         List<Long> songsIds = idsWithHasNext.ids();
 
         if (songsIds.size() == 0 && pageNumber == 0) {
-            return OffsetBasePaginatedResponse.of(songQueryRepository.findAllByQuery(query,
-                            PageRequest.of(pageNumber, pageSize))
-                    .map(SongSearchResponse::from)
-            );
+            return searchSongsWithLike(query, PageRequest.of(pageNumber, pageSize));
         }
 
         List<SongSearchResponse> songs = songQueryRepository.findAllByIdsInOrder(songsIds).stream()
@@ -55,6 +53,12 @@ public class SongQueryService {
                 pageNumber,
                 idsWithHasNext.hasNext(),
                 songs
+        );
+    }
+
+    public OffsetBasePaginatedResponse<SongSearchResponse> searchSongsWithLike(String query, Pageable pageable) {
+        return OffsetBasePaginatedResponse.of(songQueryRepository.findAllByQuery(query, pageable)
+                .map(SongSearchResponse::from)
         );
     }
 
