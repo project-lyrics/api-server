@@ -1,9 +1,12 @@
 package com.projectlyrics.server.domain.song.repository;
 
 import com.projectlyrics.server.domain.song.entity.SongMongo;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface SongMongoCommandRepository extends MongoRepository<SongMongo, Long> {
+public interface SongMongoCommandRepository {
+    SongMongo save(SongMongo song);
+
+    <S extends SongMongo> List<S> saveAll(Iterable<S> songs);
+
+    void deleteAll();
 }

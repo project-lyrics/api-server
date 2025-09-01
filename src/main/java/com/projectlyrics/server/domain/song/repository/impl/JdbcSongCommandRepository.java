@@ -22,6 +22,7 @@ public class JdbcSongCommandRepository implements SongCommandRepository {
     private final JdbcTemplate jdbcTemplate;
     private final String insertQuery = "INSERT INTO songs (artist_id, spotify_id, name, release_date, album_name, image_url, created_at, created_by, status, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private final String insertQueryWithId = "INSERT INTO songs (id, artist_id, spotify_id, name, release_date, album_name, image_url, created_at, created_by, status, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,?, ?)";
+    private final String deleteQuery = "DELETE FROM songs";
 
     @Override
     public Song save(Song song) {
@@ -98,5 +99,10 @@ public class JdbcSongCommandRepository implements SongCommandRepository {
         });
 
         return songs;
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update(deleteQuery);
     }
 }

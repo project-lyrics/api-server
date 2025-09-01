@@ -9,4 +9,6 @@ public interface SongCommandRepository {
     Song save(Song song);
 
     List<Song> saveAll(List<Song> songs);
+
+    void deleteAll();
 }

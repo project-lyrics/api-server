@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import java.util.Arrays;
 import java.util.List;
 import org.bson.Document;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Profile({"dev", "prod"})
 public class SongMongoQueryRepositoryImpl implements SongMongoQueryRepository {
 
     private final MongoTemplate mongoTemplate;

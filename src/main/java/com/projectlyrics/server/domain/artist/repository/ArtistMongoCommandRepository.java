@@ -1,9 +1,15 @@
 package com.projectlyrics.server.domain.artist.repository;
 
 import com.projectlyrics.server.domain.artist.entity.ArtistMongo;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface ArtistMongoCommandRepository extends MongoRepository<ArtistMongo, Long> {
+public interface ArtistMongoCommandRepository {
+    ArtistMongo save(ArtistMongo artist);
+
+    <S extends ArtistMongo> List<S> saveAll(Iterable<S> artists);
+
+    void delete(ArtistMongo artist);
+
+    void deleteAll();
 }
+
