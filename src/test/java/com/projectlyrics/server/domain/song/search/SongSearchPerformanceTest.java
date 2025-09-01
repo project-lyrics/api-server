@@ -1,9 +1,7 @@
 package com.projectlyrics.server.domain.song.search;
 
-import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.entity.SongMongo;
-import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.song.repository.SongMongoCommandRepository;
 import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
@@ -28,12 +26,6 @@ class SongSearchPerformanceTest {
 
     @Autowired
     private SongMongoQueryRepository songMongoQueryRepository;
-
-    @Autowired
-    private ArtistCommandRepository artistCommandRepository;
-
-    @Autowired
-    private SongCommandRepository songCommandRepository;
 
     @Autowired
     private SongQueryRepository songQueryRepository;
