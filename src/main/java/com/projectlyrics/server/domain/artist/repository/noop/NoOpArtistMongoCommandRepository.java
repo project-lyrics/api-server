@@ -16,7 +16,7 @@ public class NoOpArtistMongoCommandRepository implements ArtistMongoCommandRepos
     }
 
     @Override
-    public <S extends ArtistMongo> List<S> saveAll(Iterable<S> artists) {
+    public List<ArtistMongo> saveAll(List<ArtistMongo> artists) {
         return List.of();
     }
 

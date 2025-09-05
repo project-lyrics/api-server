@@ -16,7 +16,7 @@ public class NoOpSongMongoCommandRepository implements SongMongoCommandRepositor
     }
 
     @Override
-    public <S extends SongMongo> List<S> saveAll(Iterable<S> songs) {
+    public List<SongMongo> saveAll(List<SongMongo> songs) {
         return List.of();
     }
 

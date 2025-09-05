@@ -6,7 +6,7 @@ import java.util.List;
 public interface SongMongoCommandRepository {
     SongMongo save(SongMongo song);
 
-    <S extends SongMongo> List<S> saveAll(Iterable<S> songs);
+    List<SongMongo> saveAll(List<SongMongo> songs);
 
     void deleteAll();
 }

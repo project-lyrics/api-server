@@ -6,7 +6,7 @@ import java.util.List;
 public interface ArtistMongoCommandRepository {
     ArtistMongo save(ArtistMongo artist);
 
-    <S extends ArtistMongo> List<S> saveAll(Iterable<S> artists);
+    List<ArtistMongo> saveAll(List<ArtistMongo> artists);
 
     void delete(ArtistMongo artist);
 

@@ -20,7 +20,7 @@ public class ArtistMongoCommandRepositoryImpl implements ArtistMongoCommandRepos
     }
 
     @Override
-    public <S extends ArtistMongo> List<S> saveAll(Iterable<S> artists) {
+    public List<ArtistMongo> saveAll(List<ArtistMongo> artists) {
         return delegate.saveAll(artists);
     }
 
