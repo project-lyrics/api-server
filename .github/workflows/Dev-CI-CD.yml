@@ -78,7 +78,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.NEW_KEY }}
           source: ./scripts/deploy-dev.sh
           target: /home/ubuntu/
 
@@ -87,7 +87,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.NEW_KEY }}
           source: ./docker-compose-dev.yml
           target: /home/ubuntu/
 
@@ -96,7 +96,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.NEW_KEY }}
           source: firebase-key.json
           target: /home/ubuntu/
 
@@ -107,7 +107,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.NEW_KEY }}
           envs: GITHUB_SHA
           script: |
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
