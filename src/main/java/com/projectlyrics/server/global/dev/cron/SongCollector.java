@@ -89,7 +89,7 @@ public class SongCollector {
                     .map(Song::getId)
                     .toList();
 
-            List<Long> existingIdsInMongo = songMongoQueryRepository.findAllIdByIdIn(batchSongIds);
+            List<Long> existingIdsInMongo = songMongoQueryRepository.findAllByIdsIn(batchSongIds);
 
             List<SongMongo> songsToSave = songPage.stream()
                     .filter(song -> !existingIdsInMongo.contains(song.getId()))

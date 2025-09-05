@@ -45,7 +45,7 @@ public class SongQueryService {
             return searchSongsWithLike(query, PageRequest.of(pageNumber, pageSize));
         }
 
-        List<SongSearchResponse> songs = songQueryRepository.findAllByIdsInOrder(songsIds).stream()
+        List<SongSearchResponse> songs = songQueryRepository.findAllByIdsInListOrder(songsIds).stream()
                 .map(SongSearchResponse::from)
                 .toList();
 

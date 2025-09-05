@@ -15,7 +15,7 @@ public class NoOpSongMongoQueryRepository implements SongMongoQueryRepository {
     }
 
     @Override
-    public List<Long> findAllIdByIdIn(List<Long> ids) {
+    public List<Long> findAllByIdsIn(List<Long> ids) {
         return List.of();
     }
 }

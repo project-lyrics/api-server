@@ -47,7 +47,7 @@ public class ArtistQueryService {
             return searchArtistsWithLike(query, pageable);
         }
 
-        List<ArtistGetResponse> artists = artistQueryRepository.findAllByIdsInOrder(artistIds).stream()
+        List<ArtistGetResponse> artists = artistQueryRepository.findAllByIdsInListOrder(artistIds).stream()
                 .map(ArtistGetResponse::of)
                 .toList();
 

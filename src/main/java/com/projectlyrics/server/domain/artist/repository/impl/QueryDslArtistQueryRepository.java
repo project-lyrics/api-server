@@ -98,7 +98,7 @@ public class QueryDslArtistQueryRepository implements ArtistQueryRepository {
     }
 
     @Override
-    public List<Artist> findAllByIdsInOrder(List<Long> artistIds) {
+    public List<Artist> findAllByIdsInListOrder(List<Long> artistIds) {
 
         NumberExpression<Integer> orderExpression =
                 Expressions.numberTemplate(Integer.class, "FIELD({0}, {1})", artist.id,

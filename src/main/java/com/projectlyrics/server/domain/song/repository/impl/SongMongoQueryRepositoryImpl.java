@@ -82,7 +82,7 @@ public class SongMongoQueryRepositoryImpl implements SongMongoQueryRepository {
         return new IdsWithHasNext(ids, hasNext);
     }
 
-    public List<Long> findAllIdByIdIn(List<Long> ids) {
+    public List<Long> findAllByIdsIn(List<Long> ids) {
         Query query = new Query(Criteria.where("_id").in(ids));
         query.fields().include("_id");
         return mongoTemplate.find(query, SongMongo.class)

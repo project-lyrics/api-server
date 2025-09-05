@@ -6,5 +6,5 @@ import java.util.List;
 public interface SongMongoQueryRepository {
     IdsWithHasNext searchSongsByName(String query, int offset, int limit);
 
-    List<Long> findAllIdByIdIn(List<Long> ids);
+    List<Long> findAllByIdsIn(List<Long> ids);
 }

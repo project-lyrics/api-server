@@ -24,5 +24,5 @@ public interface SongQueryRepository {
 
     List<Song> findAllByIds(List<Long> ids);
 
-    List<Song> findAllByIdsInOrder(List<Long> songIds);
+    List<Song> findAllByIdsInListOrder(List<Long> songIds);
 }

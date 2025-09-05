@@ -137,7 +137,7 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
-    public List<Song> findAllByIdsInOrder(List<Long> songIds) {
+    public List<Song> findAllByIdsInListOrder(List<Long> songIds) {
         NumberExpression<Integer> orderExpression =
                 Expressions.numberTemplate(Integer.class, "FIELD({0}, {1})", song.id,
                         songIds.stream().map(String::valueOf).toArray());
