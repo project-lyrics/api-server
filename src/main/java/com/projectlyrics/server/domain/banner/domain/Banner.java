@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -26,15 +27,19 @@ public class Banner extends BaseEntity {
 
     private String imageUrl;
     private String redirectUrl;
+    @Setter
+    private LocalDateTime startDate;
     private LocalDateTime dueDate;
 
     private Banner(
             String imageUrl,
             String redirectUrl,
+            LocalDateTime startDate,
             LocalDateTime dueDate
     ) {
         this.imageUrl = imageUrl;
         this.redirectUrl = redirectUrl;
+        this.startDate = startDate;
         this.dueDate = dueDate;
     }
 
@@ -42,6 +47,7 @@ public class Banner extends BaseEntity {
         return new Banner(
                 bannerCreate.imageUrl(),
                 bannerCreate.redirectUrl(),
+                bannerCreate.startDate(),
                 bannerCreate.dueDate()
         );
     }
@@ -51,6 +57,7 @@ public class Banner extends BaseEntity {
                 id,
                 bannerCreate.imageUrl(),
                 bannerCreate.redirectUrl(),
+                bannerCreate.startDate(),
                 bannerCreate.dueDate()
         );
     }
