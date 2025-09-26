@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.artist.repository.ArtistQueryRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
+import com.projectlyrics.server.domain.song.entity.SongMongo;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
+import com.projectlyrics.server.domain.song.repository.SongMongoCommandRepository;
+import com.projectlyrics.server.domain.song.repository.SongMongoQueryRepository;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.projectlyrics.server.global.dev.cron.dto.Album;
 import com.projectlyrics.server.global.dev.cron.dto.AlbumListResponse;
@@ -12,28 +15,33 @@ import com.projectlyrics.server.global.dev.cron.dto.Track;
 import com.projectlyrics.server.global.dev.cron.dto.TrackListResponse;
 import com.projectlyrics.server.global.slack.domain.SlackResponseBuilder;
 import com.projectlyrics.server.global.slack.service.SlackService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
+@Profile({"prod", "dev"})
 @Component
 public class SongCollector {
 
     private final ArtistQueryRepository artistQueryRepository;
     private final SongCommandRepository songCommandRepository;
     private final SongQueryRepository songQueryRepository;
+    private final SongMongoCommandRepository songMongoCommandRepository;
+    private final SongMongoQueryRepository songMongoQueryRepository;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final SlackService slackService;
 
@@ -52,16 +60,57 @@ public class SongCollector {
                     .filter(this::notRegistered)
                     .toList();
 
-            songCommandRepository.saveAll(newSongs);
+            newSongs = songCommandRepository.saveAll(newSongs);
+            try {
+                songMongoCommandRepository.saveAll(
+                        newSongs.stream().map(SongMongo::of).toList()
+                );
+            } catch (Exception e) {
+                log.warn("MongoDB saveAll failed for {} songs. Cause: {}. Stacktrace: ", newSongs.size(),
+                        e.getMessage(), e);
+            }
             sendToSlack(newSongs);
         }
     }
+
+    @Async
+    @Scheduled(cron = "0 30 0 * * *")
+    public void syncMongo() {
+        log.info("song mongo sync started!");
+
+        int page = 0;
+        int size = 1000;
+        Slice<Song> songPage;
+
+        do {
+            songPage = songQueryRepository.findAll(PageRequest.of(page, size));
+
+            List<Long> batchSongIds = songPage.stream()
+                    .map(Song::getId)
+                    .toList();
+
+            List<Long> existingIdsInMongo = songMongoQueryRepository.findAllByIdsIn(batchSongIds);
+
+            List<SongMongo> songsToSave = songPage.stream()
+                    .filter(song -> !existingIdsInMongo.contains(song.getId()))
+                    .map(SongMongo::of)
+                    .toList();
+
+            if (!songsToSave.isEmpty()) {
+                songMongoCommandRepository.saveAll(songsToSave);
+                log.info("synced {} songs from MySQL into MongoDB", songsToSave.size());
+            }
+
+            page++;
+        } while (songPage.hasNext());
+    }
+
 
     private List<Artist> subList(List<Artist> artists) {
         if (artists.size() <= 23) {
             return artists;
         }
-        
+
         int now = LocalDateTime.now().getHour();
         int size = artists.size() / 23;
 
@@ -73,7 +122,8 @@ public class SongCollector {
 
     private static List<Song> getSongs(Artist artist) {
         HttpResponse<String> response;
-        String url = "https://api.spotify.com/v1/artists/" + artist.getSpotifyId() + "/albums?limit=50&market=KR&locale=ko_KR&include_groups=album,single";
+        String url = "https://api.spotify.com/v1/artists/" + artist.getSpotifyId()
+                + "/albums?limit=50&market=KR&locale=ko_KR&include_groups=album,single";
         List<Song> songs = new ArrayList<>();
         AlbumListResponse albumListResponse = null;
 
@@ -120,7 +170,8 @@ public class SongCollector {
                 }
             } while (isFailed(response) || hasNext(trackListResponse));
         } catch (Exception e) {
-            log.error("failed to get songs of an album {} of artist {} of id {} at all", album.getName(), album.getId(), album.getId());
+            log.error("failed to get songs of an album {} of artist {} of id {} at all", album.getName(), album.getId(),
+                    album.getId());
         }
 
         return tracks;
@@ -150,6 +201,6 @@ public class SongCollector {
 
     private void sendToSlack(List<Song> songs) {
         songs.forEach(song ->
-            slackService.sendFeedbackToSlack(SlackResponseBuilder.createSong(song), null, channelId));
+                slackService.sendFeedbackToSlack(SlackResponseBuilder.createSong(song), null, channelId));
     }
 }

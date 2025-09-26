@@ -6,7 +6,9 @@ import com.projectlyrics.server.domain.artist.entity.ArtistCreate;
 import com.projectlyrics.server.domain.artist.repository.ArtistCommandRepository;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.entity.SongCreate;
+import com.projectlyrics.server.domain.song.entity.SongMongo;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
+import com.projectlyrics.server.domain.song.repository.SongMongoCommandRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class DummyDataInitializer {
 
     private final ArtistCommandRepository artistCommandRepository;
     private final SongCommandRepository songCommandRepository;
+    private final SongMongoCommandRepository songMongoCommandRepository;
 
     @PostConstruct
     public void init() {
@@ -110,7 +113,14 @@ public class DummyDataInitializer {
             log.error("failed to read csv file", e);
         }
 
-        songCommandRepository.saveAll(songs);
+        songs = songCommandRepository.saveAll(songs);
+        try {
+            songMongoCommandRepository.saveAll(
+                    songs.stream().map(SongMongo::of).toList()
+            );
+        } catch (Exception e) {
+            log.warn("MongoDB saveAll failed for {} songs. Cause: {}. Stacktrace: ", songs.size(), e.getMessage(), e);
+        }
     }
 
     private LocalDate parse(String date) {

@@ -9,6 +9,7 @@ import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongQueryRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
@@ -68,6 +69,21 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
+    public Slice<Song> findAllByQuery(String query, Pageable pageable) {
+        List<Song> content = jpaQueryFactory
+                .selectFrom(song)
+                .where(
+                        songNameContains(query)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(song.id.desc())
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
     public Slice<Song> findAllByQueryAndArtistId(Long artistId, String query, Long cursor, Pageable pageable) {
         List<Song> content = jpaQueryFactory
                 .selectFrom(song)
@@ -100,12 +116,38 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
     }
 
     @Override
+    public Slice<Song> findAll(Pageable pageable) {
+        List<Song> content = jpaQueryFactory
+                .selectFrom(song)
+                .orderBy(song.id.asc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return new SliceImpl<>(content, pageable, QueryDslUtils.checkIfHasNext(pageable, content));
+    }
+
+    @Override
     public List<Song> findAllByIds(List<Long> ids) {
         return jpaQueryFactory
                 .selectFrom(song)
                 .leftJoin(song.notes, note).fetchJoin()
                 .join(song.artist, artist).fetchJoin()
                 .where(song.id.in(ids))
+                .fetch();
+    }
+
+    @Override
+    public List<Song> findAllByIdsInListOrder(List<Long> songIds) {
+        NumberExpression<Integer> orderExpression =
+                Expressions.numberTemplate(Integer.class, "FIELD({0}, {1})", song.id,
+                        songIds.stream().map(String::valueOf).toArray());
+
+        return jpaQueryFactory
+                .selectFrom(song)
+                .leftJoin(song.notes, note).fetchJoin()
+                .join(song.artist, artist).fetchJoin()
+                .where(song.id.in(songIds))
+                .orderBy(orderExpression.asc())
                 .fetch();
     }
 }

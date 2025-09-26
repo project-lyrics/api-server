@@ -19,4 +19,6 @@ public interface ArtistQueryRepository {
     List<Artist> findAll();
 
     List<Artist> findAllByIds(List<Long> artistIds);
+
+    List<Artist> findAllByIdsInListOrder(List<Long> artistIds);
 }
