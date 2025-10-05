@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile({"!dev", "!prod"})
+@Profile("!prod & !dev")
 public class NoOpArtistMongoCommandRepository implements ArtistMongoCommandRepository {
 
     @Override

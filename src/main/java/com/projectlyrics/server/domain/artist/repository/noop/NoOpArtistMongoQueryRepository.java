@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile({"!dev", "!prod"})
+@Profile("!prod & !dev")
 public class NoOpArtistMongoQueryRepository implements ArtistMongoQueryRepository {
     @Override
     public IdsWithHasNext searchArtistIdsByName(String query, int offset, int limit) {

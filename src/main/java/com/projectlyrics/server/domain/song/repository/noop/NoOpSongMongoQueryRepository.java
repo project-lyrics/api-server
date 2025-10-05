@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-@Profile({"!dev", "!prod"})
+@Profile("!prod & !dev")
 @Repository
 public class NoOpSongMongoQueryRepository implements SongMongoQueryRepository {
     @Override
