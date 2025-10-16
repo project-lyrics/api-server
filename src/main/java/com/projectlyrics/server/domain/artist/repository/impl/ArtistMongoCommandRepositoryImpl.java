@@ -4,11 +4,8 @@ import com.projectlyrics.server.domain.artist.entity.ArtistMongo;
 import com.projectlyrics.server.domain.artist.repository.ArtistMongoCommandRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Profile({"dev", "prod"})
+
 @RequiredArgsConstructor
 public class ArtistMongoCommandRepositoryImpl implements ArtistMongoCommandRepository {
 

@@ -4,15 +4,11 @@ import com.projectlyrics.server.domain.artist.repository.ArtistMongoQueryReposit
 import com.projectlyrics.server.domain.common.dto.util.IdsWithHasNext;
 import java.util.List;
 import org.bson.Document;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Profile({"dev", "prod"})
 public class ArtistMongoQueryRepositoryImpl implements ArtistMongoQueryRepository {
 
     private final MongoTemplate mongoTemplate;
