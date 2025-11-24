@@ -32,7 +32,10 @@ public class BannerControllerTest extends RestDocsTest {
         BannerCreateRequest request = new BannerCreateRequest(
                 "imageUrl",
                 "redirectUrl",
-                LocalDate.now()
+                LocalDate.now(),
+                LocalDate.now(),
+                false,
+                null
         );
 
         // when, then
@@ -55,8 +58,16 @@ public class BannerControllerTest extends RestDocsTest {
                                         .description("이미지 URL"),
                                 fieldWithPath("redirectUrl").type(JsonFieldType.STRING)
                                         .description("리다이렉트 URL"),
+                                fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                        .description("배너 노출 시작일")
+                                        .optional(),
                                 fieldWithPath("dueDate").type(JsonFieldType.STRING)
                                         .description("배너 노출 마감일")
+                                        .optional(),
+                                fieldWithPath("hideOther").type(JsonFieldType.BOOLEAN)
+                                        .description("다른 배너를 가릴지 여부"),
+                                fieldWithPath("hiddenBannerId").type(JsonFieldType.NUMBER)
+                                        .description("가릴 배너 Id (hideOther가 true일 때만 필요. 또한 입력하지 않을시 yml값 적용됨)")
                                         .optional()
                         )
                         .requestSchema(Schema.schema("Create Banner Request"))

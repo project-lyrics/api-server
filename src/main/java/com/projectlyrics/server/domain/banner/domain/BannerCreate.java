@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 public record BannerCreate(
         String imageUrl,
         String redirectUrl,
+        LocalDateTime startDate,
         LocalDateTime dueDate
 ) {
     public static BannerCreate of(BannerCreateRequest request) {
         return new BannerCreate(
                 request.imageUrl(),
                 request.redirectUrl(),
+                request.startDate() == null ? null: request.startDate().atStartOfDay(),
                 request.dueDate() == null ? null: request.dueDate().atStartOfDay()
         );
     }
