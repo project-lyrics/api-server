@@ -25,4 +25,8 @@ public record OffsetBasePaginatedResponse<T>(
 
         return new OffsetBasePaginatedResponse<>(pageNumber, false, data);
     }
+
+    public  static  <T> OffsetBasePaginatedResponse<T> of(int pageNumber, boolean hasNext, List<T> data) {
+        return new OffsetBasePaginatedResponse<>(pageNumber, hasNext, data);
+    }
 }
