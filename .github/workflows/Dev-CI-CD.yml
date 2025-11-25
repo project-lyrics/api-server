@@ -78,7 +78,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST_DEV }}
-          username: root
+          username: ubuntu
           key: ${{ secrets.NEW_KEY }}
           source: ./scripts/deploy-dev.sh
           target: /home/ubuntu/
@@ -87,7 +87,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST_DEV }}
-          username: root
+          username: ubuntu
           key: ${{ secrets.NEW_KEY }}
           source: ./docker-compose-dev.yml
           target: /home/ubuntu/
@@ -96,7 +96,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST_DEV }}
-          username: root
+          username: ubuntu
           key: ${{ secrets.NEW_KEY }}
           source: firebase-key.json
           target: /home/ubuntu/
@@ -107,7 +107,7 @@ jobs:
         if: contains(github.ref, 'dev')
         with:
           host: ${{ secrets.HOST_DEV }}
-          username: root
+          username: ubuntu
           key: ${{ secrets.NEW_KEY }}
           envs: GITHUB_SHA
           script: |
