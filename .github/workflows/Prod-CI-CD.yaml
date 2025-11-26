@@ -111,7 +111,7 @@ jobs:
           key: ${{ secrets.NEW_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            sudo chmod 777 /home/ubuntu/scripts/deploy-prod.sh
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            chmod 777 /home/ubuntu/scripts/deploy-prod.sh
             /home/ubuntu/scripts/deploy-prod.sh
             docker image prune -f
