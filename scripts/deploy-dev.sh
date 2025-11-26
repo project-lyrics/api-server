@@ -25,7 +25,7 @@ if [ -z "$IS_GREEN_EXIST" ];then
   while [ 1 = 1 ]; do
     echo ">>> green health check ..."
     sleep 3
-    REQUEST=$(curl http://127.0.0.1:8082/actuator/health)
+    REQUEST=$(curl http://127.0.0.1:8085/actuator/health)
     if [ -n "$REQUEST" ]; then
       echo ">>> health check success !"
       break;
@@ -54,7 +54,7 @@ else
   while [ 1 = 1 ]; do
     echo ">>> blue health check ..."
     sleep 3
-    REQUEST=$(curl http://127.0.0.1:8081/actuator/health)
+    REQUEST=$(curl http://127.0.0.1:8084/actuator/health)
     if [ -n "$REQUEST" ]; then
       echo ">>> health check success !"
       break;
