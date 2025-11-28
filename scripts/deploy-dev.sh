@@ -6,9 +6,9 @@ IS_REDIS_EXIST=$(docker ps | grep redis)
 if [ -z "$IS_REDIS_EXIST" ];then
   echo "### REDIS ###"
   echo ">>> pull redis image"
-  docker compose pull redis
+  docker compose pull redis-dev
   echo ">>> up redis container"
-  docker compose up -d redis
+  docker compose up -d redis-dev
 fi
 
 # green up
@@ -25,7 +25,7 @@ if [ -z "$IS_GREEN_EXIST" ];then
   while [ 1 = 1 ]; do
     echo ">>> green health check ..."
     sleep 3
-    REQUEST=$(curl http://127.0.0.1:8085/actuator/health)
+    REQUEST=$(curl http://127.0.0.1:8084/actuator/health)
     if [ -n "$REQUEST" ]; then
       echo ">>> health check success !"
       break;
@@ -54,7 +54,7 @@ else
   while [ 1 = 1 ]; do
     echo ">>> blue health check ..."
     sleep 3
-    REQUEST=$(curl http://127.0.0.1:8084/actuator/health)
+    REQUEST=$(curl http://127.0.0.1:8083/actuator/health)
     if [ -n "$REQUEST" ]; then
       echo ">>> health check success !"
       break;

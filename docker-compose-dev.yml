@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   redis:
-    container_name: redis
+    container_name: redis-dev
     image: redis:alpine
     volumes:
       - redis-data:/data
@@ -13,13 +13,13 @@ services:
         limits:
           memory: 512M
   blue:
-    container_name: blue
+    container_name: blue-dev
     image: jinkonu/feelin-dev:latest
     pull_policy: always
     expose:
-      - 8083
+      - 8080
     ports:
-      - "8084:8083"
+      - "8083:8080"
     environment:
       - TZ=Asia/Seoul
       - REDIS_HOST=redis
@@ -38,13 +38,13 @@ services:
         limits:
           memory: 512M
   green:
-    container_name: green
+    container_name: green-dev
     image: jinkonu/feelin-dev:latest
     pull_policy: always
     expose:
-      - 8083
+      - 8080
     ports:
-      - "8085:8083"
+      - "8084:8080"
     environment:
       - TZ=Asia/Seoul
       - REDIS_HOST=redis
