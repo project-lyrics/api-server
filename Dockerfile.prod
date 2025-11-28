@@ -7,9 +7,9 @@ EXPOSE 8080
 
 ENTRYPOINT ["java",
 "-Xms256m",
-"-Xmx512m",
+"-Xmx384m",
 "-XX:+HeapDumpOnOutOfMemoryError",
 "-XX:HeapDumpPath=/tmp/heapdump.hprof",
 "-XX:OnOutOfMemoryError='kill -9%p'",
-"-Dspring.profiles.active=dev",
+"-Dspring.profiles.active=prod",
 "-jar", "server.jar"]
