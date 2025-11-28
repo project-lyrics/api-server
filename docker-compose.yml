@@ -26,6 +26,7 @@ services:
       - REDIS_PORT=6379
     volumes:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
+      - /dump/blue:/tmp
     depends_on:
       - redis
     logging:
@@ -51,6 +52,7 @@ services:
       - REDIS_PORT=6379
     volumes:
       - ./firebase-key.json:/src/main/resources/firebase-key.json
+      - /dump/green:/tmp
     depends_on:
       - redis
     logging:
