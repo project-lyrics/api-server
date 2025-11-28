@@ -79,7 +79,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.NEW_KEY }}
+          key: ${{ secrets.NEW_DEV_KEY }}
           source: ./scripts/deploy-dev.sh
           target: /home/ubuntu/
 
@@ -88,7 +88,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.NEW_KEY }}
+          key: ${{ secrets.NEW_DEV_KEY }}
           source: ./docker-compose-dev.yml
           target: /home/ubuntu/
 
@@ -97,7 +97,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.NEW_KEY }}
+          key: ${{ secrets.NEW_DEV_KEY }}
           source: firebase-key.json
           target: /home/ubuntu/
 
@@ -108,7 +108,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.NEW_KEY }}
+          key: ${{ secrets.NEW_DEV_KEY }}
           envs: GITHUB_SHA
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -120,7 +120,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_PROD }}
           username: ubuntu
-          key: ${{ secrets.NEW_KEY }}
+          key: ${{ secrets.NEW_DEV_KEY }}
           script: |
             echo "=== HOST INFO ==="
             hostname
