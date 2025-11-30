@@ -127,7 +127,7 @@ public class SongCollector {
         List<Song> songs = new ArrayList<>();
         AlbumListResponse albumListResponse = null;
 
-        log.info("songs of {} is being collected", artist.getName());
+        //log.info("songs of {} is being collected", artist.getName());
         try {
             do {
                 response = HttpRequestClient.send(url);

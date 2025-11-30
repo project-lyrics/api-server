@@ -1,8 +1,8 @@
-FROM amazoncorretto:21-alpine-jdk
+FROM eclipse-temurin:21-jdk
 
 ARG JAR_FILE=./build/libs/*.jar
 COPY ${JAR_FILE} server.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-Dspring.profiles.active=dev", "-jar", "server.jar"]
+ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:HeapDumpPath=/tmp/heapdump.hprof", "-XX:OnOutOfMemoryError=kill -9 %p", "-Dspring.profiles.active=dev", "-jar", "server.jar"]
