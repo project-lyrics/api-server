@@ -115,13 +115,3 @@ jobs:
             chmod 777 /home/ubuntu/scripts/deploy-dev.sh
             /home/ubuntu/scripts/deploy-dev.sh
             docker image prune -f
-      - name: print hostname and IP
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_PROD }}
-          username: ubuntu
-          key: ${{ secrets.NEW_DEV_KEY }}
-          script: |
-            echo "=== HOST INFO ==="
-            hostname
-            curl ifconfig.me
