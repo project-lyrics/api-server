@@ -33,8 +33,8 @@ if [ -z "$IS_GREEN_EXIST" ];then
   done;
   sleep 3
   echo ">>> reload nginx"
-  sudo cp /etc/nginx/conf.d/green-url.inc /etc/nginx/conf.d/service-url.inc
-  sudo /usr/sbin/nginx -s reload
+  cp /etc/nginx/conf.d/green-url.inc /etc/nginx/conf.d/service-url.inc
+  nginx -s reload
   echo ">>> down blue container"
 
   docker compose -f /home/ubuntu/docker-compose-dev.yml stop blue
@@ -62,8 +62,8 @@ else
   done;
   sleep 3
   echo ">>> reload nginx"
-  sudo cp /etc/nginx/conf.d/blue-url.inc /etc/nginx/conf.d/service-url.inc
-  sudo /usr/sbin/nginx -s reload
+  cp /etc/nginx/conf.d/blue-url.inc /etc/nginx/conf.d/service-url.inc
+  nginx -s reload
   echo ">>> down green container"
 
   docker compose -f /home/ubuntu/docker-compose-dev.yml stop green
