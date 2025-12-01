@@ -14,6 +14,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -138,9 +139,16 @@ public class QueryDslSongQueryRepository implements SongQueryRepository {
 
     @Override
     public List<Song> findAllByIdsInListOrder(List<Long> songIds) {
+        String idCsv = songIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
         NumberExpression<Integer> orderExpression =
-                Expressions.numberTemplate(Integer.class, "FIELD({0}, {1})", song.id,
-                        songIds.stream().map(String::valueOf).toArray());
+                Expressions.numberTemplate(
+                        Integer.class,
+                        "FIELD({0}, " + idCsv + ")",
+                        song.id
+                );
 
         return jpaQueryFactory
                 .selectFrom(song)
