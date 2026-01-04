@@ -4,11 +4,15 @@ import com.projectlyrics.server.domain.artist.entity.Artist;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
+import com.projectlyrics.server.domain.note.exception.NoLyricsForNoteException;
 import com.projectlyrics.server.global.exception.DomainNullFieldException;
 import com.projectlyrics.server.support.fixture.ArtistFixture;
 import com.projectlyrics.server.support.fixture.SongFixture;
 import com.projectlyrics.server.support.fixture.UserFixture;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -154,5 +158,52 @@ class NoteCreateTest {
         // when & then
         assertThatThrownBy(() -> NoteCreate.from(request, publisher, song))
                 .isInstanceOf(DomainNullFieldException.class);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   ", "\t", "\n"})
+    void 가사_분석_유형인데_가사가_없으면_예외를_발생시켜야_한다(String lyrics) {
+        // given
+        Artist artist = ArtistFixture.create();
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(artist);
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                lyrics,
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                NoteType.LYRICS_ANALYSIS,
+                song.getId()
+        );
+
+        // when & then
+        assertThatThrownBy(() -> NoteCreate.from(request, publisher, song))
+                .isInstanceOf(NoLyricsForNoteException.class);
+    }
+
+    @Test
+    void 가사_분석_유형이고_가사가_있으면_노트_생성_객체를_생성해야_한다() {
+        // given
+        Artist artist = ArtistFixture.create();
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(artist);
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                NoteType.LYRICS_ANALYSIS,
+                song.getId()
+        );
+
+        // when
+        NoteCreate result = NoteCreate.from(request, publisher, song);
+
+        // then
+        assertAll(
+                () -> assertThat(result.noteType()).isEqualTo(NoteType.LYRICS_ANALYSIS),
+                () -> assertThat(result.lyrics()).isEqualTo("lyrics")
+        );
     }
 }

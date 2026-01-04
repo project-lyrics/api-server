@@ -1,6 +1,7 @@
 package com.projectlyrics.server.domain.note.entity;
 
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
+import com.projectlyrics.server.domain.note.exception.NoLyricsForNoteException;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.user.entity.User;
 
@@ -21,6 +22,7 @@ public record NoteCreate(
         checkNull(request.noteType());
         checkNull(publisher);
         checkNull(song);
+        validateLyricsForType(request.noteType(), request.lyrics());
 
         return new NoteCreate(
                 request.content(),
@@ -31,5 +33,11 @@ public record NoteCreate(
                 publisher,
                 song
         );
+    }
+
+    private static void validateLyricsForType(NoteType noteType, String lyrics) {
+        if (noteType == NoteType.LYRICS_ANALYSIS && (lyrics == null || lyrics.isBlank())) {
+            throw new NoLyricsForNoteException();
+        }
     }
 }
