@@ -25,6 +25,7 @@ import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
@@ -55,6 +56,7 @@ class NoteControllerTest extends RestDocsTest {
                 "나의 꽃이 피는 날이 올 수 있을까",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 1L
         );
 

@@ -11,12 +11,14 @@ public record NoteCreate(
         String lyrics,
         NoteBackground background,
         NoteStatus status,
+        NoteType noteType,
         User publisher,
         Song song
 ) {
 
     public static NoteCreate from(NoteCreateRequest request, User publisher, Song song) {
         checkNull(request.status());
+        checkNull(request.noteType());
         checkNull(publisher);
         checkNull(song);
 
@@ -25,6 +27,7 @@ public record NoteCreate(
                 request.lyrics(),
                 request.background(),
                 request.status(),
+                request.noteType(),
                 publisher,
                 song
         );

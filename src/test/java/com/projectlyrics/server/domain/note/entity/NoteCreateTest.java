@@ -27,6 +27,7 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -39,6 +40,7 @@ class NoteCreateTest {
                 () -> assertThat(result.lyrics()).isEqualTo(request.lyrics()),
                 () -> assertThat(result.background()).isEqualTo(request.background()),
                 () -> assertThat(result.status()).isEqualTo(request.status()),
+                () -> assertThat(result.noteType()).isEqualTo(request.noteType()),
                 () -> assertThat(result.publisher()).isEqualTo(publisher),
                 () -> assertThat(result.song()).isEqualTo(song)
         );
@@ -55,6 +57,7 @@ class NoteCreateTest {
                 null,
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -67,6 +70,7 @@ class NoteCreateTest {
                 () -> assertThat(result.lyrics()).isEqualTo(request.lyrics()),
                 () -> assertThat(result.background()).isEqualTo(request.background()),
                 () -> assertThat(result.status()).isEqualTo(request.status()),
+                () -> assertThat(result.noteType()).isEqualTo(request.noteType()),
                 () -> assertThat(result.publisher()).isEqualTo(publisher),
                 () -> assertThat(result.song()).isEqualTo(song)
         );
@@ -83,6 +87,7 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 null,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -102,6 +107,7 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -121,7 +127,28 @@ class NoteCreateTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 1L
+        );
+
+        // when & then
+        assertThatThrownBy(() -> NoteCreate.from(request, publisher, song))
+                .isInstanceOf(DomainNullFieldException.class);
+    }
+
+    @Test
+    void 널_노트_유형에_대해_예외를_발생시켜야_한다() {
+        // given
+        Artist artist = ArtistFixture.create();
+        User publisher = UserFixture.create();
+        Song song = SongFixture.create(artist);
+        NoteCreateRequest request = new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                null,
+                song.getId()
         );
 
         // when & then

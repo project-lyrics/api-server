@@ -15,6 +15,7 @@ import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteCreate;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.repository.NoteCommandRepository;
 import com.projectlyrics.server.domain.search.domain.SongSearch;
 import com.projectlyrics.server.domain.search.repository.SearchRepository;
@@ -145,6 +146,7 @@ class SongQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song1.getId()
         );
         NoteCreateRequest requestOfSong2 = new NoteCreateRequest(
@@ -152,6 +154,7 @@ class SongQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song2.getId()
         );
         NoteCreateRequest requestOfSong3 = new NoteCreateRequest(
@@ -159,6 +162,7 @@ class SongQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song3.getId()
         );
 
@@ -241,6 +245,7 @@ class SongQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
 

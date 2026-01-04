@@ -11,6 +11,7 @@ import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
@@ -74,6 +75,7 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song1.getId()
         );
 
@@ -82,6 +84,7 @@ class FavoriteArtistQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song2.getId()
         );
     }
