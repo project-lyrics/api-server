@@ -3,7 +3,7 @@ name: Build Image & Deploy (DEV)
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 permissions:
@@ -67,7 +67,7 @@ jobs:
       # 8. Docker 이미지 빌드 & 푸시
       - name: Build & Push Docker image
         run: |
-          docker build -f Dockerfile.dev -t ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest .
+          docker build -f Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest
 
       # 9. 배포 (서버 내부 실행)
