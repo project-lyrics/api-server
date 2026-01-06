@@ -1,9 +1,9 @@
-name: Build Image & Push of Dev server
+name: Build Image & Deploy (DEV)
 
 on:
   push:
     branches:
-      [ "dev" ]
+      - main
   workflow_dispatch:
 
 permissions:
@@ -12,16 +12,21 @@ permissions:
 jobs:
   CI-CD:
     runs-on: [ self-hosted, dev ]
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: set up JDK 21
+    steps:
+      # 1. 소스 체크아웃
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # 2. JDK 설정
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: 21
 
-      - name: cache gradle
+      # 3. Gradle 캐시
+      - name: Cache Gradle
         uses: actions/cache@v3
         with:
           path: |
@@ -31,87 +36,43 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: overwrite application.yml
-        if: |
-          contains(github.ref, 'dev')
+      # 4. application.yml 생성
+      - name: Create application.yml
         run: |
-          mkdir -p ./src/main/resources
+          mkdir -p src/main/resources
           echo "${{ secrets.YML }}" > src/main/resources/application.yml
-        shell: bash
 
-      - name: set up redis
-        uses: supercharge/redis-github-action@1.7.0
-        with:
-          redis-version: 6
-
-      - name: create-json
-        id: create-json
+      # 5. Firebase key 생성
+      - name: Create firebase-key.json
         uses: jsdaniell/create-json@1.1.2
         with:
-          name: "firebase-key.json"
+          name: firebase-key.json
           json: ${{ secrets.FIREBASE_KEY }}
 
-      - name: move firebase-key.json to src/main/resources
+      - name: Move firebase key
         run: |
-          mkdir -p ./src/main/resources
-          cp firebase-key.json ./src/main/resources/firebase-key.json
-        shell: bash
+          mkdir -p src/main/resources
+          mv firebase-key.json src/main/resources/firebase-key.json
 
-      - name: build with gradle
+      # 6. Gradle 빌드
+      - name: Build with Gradle
         run: |
-          ./gradlew bootjar
+          ./gradlew bootJar
 
-      - name: login into docker
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: build docker image & push to docker hub
-        if: contains(github.ref, 'dev')
+      # 7. DockerHub 로그인
+      - name: Docker login
         run: |
-          pwd
-          docker build -f Dockerfile.dev --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/feelin-dev:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/feelin-dev:latest
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: send deploy file to dev server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST_DEV }}
-          username: ubuntu
-          key: ${{ secrets.NEW_DEV_KEY }}
-          source: ./scripts/deploy-dev.sh
-          target: /home/ubuntu/
+      # 8. Docker 이미지 빌드 & 푸시
+      - name: Build & Push Docker image
+        run: |
+          docker build -f Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest
 
-      - name: send docker compose file to dev server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST_DEV }}
-          username: ubuntu
-          key: ${{ secrets.NEW_DEV_KEY }}
-          source: ./docker-compose-dev.yml
-          target: /home/ubuntu/
-
-      - name: send firebase key file to dev server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST_DEV }}
-          username: ubuntu
-          key: ${{ secrets.NEW_DEV_KEY }}
-          source: firebase-key.json
-          target: /home/ubuntu/
-
-      - name: deploy to dev server
-        uses: appleboy/ssh-action@master
-        id: deploy-dev
-        if: contains(github.ref, 'dev')
-        with:
-          host: ${{ secrets.HOST_DEV }}
-          username: ubuntu
-          key: ${{ secrets.NEW_DEV_KEY }}
-          envs: GITHUB_SHA
-          script: |
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            chmod 777 /home/ubuntu/scripts/deploy-dev.sh
-            /home/ubuntu/scripts/deploy-dev.sh
-            docker image prune -f
+      # 9. 배포 (서버 내부 실행)
+      - name: Deploy on prod server
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/feelin-api:latest
+          docker compose up -d
+          docker image prune -f
