@@ -230,7 +230,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesOfFavoriteArtists(true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -255,7 +255,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesOfFavoriteArtists(true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
 
         // then
         assertAll(

@@ -106,14 +106,15 @@ public class NoteController {
                 .body(response);
     }
 
-    @GetMapping("/notes/favorite-artists")
-    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfFavoriteArtists(
+    @GetMapping("/notes")
+    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotes(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
+            @RequestParam(name = "isFavoriteArtistsOnly", defaultValue = "false") boolean isFavoriteArtistsOnly,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesOfFavoriteArtists(hasLyrics, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotes(hasLyrics, isFavoriteArtistsOnly, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
