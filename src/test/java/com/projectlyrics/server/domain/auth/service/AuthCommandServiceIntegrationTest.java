@@ -25,6 +25,7 @@ import com.projectlyrics.server.domain.common.entity.enumerate.EntityStatusEnum;
 import com.projectlyrics.server.domain.note.dto.request.NoteCreateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.song.entity.Song;
@@ -339,6 +340,7 @@ public class AuthCommandServiceIntegrationTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
         return noteCommandService.create(noteCreateRequest, userId);

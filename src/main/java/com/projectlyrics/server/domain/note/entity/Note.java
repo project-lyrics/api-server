@@ -34,6 +34,10 @@ public class Note extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NoteStatus noteStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'FREE'")
+    private NoteType noteType;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="lyrics_id")
     private Lyrics lyrics;
@@ -58,12 +62,14 @@ public class Note extends BaseEntity {
             String content,
             Lyrics lyrics,
             NoteStatus noteStatus,
+            NoteType noteType,
             User publisher,
             Song song
     ) {
         this.id = id;
         this.content = content;
         this.noteStatus = noteStatus;
+        this.noteType = noteType;
         this.publisher = publisher;
         this.song = song;
         addLyrics(lyrics);
@@ -73,10 +79,11 @@ public class Note extends BaseEntity {
             String content,
             Lyrics lyrics,
             NoteStatus noteStatus,
+            NoteType noteType,
             User publisher,
             Song song
     ) {
-        this(null, content, lyrics, noteStatus, publisher, song);
+        this(null, content, lyrics, noteStatus, noteType, publisher, song);
     }
 
     public static Note create(NoteCreate noteCreate) {
@@ -84,6 +91,7 @@ public class Note extends BaseEntity {
                 noteCreate.content(),
                 Lyrics.of(noteCreate.lyrics(), noteCreate.background()),
                 noteCreate.status(),
+                noteCreate.noteType(),
                 noteCreate.publisher(),
                 noteCreate.song()
         );
@@ -95,6 +103,7 @@ public class Note extends BaseEntity {
                 noteCreate.content(),
                 Lyrics.of(noteCreate.lyrics(), noteCreate.background()),
                 noteCreate.status(),
+                noteCreate.noteType(),
                 noteCreate.publisher(),
                 noteCreate.song()
         );
