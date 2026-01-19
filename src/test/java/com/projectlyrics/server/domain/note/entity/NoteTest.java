@@ -22,6 +22,7 @@ class NoteTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 publisher,
                 song
         );
@@ -34,6 +35,7 @@ class NoteTest {
                 () -> assertThat(note.getContent()).isEqualTo("content"),
                 () -> assertThat(note.getLyrics()).isNull(),
                 () -> assertThat(note.getNoteStatus()).isEqualTo(NoteStatus.PUBLISHED),
+                () -> assertThat(note.getNoteType()).isEqualTo(NoteType.FREE),
                 () -> assertThat(note.getPublisher()).isEqualTo(publisher),
                 () -> assertThat(note.getSong()).isEqualTo(song)
         );
@@ -51,6 +53,7 @@ class NoteTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 publisher,
                 song
         );
@@ -73,6 +76,7 @@ class NoteTest {
                 null,
                 null,
                 NoteStatus.DRAFT,
+                NoteType.FREE,
                 publisher,
                 song
         );
@@ -108,6 +112,7 @@ class NoteTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 publisher,
                 song
         );
@@ -137,6 +142,7 @@ class NoteTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 publisher,
                 song
         );

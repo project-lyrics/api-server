@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/notes")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class NoteController {
 
@@ -37,7 +37,7 @@ public class NoteController {
     private final NoteQueryService noteQueryService;
     private final ViewCommandService viewCommandService;
 
-    @PostMapping
+    @PostMapping("/notes")
     public ResponseEntity<NoteCreateResponse> create(
             @Authenticated AuthContext authContext,
             @RequestBody @Valid NoteCreateRequest request
@@ -49,7 +49,7 @@ public class NoteController {
                 .body(new NoteCreateResponse(true));
     }
 
-    @PatchMapping("/{noteId}")
+    @PatchMapping("/notes/{noteId}")
     public ResponseEntity<NoteUpdateResponse> update(
             @Authenticated AuthContext authContext,
             @PathVariable(name = "noteId") Long noteId,
@@ -62,7 +62,7 @@ public class NoteController {
                 .body(new NoteUpdateResponse(true));
     }
 
-    @DeleteMapping("/{noteId}")
+    @DeleteMapping("/notes/{noteId}")
     public ResponseEntity<NoteDeleteResponse> delete(
             @Authenticated AuthContext authContext,
             @PathVariable(name = "noteId") Long noteId
@@ -74,7 +74,7 @@ public class NoteController {
                 .body(new NoteDeleteResponse(true));
     }
 
-    @GetMapping("/{noteId}")
+    @GetMapping("/notes/{noteId}")
     public ResponseEntity<NoteDetailResponse> getNote(
             @Authenticated AuthContext authContext,
             @RequestHeader("Device-Id") String deviceId,
@@ -91,7 +91,7 @@ public class NoteController {
                 .body(noteQueryService.getNoteById(noteId, authContext.getId()));
     }
 
-    @GetMapping
+    @GetMapping("/users/notes")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfUser(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
@@ -106,21 +106,22 @@ public class NoteController {
                 .body(response);
     }
 
-    @GetMapping("/favorite-artists")
-    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfFavoriteArtists(
+    @GetMapping("/notes")
+    public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotes(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
+            @RequestParam(name = "isFavoriteArtistsOnly", defaultValue = "false") boolean isFavoriteArtistsOnly,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesOfFavoriteArtists(hasLyrics, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotes(hasLyrics, isFavoriteArtistsOnly, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
-    @GetMapping("/artists")
+    @GetMapping("/notes/artists")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfArtist(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
@@ -135,7 +136,7 @@ public class NoteController {
                 .body(response);
     }
 
-    @GetMapping("/songs")
+    @GetMapping("/notes/songs")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesOfSong(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
@@ -150,7 +151,7 @@ public class NoteController {
                 .body(response);
     }
 
-    @GetMapping("/bookmarked")
+    @GetMapping("/notes/bookmarked")
     public ResponseEntity<CursorBasePaginatedResponse<NoteGetResponse>> getNotesBookmarked(
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,

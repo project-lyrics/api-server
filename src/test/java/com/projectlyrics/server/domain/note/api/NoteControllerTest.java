@@ -25,6 +25,7 @@ import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.user.entity.ProfileCharacter;
 import com.projectlyrics.server.domain.user.entity.User;
 import com.projectlyrics.server.support.RestDocsTest;
@@ -55,6 +56,7 @@ class NoteControllerTest extends RestDocsTest {
                 "나의 꽃이 피는 날이 올 수 있을까",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 1L
         );
 
@@ -289,7 +291,7 @@ class NoteControllerTest extends RestDocsTest {
                 .willReturn(response);
 
         // when, then
-        mockMvc.perform(get("/api/v1/notes")
+        mockMvc.perform(get("/api/v1/users/notes")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .param("artistId", "1")
                         .param("hasLyrics", "false")
@@ -373,7 +375,7 @@ class NoteControllerTest extends RestDocsTest {
     }
 
     @Test
-    void 사용자가_좋아하는_아티스트들과_관련된_노트_리스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
+    void 노트_리스트를_조회하면_데이터와_200응답을_해야_한다() throws Exception {
         // given
         User user = UserFixture.create();
 
@@ -389,32 +391,37 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesOfFavoriteArtists(anyBoolean(), any(), any(), anyInt()))
+        given(noteQueryService.getNotes(anyBoolean(), anyBoolean(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
-        mockMvc.perform(get("/api/v1/notes/favorite-artists")
+        mockMvc.perform(get("/api/v1/notes")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .param("hasLyrics", "false")
+                        .param("isFavoriteArtistsOnly", "true")
                         .param("cursor", "1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(getNoteListOfFavoriteArtistOfUserDocument());
+                .andDo(getNoteListDocument());
     }
   
-    private RestDocumentationResultHandler getNoteListOfFavoriteArtistOfUserDocument() {
+    private RestDocumentationResultHandler getNoteListDocument() {
         ParameterDescriptorWithType[] pagingQueryParameters = getCursorBasePagingQueryParameters();
-        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 1);
+        ParameterDescriptorWithType[] queryParams = Arrays.copyOf(pagingQueryParameters, pagingQueryParameters.length + 2);
         queryParams[pagingQueryParameters.length] = parameterWithName("hasLyrics")
                 .type(SimpleType.BOOLEAN)
                 .optional()
                 .description("가사가 있는 노트만 조회");
-      
+        queryParams[pagingQueryParameters.length + 1] = parameterWithName("isFavoriteArtistsOnly")
+                .type(SimpleType.BOOLEAN)
+                .optional()
+                .description("좋아하는 아티스트의 노트만 조회");
+
         return restDocs.document(
                 resource(ResourceSnippetParameters.builder()
                         .tag("Note API")
-                        .summary("사용자가 좋아하는 아티스트와 관련된 노트의 리스트 조회 API")
+                        .summary("노트 리스트 조회 API")
                         .requestHeaders(getAuthorizationHeader())
                         .queryParameters(queryParams)
                         .responseFields(

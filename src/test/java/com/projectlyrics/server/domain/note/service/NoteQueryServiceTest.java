@@ -17,6 +17,7 @@ import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.song.entity.Song;
 import com.projectlyrics.server.domain.song.repository.SongCommandRepository;
 import com.projectlyrics.server.domain.user.entity.User;
@@ -88,6 +89,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 unlikedArtistSong.getId()
         );
         likedArtistSongNoteRequest = new NoteCreateRequest(
@@ -95,6 +97,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 likedArtistSong.getId()
         );
         likedArtistSongNoteRequestWithoutLyrics = new NoteCreateRequest(
@@ -102,6 +105,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 likedArtistSong.getId()
         );
     }
@@ -226,7 +230,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesOfFavoriteArtists(true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -251,7 +255,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesOfFavoriteArtists(true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -290,6 +294,7 @@ class NoteQueryServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 likedArtistSong.getId()
         );
 

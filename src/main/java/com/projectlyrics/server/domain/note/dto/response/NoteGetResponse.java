@@ -12,6 +12,7 @@ public record NoteGetResponse(
         Long id,
         String content,
         String status,
+        String noteType,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         LocalDateTime createdAt,
         LyricsGetResponse lyrics,
@@ -28,6 +29,7 @@ public record NoteGetResponse(
                 note.getId(),
                 note.getContent(),
                 note.getNoteStatus().name(),
+                note.getNoteType().name(),
                 note.getCreatedAt(),
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),
@@ -44,6 +46,7 @@ public record NoteGetResponse(
                 note.getId(),
                 note.getContent(),
                 note.getNoteStatus().name(),
+                note.getNoteType().name(),
                 createdAt,
                 LyricsGetResponse.from(note.getLyrics()),
                 UserGetResponse.from(note.getPublisher()),

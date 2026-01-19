@@ -13,6 +13,7 @@ import com.projectlyrics.server.domain.note.dto.request.NoteUpdateRequest;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteBackground;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteDeletionException;
 import com.projectlyrics.server.domain.note.exception.InvalidNoteUpdateException;
 import com.projectlyrics.server.domain.note.exception.TooManyDraftsException;
@@ -63,6 +64,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -94,6 +96,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.DRAFT,
+                NoteType.FREE,
                 song.getId()
         );
 
@@ -118,6 +121,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
         Note note = sut.create(request, user.getId());
@@ -148,6 +152,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
         Note note = sut.create(request, publisher.getId());
@@ -170,6 +175,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.DRAFT,
+                NoteType.FREE,
                 song.getId()
         );
         Note note = sut.create(createRequest, user.getId());
@@ -208,6 +214,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.DRAFT,
+                NoteType.FREE,
                 song.getId()
         );
         Note note = sut.create(createRequest, user.getId());
@@ -243,6 +250,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 null,
                 null,
                 NoteStatus.DRAFT,
+                NoteType.FREE,
                 song.getId()
         );
         Note note = sut.create(createRequest, publisher.getId());
@@ -270,6 +278,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
         disciplineCommandRepository.save(DisciplineFixture.createForAll(artist, user));
@@ -290,6 +299,7 @@ class NoteCommandServiceTest extends IntegrationTest {
                 "lyrics",
                 NoteBackground.DEFAULT,
                 NoteStatus.PUBLISHED,
+                NoteType.FREE,
                 song.getId()
         );
         disciplineCommandRepository.save(DisciplineFixture.createForAll(artist, user));

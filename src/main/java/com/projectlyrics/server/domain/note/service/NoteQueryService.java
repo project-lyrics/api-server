@@ -39,13 +39,16 @@ public class NoteQueryService {
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotesOfFavoriteArtists(boolean hasLyrics, Long userId, Long cursor, int size) {
-        List<Long> artistsIds = favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
-                .stream()
-                .map(favoriteArtist -> favoriteArtist.getArtist().getId())
-                .toList();
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotes(boolean hasLyrics, boolean isFavoriteArtistsOnly, Long userId, Long cursor, int size) {
+        List<Long> artistsIds = null;
+        if (isFavoriteArtistsOnly) {
+            artistsIds = favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
+                    .stream()
+                    .map(favoriteArtist -> favoriteArtist.getArtist().getId())
+                    .toList();
+        }
 
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByArtistIds(hasLyrics, artistsIds, userId, cursor, PageRequest.ofSize(size))
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAll(hasLyrics, artistsIds, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
