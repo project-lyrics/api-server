@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
-@Profile({"prod", "dev"})
+@Profile("disabled") // 크론 작업 비활성화 (이전: {"prod", "dev"})
 @Component
 public class SongCollector {
 
