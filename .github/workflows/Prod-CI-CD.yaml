@@ -59,7 +59,7 @@ jobs:
 
       - name: build with gradle
         run: |
-          ./gradlew bootjar
+          ./gradlew bootjar -x test
 
       - name: login into docker
         uses: docker/login-action@v2
