@@ -86,6 +86,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .optional(),
                                 fieldWithPath("status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("songId").type(JsonFieldType.NUMBER)
                                         .description("곡 ID")
                         )
@@ -216,6 +218,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("lyrics.lyrics").type(JsonFieldType.STRING)
@@ -333,6 +337,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
@@ -437,6 +443,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
@@ -540,6 +548,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
@@ -643,6 +653,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
@@ -747,6 +759,8 @@ class NoteControllerTest extends RestDocsTest {
                                         .description("노트 내용"),
                                 fieldWithPath("data[].status").type(JsonFieldType.STRING)
                                         .description("노트 등록 상태" + getEnumValuesAsString(NoteStatus.class)),
+                                fieldWithPath("data[].noteType").type(JsonFieldType.STRING)
+                                        .description("노트 유형" + getEnumValuesAsString(NoteType.class)),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                                         .description("노트 생성 시간"),
                                 fieldWithPath("data[].lyrics.lyrics").type(JsonFieldType.STRING)
