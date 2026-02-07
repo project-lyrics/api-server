@@ -25,9 +25,12 @@ public class MongoConfig {
 
     private boolean isMongoAvailable(MongoTemplate mongoTemplate) {
         try {
+            /*
+            Mongo DB 연결 가능할 때까지 disabled 처리합니다.
             mongoTemplate.getDb().runCommand(new org.bson.Document("ping", 1));
             log.info("MongoDB 연결 성공");
-            return true;
+            */
+            return false;
         } catch (Exception e) {
             log.warn("MongoDB 연결 실패 — NoOp 리포지토리로 대체됩니다. 이유: {}", e.getMessage());
             return false;
