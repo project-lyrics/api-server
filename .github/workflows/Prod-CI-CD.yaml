@@ -57,6 +57,11 @@ jobs:
           cp firebase-key.json ./src/main/resources/firebase-key.json
         shell: bash
 
+      - name: run tests for api docs generation
+        run: |
+          ./gradlew test --continue
+        continue-on-error: true
+
       - name: build with gradle
         run: |
           ./gradlew bootjar -x test
