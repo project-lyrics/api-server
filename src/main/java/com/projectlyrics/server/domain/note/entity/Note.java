@@ -35,7 +35,7 @@ public class Note extends BaseEntity {
     private NoteStatus noteStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'FREE'")
+    @Column(nullable = false)
     private NoteType noteType;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
