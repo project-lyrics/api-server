@@ -11,8 +11,10 @@ import static com.projectlyrics.server.domain.song.entity.QSong.song;
 import com.projectlyrics.server.domain.common.util.QueryDslUtils;
 import com.projectlyrics.server.domain.note.entity.Note;
 import com.projectlyrics.server.domain.note.entity.NoteStatus;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.exception.NoteNotFoundException;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -50,7 +52,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByUserId(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -61,6 +63,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         hasLyrics(hasLyrics),
                         artistId == null ? null : artist.id.eq(artistId),
+                        hasNoteType(noteType),
                         note.publisher.deletedAt.isNull(),
                         note.publisher.id.eq(userId),
                         note.deletedAt.isNull(),
@@ -79,7 +82,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistIds(boolean hasLyrics, List<Long> artistsIds, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -90,6 +93,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         hasLyrics(hasLyrics),
                         note.song.artist.id.in(artistsIds),
+                        hasNoteType(noteType),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
@@ -106,7 +110,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAll(boolean hasLyrics, List<Long> artistsIds, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAll(boolean hasLyrics, List<Long> artistsIds, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -117,6 +121,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         hasLyrics(hasLyrics),
                         artistsIds == null || artistsIds.isEmpty() ? null : note.song.artist.id.in(artistsIds),
+                        hasNoteType(noteType),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
@@ -133,7 +138,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllByArtistId(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -144,6 +149,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         hasLyrics(hasLyrics),
                         note.song.artist.id.eq(artistId),
+                        hasNoteType(noteType),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
@@ -160,7 +166,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllBySongId(boolean hasLyrics, Long songId, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllBySongId(boolean hasLyrics, Long songId, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -171,6 +177,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                 .where(
                         hasLyrics(hasLyrics),
                         note.song.id.eq(songId),
+                        hasNoteType(noteType),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
@@ -187,7 +194,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
     }
 
     @Override
-    public Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, Long userId, Long cursorId, Pageable pageable) {
+    public Slice<Note> findAllBookmarkedAndByArtistId(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursorId, Pageable pageable) {
         List<Note> content = jpaQueryFactory
                 .selectFrom(note)
                 .leftJoin(note.lyrics).fetchJoin()
@@ -200,6 +207,7 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                                 .and(bookmark.deletedAt.isNull()),
                         hasLyrics(hasLyrics),
                         artistId == null ? null : note.song.artist.id.eq(artistId),
+                        hasNoteType(noteType),
                         note.deletedAt.isNull(),
                         QueryDslUtils.ltCursorId(cursorId, note.id),
                         note.publisher.notIn(
@@ -228,5 +236,9 @@ public class QueryDslNoteQueryRepository implements NoteQueryRepository {
                         )
                         .fetchOne()
         ).orElse(0L);
+    }
+
+    private BooleanExpression hasNoteType(NoteType noteType) {
+        return noteType == null ? null : note.noteType.eq(noteType);
     }
 }

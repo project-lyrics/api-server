@@ -51,3 +51,5 @@ application*.yml
 
 gradle.properties
 src/main/resources/firebase-key.json
+*.lck
+*.part

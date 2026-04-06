@@ -10,6 +10,7 @@ import com.projectlyrics.server.domain.note.dto.response.NoteDeleteResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteUpdateResponse;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.service.NoteCommandService;
 import com.projectlyrics.server.domain.note.service.NoteQueryService;
 import com.projectlyrics.server.domain.view.service.ViewCommandService;
@@ -96,10 +97,11 @@ public class NoteController {
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "artistId", required = false) Long artistId,
+            @RequestParam(name = "noteType", required = false) NoteType noteType,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByUserId(hasLyrics, artistId, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByUserId(hasLyrics, artistId, noteType, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -111,10 +113,11 @@ public class NoteController {
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "isFavoriteArtistsOnly", defaultValue = "false") boolean isFavoriteArtistsOnly,
+            @RequestParam(name = "noteType", required = false) NoteType noteType,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotes(hasLyrics, isFavoriteArtistsOnly, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotes(hasLyrics, isFavoriteArtistsOnly, noteType, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -126,10 +129,11 @@ public class NoteController {
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "artistId") Long artistId,
+            @RequestParam(name = "noteType", required = false) NoteType noteType,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(hasLyrics, artistId, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesByArtistId(hasLyrics, artistId, noteType, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -141,10 +145,11 @@ public class NoteController {
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "songId") Long songId,
+            @RequestParam(name = "noteType", required = false) NoteType noteType,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesBySongId(hasLyrics, songId, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getNotesBySongId(hasLyrics, songId, noteType, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -156,10 +161,11 @@ public class NoteController {
             @Authenticated AuthContext authContext,
             @RequestParam(name = "hasLyrics") boolean hasLyrics,
             @RequestParam(name = "artistId", required = false) Long artistId,
+            @RequestParam(name = "noteType", required = false) NoteType noteType,
             @RequestParam(name = "cursor", required = false) Long cursor,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getBookmarkedNotes(hasLyrics, artistId, authContext.getId(), cursor, size);
+        CursorBasePaginatedResponse<NoteGetResponse> response = noteQueryService.getBookmarkedNotes(hasLyrics, artistId, noteType, authContext.getId(), cursor, size);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

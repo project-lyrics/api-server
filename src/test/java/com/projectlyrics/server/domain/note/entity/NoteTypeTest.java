@@ -37,7 +37,7 @@ class NoteTypeTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"INVALID", "free", "question", "", " "})
+    @ValueSource(strings = {"INVALID", "FREEE", "QUESTIONS", "", " ", "lyrics-analysis"})
     void 유효하지_않은_문자열에_대해_예외를_발생시켜야_한다(String invalidType) {
         // when & then
         assertThatThrownBy(() -> NoteType.of(invalidType))

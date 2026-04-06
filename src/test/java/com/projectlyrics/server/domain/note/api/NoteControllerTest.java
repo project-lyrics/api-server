@@ -287,7 +287,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByUserId(anyBoolean(), any(), any(), any(), anyInt()))
+        given(noteQueryService.getNotesByUserId(anyBoolean(), any(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -391,7 +391,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotes(anyBoolean(), anyBoolean(), any(), any(), anyInt()))
+        given(noteQueryService.getNotes(anyBoolean(), anyBoolean(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -495,7 +495,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesByArtistId(anyBoolean(), any(), any(), any(), anyInt()))
+        given(noteQueryService.getNotesByArtistId(anyBoolean(), any(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -598,7 +598,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getNotesBySongId(anyBoolean(), any(), any(), any(), anyInt()))
+        given(noteQueryService.getNotesBySongId(anyBoolean(), any(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
@@ -701,7 +701,7 @@ class NoteControllerTest extends RestDocsTest {
                 data
         );
 
-        given(noteQueryService.getBookmarkedNotes(anyBoolean(), any(), any(), any(), anyInt()))
+        given(noteQueryService.getBookmarkedNotes(anyBoolean(), any(), any(), any(), any(), anyInt()))
                 .willReturn(response);
 
         // when, then
