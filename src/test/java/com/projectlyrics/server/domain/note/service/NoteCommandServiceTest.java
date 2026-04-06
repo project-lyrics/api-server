@@ -72,7 +72,7 @@ class NoteCommandServiceTest extends IntegrationTest {
         Note note = sut.create(request, user.getId());
 
         // then
-        Slice<Note> result = noteQueryRepository.findAllByUserId(true, null, user.getId(), null, PageRequest.ofSize(5));
+        Slice<Note> result = noteQueryRepository.findAllByUserId(true, null, null, user.getId(), null, PageRequest.ofSize(5));
         assertAll(
                 () -> assertThat(result.getContent().size()).isEqualTo(1),
                 () -> assertThat(result.getContent().getFirst().getId()).isEqualTo(note.getId()),
@@ -127,9 +127,9 @@ class NoteCommandServiceTest extends IntegrationTest {
         Note note = sut.create(request, user.getId());
 
         // when
-        Slice<Note> beforeResult = noteQueryRepository.findAllByUserId(true, null, user.getId(), null, PageRequest.ofSize(5));
+        Slice<Note> beforeResult = noteQueryRepository.findAllByUserId(true, null, null, user.getId(), null, PageRequest.ofSize(5));
         sut.delete(user.getId(), note.getId());
-        Slice<Note> afterResult = noteQueryRepository.findAllByUserId(true, null, user.getId(), null, PageRequest.ofSize(5));
+        Slice<Note> afterResult = noteQueryRepository.findAllByUserId(true, null, null, user.getId(), null, PageRequest.ofSize(5));
 
         // then
         assertAll(

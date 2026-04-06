@@ -24,7 +24,7 @@ public enum NoteType {
     @JsonCreator
     public static NoteType of(String type) {
         return Arrays.stream(NoteType.values())
-                .filter(noteType -> noteType.type.equals(type))
+                .filter(noteType -> noteType.type.equalsIgnoreCase(type))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid NoteType: " + type));
     }

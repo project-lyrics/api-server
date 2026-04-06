@@ -6,6 +6,7 @@ import com.projectlyrics.server.domain.auth.authentication.interceptor.DeviceIdI
 import com.projectlyrics.server.global.slack.interceptor.SlackInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.AdminInterceptor;
 import com.projectlyrics.server.domain.auth.authentication.interceptor.VersionVerificationInterceptor;
+import com.projectlyrics.server.global.converter.NoteTypeConverter;
 import com.projectlyrics.server.global.converter.ProfileCharacterConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new NoteTypeConverter());
         registry.addConverter(new ProfileCharacterConverter());
     }
 }

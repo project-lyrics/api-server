@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class NoteQueryServiceTest extends IntegrationTest {
@@ -184,7 +186,8 @@ class NoteQueryServiceTest extends IntegrationTest {
                 });
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(true, null, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(true, null, null, user.getId(), null,
+                10);
 
         // then
         assertAll(
@@ -207,7 +210,8 @@ class NoteQueryServiceTest extends IntegrationTest {
                 });
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(false, null, user.getId(), null, 10);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(false, null, null, user.getId(),
+                null, 10);
 
         // then
         assertAll(
@@ -230,7 +234,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note likedArtistSongNote3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, null, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -255,7 +259,7 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, null, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -273,8 +277,10 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(false, likedArtist.getId(), user.getId(), null, 5);
-        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(false, unlikedArtistSong.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesByArtistId(false, likedArtist.getId(), null,
+                user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesByArtistId(false, unlikedArtistSong.getId(),
+                null, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -303,7 +309,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(true, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(true, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -323,7 +330,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(false, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(false, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -341,8 +349,10 @@ class NoteQueryServiceTest extends IntegrationTest {
         Note note3 = noteCommandService.create(likedArtistSongNoteRequest, user.getId());
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesBySongId(false, likedArtistSong.getId(), user.getId(), null, 5);
-        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesBySongId(false, unlikedArtistSong.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result1 = sut.getNotesBySongId(false, likedArtistSong.getId(),
+                null, user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result2 = sut.getNotesBySongId(false, unlikedArtistSong.getId(),
+                null, user.getId(), null, 5);
 
         // then
         assertAll(
@@ -364,7 +374,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesBySongId(false, likedArtistSong.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesBySongId(false, likedArtistSong.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -385,7 +396,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         bookmarkCommandRepository.save(BookmarkFixture.create(user, bookmarkedNote2));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -405,7 +417,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         bookmarkCommandRepository.save(BookmarkFixture.create(user, bookmarkedNoteOfUnlikedArtist));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -424,7 +437,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         bookmarkCommandRepository.save(BookmarkFixture.create(user, unlikedArtistNote));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -450,7 +464,8 @@ class NoteQueryServiceTest extends IntegrationTest {
         blockCommandRepository.save(BlockFixture.create(user, user1));
 
         // when
-        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), user.getId(), null, 5);
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(), null,
+                user.getId(), null, 5);
 
         // then
         assertAll(
@@ -458,5 +473,135 @@ class NoteQueryServiceTest extends IntegrationTest {
                 () -> assertThat(result.data().get(0).id()).isEqualTo(bookmarkedNote4.getId()),
                 () -> assertThat(result.data().get(1).id()).isEqualTo(bookmarkedNote3.getId())
         );
+    }
+
+    @ParameterizedTest
+    @EnumSource(NoteType.class)
+    void 노트_타입으로_사용자_노트를_조회할_수_있다(NoteType noteType) {
+        // given
+        Note expectedNote = noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), noteType),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), getAnotherType(noteType)),
+                user.getId());
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByUserId(true, null, noteType, user.getId(),
+                null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data()).hasSize(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(expectedNote.getId()),
+                () -> assertThat(result.data().getFirst().noteType()).isEqualTo(noteType.getType())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(NoteType.class)
+    void 노트_타입으로_좋아하는_아티스트_노트를_조회할_수_있다(NoteType noteType) {
+        // given
+        favoriteArtistCommandRepository.save(FavoriteArtistFixture.create(user, likedArtist));
+        Note expectedNote = noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), noteType),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), getAnotherType(noteType)),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(unlikedArtistSong.getId(), noteType), user.getId());
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotes(true, true, noteType, user.getId(), null,
+                10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data()).hasSize(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(expectedNote.getId()),
+                () -> assertThat(result.data().getFirst().noteType()).isEqualTo(noteType.getType())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(NoteType.class)
+    void 노트_타입으로_아티스트별_노트를_조회할_수_있다(NoteType noteType) {
+        // given
+        Note expectedNote = noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), noteType),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), getAnotherType(noteType)),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(unlikedArtistSong.getId(), noteType), user.getId());
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesByArtistId(true, likedArtist.getId(),
+                noteType, user.getId(), null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data()).hasSize(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(expectedNote.getId()),
+                () -> assertThat(result.data().getFirst().noteType()).isEqualTo(noteType.getType())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(NoteType.class)
+    void 노트_타입으로_곡별_노트를_조회할_수_있다(NoteType noteType) {
+        // given
+        Note expectedNote = noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), noteType),
+                user.getId());
+        noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), getAnotherType(noteType)),
+                user.getId());
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getNotesBySongId(true, likedArtistSong.getId(),
+                noteType, user.getId(), null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data()).hasSize(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(expectedNote.getId()),
+                () -> assertThat(result.data().getFirst().noteType()).isEqualTo(noteType.getType())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(NoteType.class)
+    void 노트_타입으로_북마크한_노트를_조회할_수_있다(NoteType noteType) {
+        // given
+        Note expectedNote = noteCommandService.create(createNoteRequestByType(likedArtistSong.getId(), noteType),
+                user.getId());
+        Note anotherTypeNote = noteCommandService.create(
+                createNoteRequestByType(likedArtistSong.getId(), getAnotherType(noteType)), user.getId());
+
+        bookmarkCommandRepository.save(BookmarkFixture.create(user, expectedNote));
+        bookmarkCommandRepository.save(BookmarkFixture.create(user, anotherTypeNote));
+
+        // when
+        CursorBasePaginatedResponse<NoteGetResponse> result = sut.getBookmarkedNotes(true, likedArtist.getId(),
+                noteType, user.getId(), null, 10);
+
+        // then
+        assertAll(
+                () -> assertThat(result.data()).hasSize(1),
+                () -> assertThat(result.data().getFirst().id()).isEqualTo(expectedNote.getId()),
+                () -> assertThat(result.data().getFirst().noteType()).isEqualTo(noteType.getType())
+        );
+    }
+
+    private NoteCreateRequest createNoteRequestByType(Long songId, NoteType noteType) {
+        return new NoteCreateRequest(
+                "content",
+                "lyrics",
+                NoteBackground.DEFAULT,
+                NoteStatus.PUBLISHED,
+                noteType,
+                songId
+        );
+    }
+
+    private NoteType getAnotherType(NoteType noteType) {
+        return switch (noteType) {
+            case FREE -> NoteType.QUESTION;
+            case QUESTION -> NoteType.LYRICS_ANALYSIS;
+            case LYRICS_ANALYSIS -> NoteType.FREE;
+        };
     }
 }

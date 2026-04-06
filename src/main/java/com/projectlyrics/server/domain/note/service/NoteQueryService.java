@@ -7,6 +7,7 @@ import com.projectlyrics.server.domain.favoriteartist.repository.FavoriteArtistQ
 import com.projectlyrics.server.domain.note.dto.response.NoteDetailResponse;
 import com.projectlyrics.server.domain.note.dto.response.NoteGetResponse;
 import com.projectlyrics.server.domain.note.entity.Note;
+import com.projectlyrics.server.domain.note.entity.NoteType;
 import com.projectlyrics.server.domain.note.repository.NoteQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,14 +33,14 @@ public class NoteQueryService {
         return NoteDetailResponse.of(note, comments, userId);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByUserId(hasLyrics, artistId, userId, cursor, PageRequest.ofSize(size))
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByUserId(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByUserId(hasLyrics, artistId, noteType, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotes(boolean hasLyrics, boolean isFavoriteArtistsOnly, Long userId, Long cursor, int size) {
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotes(boolean hasLyrics, boolean isFavoriteArtistsOnly, NoteType noteType, Long userId, Long cursor, int size) {
         List<Long> artistsIds = null;
         if (isFavoriteArtistsOnly) {
             artistsIds = favoriteArtistQueryRepository.findAllByUserIdFetchArtist(userId)
@@ -48,28 +49,28 @@ public class NoteQueryService {
                     .toList();
         }
 
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAll(hasLyrics, artistsIds, userId, cursor, PageRequest.ofSize(size))
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAll(hasLyrics, artistsIds, noteType, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByArtistId(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByArtistId(hasLyrics, artistId, userId, cursor, PageRequest.ofSize(size))
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesByArtistId(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllByArtistId(hasLyrics, artistId, noteType, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getNotesBySongId(boolean hasLyrics, Long songId, Long userId, Long cursor, int size) {
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllBySongId(hasLyrics, songId, userId, cursor, PageRequest.ofSize(size))
+    public CursorBasePaginatedResponse<NoteGetResponse> getNotesBySongId(boolean hasLyrics, Long songId, NoteType noteType, Long userId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllBySongId(hasLyrics, songId, noteType, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
     }
 
-    public CursorBasePaginatedResponse<NoteGetResponse> getBookmarkedNotes(boolean hasLyrics, Long artistId, Long userId, Long cursor, int size) {
-        Slice<NoteGetResponse> notes = noteQueryRepository.findAllBookmarkedAndByArtistId(hasLyrics, artistId, userId, cursor, PageRequest.ofSize(size))
+    public CursorBasePaginatedResponse<NoteGetResponse> getBookmarkedNotes(boolean hasLyrics, Long artistId, NoteType noteType, Long userId, Long cursor, int size) {
+        Slice<NoteGetResponse> notes = noteQueryRepository.findAllBookmarkedAndByArtistId(hasLyrics, artistId, noteType, userId, cursor, PageRequest.ofSize(size))
                 .map(note -> NoteGetResponse.of(note, userId));
 
         return CursorBasePaginatedResponse.of(notes);
